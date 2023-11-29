@@ -3,13 +3,29 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { APP_NAME } from '@/utils/config'
 import { SessionType, useSession } from '@lens-protocol/react-web'
 import { useAccount } from 'wagmi'
+import { Button } from '@mui/material'
+import CelebrationIcon from '@mui/icons-material/Celebration'
+import { useTheme } from '../../wrappers/TailwindThemeProvider'
+
 const TopHeader = () => {
   const { data, loading } = useSession()
   const { isConnected } = useAccount()
   console.log('data', data)
+  const { theme, toggleTheme } = useTheme()
   return (
-    <div className="flex flex-row items-center justify-between p-5">
-      <div className="text-xl font-bold">{APP_NAME}</div>
+    <div className="flex flex-row items-center justify-between p-5 bg-s-bg">
+      <div className="font-bold">{APP_NAME}</div>
+      <Button
+        variant="contained"
+        onClick={toggleTheme}
+        className=""
+        size="medium"
+      >
+        {theme === 'light' ? 'Dark' : 'Light'}
+      </Button>
+      <div className="text-blue-400">
+        <CelebrationIcon />
+      </div>
       {loading ? (
         <div>Loading...</div>
       ) : (
@@ -17,7 +33,14 @@ const TopHeader = () => {
           {data?.type === SessionType.Anonymous && (
             <>
               {isConnected ? (
-                <button onClick={() => {}}>Login Lens</button>
+                <Button
+                  variant="contained"
+                  className="font-bold text-sm"
+                  onClick={() => {}}
+                  size="medium"
+                >
+                  Login Lens
+                </Button>
               ) : (
                 <ConnectButton />
               )}

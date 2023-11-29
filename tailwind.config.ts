@@ -1,6 +1,9 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
+  corePlugins: {
+    preflight: false
+  },
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -17,7 +20,8 @@ const config: Config = {
         'p-bg': 'var(--primary-background)',
         's-bg': 'var(--secondary-background)',
         's-text': 'var(--secondary-text)',
-        'p-text': 'var(--primary-text)'
+        'p-text': 'var(--primary-text)',
+        brand: 'var(--brand)'
       }
     }
   },

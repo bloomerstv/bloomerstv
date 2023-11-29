@@ -22,20 +22,22 @@
 
 :root {
   /* background */
-  --primary-background: '#cfb3a1';
-  --secondary-background: '#f5c6a9';
+  --primary-background: #cfb3a1;
+  --secondary-background: #f5c6a9;
 
   /* text */
-  --primary-text: '#363534';
-  --secondary-text: '#757372';
+  --primary-text: #363534;
+  --secondary-text: #757372;
+
+  --brand: #81c8e9;
 }
 
 [data-theme='dark'] {
   /* background */
-  --primary-background: '#1F1C1B';
-  --secondary-background: '#272325';
+  --primary-background: #1f1c1b;
+  --secondary-background: #272325;
 
   /* text */
-  --primary-text: '#FFFFFF';
-  --secondary-text: '#7B7A7B';
+  --primary-text: #ffffff;
+  --secondary-text: #7b7a7b;
 }

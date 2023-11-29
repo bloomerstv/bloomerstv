@@ -9,6 +9,8 @@ import AddPWAPage from '../pages/home/AddPWAPage'
 import 'react-toastify/dist/ReactToastify.css'
 import LivePeerWrapper from './LivePeerWrapper'
 import LensWrapper from './LensWrapper'
+import ThemeProvider from './TailwindThemeProvider'
+import MuiThemeWrapper from './MuiThemeWrapper'
 
 const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
   const [isPWA, setIsPWA] = useState(false)
@@ -26,26 +28,30 @@ const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   return (
-    <>
-      {!isPWA && isMobile && useOnlyPWAOnMobile ? (
-        <AddPWAPage />
-      ) : (
+    <ThemeProvider>
+      <MuiThemeWrapper>
         <>
-          <RainbowKitWrapper>
-            <LensWrapper>
-              <LivePeerWrapper>
-                <ToastContainer
-                  position="top-right"
-                  theme="dark"
-                  closeButton={false}
-                />
-                <UILayout>{children}</UILayout>
-              </LivePeerWrapper>
-            </LensWrapper>
-          </RainbowKitWrapper>
+          {!isPWA && isMobile && useOnlyPWAOnMobile ? (
+            <AddPWAPage />
+          ) : (
+            <>
+              <RainbowKitWrapper>
+                <LensWrapper>
+                  <LivePeerWrapper>
+                    <ToastContainer
+                      position="top-right"
+                      theme="dark"
+                      closeButton={false}
+                    />
+                    <UILayout>{children}</UILayout>
+                  </LivePeerWrapper>
+                </LensWrapper>
+              </RainbowKitWrapper>
+            </>
+          )}
         </>
-      )}
-    </>
+      </MuiThemeWrapper>
+    </ThemeProvider>
   )
 }
 
