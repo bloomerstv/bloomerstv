@@ -1,6 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import WrappersWithOnlyPwa from './WrappersWithOnlyPwa'
+import WrappersWithOnlyPwa from '../components/wrappers/WrappersWithOnlyPwa'
 
 declare global {
   interface Navigator {

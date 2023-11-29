@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react'
 import RainbowKitWrapper from './RainbowKitWrapper'
 import { ToastContainer } from 'react-toastify'
 import UILayout from './UILayout'
-import { useOnlyPWAOnMobile } from '../utils/config'
-import AddPWAPage from './AddPWAPage'
+import { useOnlyPWAOnMobile } from '../../utils/config'
+import AddPWAPage from '../pages/AddPWAPage'
 import 'react-toastify/dist/ReactToastify.css'
 import LivePeerWrapper from './LivePeerWrapper'
+import LensWrapper from './LensWrapper'
 
 const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
   const [isPWA, setIsPWA] = useState(false)
@@ -31,14 +32,16 @@ const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
       ) : (
         <>
           <RainbowKitWrapper>
-            <LivePeerWrapper>
-              <ToastContainer
-                position="top-right"
-                theme="dark"
-                closeButton={false}
-              />
-              <UILayout>{children}</UILayout>
-            </LivePeerWrapper>
+            <LensWrapper>
+              <LivePeerWrapper>
+                <ToastContainer
+                  position="top-right"
+                  theme="dark"
+                  closeButton={false}
+                />
+                <UILayout>{children}</UILayout>
+              </LivePeerWrapper>
+            </LensWrapper>
           </RainbowKitWrapper>
         </>
       )}
