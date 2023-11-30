@@ -7,7 +7,7 @@ import {
 
 const client = createReactClient({
   provider: studioProvider({
-    apiKey: String(process.env.NEXT_PUBLIC_LIVE_PEER_STUDIO_API)
+    apiKey: ''
   })
 })
 

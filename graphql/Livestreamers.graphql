@@ -1,0 +1,11 @@
+query LiveStreamers {
+  liveStreamers {
+    profileId
+    streamName
+    lastSeen
+    isActive
+    isHealthy
+    createdAt
+    playbackId
+  }
+}

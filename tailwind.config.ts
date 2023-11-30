@@ -7,10 +7,17 @@ const config: Config = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}'
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './utils/**/*.{js,ts,jsx,tsx,mdx}'
   ],
   theme: {
     extend: {
+      borderWidth: {
+        DEFAULT: '1px'
+      },
+      borderStyle: {
+        DEFAULT: 'solid'
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -25,6 +32,32 @@ const config: Config = {
       }
     }
   },
-  plugins: []
+  plugins: [
+    function ({ addUtilities }) {
+      const newUtilities = {
+        '.border': {
+          borderWidth: '1px',
+          borderStyle: 'solid'
+        },
+        '.border-t': {
+          borderTopWidth: '1px',
+          borderTopStyle: 'solid'
+        },
+        '.border-r': {
+          borderRightWidth: '1px',
+          borderRightStyle: 'solid'
+        },
+        '.border-b': {
+          borderBottomWidth: '1px',
+          borderBottomStyle: 'solid'
+        },
+        '.border-l': {
+          borderLeftWidth: '1px',
+          borderLeftStyle: 'solid'
+        }
+      }
+      addUtilities(newUtilities)
+    }
+  ]
 }
 export default config

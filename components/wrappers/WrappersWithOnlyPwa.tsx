@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useEffect, useState } from 'react'
 import RainbowKitWrapper from './RainbowKitWrapper'
 import { ToastContainer } from 'react-toastify'
@@ -11,6 +10,7 @@ import LivePeerWrapper from './LivePeerWrapper'
 import LensWrapper from './LensWrapper'
 import ThemeProvider from './TailwindThemeProvider'
 import MuiThemeWrapper from './MuiThemeWrapper'
+import ApolloWrapper from './ApolloWrapper'
 
 const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
   const [isPWA, setIsPWA] = useState(false)
@@ -37,14 +37,16 @@ const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
             <>
               <RainbowKitWrapper>
                 <LensWrapper>
-                  <LivePeerWrapper>
-                    <ToastContainer
-                      position="top-right"
-                      theme="dark"
-                      closeButton={false}
-                    />
-                    <UILayout>{children}</UILayout>
-                  </LivePeerWrapper>
+                  <ApolloWrapper>
+                    <LivePeerWrapper>
+                      <ToastContainer
+                        position="top-right"
+                        theme="dark"
+                        closeButton={false}
+                      />
+                      <UILayout>{children}</UILayout>
+                    </LivePeerWrapper>
+                  </ApolloWrapper>
                 </LensWrapper>
               </RainbowKitWrapper>
             </>

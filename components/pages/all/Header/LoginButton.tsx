@@ -1,66 +1,49 @@
-import {
-  SessionType,
-  useLastLoggedInProfile,
-  useLogin,
-  useSession
-} from '@lens-protocol/react-web'
-import React from 'react'
-import { useAccount } from 'wagmi'
-import getAvatar from '../../../../utils/lib/getAvatar'
-import LoadingButton from '@mui/lab/LoadingButton'
-import { useAccountModal, useConnectModal } from '@rainbow-me/rainbowkit'
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
-import AvatarWithOptions from './AvatarWithOptions'
+'use client'
 
-// todo: show available profiles modal and allow user to select profile to login
+import { SessionType, useSession } from '@lens-protocol/react-web'
+import React from 'react'
+import AvatarWithOptions from './AvatarWithOptions'
+import { Button, IconButton } from '@mui/material'
+import ModalWrapper from '../../../ui/Modal/ModalWrapper'
+import LoginIcon from '@mui/icons-material/Login'
+import LoginComponent from '../../../common/LoginComponent'
+import useIsMobile from '../../../../utils/hooks/useIsMobile'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
 const LoginButton = () => {
-  const { data, loading } = useSession()
-  const { isConnected, address, isConnecting, isReconnecting } = useAccount()
-  const { openConnectModal } = useConnectModal()
-  const { data: lastLoggedInProfile } = useLastLoggedInProfile({
-    // @ts-ignore
-    for: address
-  })
-  const { execute, loading: logging } = useLogin()
+  const { data } = useSession()
+
+  const [open, setOpen] = React.useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
+  const isMobile = useIsMobile()
 
   return (
     <>
+      <ModalWrapper
+        open={open}
+        title="login"
+        Icon={<LoginIcon fontSize="small" />}
+        onClose={handleClose}
+        onOpen={handleOpen}
+      >
+        <LoginComponent onClose={handleClose} />
+      </ModalWrapper>
       {data?.type === SessionType.Anonymous && (
         <>
-          {isConnected ? (
-            <LoadingButton
+          {isMobile ? (
+            <IconButton onClick={handleOpen}>
+              <AccountCircleIcon />
+            </IconButton>
+          ) : (
+            <Button
               variant="contained"
-              onClick={() => {
-                execute({
-                  // @ts-ignore
-                  address: address,
-                  profileId: lastLoggedInProfile?.id
-                })
-              }}
-              disabled={!lastLoggedInProfile}
-              startIcon={
-                <img
-                  src={getAvatar(lastLoggedInProfile)}
-                  alt="avatar"
-                  className="w-8 h-8 rounded-full"
-                />
-              }
-              loading={logging}
-              loadingPosition="start"
+              onClick={handleOpen}
+              startIcon={<AccountCircleIcon />}
             >
               Login
-            </LoadingButton>
-          ) : (
-            <LoadingButton
-              variant="contained"
-              onClick={openConnectModal}
-              loading={isConnecting || isReconnecting}
-              loadingPosition="start"
-              startIcon={<AccountBalanceWalletIcon />}
-            >
-              Connect
-            </LoadingButton>
+            </Button>
           )}
         </>
       )}

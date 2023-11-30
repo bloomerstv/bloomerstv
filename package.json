@@ -6,13 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "codegen": "graphql-codegen"
   },
   "devDependencies": {
+    "@apollo/client": "^3.8.8",
     "@aws-sdk/client-s3": "^3.418.0",
     "@ducanh2912/next-pwa": "^9.7.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/fragment-matcher": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-operations": "^4.0.1",
+    "@graphql-codegen/typescript-react-apollo": "^4.1.0",
     "@mui/icons-material": "^5.14.18",
     "@mui/lab": "^5.0.0-alpha.153",
     "@mui/material": "^5.14.18",
@@ -51,6 +58,7 @@
     "@lens-protocol/wagmi": "^3.0.0-alpha.20",
     "@livepeer/react": "^3.0.7",
     "plyr-react": "^5.3.0",
-    "tailwind-merge": "^2.0.0"
+    "tailwind-merge": "^2.0.0",
+    "usehooks-ts": "^2.9.1"
   }
 }

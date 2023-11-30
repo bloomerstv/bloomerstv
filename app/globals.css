@@ -11,12 +11,59 @@
     @apply flex flex-row items-center justify-start;
   }
 
-  .space-between-row {
+  .between-row {
     @apply flex flex-row items-center justify-between;
+  }
+
+  .between-col {
+    @apply flex flex-col justify-between;
+  }
+
+  .start-col {
+    @apply flex flex-col items-center;
   }
 
   .spinner {
     @apply animate-spin rounded-full h-5 w-5 border border-t-2 border-r-2;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 20px;
+    background: var(--background);
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* @media (prefers-color-scheme: light) {
+    ::-webkit-scrollbar-track {
+      background: #1a1a1b;
+    }
+  } */
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #757372;
+    border-radius: 30px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #757372;
   }
 }
 

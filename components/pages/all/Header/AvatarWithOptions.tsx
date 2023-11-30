@@ -2,20 +2,22 @@ import { Profile, useLogout } from '@lens-protocol/react-web'
 import React from 'react'
 import getAvatar from '../../../../utils/lib/getAvatar'
 import {
-  Avatar,
   Divider,
   IconButton,
   ListItemIcon,
   Menu,
   MenuItem
 } from '@mui/material'
-import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import { useTheme } from '../../../wrappers/TailwindThemeProvider'
 import ToggleOffIcon from '@mui/icons-material/ToggleOff'
 import ToggleOnIcon from '@mui/icons-material/ToggleOn'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useDisconnect } from 'wagmi'
+import { useRouter } from 'next/navigation'
+import Settings from '@mui/icons-material/Settings'
+import CircleIcon from '@mui/icons-material/Circle'
+
 const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
@@ -35,6 +37,8 @@ const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
     await execute()
     handleClose()
   }
+
+  const { push } = useRouter()
   return (
     <div>
       <IconButton
@@ -86,7 +90,12 @@ const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            push(`/${formatHandle(profile)}`)
+            handleClose()
+          }}
+        >
           <img
             src={getAvatar(profile)}
             alt="avatar"
@@ -96,11 +105,28 @@ const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
         </MenuItem>
         <Divider />
 
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            push(`/dashboard/go-live`)
+            handleClose()
+          }}
+        >
+          <ListItemIcon>
+            <CircleIcon fontSize="small" />
+          </ListItemIcon>
+          Go live
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            push(`/dashboard/go-live`)
+            handleClose()
+          }}
+        >
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
-          Settings
+          Dashboard
         </MenuItem>
 
         <MenuItem onClick={toggleTheme}>
