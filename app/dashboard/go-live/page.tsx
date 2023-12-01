@@ -5,10 +5,10 @@ import LiveStreamEditor from '../../../components/pages/dashboard/go-live/LiveSt
 const GoLivePage = () => {
   return (
     <div className="flex flex-row h-full">
-      <div className="flex-grow">
+      <div className="w-full flex-grow overflow-auto h-full">
         <LiveStreamEditor />
       </div>
-      <div className="w-[300px] flex-none h-full">
+      <div className="w-[400px] flex-none h-full">
         <LiveChat />
       </div>
     </div>

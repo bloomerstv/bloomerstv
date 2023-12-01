@@ -20,6 +20,9 @@
         "endOfLine": "auto"
       }
     ],
-    "no-prototype-builtins": "off"
+    "no-prototype-builtins": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "react/no-unescaped-entities": "off",
+    "no-undef": "off"
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React from 'react'
 import { NODE_GRAPHQL_URL } from '../../utils/config'
 import {
   ApolloClient,
@@ -6,38 +6,29 @@ import {
   InMemoryCache,
   createHttpLink
 } from '@apollo/client'
+import { getAccessToken } from '../../utils/lib/getAccessTokenAsync'
 import { setContext } from '@apollo/client/link/context'
-import { useAccessToken } from '@lens-protocol/react-web'
 
 const httpLink = createHttpLink({
   uri: NODE_GRAPHQL_URL
 })
 
-const ApolloWrapper = ({ children }: { children: React.ReactNode }) => {
-  const [refresh, setRefresh] = useState(0)
-  const token = useAccessToken()
+const authLink = setContext(async () => {
+  const token = await getAccessToken()
 
-  useEffect(() => {
-    if (!token) {
-      setRefresh(refresh + 1)
+  return {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : ''
     }
-  }, [refresh])
-  const client = useMemo(() => {
-    const authLink = setContext((_, { headers }) => {
-      // return the headers to the context so httpLink can read them
-      return {
-        headers: {
-          ...headers,
-          Authorization: token ? `Bearer ${token}` : ''
-        }
-      }
-    })
+  }
+})
 
-    return new ApolloClient({
-      link: authLink.concat(httpLink),
-      cache: new InMemoryCache()
-    })
-  }, [token])
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache()
+})
+
+const ApolloWrapper = ({ children }: { children: React.ReactNode }) => {
   return <ApolloProvider client={client}>{children}</ApolloProvider>
 }
 

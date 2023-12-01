@@ -1,11 +1,10 @@
-query LiveStreamers {
-  liveStreamers {
+query MyStream {
+  myStream {
     profileId
     streamName
     streamDescription
     lastSeen
-    isActive
-    createdAt
     playbackId
+    streamKey
   }
 }

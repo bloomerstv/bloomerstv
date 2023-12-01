@@ -19,3 +19,12 @@ export const NODE_API_URL =
     ? PRODUCTION_NODE_API_URL
     : DEVELOPMENT_NODE_API_URL
 export const NODE_GRAPHQL_URL = `${NODE_API_URL}/graphql`
+export const LIVE_PEER_RTMP_URL = 'rtmp://rtmp.livepeer.com/live'
+
+export const localStorageCredKey = isMainnet
+  ? 'lens.production.credentials'
+  : 'lens.development.credentials'
+export const lensTestnetUrl = 'https://api-v2-mumbai-live.lens.dev'
+export const lensMainnetUrl = 'https://api-v2.lens.dev'
+
+export const lensUrl = isMainnet ? lensMainnetUrl : lensTestnetUrl

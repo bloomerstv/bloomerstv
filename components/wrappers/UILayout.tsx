@@ -48,10 +48,15 @@ const UILayout: React.FC<Props> = (props) => {
   return (
     <div className={clsx(inter.className, 'bg-p-bg text-s-text')}>
       <div className="w-screen h-screen">
-        <div className="w-full">
+        <div
+          className="w-full"
+          style={{
+            marginBottom: '1px'
+          }}
+        >
           <TopHeader />
         </div>
-        <div className="start-row h-[calc(100%-58px)] overflow-hidden">
+        <div className="start-row h-[calc(100%-59px)] overflow-hidden">
           {pathname.startsWith('/dashboard') ? (
             <DashboardSidebar />
           ) : (

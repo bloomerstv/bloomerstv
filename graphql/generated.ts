@@ -31,10 +31,30 @@ export type Scalars = {
   BigNumber: { input: any; output: any }
 }
 
+export type Mutation = {
+  __typename?: 'Mutation'
+  updateMyStream?: Maybe<Scalars['Boolean']['output']>
+}
+
+export type MutationUpdateMyStreamArgs = {
+  request: UpdateStreamRequest
+}
+
+export type MyStream = {
+  __typename?: 'MyStream'
+  lastSeen?: Maybe<Scalars['BigNumber']['output']>
+  playbackId?: Maybe<Scalars['String']['output']>
+  profileId: Scalars['String']['output']
+  streamDescription?: Maybe<Scalars['String']['output']>
+  streamKey?: Maybe<Scalars['String']['output']>
+  streamName?: Maybe<Scalars['String']['output']>
+}
+
 export type Query = {
   __typename?: 'Query'
   liveStreamers?: Maybe<Array<Maybe<Streamer>>>
-  streamId: Scalars['String']['output']
+  myStream?: Maybe<MyStream>
+  ping?: Maybe<Scalars['String']['output']>
   streamer?: Maybe<Streamer>
 }
 
@@ -46,11 +66,16 @@ export type Streamer = {
   __typename?: 'Streamer'
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   isActive?: Maybe<Scalars['Boolean']['output']>
-  isHealthy?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   profileId: Scalars['String']['output']
+  streamDescription?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
+}
+
+export type UpdateStreamRequest = {
+  streamDescription?: InputMaybe<Scalars['String']['input']>
+  streamName?: InputMaybe<Scalars['String']['input']>
 }
 
 export type LiveStreamersQueryVariables = Exact<{ [key: string]: never }>
@@ -61,26 +86,64 @@ export type LiveStreamersQuery = {
     __typename?: 'Streamer'
     profileId: string
     streamName?: string | null
+    streamDescription?: string | null
     lastSeen?: any | null
     isActive?: boolean | null
-    isHealthy?: boolean | null
     createdAt?: any | null
     playbackId?: string | null
   } | null> | null
 }
 
-export type StreamIdQueryVariables = Exact<{ [key: string]: never }>
+export type MyStreamQueryVariables = Exact<{ [key: string]: never }>
 
-export type StreamIdQuery = { __typename?: 'Query'; streamId: string }
+export type MyStreamQuery = {
+  __typename?: 'Query'
+  myStream?: {
+    __typename?: 'MyStream'
+    profileId: string
+    streamName?: string | null
+    streamDescription?: string | null
+    lastSeen?: any | null
+    playbackId?: string | null
+    streamKey?: string | null
+  } | null
+}
+
+export type StreamerQueryVariables = Exact<{
+  profileId: Scalars['String']['input']
+}>
+
+export type StreamerQuery = {
+  __typename?: 'Query'
+  streamer?: {
+    __typename?: 'Streamer'
+    profileId: string
+    lastSeen?: any | null
+    isActive?: boolean | null
+    createdAt?: any | null
+    playbackId?: string | null
+    streamName?: string | null
+    streamDescription?: string | null
+  } | null
+}
+
+export type UpdateMyStreamMutationVariables = Exact<{
+  request: UpdateStreamRequest
+}>
+
+export type UpdateMyStreamMutation = {
+  __typename?: 'Mutation'
+  updateMyStream?: boolean | null
+}
 
 export const LiveStreamersDocument = gql`
   query LiveStreamers {
     liveStreamers {
       profileId
       streamName
+      streamDescription
       lastSeen
       isActive
-      isHealthy
       createdAt
       playbackId
     }
@@ -151,70 +214,199 @@ export type LiveStreamersQueryResult = Apollo.QueryResult<
   LiveStreamersQuery,
   LiveStreamersQueryVariables
 >
-export const StreamIdDocument = gql`
-  query StreamId {
-    streamId
+export const MyStreamDocument = gql`
+  query MyStream {
+    myStream {
+      profileId
+      streamName
+      streamDescription
+      lastSeen
+      playbackId
+      streamKey
+    }
   }
 `
 
 /**
- * __useStreamIdQuery__
+ * __useMyStreamQuery__
  *
- * To run a query within a React component, call `useStreamIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useStreamIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMyStreamQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyStreamQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useStreamIdQuery({
+ * const { data, loading, error } = useMyStreamQuery({
  *   variables: {
  *   },
  * });
  */
-export function useStreamIdQuery(
-  baseOptions?: Apollo.QueryHookOptions<StreamIdQuery, StreamIdQueryVariables>
+export function useMyStreamQuery(
+  baseOptions?: Apollo.QueryHookOptions<MyStreamQuery, MyStreamQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<StreamIdQuery, StreamIdQueryVariables>(
-    StreamIdDocument,
+  return Apollo.useQuery<MyStreamQuery, MyStreamQueryVariables>(
+    MyStreamDocument,
     options
   )
 }
-export function useStreamIdLazyQuery(
+export function useMyStreamLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    StreamIdQuery,
-    StreamIdQueryVariables
+    MyStreamQuery,
+    MyStreamQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<StreamIdQuery, StreamIdQueryVariables>(
-    StreamIdDocument,
+  return Apollo.useLazyQuery<MyStreamQuery, MyStreamQueryVariables>(
+    MyStreamDocument,
     options
   )
 }
-export function useStreamIdSuspenseQuery(
+export function useMyStreamSuspenseQuery(
   baseOptions?: Apollo.SuspenseQueryHookOptions<
-    StreamIdQuery,
-    StreamIdQueryVariables
+    MyStreamQuery,
+    MyStreamQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<StreamIdQuery, StreamIdQueryVariables>(
-    StreamIdDocument,
+  return Apollo.useSuspenseQuery<MyStreamQuery, MyStreamQueryVariables>(
+    MyStreamDocument,
     options
   )
 }
-export type StreamIdQueryHookResult = ReturnType<typeof useStreamIdQuery>
-export type StreamIdLazyQueryHookResult = ReturnType<
-  typeof useStreamIdLazyQuery
+export type MyStreamQueryHookResult = ReturnType<typeof useMyStreamQuery>
+export type MyStreamLazyQueryHookResult = ReturnType<
+  typeof useMyStreamLazyQuery
 >
-export type StreamIdSuspenseQueryHookResult = ReturnType<
-  typeof useStreamIdSuspenseQuery
+export type MyStreamSuspenseQueryHookResult = ReturnType<
+  typeof useMyStreamSuspenseQuery
 >
-export type StreamIdQueryResult = Apollo.QueryResult<
-  StreamIdQuery,
-  StreamIdQueryVariables
+export type MyStreamQueryResult = Apollo.QueryResult<
+  MyStreamQuery,
+  MyStreamQueryVariables
+>
+export const StreamerDocument = gql`
+  query Streamer($profileId: String!) {
+    streamer(profileId: $profileId) {
+      profileId
+      lastSeen
+      isActive
+      createdAt
+      playbackId
+      streamName
+      streamDescription
+    }
+  }
+`
+
+/**
+ * __useStreamerQuery__
+ *
+ * To run a query within a React component, call `useStreamerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStreamerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStreamerQuery({
+ *   variables: {
+ *      profileId: // value for 'profileId'
+ *   },
+ * });
+ */
+export function useStreamerQuery(
+  baseOptions: Apollo.QueryHookOptions<StreamerQuery, StreamerQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<StreamerQuery, StreamerQueryVariables>(
+    StreamerDocument,
+    options
+  )
+}
+export function useStreamerLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    StreamerQuery,
+    StreamerQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<StreamerQuery, StreamerQueryVariables>(
+    StreamerDocument,
+    options
+  )
+}
+export function useStreamerSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    StreamerQuery,
+    StreamerQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<StreamerQuery, StreamerQueryVariables>(
+    StreamerDocument,
+    options
+  )
+}
+export type StreamerQueryHookResult = ReturnType<typeof useStreamerQuery>
+export type StreamerLazyQueryHookResult = ReturnType<
+  typeof useStreamerLazyQuery
+>
+export type StreamerSuspenseQueryHookResult = ReturnType<
+  typeof useStreamerSuspenseQuery
+>
+export type StreamerQueryResult = Apollo.QueryResult<
+  StreamerQuery,
+  StreamerQueryVariables
+>
+export const UpdateMyStreamDocument = gql`
+  mutation UpdateMyStream($request: UpdateStreamRequest!) {
+    updateMyStream(request: $request)
+  }
+`
+export type UpdateMyStreamMutationFn = Apollo.MutationFunction<
+  UpdateMyStreamMutation,
+  UpdateMyStreamMutationVariables
+>
+
+/**
+ * __useUpdateMyStreamMutation__
+ *
+ * To run a mutation, you first call `useUpdateMyStreamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMyStreamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMyStreamMutation, { data, loading, error }] = useUpdateMyStreamMutation({
+ *   variables: {
+ *      request: // value for 'request'
+ *   },
+ * });
+ */
+export function useUpdateMyStreamMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateMyStreamMutation,
+    UpdateMyStreamMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    UpdateMyStreamMutation,
+    UpdateMyStreamMutationVariables
+  >(UpdateMyStreamDocument, options)
+}
+export type UpdateMyStreamMutationHookResult = ReturnType<
+  typeof useUpdateMyStreamMutation
+>
+export type UpdateMyStreamMutationResult =
+  Apollo.MutationResult<UpdateMyStreamMutation>
+export type UpdateMyStreamMutationOptions = Apollo.BaseMutationOptions<
+  UpdateMyStreamMutation,
+  UpdateMyStreamMutationVariables
 >
 
 export interface PossibleTypesResultData {

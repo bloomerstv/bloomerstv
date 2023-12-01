@@ -40,7 +40,7 @@ const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
                   <ApolloWrapper>
                     <LivePeerWrapper>
                       <ToastContainer
-                        position="top-right"
+                        position="bottom-left"
                         theme="dark"
                         closeButton={false}
                       />

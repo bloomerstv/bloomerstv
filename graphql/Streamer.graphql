@@ -1,0 +1,11 @@
+query Streamer($profileId: String!) {
+  streamer(profileId: $profileId) {
+    profileId
+    lastSeen
+    isActive
+    createdAt
+    playbackId
+    streamName
+    streamDescription
+  }
+}

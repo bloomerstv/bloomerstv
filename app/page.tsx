@@ -1,11 +1,12 @@
 'use client'
-import Video from '../components/livepeer/Video'
+import Video from '../components/common/Video'
 import LoginButton from '../components/pages/all/Header/LoginButton'
 import { APP_NAME } from '../utils/config'
 import useIsMobile from '../utils/hooks/useIsMobile'
 
 export default function Home() {
   const isMobile = useIsMobile()
+
   return (
     <div className="">
       {/* top header */}

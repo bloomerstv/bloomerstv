@@ -9,6 +9,7 @@ import {
   SwipeableDrawer
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import clsx from 'clsx'
 // todo: show available profiles modal and allow user to select profile to login
 const style = {
   position: 'absolute',
@@ -23,7 +24,9 @@ const ModalWrapper = ({
   Icon,
   onClose,
   onOpen,
-  open
+  open,
+  classname,
+  BotttomComponent
 }: {
   children: React.ReactNode
   title?: string
@@ -31,6 +34,8 @@ const ModalWrapper = ({
   onClose: () => void
   onOpen: () => void
   open: boolean
+  classname?: string
+  BotttomComponent?: React.ReactNode
 }) => {
   const isMobile = useIsMobile()
 
@@ -53,6 +58,11 @@ const ModalWrapper = ({
           <div className="w-16 h-1.5 bg-s-text rounded-full"></div>
         </div>
         <div className="p-4 rounded-t-lg">{children}</div>
+
+        {/* show a bottom component here */}
+        {BotttomComponent && (
+          <div className="p-4 rounded-t-lg">{BotttomComponent}</div>
+        )}
       </SwipeableDrawer>
     )
   }
@@ -86,7 +96,20 @@ const ModalWrapper = ({
                 <CloseIcon fontSize="inherit" />
               </IconButton>
             </div>
-            <div className="p-4">{children}</div>
+            <div className={clsx('max-h-[650px] overflow-auto ', classname)}>
+              <div className="p-4">{children}</div>
+            </div>
+
+            {/* show a bottom component here */}
+            {BotttomComponent && (
+              <div
+                className="px-4 py-2
+              border-t border-s-text
+              "
+              >
+                {BotttomComponent}
+              </div>
+            )}
           </div>
         </Box>
       </Fade>

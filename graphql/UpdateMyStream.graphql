@@ -1,0 +1,3 @@
+mutation UpdateMyStream($request: UpdateStreamRequest!) {
+  updateMyStream(request: $request)
+}
