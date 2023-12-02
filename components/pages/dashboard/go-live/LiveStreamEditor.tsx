@@ -9,7 +9,7 @@ import MyStreamEditButton from './MyStreamEditButton'
 import { SessionType, useSession } from '@lens-protocol/react-web'
 import { Button, TextField } from '@mui/material'
 import { LIVE_PEER_RTMP_URL } from '../../../../utils/config'
-import { stringToLength } from '../../../../utils/stringToLength'
+// import { stringToLength } from '../../../../utils/stringToLength'
 
 const LiveStreamEditor = () => {
   const { data: session } = useSession()
@@ -33,29 +33,29 @@ const LiveStreamEditor = () => {
 
   return (
     <div className="p-8">
-      <div className="bg-s-bg shadow-lg p-8 rounded-xl">
+      <div className="bg-s-bg shadow-md">
         <div className="flex flex-row">
           <Video
-            className="w-[640px] h-fit bg-red-400"
+            className="w-[480px] shrink-0"
             src={getLiveStreamUrl(myStream?.playbackId)}
             streamOfflineErrorComponent={<ConnectStream />}
           />
           <div className="flex flex-row justify-between items-start p-8 w-full">
             <div className="space-y-4">
               <div className="">
-                <div className="text-s-text font-bold text-sm">Title</div>
+                <div className="text-s-text font-bold text-md">Title</div>
                 <div className="text-p-text font-semibold text-lg">
                   {myStream?.streamName}
                 </div>
               </div>
 
-              <div className="">
+              {/* <div className="">
                 <div className="text-s-text font-bold text-sm">Description</div>
-                <div className="text-p-text font-semibold text-lg">
+                <div className="text-p-text font-semibold ">
                   {stringToLength(myStream?.streamDescription, 100) ||
                     'No description provided'}
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <MyStreamEditButton
@@ -66,7 +66,7 @@ const LiveStreamEditor = () => {
         </div>
       </div>
 
-      <div className="mt-8 p-8 bg-s-bg shadow-lg rounded-xl">
+      <div className="mt-8 p-8 bg-s-bg shadow-md ">
         <div className="space-y-8 w-[400px]">
           <div className="font-bold text-lg text-s-text">Stream Key</div>
           <div className="start-row space-x-2">
@@ -108,9 +108,7 @@ const LiveStreamEditor = () => {
             <Button
               variant="outlined"
               onClick={() => {
-                navigator.clipboard.writeText(
-                  getLiveStreamUrl(myStream?.playbackId) || ''
-                )
+                navigator.clipboard.writeText(LIVE_PEER_RTMP_URL)
                 toast.success('Copied to clipboard')
               }}
             >

@@ -71,6 +71,7 @@ export type Streamer = {
   profileId: Scalars['String']['output']
   streamDescription?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
+  thumbnail?: Maybe<Scalars['String']['output']>
 }
 
 export type UpdateStreamRequest = {
@@ -86,11 +87,11 @@ export type LiveStreamersQuery = {
     __typename?: 'Streamer'
     profileId: string
     streamName?: string | null
-    streamDescription?: string | null
     lastSeen?: any | null
     isActive?: boolean | null
     createdAt?: any | null
     playbackId?: string | null
+    thumbnail?: string | null
   } | null> | null
 }
 
@@ -102,7 +103,6 @@ export type MyStreamQuery = {
     __typename?: 'MyStream'
     profileId: string
     streamName?: string | null
-    streamDescription?: string | null
     lastSeen?: any | null
     playbackId?: string | null
     streamKey?: string | null
@@ -123,7 +123,6 @@ export type StreamerQuery = {
     createdAt?: any | null
     playbackId?: string | null
     streamName?: string | null
-    streamDescription?: string | null
   } | null
 }
 
@@ -141,11 +140,11 @@ export const LiveStreamersDocument = gql`
     liveStreamers {
       profileId
       streamName
-      streamDescription
       lastSeen
       isActive
       createdAt
       playbackId
+      thumbnail
     }
   }
 `
@@ -219,7 +218,6 @@ export const MyStreamDocument = gql`
     myStream {
       profileId
       streamName
-      streamDescription
       lastSeen
       playbackId
       streamKey
@@ -295,7 +293,6 @@ export const StreamerDocument = gql`
       createdAt
       playbackId
       streamName
-      streamDescription
     }
   }
 `

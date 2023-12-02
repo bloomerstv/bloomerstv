@@ -3,7 +3,6 @@ import * as React from 'react'
 import {
   createTheme,
   ThemeProvider,
-  styled,
   StyledEngineProvider
 } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -42,7 +41,15 @@ const darkTheme = createTheme({
   palette: {
     mode: 'dark',
     secondary: {
-      main: '#7b7a7b'
+      main: '#29292e'
+    },
+    background: {
+      default: '#0e0e10',
+      paper: '#18181b'
+    },
+    text: {
+      primary: '#adadb8',
+      secondary: '#ceced3'
     }
   }
 })
@@ -51,7 +58,15 @@ const lightTheme = createTheme({
   palette: {
     mode: 'light',
     secondary: {
-      main: '#757372'
+      main: '#e7e7ea'
+    },
+    background: {
+      default: '#E7E7EA',
+      paper: '#ffffff'
+    },
+    text: {
+      primary: '#1f1f23',
+      secondary: '#5d5d69'
     }
   }
 })

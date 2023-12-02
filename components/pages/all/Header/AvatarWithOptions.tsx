@@ -17,8 +17,10 @@ import { useDisconnect } from 'wagmi'
 import { useRouter } from 'next/navigation'
 import Settings from '@mui/icons-material/Settings'
 import CircleIcon from '@mui/icons-material/Circle'
+import useIsMobile from '../../../../utils/hooks/useIsMobile'
 
 const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
+  const isMobile = useIsMobile()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -105,29 +107,33 @@ const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
         </MenuItem>
         <Divider />
 
-        <MenuItem
-          onClick={() => {
-            push(`/dashboard/go-live`)
-            handleClose()
-          }}
-        >
-          <ListItemIcon>
-            <CircleIcon fontSize="small" />
-          </ListItemIcon>
-          Go live
-        </MenuItem>
+        {!isMobile && (
+          <>
+            <MenuItem
+              onClick={() => {
+                push(`/dashboard/go-live`)
+                handleClose()
+              }}
+            >
+              <ListItemIcon>
+                <CircleIcon fontSize="small" />
+              </ListItemIcon>
+              Go live
+            </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            push(`/dashboard/go-live`)
-            handleClose()
-          }}
-        >
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Dashboard
-        </MenuItem>
+            <MenuItem
+              onClick={() => {
+                push(`/dashboard/go-live`)
+                handleClose()
+              }}
+            >
+              <ListItemIcon>
+                <Settings fontSize="small" />
+              </ListItemIcon>
+              Dashboard
+            </MenuItem>
+          </>
+        )}
 
         <MenuItem onClick={toggleTheme}>
           <ListItemIcon>

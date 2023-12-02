@@ -57,9 +57,12 @@
     "zustand": "^4.4.6"
   },
   "dependencies": {
-    "@lens-protocol/react-web": "^2.0.0-alpha.23",
+    "@lens-protocol/react-web": "^2.0.0-alpha.24",
     "@lens-protocol/wagmi": "^3.0.0-alpha.20",
+    "@lexical/react": "^0.12.4",
     "@livepeer/react": "^3.0.7",
+    "interweave": "^13.1.0",
+    "lexical": "^0.12.4",
     "plyr-react": "^5.3.0",
     "tailwind-merge": "^2.0.0",
     "usehooks-ts": "^2.9.1"

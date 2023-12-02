@@ -11,6 +11,7 @@ import LensWrapper from './LensWrapper'
 import ThemeProvider from './TailwindThemeProvider'
 import MuiThemeWrapper from './MuiThemeWrapper'
 import ApolloWrapper from './ApolloWrapper'
+import ShowLoadingWrapper from './ShowLoadingWrapper'
 
 const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
   const [isPWA, setIsPWA] = useState(false)
@@ -37,16 +38,18 @@ const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
             <>
               <RainbowKitWrapper>
                 <LensWrapper>
-                  <ApolloWrapper>
-                    <LivePeerWrapper>
-                      <ToastContainer
-                        position="bottom-left"
-                        theme="dark"
-                        closeButton={false}
-                      />
-                      <UILayout>{children}</UILayout>
-                    </LivePeerWrapper>
-                  </ApolloWrapper>
+                  <LivePeerWrapper>
+                    <ApolloWrapper>
+                      <ShowLoadingWrapper>
+                        <ToastContainer
+                          position="bottom-left"
+                          theme="dark"
+                          closeButton={false}
+                        />
+                        <UILayout>{children}</UILayout>
+                      </ShowLoadingWrapper>
+                    </ApolloWrapper>
+                  </LivePeerWrapper>
                 </LensWrapper>
               </RainbowKitWrapper>
             </>

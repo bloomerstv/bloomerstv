@@ -2,10 +2,10 @@ query LiveStreamers {
   liveStreamers {
     profileId
     streamName
-    streamDescription
     lastSeen
     isActive
     createdAt
     playbackId
+    thumbnail
   }
 }

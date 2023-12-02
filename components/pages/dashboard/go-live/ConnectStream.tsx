@@ -7,9 +7,16 @@ const ConnectStream = () => {
   const [open, setOpen] = useState(false)
   return (
     <div className="space-y-4 font-bold flex flex-col items-center justify-center">
-      <CircularProgress color="secondary" className="w-fit" />
+      <CircularProgress
+        sx={{
+          color: '#7a7a81'
+        }}
+        className="w-fit"
+      />
 
-      <div className="text-sm">Connect streaming software to go live</div>
+      <div className="text-sm text-[#7a7a81]">
+        Connect streaming software to go live
+      </div>
       <Button
         variant="text"
         onClick={() => {

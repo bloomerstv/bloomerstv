@@ -56,7 +56,7 @@ const HeaderSearch = () => {
         {data?.length > 0 && search.length > 0 && (
           <div
             className={clsx(
-              'absolute top-8 rounded-b-lg border-l border-r border-b left-0 w-full bg-s-bg',
+              'absolute z-50 top-8 border-s-text rounded-b-lg border-l border-r border-b left-0 w-full bg-s-bg',
               showSearch && 'shadow-xl'
             )}
           >

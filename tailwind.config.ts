@@ -26,6 +26,7 @@ const config: Config = {
       colors: {
         'p-bg': 'var(--primary-background)',
         's-bg': 'var(--secondary-background)',
+        'p-hover': 'var(--primary-hover)',
         's-text': 'var(--secondary-text)',
         'p-text': 'var(--primary-text)',
         brand: 'var(--brand)'

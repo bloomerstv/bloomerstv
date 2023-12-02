@@ -7,8 +7,6 @@ import TopHeader from '@/components/pages/all/Header/TopHeader'
 import useIsMobile from '../../utils/hooks/useIsMobile'
 import MobileBottomNavbar from '../pages/all/MobileBottom/MobileBottomNavbar'
 import LoginPage from '../pages/home/LoginPage'
-import { useIsMounted } from 'usehooks-ts'
-import StartLoadingPage from '../pages/loading/StartLoadingPage'
 import StreamerSidebar from '../common/StreamerSidebar'
 import { usePathname } from 'next/navigation'
 import DashboardSidebar from '../pages/dashboard/DashboardSidebar'
@@ -21,15 +19,9 @@ interface Props {
 const inter = Inter({ subsets: ['latin'] })
 
 const UILayout: React.FC<Props> = (props) => {
-  const isMounted = useIsMounted()
-  // Define the component's logic and rendering here
   const isMobile = useIsMobile()
 
   const pathname = usePathname()
-
-  if (!isMounted()) {
-    return <StartLoadingPage />
-  }
 
   if (isMobile) {
     return (
@@ -46,17 +38,12 @@ const UILayout: React.FC<Props> = (props) => {
     )
   }
   return (
-    <div className={clsx(inter.className, 'bg-p-bg text-s-text')}>
-      <div className="w-screen h-screen">
-        <div
-          className="w-full"
-          style={{
-            marginBottom: '1px'
-          }}
-        >
+    <div className={clsx(inter.className, 'bg-p-bg text-p-text')}>
+      <div className="w-screen h-screen relative">
+        <div className="w-full absolute left-0 right-0 top-0 ">
           <TopHeader />
         </div>
-        <div className="start-row h-[calc(100%-59px)] overflow-hidden">
+        <div className="start-row h-full pt-[59px] overflow-hidden">
           {pathname.startsWith('/dashboard') ? (
             <DashboardSidebar />
           ) : (
