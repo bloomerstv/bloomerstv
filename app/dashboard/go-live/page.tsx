@@ -1,18 +1,12 @@
 import React from 'react'
-import LiveChat from '../../../components/pages/dashboard/go-live/LiveChat'
-import LiveStreamEditor from '../../../components/pages/dashboard/go-live/LiveStreamEditor'
+import GoLivePage from '../../../components/pages/dashboard/go-live/GoLivePage'
 
-const GoLivePage = () => {
+const page = () => {
   return (
-    <div className="flex flex-row h-full">
-      <div className="w-full flex-grow overflow-auto h-full">
-        <LiveStreamEditor />
-      </div>
-      <div className="w-[400px] flex-none h-full">
-        <LiveChat />
-      </div>
+    <div className="h-full">
+      <GoLivePage />
     </div>
   )
 }
 
-export default GoLivePage
+export default page

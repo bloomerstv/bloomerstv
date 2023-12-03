@@ -5,5 +5,7 @@ query MyStream {
     lastSeen
     playbackId
     streamKey
+    isActive
+    latestStreamPublicationId
   }
 }

@@ -14,7 +14,7 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import StarIcon from '@mui/icons-material/Star'
 import { Button, Tooltip } from '@mui/material'
 import IosShareIcon from '@mui/icons-material/IosShare'
-import { APP_LINK, APP_NAME } from '../../../utils/config'
+import { APP_LINK, APP_NAME, defaultSponsored } from '../../../utils/config'
 import LiveDiv from '../../ui/LiveDiv'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import { stringToLength } from '../../../utils/stringToLength'
@@ -36,7 +36,8 @@ const ProfileBar = ({
   const handleFollow = async () => {
     try {
       const result = await execute({
-        profile: profile
+        profile: profile,
+        sponsored: defaultSponsored
       })
 
       if (result.isSuccess()) {

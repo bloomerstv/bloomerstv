@@ -6,7 +6,8 @@ import {
   IconButton,
   ListItemIcon,
   Menu,
-  MenuItem
+  MenuItem,
+  MenuList
 } from '@mui/material'
 import Logout from '@mui/icons-material/Logout'
 import formatHandle from '../../../../utils/lib/formatHandle'
@@ -92,66 +93,68 @@ const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem
-          onClick={() => {
-            push(`/${formatHandle(profile)}`)
-            handleClose()
-          }}
-        >
-          <img
-            src={getAvatar(profile)}
-            alt="avatar"
-            className="w-6 h-6 rounded-full mr-3"
-          />
-          {formatHandle(profile)}
-        </MenuItem>
-        <Divider />
+        <MenuList>
+          <MenuItem
+            onClick={() => {
+              push(`/${formatHandle(profile)}`)
+              handleClose()
+            }}
+          >
+            <img
+              src={getAvatar(profile)}
+              alt="avatar"
+              className="w-6 h-6 rounded-full mr-3"
+            />
+            {formatHandle(profile)}
+          </MenuItem>
+          <Divider />
 
-        {!isMobile && (
-          <>
-            <MenuItem
-              onClick={() => {
-                push(`/dashboard/go-live`)
-                handleClose()
-              }}
-            >
-              <ListItemIcon>
-                <CircleIcon fontSize="small" />
-              </ListItemIcon>
-              Go live
-            </MenuItem>
+          {!isMobile && (
+            <>
+              <MenuItem
+                onClick={() => {
+                  push(`/dashboard/go-live`)
+                  handleClose()
+                }}
+              >
+                <ListItemIcon>
+                  <CircleIcon fontSize="small" />
+                </ListItemIcon>
+                Go live
+              </MenuItem>
 
-            <MenuItem
-              onClick={() => {
-                push(`/dashboard/go-live`)
-                handleClose()
-              }}
-            >
-              <ListItemIcon>
-                <Settings fontSize="small" />
-              </ListItemIcon>
-              Dashboard
-            </MenuItem>
-          </>
-        )}
+              <MenuItem
+                onClick={() => {
+                  push(`/dashboard/go-live`)
+                  handleClose()
+                }}
+              >
+                <ListItemIcon>
+                  <Settings fontSize="small" />
+                </ListItemIcon>
+                Dashboard
+              </MenuItem>
+            </>
+          )}
 
-        <MenuItem onClick={toggleTheme}>
-          <ListItemIcon>
-            {theme === 'light' ? (
-              <ToggleOffIcon fontSize="small" />
-            ) : (
-              <ToggleOnIcon fontSize="small" />
-            )}
-          </ListItemIcon>
-          Dark Mode
-        </MenuItem>
+          <MenuItem onClick={toggleTheme}>
+            <ListItemIcon>
+              {theme === 'light' ? (
+                <ToggleOffIcon fontSize="small" />
+              ) : (
+                <ToggleOnIcon fontSize="small" />
+              )}
+            </ListItemIcon>
+            Dark Mode
+          </MenuItem>
 
-        <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
+          <MenuItem onClick={handleLogout}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+        </MenuList>
       </Menu>
     </div>
   )

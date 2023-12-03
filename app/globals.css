@@ -7,6 +7,10 @@
     @apply flex flex-row items-center justify-center;
   }
 
+  .centered-col {
+    @apply flex flex-col items-center justify-center;
+  }
+
   .start-row {
     @apply flex flex-row items-center justify-start;
   }
@@ -82,7 +86,7 @@
 
   --primary-hover: #e7e7ea;
 
-  --brand: #1668b8;
+  --brand: #1976d2;
 }
 
 [data-theme='dark'] {
@@ -95,4 +99,6 @@
   --secondary-text: #7a7a81;
 
   --primary-hover: #29292e;
+
+  --brand: #90caf9;
 }

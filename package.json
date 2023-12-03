@@ -57,14 +57,18 @@
     "zustand": "^4.4.6"
   },
   "dependencies": {
+    "@lens-protocol/metadata": "^1.0.5",
     "@lens-protocol/react-web": "^2.0.0-alpha.24",
-    "@lens-protocol/wagmi": "^3.0.0-alpha.20",
+    "@lens-protocol/wagmi": "^3.0.0-alpha.21",
     "@lexical/react": "^0.12.4",
     "@livepeer/react": "^3.0.7",
+    "aws-crt": "^1.19.0",
+    "graphql-ws": "^5.14.2",
     "interweave": "^13.1.0",
     "lexical": "^0.12.4",
     "plyr-react": "^5.3.0",
     "tailwind-merge": "^2.0.0",
-    "usehooks-ts": "^2.9.1"
+    "usehooks-ts": "^2.9.1",
+    "ws": "^8.14.2"
   }
 }

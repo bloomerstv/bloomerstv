@@ -30,6 +30,8 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     },
     skip: !data?.id
   })
+
+  console.log('profile', data)
   if (error) {
     toast.error(error.message)
   }
@@ -53,6 +55,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
               }
             }}
             streamOfflineErrorComponent={
+              // @ts-ignore
               <StreamerOffline profile={data} streamer={streamer?.streamer} />
             }
             src={getLiveStreamUrl(streamer?.streamer?.playbackId)}
@@ -67,9 +70,12 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         {/* @ts-ignore */}
         <ProfileInfoWithStream profile={data} streamer={streamer?.streamer} />
       </div>
-      {streamer?.streamer?.isActive && !isMobile && (
+      {streamer?.streamer?.latestStreamPublicationId && !isMobile && (
         <div className="w-[400px] flex-none h-full">
-          <LiveChat />
+          <LiveChat
+            // @ts-ignore
+            publicationId={streamer?.streamer?.latestStreamPublicationId}
+          />
         </div>
       )}
     </div>

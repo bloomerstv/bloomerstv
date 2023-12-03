@@ -33,16 +33,24 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  createMyLensStreamSession?: Maybe<Scalars['Boolean']['output']>
   updateMyStream?: Maybe<Scalars['Boolean']['output']>
+}
+
+export type MutationCreateMyLensStreamSessionArgs = {
+  publicationId: Scalars['String']['input']
 }
 
 export type MutationUpdateMyStreamArgs = {
   request: UpdateStreamRequest
 }
 
-export type MyStream = {
+export type MyStream = Stream & {
   __typename?: 'MyStream'
+  createdAt?: Maybe<Scalars['BigNumber']['output']>
+  isActive?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
+  latestStreamPublicationId?: Maybe<Scalars['String']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   profileId: Scalars['String']['output']
   streamDescription?: Maybe<Scalars['String']['output']>
@@ -55,14 +63,38 @@ export type Query = {
   liveStreamers?: Maybe<Array<Maybe<Streamer>>>
   myStream?: Maybe<MyStream>
   ping?: Maybe<Scalars['String']['output']>
-  streamer?: Maybe<Streamer>
+  shouldCreateNewPost?: Maybe<Scalars['Boolean']['output']>
+  streamer?: Maybe<SingleStreamer>
 }
 
 export type QueryStreamerArgs = {
   profileId: Scalars['String']['input']
 }
 
-export type Streamer = {
+export type SingleStreamer = Stream & {
+  __typename?: 'SingleStreamer'
+  createdAt?: Maybe<Scalars['BigNumber']['output']>
+  isActive?: Maybe<Scalars['Boolean']['output']>
+  lastSeen?: Maybe<Scalars['BigNumber']['output']>
+  latestStreamPublicationId?: Maybe<Scalars['String']['output']>
+  playbackId?: Maybe<Scalars['String']['output']>
+  profileId: Scalars['String']['output']
+  streamDescription?: Maybe<Scalars['String']['output']>
+  streamName?: Maybe<Scalars['String']['output']>
+  thumbnail?: Maybe<Scalars['String']['output']>
+}
+
+export type Stream = {
+  createdAt?: Maybe<Scalars['BigNumber']['output']>
+  isActive?: Maybe<Scalars['Boolean']['output']>
+  lastSeen?: Maybe<Scalars['BigNumber']['output']>
+  playbackId?: Maybe<Scalars['String']['output']>
+  profileId: Scalars['String']['output']
+  streamDescription?: Maybe<Scalars['String']['output']>
+  streamName?: Maybe<Scalars['String']['output']>
+}
+
+export type Streamer = Stream & {
   __typename?: 'Streamer'
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   isActive?: Maybe<Scalars['Boolean']['output']>
@@ -77,6 +109,15 @@ export type Streamer = {
 export type UpdateStreamRequest = {
   streamDescription?: InputMaybe<Scalars['String']['input']>
   streamName?: InputMaybe<Scalars['String']['input']>
+}
+
+export type CreateMyLensStreamSessionMutationVariables = Exact<{
+  publicationId: Scalars['String']['input']
+}>
+
+export type CreateMyLensStreamSessionMutation = {
+  __typename?: 'Mutation'
+  createMyLensStreamSession?: boolean | null
 }
 
 export type LiveStreamersQueryVariables = Exact<{ [key: string]: never }>
@@ -106,7 +147,16 @@ export type MyStreamQuery = {
     lastSeen?: any | null
     playbackId?: string | null
     streamKey?: string | null
+    isActive?: boolean | null
+    latestStreamPublicationId?: string | null
   } | null
+}
+
+export type ShouldCreateNewPostQueryVariables = Exact<{ [key: string]: never }>
+
+export type ShouldCreateNewPostQuery = {
+  __typename?: 'Query'
+  shouldCreateNewPost?: boolean | null
 }
 
 export type StreamerQueryVariables = Exact<{
@@ -116,13 +166,14 @@ export type StreamerQueryVariables = Exact<{
 export type StreamerQuery = {
   __typename?: 'Query'
   streamer?: {
-    __typename?: 'Streamer'
+    __typename?: 'SingleStreamer'
     profileId: string
     lastSeen?: any | null
     isActive?: boolean | null
     createdAt?: any | null
     playbackId?: string | null
     streamName?: string | null
+    latestStreamPublicationId?: string | null
   } | null
 }
 
@@ -135,6 +186,55 @@ export type UpdateMyStreamMutation = {
   updateMyStream?: boolean | null
 }
 
+export const CreateMyLensStreamSessionDocument = gql`
+  mutation CreateMyLensStreamSession($publicationId: String!) {
+    createMyLensStreamSession(publicationId: $publicationId)
+  }
+`
+export type CreateMyLensStreamSessionMutationFn = Apollo.MutationFunction<
+  CreateMyLensStreamSessionMutation,
+  CreateMyLensStreamSessionMutationVariables
+>
+
+/**
+ * __useCreateMyLensStreamSessionMutation__
+ *
+ * To run a mutation, you first call `useCreateMyLensStreamSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateMyLensStreamSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createMyLensStreamSessionMutation, { data, loading, error }] = useCreateMyLensStreamSessionMutation({
+ *   variables: {
+ *      publicationId: // value for 'publicationId'
+ *   },
+ * });
+ */
+export function useCreateMyLensStreamSessionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateMyLensStreamSessionMutation,
+    CreateMyLensStreamSessionMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    CreateMyLensStreamSessionMutation,
+    CreateMyLensStreamSessionMutationVariables
+  >(CreateMyLensStreamSessionDocument, options)
+}
+export type CreateMyLensStreamSessionMutationHookResult = ReturnType<
+  typeof useCreateMyLensStreamSessionMutation
+>
+export type CreateMyLensStreamSessionMutationResult =
+  Apollo.MutationResult<CreateMyLensStreamSessionMutation>
+export type CreateMyLensStreamSessionMutationOptions =
+  Apollo.BaseMutationOptions<
+    CreateMyLensStreamSessionMutation,
+    CreateMyLensStreamSessionMutationVariables
+  >
 export const LiveStreamersDocument = gql`
   query LiveStreamers {
     liveStreamers {
@@ -221,6 +321,8 @@ export const MyStreamDocument = gql`
       lastSeen
       playbackId
       streamKey
+      isActive
+      latestStreamPublicationId
     }
   }
 `
@@ -284,6 +386,76 @@ export type MyStreamQueryResult = Apollo.QueryResult<
   MyStreamQuery,
   MyStreamQueryVariables
 >
+export const ShouldCreateNewPostDocument = gql`
+  query ShouldCreateNewPost {
+    shouldCreateNewPost
+  }
+`
+
+/**
+ * __useShouldCreateNewPostQuery__
+ *
+ * To run a query within a React component, call `useShouldCreateNewPostQuery` and pass it any options that fit your needs.
+ * When your component renders, `useShouldCreateNewPostQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useShouldCreateNewPostQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useShouldCreateNewPostQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    ShouldCreateNewPostQuery,
+    ShouldCreateNewPostQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    ShouldCreateNewPostQuery,
+    ShouldCreateNewPostQueryVariables
+  >(ShouldCreateNewPostDocument, options)
+}
+export function useShouldCreateNewPostLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ShouldCreateNewPostQuery,
+    ShouldCreateNewPostQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    ShouldCreateNewPostQuery,
+    ShouldCreateNewPostQueryVariables
+  >(ShouldCreateNewPostDocument, options)
+}
+export function useShouldCreateNewPostSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    ShouldCreateNewPostQuery,
+    ShouldCreateNewPostQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    ShouldCreateNewPostQuery,
+    ShouldCreateNewPostQueryVariables
+  >(ShouldCreateNewPostDocument, options)
+}
+export type ShouldCreateNewPostQueryHookResult = ReturnType<
+  typeof useShouldCreateNewPostQuery
+>
+export type ShouldCreateNewPostLazyQueryHookResult = ReturnType<
+  typeof useShouldCreateNewPostLazyQuery
+>
+export type ShouldCreateNewPostSuspenseQueryHookResult = ReturnType<
+  typeof useShouldCreateNewPostSuspenseQuery
+>
+export type ShouldCreateNewPostQueryResult = Apollo.QueryResult<
+  ShouldCreateNewPostQuery,
+  ShouldCreateNewPostQueryVariables
+>
 export const StreamerDocument = gql`
   query Streamer($profileId: String!) {
     streamer(profileId: $profileId) {
@@ -293,6 +465,7 @@ export const StreamerDocument = gql`
       createdAt
       playbackId
       streamName
+      latestStreamPublicationId
     }
   }
 `
@@ -412,6 +585,8 @@ export interface PossibleTypesResultData {
   }
 }
 const result: PossibleTypesResultData = {
-  possibleTypes: {}
+  possibleTypes: {
+    Stream: ['MyStream', 'SingleStreamer', 'Streamer']
+  }
 }
 export default result

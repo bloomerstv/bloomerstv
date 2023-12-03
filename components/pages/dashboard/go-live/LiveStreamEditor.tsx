@@ -1,50 +1,223 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { toast } from 'react-toastify'
-import { useMyStreamQuery } from '../../../../graphql/generated'
+import {
+  ShouldCreateNewPostDocument,
+  useCreateMyLensStreamSessionMutation,
+  useMyStreamQuery
+} from '../../../../graphql/generated'
 import Video from '../../../common/Video'
 import { getLiveStreamUrl } from '../../../../utils/lib/getLiveStreamUrl'
 import ConnectStream from './ConnectStream'
 import MyStreamEditButton from './MyStreamEditButton'
-import { SessionType, useSession } from '@lens-protocol/react-web'
+import {
+  ReferencePolicyType,
+  SessionType,
+  useCreatePost,
+  useSession
+} from '@lens-protocol/react-web'
 import { Button, TextField } from '@mui/material'
-import { LIVE_PEER_RTMP_URL } from '../../../../utils/config'
+import {
+  APP_ID,
+  APP_LINK,
+  LIVE_PEER_RTMP_URL,
+  defaultSponsored
+} from '../../../../utils/config'
+import { useApolloClient } from '@apollo/client'
+import { liveStream } from '@lens-protocol/metadata'
+import formatHandle from '../../../../utils/lib/formatHandle'
 // import { stringToLength } from '../../../../utils/stringToLength'
+import { v4 as uuid } from 'uuid'
+import getUserLocale from '../../../../utils/getUserLocale'
+import uploadToIPFS from '../../../../utils/uploadToIPFS'
+import clsx from 'clsx'
+import { getPublicationShareLink } from '../../../../utils/lib/getPublicationShareLink'
 
-const LiveStreamEditor = () => {
+const LiveStreamEditor = ({
+  createdPublicationId,
+  setCreatedPublicationId
+}: {
+  createdPublicationId: string | null
+  setCreatedPublicationId: (id: string | null) => void
+}) => {
   const { data: session } = useSession()
   const { data, error, refetch } = useMyStreamQuery()
+  const [startedStreaming, setStartedStreaming] = React.useState(false)
 
-  if (error) {
-    toast.error(error.message)
+  const client = useApolloClient()
+
+  const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation()
+  const { execute, error: createPostError } = useCreatePost()
+
+  const shouldCreateNewPost = async () => {
+    const { data } = await client.query({
+      query: ShouldCreateNewPostDocument
+    })
+
+    return data?.shouldCreateNewPost
+  }
+
+  useEffect(() => {
+    if (createPostError) {
+      toast.error(createPostError.message)
+    }
+  }, [createPostError])
+
+  useEffect(() => {
+    if (!error) return
+    toast.error(error?.message)
+  }, [error])
+
+  const myStream = data?.myStream
+
+  const createLensPost = async (): Promise<string | undefined> => {
+    if (session?.type !== SessionType.WithProfile) {
+      return
+    }
+    // code logic here
+    console.log('create lens post')
+    const streamName = myStream?.streamName ?? undefined
+    const streamerHandle = formatHandle(session?.profile)
+    const profileLink = `${APP_LINK}/${streamerHandle}`
+    const id = uuid()
+    const locale = getUserLocale()
+
+    const metadata = liveStream({
+      title: streamName,
+      content: `${streamName} \n Live on ${profileLink}`,
+      marketplace: {
+        description: `${streamName} \n Live on ${profileLink}`,
+        external_url: profileLink
+      },
+      id: id,
+      locale: locale,
+      appId: APP_ID,
+      liveUrl: getLiveStreamUrl(myStream?.playbackId),
+      playbackUrl: getLiveStreamUrl(myStream?.playbackId),
+      startsAt: new Date().toISOString()
+    })
+
+    const data = await uploadToIPFS(
+      new File([JSON.stringify(metadata)], 'metadata.json')
+    ).then((res) => res)
+
+    console.log('url', data?.url)
+
+    if (!data?.url) {
+      throw new Error('Error uploading metadata to IPFS')
+    }
+    // invoke the `execute` function to create the post
+    const result = await execute({
+      metadata: data?.url,
+      reference: {
+        type: ReferencePolicyType.ANYONE
+      },
+      sponsored: defaultSponsored
+    })
+
+    console.log('result', result)
+
+    if (!result.isSuccess()) {
+      toast.error(result.error.message)
+      // handle failure scenarios
+      throw new Error('Error creating post')
+    }
+
+    // this might take a while, depends on the type of tx (on-chain or Momoka)
+    // and the congestion of the network
+    const completion = await result.value.waitForCompletion()
+
+    console.log('completion', completion)
+
+    if (completion.isFailure()) {
+      console.log(
+        'There was an processing the transaction',
+        completion.error.message
+      )
+      toast.error(completion.error.message)
+      throw new Error('Error creating post during tx processing')
+    }
+
+    // the post is now ready to be used
+    const post = completion.value
+    console.log('Post created', post)
+
+    return post?.id
+  }
+
+  useEffect(() => {
+    if (startedStreaming) {
+      handleStartedStreaming()
+    }
+  }, [startedStreaming])
+
+  const handleStartedStreaming = async () => {
+    try {
+      console.log('handleStartedStreaming')
+      // check if should create new post
+      const res = await shouldCreateNewPost()
+      if (!res) {
+        // @ts-ignore
+        setCreatedPublicationId(myStream?.latestStreamPublicationId)
+        return
+      }
+
+      // if yet, create lens post and get post id
+      const publicationId = await toast.promise(createLensPost(), {
+        pending: 'Creating post for your stream...',
+        success: 'Post created!',
+        error: 'Error creating post'
+      })
+
+      console.log('publicationId', publicationId)
+
+      if (!publicationId) {
+        return
+      }
+
+      setCreatedPublicationId(publicationId)
+      // submit the lens post id to create a lens stream session to api
+      // so when/if we check for lens post id on the latest session, it will be there
+
+      const { data, errors } = await createMyLensStreamSession({
+        variables: {
+          publicationId: publicationId
+        }
+      })
+
+      if (errors?.[0] && !data?.createMyLensStreamSession) {
+        toast.error(errors[0].message)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   if (session?.type !== SessionType.WithProfile) {
     return <div>You must be logged in to stream.</div>
   }
 
-  const myStream = data?.myStream
-
   if (!myStream) {
     return <div>You can't stream right now.</div>
   }
-
-  console.log('myStream', myStream)
 
   return (
     <div className="p-8">
       <div className="bg-s-bg shadow-md">
         <div className="flex flex-row">
           <Video
-            className="w-[480px] shrink-0"
+            className="w-[360px] 2xl:w-[480px] shrink-0"
             src={getLiveStreamUrl(myStream?.playbackId)}
             streamOfflineErrorComponent={<ConnectStream />}
+            onStreamStatusChange={(isLive) => {
+              setStartedStreaming(isLive)
+            }}
           />
           <div className="flex flex-row justify-between items-start p-8 w-full">
             <div className="space-y-4">
               <div className="">
                 <div className="text-s-text font-bold text-md">Title</div>
-                <div className="text-p-text font-semibold text-lg">
+                <div className="text-p-text font-semibold text-md 2xl:text-lg">
                   {myStream?.streamName}
                 </div>
               </div>
@@ -63,6 +236,30 @@ const LiveStreamEditor = () => {
               myStream={myStream}
             />
           </div>
+        </div>
+        <div className="px-4 py-3 start-row space-x-4">
+          {/* dot that goes red when live and green when not */}
+          <div
+            className={clsx(
+              'w-4 h-4 rounded-full',
+              startedStreaming ? 'bg-brand' : 'bg-s-text'
+            )}
+          />
+
+          <div className="font-semibold ">
+            {startedStreaming
+              ? `You're live! End your stream from obs or your streaming software.`
+              : 'Start streaming from obs or your streaming software to go live'}
+          </div>
+          {startedStreaming && createdPublicationId && (
+            <a
+              target="_blank"
+              href={getPublicationShareLink(createdPublicationId)}
+              rel="noreferrer"
+            >
+              Lens Post
+            </a>
+          )}
         </div>
       </div>
 

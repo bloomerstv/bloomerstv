@@ -5,6 +5,18 @@ export const shortFormOfLink = (link?: string) => {
   return link.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '')
 }
 
+export const simpleTime = (time: number) => {
+  const date = new Date(time)
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  const seconds = date.getSeconds()
+  const ampm = hours >= 12 ? 'PM' : 'AM'
+  const hours12 = hours % 12 || 12
+  const minutes12 = minutes < 10 ? `0${minutes}` : minutes
+  const seconds12 = seconds < 10 ? `0${seconds}` : seconds
+  return `${hours12}:${minutes12}:${seconds12} ${ampm}`
+}
+
 export const timeAgo = (time: number) => {
   const now = new Date().getTime()
   const diff = now - time

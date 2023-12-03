@@ -42,8 +42,8 @@ const MyStreamEditButton = ({
         }
       }
     })
-    refreshStreamInfo()
 
+    refreshStreamInfo()
     setOpen(false)
   }
 
