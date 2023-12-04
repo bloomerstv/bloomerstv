@@ -1,0 +1,6 @@
+mutation UploadDataToIpfs($data: String!) {
+  uploadDataToIpfs(data: $data) {
+    cid
+    size
+  }
+}

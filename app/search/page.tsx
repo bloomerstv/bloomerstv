@@ -15,8 +15,6 @@ const SearchPage = () => {
     query: search
   })
 
-  console.log('data', data)
-
   return (
     <div>
       <div className="centered-row w-full p-3 sticky top-0 z-10">

@@ -11,12 +11,12 @@ interface ContextType {
 }
 
 export const ThemeContext = createContext<ContextType>({
-  theme: 'dark',
+  theme: 'light',
   toggleTheme: () => {}
 })
 // import MUITheme from './MUITheme'
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
   const toggleTheme = () => {
     if (theme === 'light') {
@@ -40,10 +40,10 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       // @ts-ignore
       setTheme(theme)
     } else {
-      document.body.classList.add('dark')
-      document.documentElement.setAttribute('data-theme', 'dark')
-      window.localStorage.setItem('data-theme', 'dark')
-      setTheme('dark')
+      document.body.classList.add('light')
+      document.documentElement.setAttribute('data-theme', 'light')
+      window.localStorage.setItem('data-theme', 'light')
+      setTheme('light')
     }
   }, [])
   return (

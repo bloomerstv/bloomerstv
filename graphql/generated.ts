@@ -31,10 +31,17 @@ export type Scalars = {
   BigNumber: { input: any; output: any }
 }
 
+export type IpfsResult = {
+  __typename?: 'IpfsResult'
+  cid?: Maybe<Scalars['String']['output']>
+  size?: Maybe<Scalars['Int']['output']>
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createMyLensStreamSession?: Maybe<Scalars['Boolean']['output']>
   updateMyStream?: Maybe<Scalars['Boolean']['output']>
+  uploadDataToIpfs?: Maybe<IpfsResult>
 }
 
 export type MutationCreateMyLensStreamSessionArgs = {
@@ -43,6 +50,10 @@ export type MutationCreateMyLensStreamSessionArgs = {
 
 export type MutationUpdateMyStreamArgs = {
   request: UpdateStreamRequest
+}
+
+export type MutationUploadDataToIpfsArgs = {
+  data: Scalars['String']['input']
 }
 
 export type MyStream = Stream & {
@@ -184,6 +195,19 @@ export type UpdateMyStreamMutationVariables = Exact<{
 export type UpdateMyStreamMutation = {
   __typename?: 'Mutation'
   updateMyStream?: boolean | null
+}
+
+export type UploadDataToIpfsMutationVariables = Exact<{
+  data: Scalars['String']['input']
+}>
+
+export type UploadDataToIpfsMutation = {
+  __typename?: 'Mutation'
+  uploadDataToIpfs?: {
+    __typename?: 'IpfsResult'
+    cid?: string | null
+    size?: number | null
+  } | null
 }
 
 export const CreateMyLensStreamSessionDocument = gql`
@@ -577,6 +601,57 @@ export type UpdateMyStreamMutationResult =
 export type UpdateMyStreamMutationOptions = Apollo.BaseMutationOptions<
   UpdateMyStreamMutation,
   UpdateMyStreamMutationVariables
+>
+export const UploadDataToIpfsDocument = gql`
+  mutation UploadDataToIpfs($data: String!) {
+    uploadDataToIpfs(data: $data) {
+      cid
+      size
+    }
+  }
+`
+export type UploadDataToIpfsMutationFn = Apollo.MutationFunction<
+  UploadDataToIpfsMutation,
+  UploadDataToIpfsMutationVariables
+>
+
+/**
+ * __useUploadDataToIpfsMutation__
+ *
+ * To run a mutation, you first call `useUploadDataToIpfsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadDataToIpfsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadDataToIpfsMutation, { data, loading, error }] = useUploadDataToIpfsMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUploadDataToIpfsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UploadDataToIpfsMutation,
+    UploadDataToIpfsMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    UploadDataToIpfsMutation,
+    UploadDataToIpfsMutationVariables
+  >(UploadDataToIpfsDocument, options)
+}
+export type UploadDataToIpfsMutationHookResult = ReturnType<
+  typeof useUploadDataToIpfsMutation
+>
+export type UploadDataToIpfsMutationResult =
+  Apollo.MutationResult<UploadDataToIpfsMutation>
+export type UploadDataToIpfsMutationOptions = Apollo.BaseMutationOptions<
+  UploadDataToIpfsMutation,
+  UploadDataToIpfsMutationVariables
 >
 
 export interface PossibleTypesResultData {

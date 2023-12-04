@@ -55,6 +55,7 @@ const Video: FC<VideoProps> = ({
           ipfsGateway: IPFS_GATEWAY,
           arweaveGateway: ARWEAVE_GATEWAY
         }}
+        allowCrossOriginCredentials
         loop={loop}
         onStreamStatusChange={onStreamStatusChange}
         streamOfflineErrorComponent={streamOfflineErrorComponent}
@@ -66,7 +67,8 @@ const Video: FC<VideoProps> = ({
             volumeLeft: '#1668b8',
             volumeRight: '#f7f7f8',
             volumeMiddle: '#ffffff',
-            loading: '#1668b8'
+            loading: '#1668b8',
+            liveIndicator: '#1668b8'
           }
         }}
       />

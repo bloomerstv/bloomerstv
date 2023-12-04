@@ -23,9 +23,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
       </div>
 
       {/* red dot */}
-      {streamer?.isActive && (
-        <div className="w-2 h-2 rounded-full bg-red-600" />
-      )}
+      {streamer?.isActive && <div className="w-2 h-2 rounded-full bg-brand" />}
     </Link>
   )
 }

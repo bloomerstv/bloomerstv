@@ -14,8 +14,6 @@ const StreamerOffline = ({
   streamer?: Streamer
 }) => {
   const banner = getBanner(profile)
-  console.log('banner', banner)
-  console.log('streamer', streamer)
   return (
     <div className="w-full h-full relative">
       <div className="absolute w-full h-full z-10 flex flex-col items-center justify-center w-full h-full z-20">

@@ -4,32 +4,26 @@ import { toast } from 'react-toastify'
 import {
   ShouldCreateNewPostDocument,
   useCreateMyLensStreamSessionMutation,
-  useMyStreamQuery
+  useMyStreamQuery,
+  useUploadDataToIpfsMutation
 } from '../../../../graphql/generated'
 import Video from '../../../common/Video'
 import { getLiveStreamUrl } from '../../../../utils/lib/getLiveStreamUrl'
 import ConnectStream from './ConnectStream'
 import MyStreamEditButton from './MyStreamEditButton'
 import {
-  ReferencePolicyType,
   SessionType,
   useCreatePost,
   useSession
 } from '@lens-protocol/react-web'
 import { Button, TextField } from '@mui/material'
-import {
-  APP_ID,
-  APP_LINK,
-  LIVE_PEER_RTMP_URL,
-  defaultSponsored
-} from '../../../../utils/config'
+import { APP_ID, APP_LINK, LIVE_PEER_RTMP_URL } from '../../../../utils/config'
 import { useApolloClient } from '@apollo/client'
 import { liveStream } from '@lens-protocol/metadata'
 import formatHandle from '../../../../utils/lib/formatHandle'
 // import { stringToLength } from '../../../../utils/stringToLength'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
-import uploadToIPFS from '../../../../utils/uploadToIPFS'
 import clsx from 'clsx'
 import { getPublicationShareLink } from '../../../../utils/lib/getPublicationShareLink'
 
@@ -48,6 +42,8 @@ const LiveStreamEditor = ({
 
   const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation()
   const { execute, error: createPostError } = useCreatePost()
+
+  const [uploadDataToIpfs] = useUploadDataToIpfsMutation()
 
   const shouldCreateNewPost = async () => {
     const { data } = await client.query({
@@ -75,7 +71,6 @@ const LiveStreamEditor = ({
       return
     }
     // code logic here
-    console.log('create lens post')
     const streamName = myStream?.streamName ?? undefined
     const streamerHandle = formatHandle(session?.profile)
     const profileLink = `${APP_LINK}/${streamerHandle}`
@@ -97,25 +92,21 @@ const LiveStreamEditor = ({
       startsAt: new Date().toISOString()
     })
 
-    const data = await uploadToIPFS(
-      new File([JSON.stringify(metadata)], 'metadata.json')
-    ).then((res) => res)
+    const { data } = await uploadDataToIpfs({
+      variables: {
+        data: JSON.stringify(metadata)
+      }
+    })
 
-    console.log('url', data?.url)
+    const cid = data?.uploadDataToIpfs?.cid
 
-    if (!data?.url) {
+    if (!cid) {
       throw new Error('Error uploading metadata to IPFS')
     }
     // invoke the `execute` function to create the post
     const result = await execute({
-      metadata: data?.url,
-      reference: {
-        type: ReferencePolicyType.ANYONE
-      },
-      sponsored: defaultSponsored
+      metadata: `ipfs://${cid}`
     })
-
-    console.log('result', result)
 
     if (!result.isSuccess()) {
       toast.error(result.error.message)
@@ -127,20 +118,13 @@ const LiveStreamEditor = ({
     // and the congestion of the network
     const completion = await result.value.waitForCompletion()
 
-    console.log('completion', completion)
-
     if (completion.isFailure()) {
-      console.log(
-        'There was an processing the transaction',
-        completion.error.message
-      )
       toast.error(completion.error.message)
       throw new Error('Error creating post during tx processing')
     }
 
     // the post is now ready to be used
     const post = completion.value
-    console.log('Post created', post)
 
     return post?.id
   }
@@ -153,7 +137,6 @@ const LiveStreamEditor = ({
 
   const handleStartedStreaming = async () => {
     try {
-      console.log('handleStartedStreaming')
       // check if should create new post
       const res = await shouldCreateNewPost()
       if (!res) {
@@ -168,8 +151,6 @@ const LiveStreamEditor = ({
         success: 'Post created!',
         error: 'Error creating post'
       })
-
-      console.log('publicationId', publicationId)
 
       if (!publicationId) {
         return
@@ -193,6 +174,25 @@ const LiveStreamEditor = ({
     }
   }
 
+  // memoized connect stream component
+  const ConnectStreamMemo = React.useMemo(() => {
+    return <ConnectStream />
+  }, [])
+
+  const videoComponent = React.useMemo(
+    () => (
+      <Video
+        className="w-[360px] 2xl:w-[480px] shrink-0"
+        src={getLiveStreamUrl(myStream?.playbackId)}
+        streamOfflineErrorComponent={ConnectStreamMemo}
+        onStreamStatusChange={(isLive) => {
+          setStartedStreaming(isLive)
+        }}
+      />
+    ),
+    [myStream?.playbackId]
+  )
+
   if (session?.type !== SessionType.WithProfile) {
     return <div>You must be logged in to stream.</div>
   }
@@ -205,14 +205,7 @@ const LiveStreamEditor = ({
     <div className="p-8">
       <div className="bg-s-bg shadow-md">
         <div className="flex flex-row">
-          <Video
-            className="w-[360px] 2xl:w-[480px] shrink-0"
-            src={getLiveStreamUrl(myStream?.playbackId)}
-            streamOfflineErrorComponent={<ConnectStream />}
-            onStreamStatusChange={(isLive) => {
-              setStartedStreaming(isLive)
-            }}
-          />
+          {videoComponent}
           <div className="flex flex-row justify-between items-start p-8 w-full">
             <div className="space-y-4">
               <div className="">
