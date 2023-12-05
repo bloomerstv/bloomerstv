@@ -1,6 +1,6 @@
 import { Interweave } from 'interweave'
 import type { FC, MouseEvent } from 'react'
-import { MDBoldMatcher } from './matchers/markdown/MDBoldMatcher'
+// import { MDBoldMatcher } from './matchers/markdown/MDBoldMatcher'
 import { MDCodeMatcher } from './matchers/markdown/MDCodeMatcher'
 import { MDItalicMatcher } from './matchers/markdown/MDItalicMatcher'
 import { MDLinkMatcher } from './matchers/markdown/MDLinkMatcher'
@@ -10,7 +10,7 @@ import { UrlMatcher } from './matchers/UrlMatcher'
 import React from 'react'
 import trimify from './trimify'
 import { MentionMatcher } from './matchers/MentionMatcher'
-import { HashtagMatcher } from './matchers/HashtagMatcher'
+// import { HashtagMatcher } from './matchers/HashtagMatcher'
 
 interface Props {
   children: string
@@ -30,8 +30,8 @@ const Markup: FC<Props> = ({
     new MentionMatcher('mention'),
     new MDLinkMatcher('mdLink'),
     new UrlMatcher('url'),
-    new HashtagMatcher('hashtag'),
-    new MDBoldMatcher('mdBold'),
+    // new HashtagMatcher('hashtag'),
+    // new MDBoldMatcher('mdBold'),
     new MDItalicMatcher('mdItalic'),
     new MDStrikeMatcher('mdStrike'),
     new MDQuoteMatcher('mdQuote')

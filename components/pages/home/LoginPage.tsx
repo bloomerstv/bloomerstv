@@ -46,7 +46,7 @@ const LoginPage = () => {
             <div className="text-s-text font-bold text-lg">
               Select a profile to sign in with{' '}
             </div>
-            <div className="start-col w-full rounded-xl bg-s-bg border border-s-text">
+            <div className="start-col w-full rounded-xl bg-s-bg border border-p-border">
               {loadingProfiles && (
                 <div className="centered-row w-full p-4">
                   <CircularProgress />
@@ -57,7 +57,7 @@ const LoginPage = () => {
                 <div
                   className={clsx(
                     'between-row w-full p-4',
-                    i < profiles.length - 1 && 'border-b border-s-text '
+                    i < profiles.length - 1 && 'border-b border-p-border '
                   )}
                   key={profile?.id}
                 >

@@ -18,9 +18,9 @@ export const Mention = ({ ...props }: any) => {
         e.stopPropagation()
       }}
     >
-      <Link href={`/u/${profile?.handle}`}>
+      <Link href={`/${profile?.handle}`} className="no-underline">
         <span className="hover:underline text-blue-400 cursor-pointer">
-          {profile?.handle && `u/${profile?.handle}`}
+          {profile?.handle && `@${profile?.handle}`}
         </span>
       </Link>
     </span>

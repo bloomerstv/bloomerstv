@@ -43,7 +43,7 @@ const UILayout: React.FC<Props> = (props) => {
         <div className="w-full absolute left-0 right-0 top-0 ">
           <TopHeader />
         </div>
-        <div className="start-row h-full pt-[60px] overflow-hidden">
+        <div className="start-row h-screen pt-[60px] overflow-hidden">
           {pathname.startsWith('/dashboard') ? (
             <DashboardSidebar />
           ) : (

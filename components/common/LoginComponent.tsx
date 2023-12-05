@@ -35,11 +35,11 @@ const LoginComponent = ({ onClose }: { onClose?: () => void }) => {
     return null
   }
   return (
-    <div>
+    <div className="p-4 sm:p-0">
       {isConnected ? (
         <>
           <div className="text-2xl font-bold">Login with your profile</div>
-          <div className="start-col my-4 w-full rounded-xl bg-s-bg border border-s-text">
+          <div className="start-col my-4 w-full rounded-xl bg-s-bg border border-p-border">
             {loadingProfiles && (
               <div className="centered-row w-full p-4">
                 <CircularProgress />
@@ -50,7 +50,7 @@ const LoginComponent = ({ onClose }: { onClose?: () => void }) => {
               <div
                 className={clsx(
                   'between-row w-full p-4',
-                  i < profiles.length - 1 && 'border-b border-s-text '
+                  i < profiles.length - 1 && 'border-b border-p-border '
                 )}
                 key={profile?.id}
               >

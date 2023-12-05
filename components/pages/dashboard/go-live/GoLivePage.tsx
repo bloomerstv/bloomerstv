@@ -34,7 +34,7 @@ const GoLivePage = () => {
           setCreatedPublicationId={setCreatedPublicationId}
         />
       </div>
-      <div className="w-[400px] flex-none h-full">
+      <div className="sm:w-[350px] flex-none h-full">
         {/* {createdPublicationId ? ( */}
         <LiveChat profileId={data?.profile?.id} />
         {/* // ) : (

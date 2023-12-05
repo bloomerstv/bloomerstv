@@ -26,7 +26,8 @@ const ModalWrapper = ({
   onOpen,
   open,
   classname,
-  BotttomComponent
+  BotttomComponent,
+  hideBackdrop = false
 }: {
   children: React.ReactNode
   title?: string
@@ -36,12 +37,14 @@ const ModalWrapper = ({
   open: boolean
   classname?: string
   BotttomComponent?: React.ReactNode
+  hideBackdrop?: boolean
 }) => {
   const isMobile = useIsMobile()
 
   if (isMobile) {
     return (
       <SwipeableDrawer
+        hideBackdrop={hideBackdrop}
         anchor="bottom"
         open={open}
         onClose={onClose}
@@ -57,7 +60,7 @@ const ModalWrapper = ({
         <div className="centered-row w-full p-3">
           <div className="w-16 h-1.5 bg-s-text rounded-full"></div>
         </div>
-        <div className="p-4 rounded-t-lg">{children}</div>
+        <div className="rounded-t-lg">{children}</div>
 
         {/* show a bottom component here */}
         {BotttomComponent && (
@@ -80,11 +83,12 @@ const ModalWrapper = ({
           timeout: 500
         }
       }}
+      hideBackdrop={hideBackdrop}
     >
       <Fade in={open}>
         <Box sx={style}>
           <div className="min-w-[400px] bg-p-bg rounded-xl shadow-xl">
-            <div className="between-row p-4 border-b border-s-text">
+            <div className="between-row p-4 border-b border-p-border">
               <div className="start-row space-x-4">
                 <div className="centered-row">{Icon}</div>
                 <div className="text-p-text font-bold">{title}</div>
@@ -104,7 +108,7 @@ const ModalWrapper = ({
             {BotttomComponent && (
               <div
                 className="px-4 py-2
-              border-t border-s-text
+              border-t border-p-border
               "
               >
                 {BotttomComponent}

@@ -32,8 +32,8 @@ const HeaderSearch = () => {
   return (
     <ClickAwayListener onClickAway={closeSearch}>
       <div className={clsx('relative', showSearch && 'shadow-xl')}>
-        <div className="centered-row border rounded-lg border-s-text px-3 py-1.5">
-          <SearchIcon />
+        <div className="centered-row border rounded-lg border-p-border px-3 py-1.5">
+          <SearchIcon className="text-s-text" />
           <input
             type="text"
             className="w-full rounded-xl border-0 text-sm px-6 text-lg font-semibold bg-s-bg outline-none text-s-text"
@@ -56,7 +56,7 @@ const HeaderSearch = () => {
         {data?.length > 0 && search.length > 0 && (
           <div
             className={clsx(
-              'absolute z-50 top-8 border-s-text rounded-b-lg border-l border-r border-b left-0 w-full bg-s-bg',
+              'absolute z-50 top-8 border-p-border rounded-b-lg border-l border-r border-b left-0 w-full bg-s-bg',
               showSearch && 'shadow-xl'
             )}
           >

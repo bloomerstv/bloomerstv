@@ -38,7 +38,7 @@ const PublicationEditor = ({
               'blocktext-p-text overflow-auto  outline-none bg-s-bg',
               isComment
                 ? 'min-h-[20px] max-h-[200px] sm:max-h-[250px]'
-                : ' min-h-[70px] max-h-[300px] sm:max-h-[350px]  px-4 py-2 border border-s-border rounded-xl m-4'
+                : ' min-h-[70px] max-h-[300px] sm:max-h-[350px]  px-4 py-2 border border-p-border rounded-xl m-4'
             )}
           />
         }

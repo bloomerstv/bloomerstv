@@ -9,10 +9,6 @@ const AboutProfile = ({ profile }: { profile: Profile }) => {
       <div className="text-2xl font-bold mb-4">
         About {formatHandle(profile)}
       </div>
-      <div className="start-row space-x-1">
-        <div className="font-bold">{profile?.stats?.followers}</div>
-        <div className="text-s-text">followers</div>
-      </div>
       {profile?.metadata?.bio && (
         <Markup className="mt-4">{String(profile?.metadata?.bio)}</Markup>
       )}

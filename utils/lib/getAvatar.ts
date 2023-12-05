@@ -21,8 +21,10 @@ const getAvatar = (profile: any, namedTransform = AVATAR): string => {
     // Lens Profile Avatar fallbacks
     profile?.metadata?.picture?.optimized?.uri ??
     profile?.metadata?.picture?.raw?.uri ??
-    // Stamp.fyi Avatar fallbacks
-    getStampFyiURL(profile?.ownedBy.address ?? ZERO_ADDRESS)
+    profile?.id
+      ? `https://api.hey.xyz/avatar?id=${profile?.id}`
+      : // Stamp.fyi Avatar fallbacks
+        getStampFyiURL(profile?.ownedBy.address ?? ZERO_ADDRESS)
 
   return imageKit(sanitizeDStorageUrl(avatarUrl), namedTransform)
 }

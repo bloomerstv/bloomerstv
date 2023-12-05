@@ -29,6 +29,7 @@ const config: Config = {
         'p-hover': 'var(--primary-hover)',
         's-text': 'var(--secondary-text)',
         'p-text': 'var(--primary-text)',
+        'p-border': 'var(--primary-border)',
         brand: 'var(--brand)'
       }
     }

@@ -86,6 +86,8 @@
 
   --primary-hover: #e7e7ea;
 
+  --primary-border: #c4c4c4;
+
   --brand: #1976d2;
 }
 
@@ -99,6 +101,8 @@
   --secondary-text: #7a7a81;
 
   --primary-hover: #29292e;
+
+  --primary-border: #4d4d50;
 
   --brand: #90caf9;
 }
