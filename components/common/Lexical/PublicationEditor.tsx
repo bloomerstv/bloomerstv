@@ -11,7 +11,7 @@ import { HashtagPlugin } from '@lexical/react/LexicalHashtagPlugin'
 import LexicalAutoLinkPlugin from './Plugins/LexicalAutoLinkPlugin'
 import ImagesPlugin from './Plugins/ImagesPlugin'
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin'
-import NewMentionsPlugin from './Plugins/MentionsPlugin'
+// import NewMentionsPlugin from './Plugins/MentionsPlugin'
 import clsx from 'clsx'
 
 /* eslint-disable */
@@ -71,7 +71,7 @@ const PublicationEditor = ({
           })
         }}
       />
-      <NewMentionsPlugin />
+      {/* <NewMentionsPlugin /> */}
       {/* <HistoryPlugin /> */}
       <HashtagPlugin />
       <LexicalAutoLinkPlugin />
