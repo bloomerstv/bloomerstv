@@ -12,8 +12,8 @@ export const AVATAR = 'tr:w-300,h-300'
 export const NODE_API_MODE = process.env.NEXT_PUBLIC_NODE_API_MODE
 
 export const LOCAL_NODE_API_URL = 'http://localhost:8000'
-export const PRODUCTION_NODE_API_URL = 'http://localhost:8000'
-export const DEVELOPMENT_NODE_API_URL = 'http://localhost:8000'
+export const PRODUCTION_NODE_API_URL = 'https://api.bloomers.tv'
+export const DEVELOPMENT_NODE_API_URL = 'https://api.bloomers.tv'
 
 export const NODE_API_URL =
   NODE_API_MODE === 'local'
@@ -22,7 +22,8 @@ export const NODE_API_URL =
       ? PRODUCTION_NODE_API_URL
       : DEVELOPMENT_NODE_API_URL
 
-export const LIVE_CHAT_WEB_SOCKET_URL = `ws://localhost:8000`
+export const LIVE_CHAT_WEB_SOCKET_URL =
+  NODE_API_MODE === 'local' ? `ws://localhost:8000` : `wss://api.bloomers.tv`
 export const NODE_GRAPHQL_URL = `${NODE_API_URL}/graphql`
 export const LIVE_PEER_RTMP_URL = 'rtmp://rtmp.livepeer.com/live'
 
