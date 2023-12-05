@@ -10,7 +10,7 @@ import {
   useSession,
   useUnfollow
 } from '@lens-protocol/react-web'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SingleStreamer } from '../../../graphql/generated'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
@@ -27,6 +27,10 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 
 import ReplyIcon from '@mui/icons-material/Reply'
+import ModalWrapper from '../../ui/Modal/ModalWrapper'
+import LoginComponent from '../../common/LoginComponent'
+
+import LoginIcon from '@mui/icons-material/Login'
 
 const ProfileBar = ({
   profile,
@@ -56,6 +60,8 @@ const ProfileBar = ({
 
   const isMobile = useIsMobile()
 
+  const [open, setOpen] = useState(false)
+
   useEffect(() => {
     if (data?.__typename === 'Post') {
       setLiked(data?.operations?.hasUpvoted)
@@ -65,6 +71,8 @@ const ProfileBar = ({
 
   const handleFollow = async () => {
     try {
+      if (!mustLogin('Must Login to follow')) return
+
       const result = await execute({
         profile: profile,
         sponsored: defaultSponsored
@@ -78,11 +86,14 @@ const ProfileBar = ({
       }
     } catch (e) {
       console.log(e)
+      // @ts-ignore
+      toast.error(e)
     }
   }
 
   const handleUnFollow = async () => {
     try {
+      if (!mustLogin('Must Login to unfollow')) return
       const result = await unFollow({
         profile: profile
       })
@@ -95,11 +106,23 @@ const ProfileBar = ({
       }
     } catch (e) {
       console.log(e)
+      // @ts-ignore
+      toast.error(e)
     }
+  }
+
+  const mustLogin = (infoMsg: string = 'Must Login'): Boolean => {
+    if (mySession?.type !== SessionType.WithProfile) {
+      setOpen(true)
+      toast.info(infoMsg)
+      return false
+    }
+    return true
   }
 
   const handleLike = async () => {
     try {
+      if (!mustLogin('Must Login to like')) return
       const result = await toggleReaction({
         // @ts-ignore
         publication: data,
@@ -120,6 +143,7 @@ const ProfileBar = ({
 
   const handleMirror = async () => {
     try {
+      if (!mustLogin('Must Login to mirror')) return
       const result = await createMirror({
         // @ts-ignore
         mirrorOn: data?.id,
@@ -193,6 +217,15 @@ const ProfileBar = ({
 
   return (
     <div className="w-full">
+      <ModalWrapper
+        open={open}
+        title="login"
+        Icon={<LoginIcon fontSize="small" />}
+        onClose={() => setOpen(false)}
+        onOpen={() => setOpen(true)}
+      >
+        <LoginComponent onClose={() => setOpen(false)} />
+      </ModalWrapper>
       {streamer?.streamName && (
         <div className="font-bold m-2 sm:mx-8 sm:mt-6 text-lg">
           {stringToLength(streamer?.streamName, 200)}
@@ -312,50 +345,46 @@ const ProfileBar = ({
         <div className="mx-2 my-3">
           <div className="start-row gap-x-3 px-2 py-1">
             {/* like button */}
-            {data?.__typename === 'Post' &&
-              data?.id &&
-              mySession?.type === SessionType.WithProfile && (
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="contained"
-                  onClick={handleLike}
-                  startIcon={
-                    liked ? (
-                      <FavoriteIcon className="text-brand" />
-                    ) : (
-                      <FavoriteBorderIcon />
-                    )
-                  }
-                  sx={{
-                    borderRadius: '20px',
-                    boxShadow: 'none'
-                  }}
-                >
-                  {data?.stats?.upvotes}
-                </Button>
-              )}
+            {data?.__typename === 'Post' && data?.id && (
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                onClick={handleLike}
+                startIcon={
+                  liked ? (
+                    <FavoriteIcon className="text-brand" />
+                  ) : (
+                    <FavoriteBorderIcon />
+                  )
+                }
+                sx={{
+                  borderRadius: '20px',
+                  boxShadow: 'none'
+                }}
+              >
+                {data?.stats?.upvotes}
+              </Button>
+            )}
             {/* mirror button */}
 
-            {data?.__typename === 'Post' &&
-              data?.id &&
-              mySession?.type === SessionType.WithProfile && (
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="contained"
-                  onClick={handleMirror}
-                  startIcon={
-                    <AutorenewIcon className={isMirrored ? 'text-brand' : ''} />
-                  }
-                  sx={{
-                    borderRadius: '20px',
-                    boxShadow: 'none'
-                  }}
-                >
-                  {data?.stats?.mirrors}
-                </Button>
-              )}
+            {data?.__typename === 'Post' && data?.id && (
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                onClick={handleMirror}
+                startIcon={
+                  <AutorenewIcon className={isMirrored ? 'text-brand' : ''} />
+                }
+                sx={{
+                  borderRadius: '20px',
+                  boxShadow: 'none'
+                }}
+              >
+                {data?.stats?.mirrors}
+              </Button>
+            )}
 
             {/* live chat button */}
             <MobileChatButton profileId={profile?.id} />

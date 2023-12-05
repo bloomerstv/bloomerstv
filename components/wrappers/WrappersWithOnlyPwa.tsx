@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import RainbowKitWrapper from './RainbowKitWrapper'
-import { ToastContainer } from 'react-toastify'
 import UILayout from './UILayout'
 import { useOnlyPWAOnMobile } from '../../utils/config'
 import AddPWAPage from '../pages/home/AddPWAPage'
@@ -12,6 +11,7 @@ import ThemeProvider from './TailwindThemeProvider'
 import MuiThemeWrapper from './MuiThemeWrapper'
 import ApolloWrapper from './ApolloWrapper'
 import ShowLoadingWrapper from './ShowLoadingWrapper'
+import ToastWrapper from './ToastWrapper'
 
 const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
   const [isPWA, setIsPWA] = useState(false)
@@ -41,12 +41,9 @@ const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
                   <LivePeerWrapper>
                     <ApolloWrapper>
                       <ShowLoadingWrapper>
-                        <ToastContainer
-                          position="bottom-left"
-                          theme="dark"
-                          closeButton={false}
-                        />
-                        <UILayout>{children}</UILayout>
+                        <ToastWrapper>
+                          <UILayout>{children}</UILayout>
+                        </ToastWrapper>
                       </ShowLoadingWrapper>
                     </ApolloWrapper>
                   </LivePeerWrapper>
