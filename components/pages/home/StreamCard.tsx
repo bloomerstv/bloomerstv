@@ -8,6 +8,7 @@ import LiveDiv from '../../ui/LiveDiv'
 const StreamCard = ({ streamer }: { streamer: StreamerWithProfile }) => {
   return (
     <Link
+      prefetch
       href={`/${formatHandle(streamer?.profile)}`}
       className="no-underline text-p-text w-full"
     >

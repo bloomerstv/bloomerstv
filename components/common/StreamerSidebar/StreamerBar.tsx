@@ -7,6 +7,7 @@ import Link from 'next/link'
 const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
   return (
     <Link
+      prefetch
       href={`/${formatHandle(streamer?.profile)}`}
       key={streamer?.profileId}
       className="flex flex-row no-underline w-full items-center px-4 py-2 justify-between hover:bg-p-hover cursor-pointer"

@@ -6,7 +6,7 @@ import Link from 'next/link'
 const TopHeader = () => {
   return (
     <div className="flex flex-row items-center justify-between p-2 px-4 shadow-sm bg-s-bg h-[60px]">
-      <Link href="/" className="no-underline">
+      <Link prefetch href="/" className="no-underline">
         <div className="transition-all duration-200 ease-in-out font-bold text-s-text hover:text-p-text no-underline cursor-pointer">
           {APP_NAME}
         </div>

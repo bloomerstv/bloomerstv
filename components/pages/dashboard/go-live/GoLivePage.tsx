@@ -36,7 +36,7 @@ const GoLivePage = () => {
       </div>
       <div className="sm:w-[350px] flex-none h-full">
         {/* {createdPublicationId ? ( */}
-        <LiveChat profileId={data?.profile?.id} />
+        {data?.profile?.id && <LiveChat profileId={data?.profile?.id} />}
         {/* // ) : (
         //   <div className="flex bg-s-bg flex-col gap-y-8 items-center justify-center h-full">
         //     <CircularProgress color="secondary" />

@@ -20,7 +20,6 @@ const inter = Inter({ subsets: ['latin'] })
 
 const UILayout: React.FC<Props> = (props) => {
   const isMobile = useIsMobile()
-
   const pathname = usePathname()
 
   if (isMobile) {

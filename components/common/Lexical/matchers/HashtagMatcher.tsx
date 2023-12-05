@@ -13,7 +13,10 @@ export const Hashtag = ({ ...props }: any) => {
       }}
       className="inline-flex text-blue-400 items-center space-x-1"
     >
-      <Link href={`/search?q=${props.display.slice(1)}&type=publication`}>
+      <Link
+        prefetch
+        href={`/search?q=${props.display.slice(1)}&type=publication`}
+      >
         {props.display}
       </Link>
     </span>

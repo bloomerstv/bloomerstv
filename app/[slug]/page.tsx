@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import ProfilePage from '../../components/pages/profile/ProfilePage'
 import { getHandle } from '../../utils/lib/getHandle'

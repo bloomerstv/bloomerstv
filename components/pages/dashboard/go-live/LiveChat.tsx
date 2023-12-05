@@ -1,12 +1,12 @@
 import { Button, IconButton, TextareaAutosize } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 
 // import { WebSocket } from 'ws'
 // import { createClient } from 'graphql-ws'
 // import { wsLensGraphEndpoint } from '../../../../utils/config'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import { timeAgo } from '../../../../utils/helpers'
-import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
+// import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
 import { LIVE_CHAT_WEB_SOCKET_URL } from '../../../../utils/config'
 import io from 'socket.io-client'
 import { SessionType, useSession } from '@lens-protocol/react-web'
@@ -18,12 +18,13 @@ import LoginIcon from '@mui/icons-material/Login'
 import Markup from '../../../common/Lexical/Markup'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
 import CloseIcon from '@mui/icons-material/Close'
+import { useEffectOnce } from 'usehooks-ts'
 interface MessageType {
   content: string
   avatarUrl: string
   handle: string
-  authorProfileId: string
   time: string
+  id: string
 }
 
 const LiveChat = ({
@@ -37,11 +38,13 @@ const LiveChat = ({
 }) => {
   const [messages, setMessages] = useState<MessageType[]>([])
   const [inputMessage, setInputMessage] = useState('')
-  const [socket, setSocket] = useState<any>()
-  const [isSocketWithAuthToken, setIsSocketWithAuthToken] = useState(false)
+  const [socket, setSocket] = useState<any>(null)
+  // const [isSocketWithAuthToken, setIsSocketWithAuthToken] = useState(false)
   const { data } = useSession()
   const [open, setOpen] = React.useState(false)
   const isMobile = useIsMobile()
+
+  const [uniqueMessages, setUniqueMessages] = useState<MessageType[]>([])
 
   const messagesEndRef = React.useRef(null)
 
@@ -51,77 +54,95 @@ const LiveChat = ({
   }
 
   useEffect(() => {
+    if (data?.type === SessionType.WithProfile) {
+      setOpen(false)
+    }
+  }, [data?.type])
+
+  useEffect(() => {
+    const seen = new Set()
+    const filteredArr = messages.filter((el) => {
+      const duplicate = seen.has(el.id)
+      seen.add(el.id)
+      return !duplicate
+    })
+    setUniqueMessages(filteredArr)
+  }, [messages])
+
+  useEffect(() => {
     scrollToBottom()
   }, [messages])
 
-  const listenToSocket = async () => {
-    if (socket) {
-      socket?.removeAllListeners()
-      socket?.disconnect()
-    }
-    const authorToken = await getAccessToken()
+  useEffectOnce(() => {
+    console.log('useEffect called') // Add this line
+    // const listenToSocket = async () => {
+    // const authorToken = await getAccessToken()
     const newSocket = io(LIVE_CHAT_WEB_SOCKET_URL, {
-      auth: {
-        token: authorToken
-      },
-      withCredentials: true
+      // auth: {
+      //   token: authorToken
+      // },
+      // withCredentials: true
     })
 
+    console.log('newSocket', newSocket)
+
     newSocket.on('connect', () => {
+      console.log('connected')
       setTimeout(() => {
         newSocket.emit('join', profileId)
+        // if (!isSocketWithAuthToken && authorToken) {
+        //   setIsSocketWithAuthToken(true)
+        // }
+        // @ts-ignore
+        setSocket(newSocket)
       }, 1000) // Wait for 1 second before joining the room
-
-      if (!isSocketWithAuthToken && authorToken) {
-        setIsSocketWithAuthToken(true)
-      }
-      setSocket(newSocket)
     })
 
     newSocket.on('message', (receivedData) => {
+      console.log('receivedData', receivedData)
       const {
         profileId: chatProfileId,
         content,
-        authorProfileId,
         avatarUrl,
-        handle
+        handle,
+        id
       } = receivedData
 
       if (chatProfileId === profileId) {
-        setMessages((prev) => {
-          return [
-            ...prev,
-            {
-              content,
-              authorProfileId,
-              avatarUrl,
-              handle: handle,
-              time: timeAgo(Date.now())
-            }
-          ]
-        })
+        setMessages((prev) => [
+          ...prev,
+          {
+            content,
+            avatarUrl,
+            handle,
+            time: timeAgo(new Date().getTime()),
+            id: id
+          }
+        ])
       }
     })
-  }
+    // }
 
-  useEffect(() => {
-    if (profileId && (!socket || !isSocketWithAuthToken)) {
-      listenToSocket()
-    }
+    // listenToSocket()
+
     return () => {
-      if (socket) {
-        socket.removeAllListeners()
-        socket.disconnect()
+      if (newSocket) {
+        newSocket?.disconnect()
+        newSocket?.close()
+        newSocket?.removeAllListeners()
       }
     }
     // @ts-ignore
-  }, [profileId, data?.profile?.id])
+  }, [])
 
   const sendMessage = async () => {
     if (data?.type !== SessionType.WithProfile) {
       return
     }
+
+    console.log('sending message')
     if (socket && inputMessage.trim() !== '') {
+      // @ts-ignore
       socket.emit('message', {
         profileId,
         content: inputMessage,
@@ -141,7 +162,7 @@ const LiveChat = ({
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
       >
-        <LoginComponent onClose={() => setOpen(false)} />
+        <LoginComponent />
       </ModalWrapper>
       {/* title section */}
 
@@ -159,7 +180,7 @@ const LiveChat = ({
         style={{ minWidth: 0 }}
         className="h-full flex-grow flex-col justify-end flex overflow-auto py-1"
       >
-        {messages.map((msg, index) => (
+        {uniqueMessages.map((msg, index) => (
           <div key={index} className="flex flex-row px-3 my-1.5">
             <img
               src={msg.avatarUrl}
@@ -185,9 +206,7 @@ const LiveChat = ({
 
       {/* input section */}
       <div className="w-full py-1.5 px-3 border-t border-p-border">
-        {data?.type === SessionType.WithProfile &&
-        isSocketWithAuthToken &&
-        socket ? (
+        {data?.type === SessionType.WithProfile && socket ? (
           <div className="w-full flex flex-row items-end gap-x-2">
             {inputMessage.trim().length > 0 && (
               <img
@@ -197,7 +216,7 @@ const LiveChat = ({
               />
             )}
             <TextareaAutosize
-              className="text-sm outline-none bg-p-bg w-full font-normal font-sans leading-normal px-3 py-1 mb-1 rounded-xl "
+              className="text-sm text-p-text outline-none bg-p-bg w-full font-normal font-sans leading-normal px-3 py-1 mb-1 rounded-xl "
               aria-label="empty textarea"
               placeholder="Chat..."
               style={{
@@ -244,4 +263,4 @@ const LiveChat = ({
   )
 }
 
-export default LiveChat
+export default memo(LiveChat)

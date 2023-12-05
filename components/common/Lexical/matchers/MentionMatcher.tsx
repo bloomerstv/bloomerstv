@@ -18,7 +18,7 @@ export const Mention = ({ ...props }: any) => {
         e.stopPropagation()
       }}
     >
-      <Link href={`/${profile?.handle}`} className="no-underline">
+      <Link prefetch href={`/${profile?.handle}`} className="no-underline">
         <span className="hover:underline text-blue-400 cursor-pointer">
           {profile?.handle && `@${profile?.handle}`}
         </span>

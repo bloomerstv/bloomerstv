@@ -387,7 +387,7 @@ const ProfileBar = ({
             )}
 
             {/* live chat button */}
-            <MobileChatButton profileId={profile?.id} />
+            {profile?.id && <MobileChatButton profileId={profile?.id} />}
 
             {/* share button */}
             <Button

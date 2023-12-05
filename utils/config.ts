@@ -1,4 +1,4 @@
-export const APP_NAME = 'BloomersTv'
+export const APP_NAME = 'BloomersTV'
 export const APP_LINK = 'https://bloomers.tv'
 export const APP_ID = 'bloomers.tv'
 export const STS_TOKEN_URL = process.env.NEXT_PUBLIC_STS_TOKEN_URL
