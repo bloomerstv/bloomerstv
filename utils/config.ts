@@ -37,5 +37,6 @@ export const wsLensGraphEndpoint = isMainnet
   : 'wss://api-v2-mumbai-live.lens.dev'
 export const lensUrl = isMainnet ? lensMainnetUrl : lensTestnetUrl
 export const handlePrefix = isMainnet ? 'lens/' : 'test/'
-export const defaultSponsored = false
+export const defaultSponsored =
+  process.env.NEXT_PUBLIC_DEFAULT_SPONSORED === 'true'
 export const SHARE_LENS_URL = 'https://share.lens.xyz'

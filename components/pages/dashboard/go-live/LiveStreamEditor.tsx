@@ -17,7 +17,12 @@ import {
   useSession
 } from '@lens-protocol/react-web'
 import { Button, TextField } from '@mui/material'
-import { APP_ID, APP_LINK, LIVE_PEER_RTMP_URL } from '../../../../utils/config'
+import {
+  APP_ID,
+  APP_LINK,
+  LIVE_PEER_RTMP_URL,
+  defaultSponsored
+} from '../../../../utils/config'
 import { useApolloClient } from '@apollo/client'
 import { liveStream } from '@lens-protocol/metadata'
 import formatHandle from '../../../../utils/lib/formatHandle'
@@ -105,7 +110,8 @@ const LiveStreamEditor = ({
     }
     // invoke the `execute` function to create the post
     const result = await execute({
-      metadata: `ipfs://${cid}`
+      metadata: `ipfs://${cid}`,
+      sponsored: defaultSponsored
     })
 
     if (!result.isSuccess()) {

@@ -147,7 +147,7 @@ const ProfileBar = ({
       const result = await createMirror({
         // @ts-ignore
         mirrorOn: data?.id,
-        sponsored: true
+        sponsored: defaultSponsored
       })
 
       if (result.isFailure()) {
