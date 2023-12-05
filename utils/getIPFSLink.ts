@@ -1,4 +1,4 @@
-import { IPFS_ENDPOINT } from './config'
+import { IPFS_GATEWAY } from './contants'
 
 /**
  *
@@ -9,7 +9,7 @@ const getIPFSLink = (hash?: string): string => {
   if (!hash) {
     return ''
   }
-  const gateway = IPFS_ENDPOINT
+  const gateway = IPFS_GATEWAY
 
   return hash
     .replace(/^Qm[1-9A-Za-z]{44}/gm, `${gateway}${hash}`)
