@@ -36,7 +36,7 @@ const HeaderSearch = () => {
           <SearchIcon className="text-s-text" />
           <input
             type="text"
-            className="w-full rounded-xl border-0 text-sm px-6 text-lg font-semibold bg-s-bg outline-none text-s-text"
+            className="w-full rounded-xl border-0 text-sm px-6 text-lg font-semibold bg-s-bg outline-none text-p-text"
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}

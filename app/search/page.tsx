@@ -33,7 +33,7 @@ const SearchPage = () => {
         <div className="flex-grow">
           <input
             type="text"
-            className="w-full border-0 text-xl h-10 px-4 text-sm bg-p-bg outline-none"
+            className="w-full border-0 text-xl text-p-text h-10 px-4 text-sm bg-p-bg outline-none"
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
