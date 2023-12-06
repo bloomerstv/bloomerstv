@@ -18,20 +18,28 @@ import AutorenewIcon from '@mui/icons-material/Autorenew'
 import { toast } from 'react-toastify'
 import LoadingButton from '@mui/lab/LoadingButton'
 import StarIcon from '@mui/icons-material/Star'
-import { Button, Tooltip } from '@mui/material'
+import {
+  Button,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  MenuList,
+  Tooltip
+} from '@mui/material'
 import { APP_LINK, APP_NAME, defaultSponsored } from '../../../utils/config'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import { stringToLength } from '../../../utils/stringToLength'
 import MobileChatButton from './MobileChatButton'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
-
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ReplyIcon from '@mui/icons-material/Reply'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import LoginComponent from '../../common/LoginComponent'
 
 import LoginIcon from '@mui/icons-material/Login'
-
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 const ProfileBar = ({
   profile,
   streamer
@@ -43,7 +51,7 @@ const ProfileBar = ({
     profile?.operations?.isFollowedByMe?.value
   )
   const { execute, loading: followLoading } = useFollow()
-  const { execute: unFollow, loading: unFollowLoading } = useUnfollow()
+  const { execute: unFollow, loading: unFollowing } = useUnfollow()
 
   const { data: mySession } = useSession()
 
@@ -61,6 +69,15 @@ const ProfileBar = ({
   const isMobile = useIsMobile()
 
   const [open, setOpen] = useState(false)
+
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const isMenuOpen = Boolean(anchorEl)
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+  }
 
   useEffect(() => {
     if (data?.__typename === 'Post') {
@@ -162,61 +179,57 @@ const ProfileBar = ({
     }
   }
 
-  const FollowUnFollowButton = () => {
-    return (
-      <>
-        {!profile?.operations?.isFollowedByMe?.value &&
-          profile?.operations?.canFollow === TriStateValue.Yes && (
-            <Tooltip title="Follow this streamer" arrow>
-              <LoadingButton
-                loading={followLoading}
-                onClick={handleFollow}
-                variant="contained"
-                autoCapitalize="none"
-                size="small"
-                color="primary"
-                startIcon={<StarIcon />}
-                loadingPosition="start"
-                disabled={followLoading || isFollowing}
-                title="Follow this streamer"
-                sx={{
-                  borderRadius: isMobile ? '20px' : '4px',
-                  boxShadow: 'none'
-                }}
-              >
-                {isFollowing ? 'Following' : 'Follow'}
-              </LoadingButton>
-            </Tooltip>
-          )}
-
-        {profile?.operations?.isFollowedByMe?.value &&
-          profile?.operations?.canUnfollow && (
-            <Tooltip title="Unfollow" arrow>
-              <LoadingButton
-                loading={unFollowLoading}
-                onClick={handleUnFollow}
-                variant="contained"
-                autoCapitalize="none"
-                size="small"
-                color="secondary"
-                startIcon={<StarIcon />}
-                loadingPosition="start"
-                disabled={!isFollowing}
-                sx={{
-                  borderRadius: isMobile ? '20px' : '4px',
-                  boxShadow: 'none'
-                }}
-              >
-                {isFollowing ? 'Following' : 'Follow'}
-              </LoadingButton>
-            </Tooltip>
-          )}
-      </>
-    )
-  }
-
   return (
     <div className="w-full">
+      <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={isMenuOpen}
+        onClose={handleMenuClose}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: 1.5,
+            '& .MuiAvatar-root': {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1
+            },
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0
+            }
+          }
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuList>
+          <MenuItem
+            onClick={async () => {
+              await handleUnFollow()
+              handleMenuClose()
+            }}
+            disabled={unFollowing}
+          >
+            <ListItemIcon>
+              <PersonRemoveIcon fontSize="small" />
+            </ListItemIcon>
+            Unfollow
+          </MenuItem>
+        </MenuList>
+      </Menu>
       <ModalWrapper
         open={open}
         title="login"
@@ -299,7 +312,29 @@ const ProfileBar = ({
               </Tooltip>
             )}
 
-            <FollowUnFollowButton />
+            {!isFollowing &&
+              profile?.operations?.canFollow === TriStateValue.Yes && (
+                <Tooltip title="Follow this streamer" arrow>
+                  <LoadingButton
+                    loading={followLoading}
+                    onClick={handleFollow}
+                    variant="contained"
+                    autoCapitalize="none"
+                    size="small"
+                    color="primary"
+                    startIcon={<StarIcon />}
+                    loadingPosition="start"
+                    disabled={followLoading || isFollowing}
+                    title="Follow this streamer"
+                    sx={{
+                      borderRadius: isMobile ? '20px' : '4px',
+                      boxShadow: 'none'
+                    }}
+                  >
+                    {isFollowing ? 'Following' : 'Follow'}
+                  </LoadingButton>
+                </Tooltip>
+              )}
 
             {/* share button */}
             {!isMobile && (
@@ -336,6 +371,12 @@ const ProfileBar = ({
                   Share
                 </Button>
               </div>
+            )}
+
+            {isFollowing && profile?.operations?.canUnfollow && (
+              <IconButton onClick={handleMenuClick}>
+                <MoreVertIcon className="text-s-text" />
+              </IconButton>
             )}
           </div>
         </div>
