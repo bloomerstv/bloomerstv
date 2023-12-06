@@ -19,11 +19,16 @@ import { useRouter } from 'next/navigation'
 import Settings from '@mui/icons-material/Settings'
 import CircleIcon from '@mui/icons-material/Circle'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
+import ModalWrapper from '../../../ui/Modal/ModalWrapper'
+import LoginComponent from '../../../common/LoginComponent'
+import LoginIcon from '@mui/icons-material/Login'
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 
 const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
   const isMobile = useIsMobile()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
+  const [isOpen, setIsOpen] = React.useState(false)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
@@ -41,9 +46,23 @@ const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
     handleClose()
   }
 
+  const handleSwitchProfile = async () => {
+    await execute()
+    handleClose()
+  }
+
   const { push } = useRouter()
   return (
     <div>
+      <ModalWrapper
+        open={isOpen}
+        title="login"
+        Icon={<LoginIcon fontSize="small" />}
+        onClose={() => setIsOpen(false)}
+        onOpen={() => setIsOpen(true)}
+      >
+        <LoginComponent open={open} onClose={() => setIsOpen(false)} />
+      </ModalWrapper>
       <IconButton
         onClick={handleClick}
         size="small"
@@ -106,6 +125,12 @@ const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
               className="w-6 h-6 rounded-full mr-3"
             />
             {formatHandle(profile)}
+          </MenuItem>
+          <MenuItem onClick={handleSwitchProfile}>
+            <ListItemIcon>
+              <SwapHorizIcon fontSize="small" />
+            </ListItemIcon>
+            Switch Profile
           </MenuItem>
           <Divider />
 

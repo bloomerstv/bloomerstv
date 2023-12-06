@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import clsx from 'clsx'
+import { useTheme } from '../../wrappers/TailwindThemeProvider'
 // todo: show available profiles modal and allow user to select profile to login
 const style = {
   position: 'absolute',
@@ -40,6 +41,7 @@ const ModalWrapper = ({
   hideBackdrop?: boolean
 }) => {
   const isMobile = useIsMobile()
+  const { theme } = useTheme()
 
   if (isMobile) {
     return (
@@ -54,7 +56,7 @@ const ModalWrapper = ({
           '.MuiDrawer-paper': {
             borderTopLeftRadius: '16px',
             borderTopRightRadius: '16px',
-            background: '#1E1E1E'
+            background: theme === 'light' ? '#FFFFFF' : '#1E1E1E'
           }
         }}
       >

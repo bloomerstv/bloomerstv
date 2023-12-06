@@ -7,15 +7,20 @@ import {
 import { CircularProgress } from '@mui/material'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import clsx from 'clsx'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 import getAvatar from '../../utils/lib/getAvatar'
 import formatHandle from '../../utils/lib/formatHandle'
 import LoadingButton from '@mui/lab/LoadingButton'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
-
-const LoginComponent = ({ onClose }: { onClose?: () => void }) => {
+import LoginIcon from '@mui/icons-material/Login'
+const LoginComponent = ({
+  open,
+  onClose
+}: {
+  open?: boolean
+  onClose?: () => void
+}) => {
   const { data } = useSession()
   const { disconnectAsync } = useDisconnect()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
@@ -28,12 +33,21 @@ const LoginComponent = ({ onClose }: { onClose?: () => void }) => {
     }
   })
   const { execute, loading: logging } = useLogin()
-  if (data?.type === SessionType.WithProfile) {
-    if (onClose) {
-      onClose()
+
+  useEffect(() => {
+    if (open && !isConnected && openConnectModal) {
+      openConnectModal()
     }
-    return null
-  }
+  }, [open, isConnected])
+
+  useEffect(() => {
+    if (data?.type === SessionType.WithProfile) {
+      if (onClose) {
+        onClose()
+      }
+    }
+  }, [data?.type])
+
   return (
     <div className="p-4 sm:p-0">
       {isConnected ? (
@@ -77,7 +91,7 @@ const LoginComponent = ({ onClose }: { onClose?: () => void }) => {
                     }}
                     loading={logging && selectedProfileId === profile.id}
                     loadingPosition="start"
-                    startIcon={<ArrowForwardIcon />}
+                    startIcon={<LoginIcon />}
                     sx={{
                       borderRadius: '2rem'
                     }}

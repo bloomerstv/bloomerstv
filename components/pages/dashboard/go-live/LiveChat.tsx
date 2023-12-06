@@ -162,7 +162,7 @@ const LiveChat = ({
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
       >
-        <LoginComponent />
+        <LoginComponent onClose={() => setOpen(false)} open={open} />
       </ModalWrapper>
       {/* title section */}
 

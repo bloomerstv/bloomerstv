@@ -3,12 +3,11 @@
 import { SessionType, useSession } from '@lens-protocol/react-web'
 import React from 'react'
 import AvatarWithOptions from './AvatarWithOptions'
-import { Button, IconButton } from '@mui/material'
+import { Button } from '@mui/material'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import LoginIcon from '@mui/icons-material/Login'
 import LoginComponent from '../../../common/LoginComponent'
-import useIsMobile from '../../../../utils/hooks/useIsMobile'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import { useTheme } from '../../../wrappers/TailwindThemeProvider'
 
 const LoginButton = () => {
   const { data } = useSession()
@@ -16,8 +15,7 @@ const LoginButton = () => {
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
-
-  const isMobile = useIsMobile()
+  const { theme } = useTheme()
 
   return (
     <>
@@ -28,23 +26,32 @@ const LoginButton = () => {
         onClose={handleClose}
         onOpen={handleOpen}
       >
-        <LoginComponent onClose={handleClose} />
+        <LoginComponent open={open} onClose={handleClose} />
       </ModalWrapper>
       {data?.type === SessionType.Anonymous && (
         <>
-          {isMobile ? (
+          {/* {isMobile ? (
             <IconButton onClick={handleOpen}>
-              <AccountCircleIcon />
+              <img
+                src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
+                className="w-8 h-8 rounded-full"
+              />
             </IconButton>
-          ) : (
-            <Button
-              variant="contained"
-              onClick={handleOpen}
-              startIcon={<AccountCircleIcon />}
-            >
-              Login
-            </Button>
-          )}
+          ) : ( */}
+          <Button
+            variant="contained"
+            onClick={handleOpen}
+            size="small"
+            startIcon={
+              <img
+                src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
+                className="w-8 h-8 rounded-full"
+              />
+            }
+          >
+            Login
+          </Button>
+          {/* )} */}
         </>
       )}
       {data?.type === SessionType.WithProfile && (
