@@ -30,16 +30,9 @@ import formatHandle from '../../../../utils/lib/formatHandle'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
 import clsx from 'clsx'
-import { getPublicationShareLink } from '../../../../utils/lib/getPublicationShareLink'
 import StartLoadingPage from '../../loading/StartLoadingPage'
 
-const LiveStreamEditor = ({
-  createdPublicationId,
-  setCreatedPublicationId
-}: {
-  createdPublicationId: string | null
-  setCreatedPublicationId: (id: string | null) => void
-}) => {
+const LiveStreamEditor = () => {
   const { data: session } = useSession()
   const { data, error, refetch, loading } = useMyStreamQuery()
   const [startedStreaming, setStartedStreaming] = React.useState(false)
@@ -85,8 +78,9 @@ const LiveStreamEditor = ({
 
     const metadata = liveStream({
       title: streamName,
-      content: `${streamName} \n Live on ${profileLink}`,
+      content: `${streamName} \nLive Chat at ${profileLink}`,
       marketplace: {
+        name: streamName,
         description: `${streamName} \n Live on ${profileLink}`,
         external_url: profileLink
       },
@@ -147,8 +141,6 @@ const LiveStreamEditor = ({
       // check if should create new post
       const res = await shouldCreateNewPost()
       if (!res) {
-        // @ts-ignore
-        setCreatedPublicationId(myStream?.latestStreamPublicationId)
         return
       }
 
@@ -163,7 +155,7 @@ const LiveStreamEditor = ({
         return
       }
 
-      setCreatedPublicationId(publicationId)
+      console.log('created publicationId', publicationId)
       // submit the lens post id to create a lens stream session to api
       // so when/if we check for lens post id on the latest session, it will be there
 
@@ -252,18 +244,9 @@ const LiveStreamEditor = ({
 
           <div className="font-semibold ">
             {startedStreaming
-              ? `You're live! End your stream from obs or your streaming software.`
+              ? `You're live! You can end your stream from obs or your streaming software.`
               : 'Start streaming from obs or your streaming software to go live'}
           </div>
-          {startedStreaming && createdPublicationId && (
-            <a
-              target="_blank"
-              href={getPublicationShareLink(createdPublicationId)}
-              rel="noreferrer"
-            >
-              Lens Post
-            </a>
-          )}
         </div>
       </div>
 

@@ -1,0 +1,7 @@
+query GetMyRecordedStreamSessions($skip: Int) {
+  getMyRecordedStreamSessions(skip: $skip) {
+    publicationId
+    mp4Url
+    sourceSegmentsDuration
+  }
+}

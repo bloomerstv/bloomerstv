@@ -11,7 +11,7 @@ const DashboardSidebar = () => {
   const pathname = usePathname()
   const { data } = useSession()
   return (
-    <div className="w-1/6 min-w-[250px] h-full bg-s-bg">
+    <div className="w-1/6 min-w-[250px] h-full bg-s-bg overflow-auto">
       {data?.type === SessionType.WithProfile && (
         <div className="flex flex-col items-center justify-center my-4">
           <img

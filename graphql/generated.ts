@@ -71,6 +71,7 @@ export type MyStream = Stream & {
 
 export type Query = {
   __typename?: 'Query'
+  getMyRecordedStreamSessions?: Maybe<Array<Maybe<RecordedSession>>>
   liveStreamers?: Maybe<Array<Maybe<Streamer>>>
   myStream?: Maybe<MyStream>
   ping?: Maybe<Scalars['String']['output']>
@@ -78,8 +79,20 @@ export type Query = {
   streamer?: Maybe<SingleStreamer>
 }
 
+export type QueryGetMyRecordedStreamSessionsArgs = {
+  skip?: InputMaybe<Scalars['Int']['input']>
+}
+
 export type QueryStreamerArgs = {
   profileId: Scalars['String']['input']
+}
+
+export type RecordedSession = {
+  __typename?: 'RecordedSession'
+  mp4Url?: Maybe<Scalars['String']['output']>
+  publicationId?: Maybe<Scalars['String']['output']>
+  sourceSegmentsDuration?: Maybe<Scalars['Int']['output']>
+  transcodedSegmentsDuration?: Maybe<Scalars['Int']['output']>
 }
 
 export type SingleStreamer = Stream & {
@@ -129,6 +142,20 @@ export type CreateMyLensStreamSessionMutationVariables = Exact<{
 export type CreateMyLensStreamSessionMutation = {
   __typename?: 'Mutation'
   createMyLensStreamSession?: boolean | null
+}
+
+export type GetMyRecordedStreamSessionsQueryVariables = Exact<{
+  skip?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetMyRecordedStreamSessionsQuery = {
+  __typename?: 'Query'
+  getMyRecordedStreamSessions?: Array<{
+    __typename?: 'RecordedSession'
+    publicationId?: string | null
+    mp4Url?: string | null
+    sourceSegmentsDuration?: number | null
+  } | null> | null
 }
 
 export type LiveStreamersQueryVariables = Exact<{ [key: string]: never }>
@@ -259,6 +286,81 @@ export type CreateMyLensStreamSessionMutationOptions =
     CreateMyLensStreamSessionMutation,
     CreateMyLensStreamSessionMutationVariables
   >
+export const GetMyRecordedStreamSessionsDocument = gql`
+  query GetMyRecordedStreamSessions($skip: Int) {
+    getMyRecordedStreamSessions(skip: $skip) {
+      publicationId
+      mp4Url
+      sourceSegmentsDuration
+    }
+  }
+`
+
+/**
+ * __useGetMyRecordedStreamSessionsQuery__
+ *
+ * To run a query within a React component, call `useGetMyRecordedStreamSessionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyRecordedStreamSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyRecordedStreamSessionsQuery({
+ *   variables: {
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useGetMyRecordedStreamSessionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetMyRecordedStreamSessionsQuery,
+    GetMyRecordedStreamSessionsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    GetMyRecordedStreamSessionsQuery,
+    GetMyRecordedStreamSessionsQueryVariables
+  >(GetMyRecordedStreamSessionsDocument, options)
+}
+export function useGetMyRecordedStreamSessionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyRecordedStreamSessionsQuery,
+    GetMyRecordedStreamSessionsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    GetMyRecordedStreamSessionsQuery,
+    GetMyRecordedStreamSessionsQueryVariables
+  >(GetMyRecordedStreamSessionsDocument, options)
+}
+export function useGetMyRecordedStreamSessionsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetMyRecordedStreamSessionsQuery,
+    GetMyRecordedStreamSessionsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetMyRecordedStreamSessionsQuery,
+    GetMyRecordedStreamSessionsQueryVariables
+  >(GetMyRecordedStreamSessionsDocument, options)
+}
+export type GetMyRecordedStreamSessionsQueryHookResult = ReturnType<
+  typeof useGetMyRecordedStreamSessionsQuery
+>
+export type GetMyRecordedStreamSessionsLazyQueryHookResult = ReturnType<
+  typeof useGetMyRecordedStreamSessionsLazyQuery
+>
+export type GetMyRecordedStreamSessionsSuspenseQueryHookResult = ReturnType<
+  typeof useGetMyRecordedStreamSessionsSuspenseQuery
+>
+export type GetMyRecordedStreamSessionsQueryResult = Apollo.QueryResult<
+  GetMyRecordedStreamSessionsQuery,
+  GetMyRecordedStreamSessionsQueryVariables
+>
 export const LiveStreamersDocument = gql`
   query LiveStreamers {
     liveStreamers {

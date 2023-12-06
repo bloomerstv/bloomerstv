@@ -39,3 +39,16 @@ export const timeAgo = (time: number) => {
   }
   return 'just now'
 }
+
+export const localDateAndTime = (dataTime: string) => {
+  const date = new Date(dataTime)
+  const year = date.getFullYear()
+  const month = date.toLocaleString('default', { month: 'short' }) // Get short month name
+  const day = date.getDate()
+  const time = date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+
+  return `${day} ${month} ${year} ${time}`
+}

@@ -15,7 +15,7 @@ const StreamerSidebar = () => {
     return !streamer?.profile?.operations?.isFollowedByMe?.value
   })
   return (
-    <div className="w-1/6 min-w-[250px] h-full bg-s-bg py-6">
+    <div className="w-1/6 min-w-[250px] h-full bg-s-bg py-6 overflow-auto">
       <div className="flex flex-col w-full">
         <>
           <div className="font-bold px-4 py-2">Following Channels</div>
