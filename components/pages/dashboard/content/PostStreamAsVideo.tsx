@@ -26,13 +26,19 @@ const PostStreamAsVideo = ({
 }) => {
   // @ts-ignore
   const [content, setContent] = React.useState(
-    getPublicationData(publication?.metadata)?.content
+    getPublicationData(publication?.metadata)?.content?.split(
+      '\nLive Chat at'
+    )[0]
   )
 
   useEffect(() => {
     // @ts-ignore
-    setContent(getPublicationData(publication?.metadata)?.content)
-  }, [])
+    setContent(
+      getPublicationData(publication?.metadata)?.content?.split(
+        '\nLive Chat at'
+      )[0]
+    )
+  }, [publication?.metadata])
   const [open, setOpen] = useState(false)
 
   const { data: profile } = useSession()

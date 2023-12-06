@@ -150,7 +150,7 @@ const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
 
               <MenuItem
                 onClick={() => {
-                  push(`/dashboard/go-live`)
+                  push(`/dashboard/content`)
                   handleClose()
                 }}
               >
