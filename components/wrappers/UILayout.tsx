@@ -10,6 +10,8 @@ import LoginPage from '../pages/home/LoginPage'
 import StreamerSidebar from '../common/StreamerSidebar'
 import { usePathname } from 'next/navigation'
 import DashboardSidebar from '../pages/dashboard/DashboardSidebar'
+import Head from 'next/head'
+import { useTheme } from './TailwindThemeProvider'
 
 interface Props {
   // Define any props that the component will accept
@@ -21,37 +23,47 @@ const inter = Inter({ subsets: ['latin'] })
 const UILayout: React.FC<Props> = (props) => {
   const isMobile = useIsMobile()
   const pathname = usePathname()
+  const { theme } = useTheme()
 
-  if (isMobile) {
-    return (
-      <div
-        className={clsx(
-          inter.className,
-          'bg-p-bg text-p-text flex flex-col h-screen'
-        )}
-      >
-        <LoginPage />
-        <div className="flex-grow overflow-auto">{props.children}</div>
-        <MobileBottomNavbar />
-      </div>
-    )
-  }
   return (
-    <div className={clsx(inter.className, 'bg-p-bg text-p-text')}>
-      <div className="w-screen h-screen relative">
-        <div className="w-full absolute left-0 right-0 top-0 ">
-          <TopHeader />
-        </div>
-        <div className="start-row h-screen pt-[60px] overflow-hidden">
-          {pathname.startsWith('/dashboard') ? (
-            <DashboardSidebar />
-          ) : (
-            <StreamerSidebar />
+    <>
+      <Head>
+        <meta
+          name="theme-color"
+          content={`${theme === 'dark' ? '#18181b' : '#ffffff'}`}
+        />
+      </Head>
+      {isMobile ? (
+        <div
+          className={clsx(
+            inter.className,
+            'bg-p-bg text-p-text flex flex-col h-screen'
           )}
-          <div className="h-full overflow-auto w-full">{props.children}</div>
+        >
+          <LoginPage />
+          <div className="flex-grow overflow-auto">{props.children}</div>
+          <MobileBottomNavbar />
         </div>
-      </div>
-    </div>
+      ) : (
+        <div className={clsx(inter.className, 'bg-p-bg text-p-text')}>
+          <div className="w-screen h-screen relative">
+            <div className="w-full absolute left-0 right-0 top-0 ">
+              <TopHeader />
+            </div>
+            <div className="start-row h-screen pt-[60px] overflow-hidden">
+              {pathname.startsWith('/dashboard') ? (
+                <DashboardSidebar />
+              ) : (
+                <StreamerSidebar />
+              )}
+              <div className="h-full overflow-auto w-full">
+                {props.children}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
