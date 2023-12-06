@@ -1,39 +1,17 @@
 import React from 'react'
 import { useStreamersWithProfiles } from '../store/useStreamersWithProfiles'
-import { useProfiles } from '@lens-protocol/react-web'
-import { useLiveStreamersQuery } from '../../graphql/generated'
 import StreamerBar from './StreamerSidebar/StreamerBar'
 
 const StreamerSidebar = () => {
-  const { data } = useLiveStreamersQuery()
-  const setStreamersWithProfiles = useStreamersWithProfiles(
-    (state) => state.setStreamersWithProfiles
+  const streamersWithProfiles = useStreamersWithProfiles(
+    (state) => state.streamersWithProfiles
   )
 
-  const { data: profiles } = useProfiles({
-    where: {
-      // @ts-ignore
-      profileIds: data?.liveStreamers?.map((streamer) => streamer?.profileId)
-    }
-  })
-
-  const streamers = data?.liveStreamers?.map((streamer) => {
-    return {
-      ...streamer,
-      profile: profiles?.find((profile) => profile?.id === streamer?.profileId)
-    }
-  })
-
-  React.useEffect(() => {
-    // @ts-ignore
-    setStreamersWithProfiles(streamers)
-  }, [streamers])
-
-  const followingStreamers = streamers?.filter((streamer) => {
+  const followingStreamers = streamersWithProfiles?.filter((streamer) => {
     return streamer?.profile?.operations?.isFollowedByMe?.value
   })
 
-  const restOfTheStreamers = streamers?.filter((streamer) => {
+  const restOfTheStreamers = streamersWithProfiles?.filter((streamer) => {
     return !streamer?.profile?.operations?.isFollowedByMe?.value
   })
   return (

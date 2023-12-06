@@ -10,6 +10,9 @@ import LoginPage from '../pages/home/LoginPage'
 import StreamerSidebar from '../common/StreamerSidebar'
 import { usePathname } from 'next/navigation'
 import DashboardSidebar from '../pages/dashboard/DashboardSidebar'
+import { useLiveStreamersQuery } from '../../graphql/generated'
+import { useStreamersWithProfiles } from '../store/useStreamersWithProfiles'
+import { useProfiles } from '@lens-protocol/react-web'
 
 interface Props {
   // Define any props that the component will accept
@@ -22,6 +25,29 @@ const UILayout: React.FC<Props> = (props) => {
   const isMobile = useIsMobile()
   const pathname = usePathname()
 
+  const { data } = useLiveStreamersQuery()
+  const setStreamersWithProfiles = useStreamersWithProfiles(
+    (state) => state.setStreamersWithProfiles
+  )
+
+  const { data: profiles } = useProfiles({
+    where: {
+      // @ts-ignore
+      profileIds: data?.liveStreamers?.map((streamer) => streamer?.profileId)
+    }
+  })
+
+  const streamers = data?.liveStreamers?.map((streamer) => {
+    return {
+      ...streamer,
+      profile: profiles?.find((profile) => profile?.id === streamer?.profileId)
+    }
+  })
+
+  React.useEffect(() => {
+    // @ts-ignore
+    setStreamersWithProfiles(streamers)
+  }, [streamers])
   return (
     <>
       {isMobile ? (
