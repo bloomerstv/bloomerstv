@@ -9,6 +9,7 @@ import StreamerOffline from './StreamerOffline'
 import Video from '../../common/Video'
 import { getLiveStreamUrl } from '../../../utils/lib/getLiveStreamUrl'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
+import StartLoadingPage from '../loading/StartLoadingPage'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const isMobile = useIsMobile()
@@ -56,8 +57,8 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     )
   }, [streamer?.streamer?.playbackId, streamer?.streamer?.lastSeen])
 
-  if (profileLoading || streamerLoading) {
-    return <div>Loading...</div>
+  if (profileLoading || (streamerLoading && !streamer?.streamer)) {
+    return <StartLoadingPage />
   }
 
   if (!data) {

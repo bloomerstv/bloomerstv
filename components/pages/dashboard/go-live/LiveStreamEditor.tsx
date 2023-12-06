@@ -31,6 +31,7 @@ import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
 import clsx from 'clsx'
 import { getPublicationShareLink } from '../../../../utils/lib/getPublicationShareLink'
+import StartLoadingPage from '../../loading/StartLoadingPage'
 
 const LiveStreamEditor = ({
   createdPublicationId,
@@ -40,7 +41,7 @@ const LiveStreamEditor = ({
   setCreatedPublicationId: (id: string | null) => void
 }) => {
   const { data: session } = useSession()
-  const { data, error, refetch } = useMyStreamQuery()
+  const { data, error, refetch, loading } = useMyStreamQuery()
   const [startedStreaming, setStartedStreaming] = React.useState(false)
 
   const client = useApolloClient()
@@ -201,6 +202,10 @@ const LiveStreamEditor = ({
 
   if (session?.type !== SessionType.WithProfile) {
     return <div>You must be logged in to stream.</div>
+  }
+
+  if (loading && !myStream) {
+    return <StartLoadingPage />
   }
 
   if (!myStream) {

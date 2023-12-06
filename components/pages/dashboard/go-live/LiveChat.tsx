@@ -170,7 +170,7 @@ const LiveChat = ({
         <div className="font-semibold">{title}</div>
         {isMobile && onClose && (
           <IconButton onClick={onClose}>
-            <CloseIcon />
+            <CloseIcon className="text-s-text" />
           </IconButton>
         )}
       </div>
@@ -205,7 +205,7 @@ const LiveChat = ({
       </div>
 
       {/* input section */}
-      <div className="w-full py-1.5 px-3 border-t border-p-border">
+      <div className="w-full py-2 px-3 border-t border-p-border">
         {data?.type === SessionType.WithProfile && socket ? (
           <div className="w-full flex flex-row items-end gap-x-2">
             {inputMessage.trim().length > 0 && (
@@ -216,7 +216,7 @@ const LiveChat = ({
               />
             )}
             <TextareaAutosize
-              className="text-sm text-p-text outline-none bg-p-bg w-full font-normal font-sans leading-normal px-3 py-1 mb-1 rounded-xl "
+              className="text-sm text-p-text border-p-border outline-none bg-s-bg w-full font-normal font-sans leading-normal px-3 py-1.5 mb-0.5 rounded-xl "
               aria-label="empty textarea"
               placeholder="Chat..."
               style={{

@@ -49,10 +49,12 @@ const ModalWrapper = ({
         open={open}
         onClose={onClose}
         onOpen={onOpen}
+        disableSwipeToOpen
         sx={{
           '.MuiDrawer-paper': {
             borderTopLeftRadius: '16px',
-            borderTopRightRadius: '16px'
+            borderTopRightRadius: '16px',
+            background: '#1E1E1E'
           }
         }}
       >
@@ -83,11 +85,12 @@ const ModalWrapper = ({
           timeout: 500
         }
       }}
+      sx={{}}
       hideBackdrop={hideBackdrop}
     >
       <Fade in={open}>
         <Box sx={style}>
-          <div className="min-w-[400px] bg-p-bg rounded-xl shadow-xl">
+          <div className="min-w-[400px] bg-s-bg rounded-xl shadow-xl">
             <div className="between-row p-4 border-b border-p-border">
               <div className="start-row space-x-4">
                 <div className="centered-row">{Icon}</div>
