@@ -10,8 +10,6 @@ import LoginPage from '../pages/home/LoginPage'
 import StreamerSidebar from '../common/StreamerSidebar'
 import { usePathname } from 'next/navigation'
 import DashboardSidebar from '../pages/dashboard/DashboardSidebar'
-import Head from 'next/head'
-import { useTheme } from './TailwindThemeProvider'
 
 interface Props {
   // Define any props that the component will accept
@@ -23,16 +21,9 @@ const inter = Inter({ subsets: ['latin'] })
 const UILayout: React.FC<Props> = (props) => {
   const isMobile = useIsMobile()
   const pathname = usePathname()
-  const { theme } = useTheme()
 
   return (
     <>
-      <Head>
-        <meta
-          name="theme-color"
-          content={`${theme === 'dark' ? '#18181b' : '#ffffff'}`}
-        />
-      </Head>
       {isMobile ? (
         <div
           className={clsx(
