@@ -8,7 +8,7 @@ const LiveStreamerFeed = () => {
   )
   return (
     <div className="sm:m-8 my-4">
-      <div className="text-p-text font-bold text-xl py-2 px-2 mb-4 sm:mb-8">
+      <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
         Live Channels
       </div>
 
@@ -19,7 +19,7 @@ const LiveStreamerFeed = () => {
           })}
         </div>
       ) : (
-        <div className="text-s-text font-bold text-xl py-2 px-2 mb-4 sm:mb-8">
+        <div className="text-s-text font-bold text-xl px-2 mb-4 sm:mb-8">
           No one is live right now
         </div>
       )}
