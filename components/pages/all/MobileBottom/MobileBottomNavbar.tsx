@@ -3,9 +3,9 @@
 import { BottomNavigation, BottomNavigationAction } from '@mui/material'
 import React, { useEffect } from 'react'
 import HomeIcon from '@mui/icons-material/Home'
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports'
 import SearchIcon from '@mui/icons-material/Search'
 import { usePathname, useRouter } from 'next/navigation'
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo'
 const MobileBottomNavbar = () => {
   const [value, setValue] = React.useState(0)
   const router = useRouter()
@@ -34,7 +34,7 @@ const MobileBottomNavbar = () => {
       }}
     >
       <BottomNavigationAction label="Home" icon={<HomeIcon />} />
-      <BottomNavigationAction label="Categories" icon={<SportsEsportsIcon />} />
+      <BottomNavigationAction label="Clips" icon={<OndemandVideoIcon />} />
       <BottomNavigationAction label="Search" icon={<SearchIcon />} />
     </BottomNavigation>
   )
