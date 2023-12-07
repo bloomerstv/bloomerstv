@@ -58,8 +58,8 @@
   },
   "dependencies": {
     "@lens-protocol/metadata": "^1.0.5",
-    "@lens-protocol/react-web": "^2.0.0-alpha.24",
-    "@lens-protocol/wagmi": "^3.0.0-alpha.21",
+    "@lens-protocol/react-web": "^2.0.0-alpha.25",
+    "@lens-protocol/wagmi": "^3.0.0-alpha.22",
     "@lexical/react": "^0.12.4",
     "@livepeer/react": "^3.0.7",
     "aws-crt": "^1.19.0",

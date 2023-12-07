@@ -1,4 +1,5 @@
 import {
+  Post,
   Profile,
   PublicationReactionType,
   SessionType,
@@ -29,7 +30,6 @@ import {
 } from '@mui/material'
 import { APP_LINK, APP_NAME, defaultSponsored } from '../../../utils/config'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
-import { stringToLength } from '../../../utils/stringToLength'
 import MobileChatButton from './MobileChatButton'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
@@ -40,12 +40,15 @@ import LoginComponent from '../../common/LoginComponent'
 
 import LoginIcon from '@mui/icons-material/Login'
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
+import Markup from '../../common/Lexical/Markup'
 const ProfileBar = ({
   profile,
-  streamer
+  streamer,
+  post
 }: {
   profile: Profile
   streamer?: SingleStreamer
+  post?: Post
 }) => {
   const [isFollowing, setIsFollowing] = React.useState<boolean>(
     profile?.operations?.isFollowedByMe?.value
@@ -59,6 +62,8 @@ const ProfileBar = ({
     // @ts-ignore
     forId: streamer?.latestStreamPublicationId
   })
+
+  const [publication, setPublication] = useState<Post | null | undefined>(post)
 
   const [liked, setLiked] = React.useState(false)
   const [isMirrored, setIsMirrored] = React.useState(false)
@@ -80,11 +85,20 @@ const ProfileBar = ({
   }
 
   useEffect(() => {
-    if (data?.__typename === 'Post') {
+    if (data?.__typename === 'Post' && !post) {
+      setPublication(data)
       setLiked(data?.operations?.hasUpvoted)
       setIsMirrored(data?.operations?.hasMirrored)
     }
   }, [data?.id])
+
+  useEffect(() => {
+    if (post) {
+      setPublication(post)
+      setLiked(post?.operations?.hasUpvoted)
+      setIsMirrored(post?.operations?.hasMirrored)
+    }
+  }, [post])
 
   const handleFollow = async () => {
     try {
@@ -142,7 +156,7 @@ const ProfileBar = ({
       if (!mustLogin('Must Login to like')) return
       const result = await toggleReaction({
         // @ts-ignore
-        publication: data,
+        publication: publication,
         reaction: PublicationReactionType.Upvote
       })
 
@@ -163,7 +177,7 @@ const ProfileBar = ({
       if (!mustLogin('Must Login to mirror')) return
       const result = await createMirror({
         // @ts-ignore
-        mirrorOn: data?.id,
+        mirrorOn: publication?.id,
         sponsored: defaultSponsored
       })
 
@@ -176,6 +190,33 @@ const ProfileBar = ({
       console.log(error)
       // @ts-ignore
       toast.error(error?.message ?? error)
+    }
+  }
+
+  const handleShare = () => {
+    if (navigator.share) {
+      if (!streamer && publication) {
+        // share publication instead
+        navigator
+          .share({
+            title: APP_NAME,
+            // @ts-ignore
+            text: publication?.metadata?.title,
+            url: `${APP_LINK}/watch/${publication?.id}`
+          })
+          .then(() => console.log('Successful share'))
+          .catch((error) => console.log('Error sharing', error))
+        return
+      }
+
+      navigator
+        .share({
+          title: APP_NAME,
+          text: `Check out ${formatHandle(profile)} on ${APP_NAME}`,
+          url: `${APP_LINK}/${formatHandle(profile)}`
+        })
+        .then(() => console.log('Successful share'))
+        .catch((error) => console.log('Error sharing', error))
     }
   }
 
@@ -239,9 +280,13 @@ const ProfileBar = ({
       >
         <LoginComponent onClose={() => setOpen(false)} />
       </ModalWrapper>
-      {streamer?.streamName && (
-        <div className="font-bold m-2 sm:mx-8 sm:mt-6 text-lg">
-          {stringToLength(streamer?.streamName, 200)}
+      {/* @ts-ignore   */}
+      {(streamer?.streamName || publication?.metadata?.title) && (
+        <div className="m-2 sm:mx-8 sm:mt-6 ">
+          <Markup className="font-bold text-lg break-words whitespace-pre-wrap">
+            {/* @ts-ignore   */}
+            {streamer?.streamName || publication?.metadata?.title}
+          </Markup>
         </div>
       )}
 
@@ -268,7 +313,7 @@ const ProfileBar = ({
         <div className="flex flex-col items-end">
           <div className="end-col sm:start-row space-x-4">
             {/* like button  */}
-            {!isMobile && data?.__typename === 'Post' && data?.id && (
+            {!isMobile && publication?.id && (
               <Tooltip title="Like" arrow>
                 <Button
                   size="small"
@@ -286,14 +331,14 @@ const ProfileBar = ({
                     boxShadow: 'none'
                   }}
                 >
-                  {data?.stats?.upvotes}
+                  {publication?.stats?.upvotes}
                 </Button>
               </Tooltip>
             )}
 
             {/* mirror button */}
 
-            {!isMobile && data?.__typename === 'Post' && data?.id && (
+            {!isMobile && publication?.id && (
               <Tooltip title="Boost the stream" arrow>
                 <Button
                   size="small"
@@ -307,7 +352,7 @@ const ProfileBar = ({
                     boxShadow: 'none'
                   }}
                 >
-                  {data?.stats?.mirrors}
+                  {publication?.stats?.mirrors}
                 </Button>
               </Tooltip>
             )}
@@ -343,20 +388,7 @@ const ProfileBar = ({
                   size="small"
                   color="secondary"
                   variant="contained"
-                  onClick={() => {
-                    if (navigator.share) {
-                      navigator
-                        .share({
-                          title: APP_NAME,
-                          text: `Check out ${formatHandle(
-                            profile
-                          )} on ${APP_NAME}`,
-                          url: `${APP_LINK}/${formatHandle(profile)}`
-                        })
-                        .then(() => console.log('Successful share'))
-                        .catch((error) => console.log('Error sharing', error))
-                    }
-                  }}
+                  onClick={handleShare}
                   startIcon={
                     <ReplyIcon
                       style={{
@@ -383,10 +415,10 @@ const ProfileBar = ({
       </div>
 
       {isMobile && (
-        <div className="mx-2 my-3">
+        <div className="my-3">
           <div className="start-row gap-x-3 px-2 py-1">
             {/* like button */}
-            {data?.__typename === 'Post' && data?.id && (
+            {publication?.id && (
               <Button
                 size="small"
                 color="secondary"
@@ -404,12 +436,12 @@ const ProfileBar = ({
                   boxShadow: 'none'
                 }}
               >
-                {data?.stats?.upvotes}
+                {publication?.stats?.upvotes}
               </Button>
             )}
             {/* mirror button */}
 
-            {data?.__typename === 'Post' && data?.id && (
+            {publication?.id && (
               <Button
                 size="small"
                 color="secondary"
@@ -423,30 +455,21 @@ const ProfileBar = ({
                   boxShadow: 'none'
                 }}
               >
-                {data?.stats?.mirrors}
+                {publication?.stats?.mirrors}
               </Button>
             )}
 
             {/* live chat button */}
-            {profile?.id && <MobileChatButton profileId={profile?.id} />}
+            {profile?.id && !post && (
+              <MobileChatButton profileId={profile?.id} />
+            )}
 
             {/* share button */}
             <Button
               size="small"
               color="secondary"
               variant="contained"
-              onClick={() => {
-                if (navigator.share) {
-                  navigator
-                    .share({
-                      title: APP_NAME,
-                      text: `Check out ${formatHandle(profile)} on ${APP_NAME}`,
-                      url: `${APP_LINK}/${formatHandle(profile)}`
-                    })
-                    .then(() => console.log('Successful share'))
-                    .catch((error) => console.log('Error sharing', error))
-                }
-              }}
+              onClick={handleShare}
               sx={{
                 borderRadius: '20px',
                 boxShadow: 'none'

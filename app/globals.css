@@ -31,6 +31,10 @@
     @apply flex flex-col items-end;
   }
 
+  .centered {
+    @apply flex flex-col items-center justify-center w-full h-full;
+  }
+
   .spinner {
     @apply animate-spin rounded-full h-5 w-5 border border-t-2 border-r-2;
   }

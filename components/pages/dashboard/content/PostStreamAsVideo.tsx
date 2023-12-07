@@ -16,6 +16,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import getPublicationData from '../../../../utils/lib/getPublicationData'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
+import Video from '../../../common/Video'
 
 const PostStreamAsVideo = ({
   publication,
@@ -157,11 +158,13 @@ const PostStreamAsVideo = ({
             value={content}
           />
 
-          <video
+          {/* @ts-ignore */}
+          <Video src={session?.mp4Url?.toString()} />
+          {/* <video
             src={session?.mp4Url?.toString()}
             controls
             className="rounded-xl"
-          />
+          /> */}
         </div>
       </ModalWrapper>
       <Button

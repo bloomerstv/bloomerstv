@@ -8,7 +8,7 @@ interface VideoProps {
   src: string
   poster?: string
   className?: string
-  playerbackId?: string
+  playbackId?: string
   streamOfflineErrorComponent?: React.ReactNode
   onStreamStatusChange?: (isLive: boolean) => void
   autoPlay?: boolean
@@ -20,12 +20,12 @@ const Video: FC<VideoProps> = ({
   src,
   poster,
   className = '',
-  playerbackId,
   streamOfflineErrorComponent = null,
   onStreamStatusChange = () => {},
   autoPlay = true,
   muted = true,
-  loop = false
+  loop = false,
+  playbackId
 }) => {
   //   const currentProfile = useAppStore((state) => state.currentProfile)
 
@@ -39,7 +39,6 @@ const Video: FC<VideoProps> = ({
       <Player
         src={src}
         poster={poster}
-        playbackId={playerbackId}
         objectFit="contain"
         showLoadingSpinner={true}
         showUploadingIndicator
@@ -47,6 +46,7 @@ const Video: FC<VideoProps> = ({
         aspectRatio="16to9"
         autoPlay={autoPlay}
         muted={muted}
+        playbackId={playbackId}
         // viewerId={currentProfile?.ownedBy.address}
         controls={{ defaultVolume: 1 }}
         refetchPlaybackInfoInterval={1000 * 60 * 60 * 24}
@@ -55,7 +55,6 @@ const Video: FC<VideoProps> = ({
           ipfsGateway: IPFS_GATEWAY,
           arweaveGateway: ARWEAVE_GATEWAY
         }}
-        allowCrossOriginCredentials
         loop={loop}
         onStreamStatusChange={onStreamStatusChange}
         streamOfflineErrorComponent={streamOfflineErrorComponent}
@@ -69,6 +68,10 @@ const Video: FC<VideoProps> = ({
             volumeMiddle: '#ffffff',
             loading: '#1668b8',
             liveIndicator: '#1668b8'
+          },
+          sizes: {
+            iconButtonSize: '30px',
+            iconButtonSizeSm: '25px'
           }
         }}
       />

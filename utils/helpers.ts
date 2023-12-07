@@ -17,8 +17,12 @@ export const simpleTime = (time: number) => {
   return `${hours12}:${minutes12}:${seconds12} ${ampm}`
 }
 
-export const timeAgo = (time: number) => {
+export const timeAgo = (time: number | string) => {
   const now = new Date().getTime()
+
+  if (typeof time === 'string') {
+    time = new Date(time).getTime()
+  }
   const diff = now - time
   const seconds = Math.floor(diff / 1000)
   const minutes = Math.floor(seconds / 60)
@@ -51,4 +55,14 @@ export const localDateAndTime = (dataTime: string) => {
   })
 
   return `${day} ${month} ${year} ${time}`
+}
+
+export const secondsToTime = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds - hours * 3600) / 60)
+  const secondsLeft = seconds - hours * 3600 - minutes * 60
+
+  return `${hours ? `${hours}:` : ''}${
+    minutes ? `${minutes < 10 ? `0${minutes}` : minutes}:` : '00:'
+  }${secondsLeft < 10 ? `0${secondsLeft}` : secondsLeft}`
 }

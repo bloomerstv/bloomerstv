@@ -7,6 +7,7 @@ export interface MetadataAsset {
   cover?: string
   artist?: string
   title?: string
+  duration?: number | null
 }
 
 const getPublicationData = (
@@ -62,7 +63,8 @@ const getPublicationData = (
           uri: metadata.asset.video.optimized?.uri || videoAttachments?.uri,
           cover:
             metadata.asset.cover?.optimized?.uri || videoAttachments?.coverUri,
-          type: 'Video'
+          type: 'Video',
+          duration: metadata?.asset?.duration
         }
       }
     case 'MintMetadataV3':

@@ -71,7 +71,7 @@ const UILayout: React.FC<Props> = (props) => {
               {pathname.startsWith('/dashboard') ? (
                 <DashboardSidebar />
               ) : (
-                <StreamerSidebar />
+                <>{!pathname.startsWith('/watch/') && <StreamerSidebar />}</>
               )}
               <div className="h-full overflow-auto w-full">
                 {props.children}
