@@ -42,7 +42,7 @@ const Video: FC<VideoProps> = ({
         objectFit="contain"
         showLoadingSpinner={true}
         showUploadingIndicator
-        showPipButton={false}
+        showPipButton
         aspectRatio="16to9"
         autoPlay={autoPlay}
         muted={muted}
