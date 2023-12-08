@@ -41,6 +41,7 @@ import LoginComponent from '../../common/LoginComponent'
 import LoginIcon from '@mui/icons-material/Login'
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import Markup from '../../common/Lexical/Markup'
+import MobileCommentButton from '../watch/MobileCommentButton'
 const ProfileBar = ({
   profile,
   streamer,
@@ -415,8 +416,8 @@ const ProfileBar = ({
       </div>
 
       {isMobile && (
-        <div className="my-3">
-          <div className="start-row gap-x-3 px-2 py-1">
+        <div className="py-3 w-full">
+          <div className="start-row gap-x-3 px-2 py-1 w-full no-scrollbar  overflow-x-auto">
             {/* like button */}
             {publication?.id && (
               <Button
@@ -464,6 +465,8 @@ const ProfileBar = ({
               <MobileChatButton profileId={profile?.id} />
             )}
 
+            {post?.id && !streamer && <MobileCommentButton postId={post?.id} />}
+
             {/* share button */}
             <Button
               size="small"
@@ -474,6 +477,7 @@ const ProfileBar = ({
                 borderRadius: '20px',
                 boxShadow: 'none'
               }}
+              className="shrink-0"
               startIcon={
                 <ReplyIcon
                   style={{

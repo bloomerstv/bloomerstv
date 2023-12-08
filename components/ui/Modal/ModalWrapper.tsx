@@ -56,7 +56,8 @@ const ModalWrapper = ({
           '.MuiDrawer-paper': {
             borderTopLeftRadius: '16px',
             borderTopRightRadius: '16px',
-            background: theme === 'light' ? '#FFFFFF' : '#1E1E1E'
+            background: theme === 'light' ? '#FFFFFF' : '#1E1E1E',
+            overflowX: 'hidden'
           }
         }}
       >

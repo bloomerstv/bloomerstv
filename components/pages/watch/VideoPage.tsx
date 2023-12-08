@@ -5,7 +5,7 @@ import getPublicationData from '../../../utils/lib/getPublicationData'
 import ProfileInfoWithStream from '../profile/ProfileInfoWithStream'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import OtherVideosRecommendations from './OtherVideosRecommendations'
-// import CommentSection from './CommentSection'
+import CommentSection from './CommentSection'
 
 const VideoPage = ({ post }: { post: Post }) => {
   const isMobile = useIsMobile()
@@ -46,9 +46,13 @@ const VideoPage = ({ post }: { post: Post }) => {
       </div>
       <ProfileInfoWithStream profile={post?.by} post={post} />
 
-      {/* <CommentSection publicationId={post?.id} /> */}
-
-      {isMobile && <OtherVideosRecommendations className="py-4" />}
+      {!isMobile && (
+        <div className="border-t border-p-border mt-8 mb-4">
+          <div className="text-xl font-semibold my-4">Comments</div>
+          <CommentSection publicationId={post?.id} />
+        </div>
+      )}
+      {isMobile && <OtherVideosRecommendations className="py-4 border-t" />}
     </div>
   )
 }

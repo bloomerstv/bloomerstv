@@ -54,7 +54,7 @@ const UILayout: React.FC<Props> = (props) => {
         <div
           className={clsx(
             inter.className,
-            'bg-s-bg text-p-text flex flex-col h-screen'
+            'bg-s-bg text-p-text flex flex-col h-screen w-screen'
           )}
         >
           <LoginPage />
