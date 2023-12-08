@@ -68,11 +68,11 @@ const Video: FC<VideoProps> = ({
             volumeMiddle: '#ffffff',
             loading: '#1668b8',
             liveIndicator: '#1668b8'
-          },
-          sizes: {
-            iconButtonSize: '30px',
-            iconButtonSizeSm: '25px'
           }
+          // sizes: {
+          //   iconButtonSize: '30px',
+          //   iconButtonSizeSm: '25px'
+          // }
         }}
       />
     </div>

@@ -14,7 +14,8 @@ const TopHeader = () => {
         theme === 'dark' && 'border-b border-p-border'
       )}
     >
-      <Link prefetch href="/" className="no-underline">
+      <Link prefetch href="/" className="no-underline start-row">
+        <div className="bg-brand rounded-full w-6 h-6 mr-2" />
         <div className="transition-all duration-200 ease-in-out font-bold text-s-text hover:text-p-text no-underline cursor-pointer">
           {APP_NAME}
         </div>

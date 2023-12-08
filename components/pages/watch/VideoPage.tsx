@@ -27,7 +27,7 @@ const VideoPage = ({ post }: { post: Post }) => {
     <div className="h-full w-full">
       {/* @ts-ignore */}
 
-      <div className="rounded-md overflow-hidden bg-red-400">
+      <div className="sm:rounded-xl  overflow-hidden ">
         {post?.metadata?.__typename === 'LiveStreamMetadataV3' ? (
           <>
             {/* //todo here check if there is a recording is allowd to  from api, fetch it and show it here instead of liveUrl  */}

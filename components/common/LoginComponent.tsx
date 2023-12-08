@@ -35,10 +35,15 @@ const LoginComponent = ({
   const { execute, loading: logging } = useLogin()
 
   useEffect(() => {
-    if (open && !isConnected && openConnectModal) {
+    if (
+      open &&
+      !isConnected &&
+      openConnectModal &&
+      data?.type !== SessionType.WithProfile
+    ) {
       openConnectModal()
     }
-  }, [open, isConnected])
+  }, [open, isConnected, data?.type])
 
   useEffect(() => {
     if (data?.type === SessionType.WithProfile) {

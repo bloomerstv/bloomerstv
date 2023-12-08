@@ -30,7 +30,7 @@ const StreamerSidebar = () => {
             </div>
           ) : (
             <div className="px-4 py-2 text-sm text-s-text font-semibold">
-              No one from your following list is live right now
+              No one from your followings is live right now
             </div>
           )}
         </>

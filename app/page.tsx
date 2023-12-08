@@ -14,7 +14,10 @@ export default function Home() {
       {/* top header */}
       {isMobile && (
         <div className="flex flex-row items-center sticky top-0 z-10 justify-between p-2 sm:p-3 bg-s-bg">
-          <div className="font-bold">{APP_NAME}</div>
+          <div className="start-row">
+            <div className="bg-brand rounded-full w-6 h-6 mr-2" />
+            <div className="font-bold">{APP_NAME}</div>
+          </div>
           <LoginButton />
         </div>
       )}

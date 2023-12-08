@@ -54,12 +54,16 @@ const UILayout: React.FC<Props> = (props) => {
         <div
           className={clsx(
             inter.className,
-            'bg-p-bg text-p-text flex flex-col h-screen'
+            'bg-s-bg text-p-text flex flex-col h-screen'
           )}
         >
           <LoginPage />
-          <div className="flex-grow overflow-auto">{props.children}</div>
-          <MobileBottomNavbar />
+          <div className="flex-grow overflow-auto no-scrollbar">
+            {props.children}
+          </div>
+          <div className="shrink-0 w-full">
+            <MobileBottomNavbar />
+          </div>
         </div>
       ) : (
         <div className={clsx(inter.className, 'bg-p-bg text-p-text')}>
