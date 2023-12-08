@@ -5,11 +5,14 @@ export const STS_TOKEN_URL = process.env.NEXT_PUBLIC_STS_TOKEN_URL
 export const EVER_REGION = 'us-west-2'
 
 export const useOnlyPWAOnMobile = false
-export const isMainnet = process.env.NEXT_PUBLIC_LENS_MODE === 'mainnet'
+export const isMainnet = process.env.NEXT_PUBLIC_LENS_MODE
+  ? process.env.NEXT_PUBLIC_LENS_MODE === 'mainnet'
+  : true
 
 export const AVATAR = 'tr:w-300,h-300'
 
-export const NODE_API_MODE = process.env.NEXT_PUBLIC_NODE_API_MODE
+export const NODE_API_MODE =
+  process.env.NEXT_PUBLIC_NODE_API_MODE ?? 'production'
 
 export const LOCAL_NODE_API_URL = 'http://localhost:8000'
 export const PRODUCTION_NODE_API_URL = 'https://api.bloomers.tv'
@@ -37,6 +40,7 @@ export const wsLensGraphEndpoint = isMainnet
   : 'wss://api-v2-mumbai-live.lens.dev'
 export const lensUrl = isMainnet ? lensMainnetUrl : lensTestnetUrl
 export const handlePrefix = isMainnet ? 'lens/' : 'test/'
-export const defaultSponsored =
-  process.env.NEXT_PUBLIC_DEFAULT_SPONSORED === 'true'
+export const defaultSponsored = process.env.NEXT_PUBLIC_DEFAULT_SPONSORED
+  ? process.env.NEXT_PUBLIC_DEFAULT_SPONSORED === 'true'
+  : true
 export const SHARE_LENS_URL = 'https://share.lens.xyz'
