@@ -48,7 +48,7 @@ const HomeVideoCard = ({ post }: { post: Post }) => {
           <div className="start-row text-sm text-s-text gap-x-1.5">
             <Link
               prefetch
-              className="no-underline text-p-text group"
+              className="no-underline text-p-text group font-semibold text-s-text"
               href={`/${formatHandle(post?.by)}`}
             >
               <div className="">{formatHandle(post?.by)} </div>
