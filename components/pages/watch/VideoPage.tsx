@@ -52,7 +52,7 @@ const VideoPage = ({ post }: { post: Post }) => {
           <CommentSection publicationId={post?.id} />
         </div>
       )}
-      {isMobile && <OtherVideosRecommendations className="py-4 border-t" />}
+      {isMobile && <OtherVideosRecommendations className="py-4" />}
     </div>
   )
 }

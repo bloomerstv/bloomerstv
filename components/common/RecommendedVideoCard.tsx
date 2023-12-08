@@ -25,10 +25,10 @@ const RecommendedVideoCard = ({ post }: { post: Post }) => {
       href={`/watch/${post?.id}`}
     >
       <div className="w-full flex flex-row gap-x-3 font-semibold">
-        <div className="relative h-[100px] rounded-md">
+        <div className="relative h-[99px] w-[176px] rounded-md">
           <img
             src={asset?.cover}
-            className="h-full w-full object-cover rounded-md"
+            className="h-[99px] w-[176px] object-cover rounded-md"
           />
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             <PlayArrowIcon className="text-white transform transition-transform group-hover:scale-110 duration-500" />

@@ -44,7 +44,10 @@ const MobileCommentButton = ({ postId }: { postId: string }) => {
         onOpen={() => setOpen(true)}
         hideBackdrop
       >
-        <div style={{ height: `${heightOfChat}px` }} className="w-screen ">
+        <div
+          style={{ height: `${heightOfChat}px` }}
+          className="w-screen overflow-y-auto no-scrollbar"
+        >
           <div className="text-lg font-semibold px-3 py-1 border-b border-p-border">
             Comments
           </div>

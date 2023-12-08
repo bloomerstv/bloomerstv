@@ -57,12 +57,12 @@ const PostStreamAsVideo = ({
 
     const metadata = video({
       // @ts-ignore
-      title: streamTitle,
+      title: content,
       // @ts-ignore
-      content: streamTitle,
+      content: content,
       marketplace: {
-        name: streamTitle,
-        description: streamTitle,
+        name: content,
+        description: content,
         // @ts-ignore
         external_url: `${APP_LINK}/${formatHandle(profile?.profile)}`,
         // @ts-ignore

@@ -65,6 +65,54 @@ const CommentSection = ({
           />
         )
       })}
+      {data?.map((comment) => {
+        return (
+          <CommentRow
+            comment={comment as Comment}
+            key={comment?.id}
+            addNewCommment={(comment) => {
+              setNewComments([comment, ...newCommments])
+            }}
+            level={level}
+          />
+        )
+      })}
+      {data?.map((comment) => {
+        return (
+          <CommentRow
+            comment={comment as Comment}
+            key={comment?.id}
+            addNewCommment={(comment) => {
+              setNewComments([comment, ...newCommments])
+            }}
+            level={level}
+          />
+        )
+      })}
+      {data?.map((comment) => {
+        return (
+          <CommentRow
+            comment={comment as Comment}
+            key={comment?.id}
+            addNewCommment={(comment) => {
+              setNewComments([comment, ...newCommments])
+            }}
+            level={level}
+          />
+        )
+      })}
+      {data?.map((comment) => {
+        return (
+          <CommentRow
+            comment={comment as Comment}
+            key={comment?.id}
+            addNewCommment={(comment) => {
+              setNewComments([comment, ...newCommments])
+            }}
+            level={level}
+          />
+        )
+      })}
     </div>
   )
 }
