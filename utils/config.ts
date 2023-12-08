@@ -45,3 +45,4 @@ export const defaultSponsored = process.env.NEXT_PUBLIC_DEFAULT_SPONSORED
   : true
 export const SHARE_LENS_URL = 'https://share.lens.xyz'
 export const GITHUB_URL = 'https://github.com/bloomerstv/bloomerstv'
+export const FEEDBACK_URL = 'https://forms.gle/mbz1xyUQXdosJZSp8'

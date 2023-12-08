@@ -2,7 +2,7 @@ import React from 'react'
 import { useStreamersWithProfiles } from '../store/useStreamersWithProfiles'
 import StreamerBar from './StreamerSidebar/StreamerBar'
 import Link from 'next/link'
-import { GITHUB_URL } from '../../utils/config'
+import { FEEDBACK_URL, GITHUB_URL } from '../../utils/config'
 
 const StreamerSidebar = () => {
   const streamersWithProfiles = useStreamersWithProfiles(
@@ -56,10 +56,17 @@ const StreamerSidebar = () => {
         <div className="start-row flex-wrap gap-2 px-4 text-sm font-semibold">
           <Link
             href={GITHUB_URL}
-            className="no-underline text-s-text"
+            className="no-underline text-s-text hover:text-p-text"
             target="_blank"
           >
             Github
+          </Link>
+          <Link
+            href={FEEDBACK_URL}
+            className="no-underline text-s-text hover:text-p-text"
+            target="_blank"
+          >
+            Feedback
           </Link>
         </div>
       </div>
