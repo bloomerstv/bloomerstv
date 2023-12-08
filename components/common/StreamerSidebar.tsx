@@ -1,6 +1,8 @@
 import React from 'react'
 import { useStreamersWithProfiles } from '../store/useStreamersWithProfiles'
 import StreamerBar from './StreamerSidebar/StreamerBar'
+import Link from 'next/link'
+import { GITHUB_URL } from '../../utils/config'
 
 const StreamerSidebar = () => {
   const streamersWithProfiles = useStreamersWithProfiles(
@@ -16,8 +18,8 @@ const StreamerSidebar = () => {
   })
   return (
     <div className="w-1/6 min-w-[250px] h-full bg-s-bg py-6 overflow-auto">
-      <div className="flex flex-col w-full">
-        <>
+      <div className="flex flex-col w-full h-full justify-between">
+        <div className="flex flex-col w-full h-full overflow-y-auto">
           <div className="font-bold px-4 py-2">Following Channels</div>
           {followingStreamers?.length ? (
             <div className="flex flex-col w-full">
@@ -33,20 +35,33 @@ const StreamerSidebar = () => {
               No one from your followings is live right now
             </div>
           )}
-        </>
-        {Boolean(restOfTheStreamers?.length) && (
-          <>
-            <div className="font-bold px-4 py-2">Recommended Channels</div>
-            <div className="flex flex-col w-full">
-              {restOfTheStreamers?.map((streamer) => {
-                return (
-                  // @ts-ignore
-                  <StreamerBar key={streamer?.profileId} streamer={streamer} />
-                )
-              })}
-            </div>
-          </>
-        )}
+
+          {Boolean(restOfTheStreamers?.length) && (
+            <>
+              <div className="font-bold px-4 py-2">Recommended Channels</div>
+              <div className="flex flex-col w-full">
+                {restOfTheStreamers?.map((streamer) => {
+                  return (
+                    // @ts-ignore
+                    <StreamerBar
+                      key={streamer?.profileId}
+                      streamer={streamer}
+                    />
+                  )
+                })}
+              </div>
+            </>
+          )}
+        </div>
+        <div className="start-row flex-wrap gap-2 px-4 text-sm font-semibold">
+          <Link
+            href={GITHUB_URL}
+            className="no-underline text-s-text"
+            target="_blank"
+          >
+            Github
+          </Link>
+        </div>
       </div>
     </div>
   )

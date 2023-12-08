@@ -44,3 +44,4 @@ export const defaultSponsored = process.env.NEXT_PUBLIC_DEFAULT_SPONSORED
   ? process.env.NEXT_PUBLIC_DEFAULT_SPONSORED === 'true'
   : true
 export const SHARE_LENS_URL = 'https://share.lens.xyz'
+export const GITHUB_URL = 'https://github.com/bloomerstv/bloomerstv'
