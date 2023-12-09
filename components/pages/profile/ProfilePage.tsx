@@ -10,6 +10,8 @@ import Video from '../../common/Video'
 import { getLiveStreamUrl } from '../../../utils/lib/getLiveStreamUrl'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import StartLoadingPage from '../loading/StartLoadingPage'
+import CommentSection from '../watch/CommentSection'
+import AboutProfile from './AboutProfile'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const isMobile = useIsMobile()
@@ -79,6 +81,14 @@ const ProfilePage = ({ handle }: { handle: string }) => {
 
         {/* @ts-ignore */}
         <ProfileInfoWithStream profile={data} streamer={streamer?.streamer} />
+
+        {!isMobile && streamer?.streamer?.latestStreamPublicationId && (
+          <CommentSection
+            publicationId={streamer?.streamer?.latestStreamPublicationId}
+          />
+        )}
+
+        <AboutProfile profile={data} />
       </div>
       {data?.id && !isMobile && (
         <div className="w-[350px] flex-none h-full">

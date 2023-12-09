@@ -465,7 +465,9 @@ const ProfileBar = ({
               <MobileChatButton profileId={profile?.id} />
             )}
 
-            {post?.id && !streamer && <MobileCommentButton postId={post?.id} />}
+            {publication?.id && (
+              <MobileCommentButton postId={publication?.id} />
+            )}
 
             {/* share button */}
             <Button
