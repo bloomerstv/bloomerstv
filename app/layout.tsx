@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     images: [
       // logo image
       {
-        url: 'https://bloomers.tv/logo.png',
+        url: '/logo.png',
         width: 512,
         height: 512,
         alt: 'BloomersTV Logo'
