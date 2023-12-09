@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script
+        {/* <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-W57EMMVS2J"
         ></script>
@@ -52,7 +52,7 @@ export default function RootLayout({
       gtag('config', 'G-W57EMMVS2J');
     `
           }}
-        />
+        /> */}
         <meta
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
