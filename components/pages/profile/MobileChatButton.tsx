@@ -35,7 +35,7 @@ const MobileChatButton = ({ profileId }: { profileId: string }) => {
         onClick={() => setOpen(true)}
         startIcon={<ChatIcon />}
       >
-        Chat
+        Live Chat
       </Button>
       <ModalWrapper
         open={open}

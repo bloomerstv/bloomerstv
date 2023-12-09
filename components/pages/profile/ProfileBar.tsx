@@ -461,8 +461,10 @@ const ProfileBar = ({
             )}
 
             {/* live chat button */}
-            {profile?.id && !post && (
-              <MobileChatButton profileId={profile?.id} />
+            {profile?.id && !post && streamer?.isActive && (
+              <div className="shrink-0">
+                <MobileChatButton profileId={profile?.id} />
+              </div>
             )}
 
             {publication?.id && (

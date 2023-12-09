@@ -15,7 +15,6 @@ const ContentPage = () => {
   const [hasMore, setHasMore] = useState<boolean>(true)
   const { loading, error } = useGetMyRecordedStreamSessionsQuery({
     onCompleted: (data) => {
-      console.log(data)
       // @ts-ignore
       setSessions((prev) => [
         ...(prev ?? []),
