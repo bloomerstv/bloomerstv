@@ -74,7 +74,6 @@ const LiveChat = ({
   }, [messages])
 
   useEffectOnce(() => {
-    console.log('useEffect called') // Add this line
     // const listenToSocket = async () => {
     // const authorToken = await getAccessToken()
     const newSocket = io(LIVE_CHAT_WEB_SOCKET_URL, {
@@ -84,10 +83,7 @@ const LiveChat = ({
       // withCredentials: true
     })
 
-    console.log('newSocket', newSocket)
-
     newSocket.on('connect', () => {
-      console.log('connected')
       setTimeout(() => {
         newSocket.emit('join', profileId)
         // if (!isSocketWithAuthToken && authorToken) {
@@ -99,7 +95,6 @@ const LiveChat = ({
     })
 
     newSocket.on('message', (receivedData) => {
-      console.log('receivedData', receivedData)
       const {
         profileId: chatProfileId,
         content,
@@ -140,7 +135,6 @@ const LiveChat = ({
       return
     }
 
-    console.log('sending message')
     if (socket && inputMessage.trim() !== '') {
       // @ts-ignore
       socket.emit('message', {

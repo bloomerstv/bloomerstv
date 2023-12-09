@@ -3,6 +3,7 @@ import cn from '../../utils/ui/cn'
 import { Player } from '@livepeer/react'
 import { ARWEAVE_GATEWAY, IPFS_GATEWAY } from '../../utils/contants'
 import React, { FC, memo } from 'react'
+import { SessionType, useSession } from '@lens-protocol/react-web'
 
 interface VideoProps {
   src: string
@@ -28,6 +29,7 @@ const Video: FC<VideoProps> = ({
   playbackId
 }) => {
   //   const currentProfile = useAppStore((state) => state.currentProfile)
+  const { data } = useSession()
 
   return (
     <div
@@ -47,7 +49,9 @@ const Video: FC<VideoProps> = ({
         autoPlay={autoPlay}
         muted={muted}
         playbackId={playbackId}
-        // viewerId={currentProfile?.ownedBy.address}
+        viewerId={
+          data?.type === SessionType.WithProfile ? data?.address : undefined
+        }
         controls={{ defaultVolume: 1 }}
         refetchPlaybackInfoInterval={1000 * 60 * 60 * 24}
         autoUrlUpload={{
@@ -63,7 +67,7 @@ const Video: FC<VideoProps> = ({
             progressLeft: '#1668b8',
             progressRight: '#f7f7f8',
             progressMiddle: '#ffffff',
-            volumeLeft: '#1668b8',
+            volumeLeft: '#ffffff',
             volumeRight: '#f7f7f8',
             volumeMiddle: '#ffffff',
             loading: '#1668b8',

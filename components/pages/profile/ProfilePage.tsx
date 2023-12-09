@@ -83,9 +83,12 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         <ProfileInfoWithStream profile={data} streamer={streamer?.streamer} />
 
         {!isMobile && streamer?.streamer?.latestStreamPublicationId && (
-          <CommentSection
-            publicationId={streamer?.streamer?.latestStreamPublicationId}
-          />
+          <div className="m-8 border-t border-p-border">
+            <div className="text-xl font-semibold my-4">Comments</div>
+            <CommentSection
+              publicationId={streamer?.streamer?.latestStreamPublicationId}
+            />
+          </div>
         )}
 
         <AboutProfile profile={data} />

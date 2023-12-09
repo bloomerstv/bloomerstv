@@ -78,10 +78,10 @@ const LiveStreamEditor = () => {
 
     const metadata = liveStream({
       title: streamName,
-      content: `${streamName} \nLive Chat at ${profileLink}`,
+      content: `${streamName}\n\nLive Chat at ${profileLink}`,
       marketplace: {
         name: streamName,
-        description: `${streamName} \n Live on ${profileLink}`,
+        description: `${streamName}\n\nLive on ${profileLink}`,
         external_url: profileLink
       },
       id: id,

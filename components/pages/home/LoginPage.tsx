@@ -15,9 +15,11 @@ import formatHandle from '../../../utils/lib/formatHandle'
 import getAvatar from '../../../utils/lib/getAvatar'
 import clsx from 'clsx'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import { usePathname } from 'next/navigation'
 
 const LoginPage = () => {
   const [loginAsGuest, setLoginAsGuest] = React.useState(false)
+  const path = usePathname()
   const { data, loading } = useSession()
   const { disconnectAsync } = useDisconnect()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
@@ -29,8 +31,14 @@ const LoginPage = () => {
       ownedBy: [address]
     }
   })
+
   const { execute, loading: logging } = useLogin()
-  if (loginAsGuest || loading || data?.type === SessionType.WithProfile) {
+  if (
+    loginAsGuest ||
+    loading ||
+    data?.type === SessionType.WithProfile ||
+    path !== '/'
+  ) {
     return null
   }
   return (

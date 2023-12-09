@@ -38,10 +38,26 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-W57EMMVS2J"
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-W57EMMVS2J');
+    `
+          }}
+        />
         <meta
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
+
         {/* <link
           rel="apple-touch-icon"
           sizes="180x180"

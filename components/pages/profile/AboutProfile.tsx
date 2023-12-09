@@ -5,7 +5,7 @@ import Markup from '../../common/Lexical/Markup'
 
 const AboutProfile = ({ profile }: { profile: Profile }) => {
   return (
-    <div className="sm:m-8 sm:p-8 m-2 p-4 rounded-lg shadow-sm bg-s-bg">
+    <div className="sm:m-8 sm:p-8 m-2 p-4 rounded-xl shadow-sm bg-s-bg border border-p-border">
       <div className="text-2xl font-bold mb-4">
         About {formatHandle(profile)}
       </div>

@@ -13,7 +13,6 @@ import { video } from '@lens-protocol/metadata'
 import { APP_ID, APP_LINK, defaultSponsored } from '../../../../utils/config'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
-import getPublicationData from '../../../../utils/lib/getPublicationData'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import Video from '../../../common/Video'
@@ -27,19 +26,18 @@ const PostStreamAsVideo = ({
 }) => {
   // @ts-ignore
   const [content, setContent] = React.useState(
-    getPublicationData(publication?.metadata)?.content?.split(
-      '\nLive Chat at'
-    )[0]
+    // @ts-ignore
+    publication?.metadata?.title
   )
 
   useEffect(() => {
     // @ts-ignore
     setContent(
-      getPublicationData(publication?.metadata)?.content?.split(
-        '\nLive Chat at'
-      )[0]
+      // @ts-ignore
+      publication?.metadata?.title
     )
-  }, [publication?.metadata])
+    // @ts-ignore
+  }, [publication?.metadata?.title])
   const [open, setOpen] = useState(false)
 
   const { data: profile } = useSession()
