@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   manifest: '/manifest.json', // we are accessing our manifest file here
   title: 'BloomersTV',
   description: 'Game Streaming platform for Bloomers of Lens.',
+  icons: [
+    { rel: 'icon', url: 'https://bloomers.tv/icon.png' },
+    { rel: 'apple-touch-icon', url: 'https://bloomers.tv/apple-icon.png' }
+  ],
   openGraph: {
     title: 'BloomersTV',
     description: 'Game Streaming platform for Bloomers of Lens.',
@@ -21,9 +25,9 @@ export const metadata: Metadata = {
     images: [
       // logo image
       {
-        url: '/logo.png',
-        width: 512,
-        height: 512,
+        url: 'https://bloomers.tv/banner.png',
+        width: 1200,
+        height: 630,
         alt: 'BloomersTV Logo'
       }
     ]
