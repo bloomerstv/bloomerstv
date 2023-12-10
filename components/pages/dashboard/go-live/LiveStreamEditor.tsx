@@ -71,6 +71,10 @@ const LiveStreamEditor = () => {
     }
     // code logic here
     const streamName = myStream?.streamName ?? undefined
+    if (!streamName) {
+      toast.info('Please enter a stream name')
+      throw new Error('No stream name')
+    }
     const streamerHandle = formatHandle(session?.profile)
     const profileLink = `${APP_LINK}/${streamerHandle}`
     const id = uuid()
@@ -138,8 +142,10 @@ const LiveStreamEditor = () => {
 
   const handleStartedStreaming = async () => {
     try {
+      console.log('started streaming')
       // check if should create new post
       const res = await shouldCreateNewPost()
+      console.log('should create new post', res)
       if (!res) {
         return
       }

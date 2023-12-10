@@ -95,7 +95,10 @@ const CreateCommentRow = ({
       <img src={getAvatar(session.profile)} className="w-8 h-8 rounded-full" />
       <div className="border border-p-border rounded-lg overflow-hidden w-full">
         <input
-          className="flex-1 p-2 sm:px-4 w-full outline-none rounded-full border-0 bg-s-bg text-p-text"
+          className={clsx(
+            'flex-1 p-2 sm:px-4 w-full outline-none rounded-lg border-0 bg-s-bg ',
+            creating ? 'text-s-text' : 'text-p-text'
+          )}
           placeholder="Add a comment..."
           value={content}
           onChange={(e) => setContent(e.target.value)}

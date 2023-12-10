@@ -38,7 +38,7 @@ const StreamerOffline = ({
         {banner ? (
           <>
             <img
-              className="h-full w-full object-contain"
+              className="h-full w-full object-cover"
               src={banner}
               alt="logo"
             />

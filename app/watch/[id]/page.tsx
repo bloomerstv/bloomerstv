@@ -53,7 +53,7 @@ const page = ({
         <VideoPage post={data as Post} />
       </div>
       {!isMobile && (
-        <div className="sm:w-1/3">
+        <div className="sm:w-[600px] w-full">
           <OtherVideosRecommendations />
         </div>
       )}

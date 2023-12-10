@@ -21,7 +21,7 @@ const RecommendedVideoCard = ({ post }: { post: Post }) => {
   return (
     <Link
       prefetch
-      className="no-underline text-p-text w-full group"
+      className="no-underline text-p-text w-full group shrink-0"
       href={`/watch/${post?.id}`}
     >
       <div className="w-full flex flex-row gap-x-3 font-semibold">
@@ -35,14 +35,14 @@ const RecommendedVideoCard = ({ post }: { post: Post }) => {
           </div>
         </div>
         <div>
-          <div className="">
+          <div className="text-sm">
             {/* @ts-ignore */}
-            {stringToLength(post?.metadata?.title, 200)}
+            {stringToLength(post?.metadata?.title, 55)}
           </div>
 
           <Link
             prefetch
-            className="no-underline text-p-text w-full"
+            className="no-underline text-p-text w-full text-sm"
             href={`/${formatHandle(post?.by)}`}
           >
             <div className="text-s-text">{formatHandle(post?.by)}</div>

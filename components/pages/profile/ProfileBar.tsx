@@ -3,7 +3,6 @@ import {
   Profile,
   PublicationReactionType,
   SessionType,
-  TriStateValue,
   useCreateMirror,
   useFollow,
   usePublication,
@@ -42,6 +41,7 @@ import LoginIcon from '@mui/icons-material/Login'
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import Markup from '../../common/Lexical/Markup'
 import MobileCommentButton from '../watch/MobileCommentButton'
+import clsx from 'clsx'
 const ProfileBar = ({
   profile,
   streamer,
@@ -68,9 +68,11 @@ const ProfileBar = ({
 
   const [liked, setLiked] = React.useState(false)
   const [isMirrored, setIsMirrored] = React.useState(false)
+  const [upvotes, setUpvotes] = React.useState(0)
+  const [mirrors, setMirrors] = React.useState(0)
 
   const { execute: toggleReaction } = useReactionToggle()
-  const { execute: createMirror } = useCreateMirror()
+  const { execute: createMirror, loading: mirroring } = useCreateMirror()
 
   const isMobile = useIsMobile()
 
@@ -101,6 +103,18 @@ const ProfileBar = ({
     }
   }, [post])
 
+  useEffect(() => {
+    if (publication?.stats?.upvotes) {
+      setUpvotes(publication?.stats?.upvotes)
+    }
+  }, [publication?.stats?.upvotes])
+
+  useEffect(() => {
+    if (publication?.stats?.mirrors) {
+      setMirrors(publication?.stats?.mirrors)
+    }
+  }, [publication?.stats?.mirrors])
+
   const handleFollow = async () => {
     try {
       if (!mustLogin('Must Login to follow')) return
@@ -118,8 +132,7 @@ const ProfileBar = ({
       }
     } catch (e) {
       console.log(e)
-      // @ts-ignore
-      toast.error(e)
+      toast.error(String(e))
     }
   }
 
@@ -139,7 +152,7 @@ const ProfileBar = ({
     } catch (e) {
       console.log(e)
       // @ts-ignore
-      toast.error(e)
+      toast.error(String(e))
     }
   }
 
@@ -166,6 +179,7 @@ const ProfileBar = ({
       }
 
       setLiked(!liked)
+      setUpvotes(liked ? upvotes - 1 : upvotes + 1)
     } catch (error) {
       console.log(error)
       // @ts-ignore
@@ -187,6 +201,7 @@ const ProfileBar = ({
       }
 
       setIsMirrored(true)
+      setMirrors(mirrors + 1)
     } catch (error) {
       console.log(error)
       // @ts-ignore
@@ -292,14 +307,14 @@ const ProfileBar = ({
       )}
 
       <div className="m-2 sm:m-4 sm:mx-8 between-row text-p-text">
-        <div className="centered-row space-x-2  sm:space-x-4">
-          <div className="sm:w-16 sm:h-16 w-8 h-8 rounded-full relative">
+        <div className="centered-row space-x-2 sm:space-x-5">
+          <div className="sm:w-12 sm:h-12 w-8 h-8 rounded-full relative">
             <img
               src={getAvatar(profile)}
-              className="sm:w-16 sm:h-16 w-8 h-8 rounded-full"
+              className="sm:w-12 sm:h-12 w-8 h-8 rounded-full"
             />
           </div>
-          <div className="start-col">
+          <div className="start-col sm:pr-3">
             <div className="font-semibold sm:text-xl">
               {formatHandle(profile)}
             </div>
@@ -309,6 +324,28 @@ const ProfileBar = ({
               <div className="text-s-text">followers</div>
             </div>
           </div>
+          {!isFollowing && (
+            <Tooltip title="Follow this streamer" arrow>
+              <LoadingButton
+                loading={followLoading}
+                onClick={handleFollow}
+                variant="contained"
+                autoCapitalize="none"
+                size="small"
+                color="primary"
+                startIcon={<StarIcon />}
+                loadingPosition="start"
+                disabled={followLoading || isFollowing}
+                title="Follow this streamer"
+                sx={{
+                  borderRadius: isMobile ? '20px' : '4px',
+                  boxShadow: 'none'
+                }}
+              >
+                {isFollowing ? 'Following' : 'Follow'}
+              </LoadingButton>
+            </Tooltip>
+          )}
         </div>
 
         <div className="flex flex-col items-end">
@@ -332,7 +369,7 @@ const ProfileBar = ({
                     boxShadow: 'none'
                   }}
                 >
-                  {publication?.stats?.upvotes}
+                  {upvotes}
                 </Button>
               </Tooltip>
             )}
@@ -347,40 +384,21 @@ const ProfileBar = ({
                   variant="contained"
                   onClick={handleMirror}
                   startIcon={
-                    <AutorenewIcon className={isMirrored ? 'text-brand' : ''} />
+                    <AutorenewIcon
+                      className={clsx(
+                        isMirrored && 'text-brand',
+                        mirroring && 'animate-spin'
+                      )}
+                    />
                   }
                   sx={{
                     boxShadow: 'none'
                   }}
                 >
-                  {publication?.stats?.mirrors}
+                  {mirrors}
                 </Button>
               </Tooltip>
             )}
-
-            {!isFollowing &&
-              profile?.operations?.canFollow === TriStateValue.Yes && (
-                <Tooltip title="Follow this streamer" arrow>
-                  <LoadingButton
-                    loading={followLoading}
-                    onClick={handleFollow}
-                    variant="contained"
-                    autoCapitalize="none"
-                    size="small"
-                    color="primary"
-                    startIcon={<StarIcon />}
-                    loadingPosition="start"
-                    disabled={followLoading || isFollowing}
-                    title="Follow this streamer"
-                    sx={{
-                      borderRadius: isMobile ? '20px' : '4px',
-                      boxShadow: 'none'
-                    }}
-                  >
-                    {isFollowing ? 'Following' : 'Follow'}
-                  </LoadingButton>
-                </Tooltip>
-              )}
 
             {/* share button */}
             {!isMobile && (
@@ -406,7 +424,7 @@ const ProfileBar = ({
               </div>
             )}
 
-            {isFollowing && profile?.operations?.canUnfollow && (
+            {isFollowing && (
               <IconButton onClick={handleMenuClick}>
                 <MoreVertIcon className="text-s-text" />
               </IconButton>
@@ -437,7 +455,7 @@ const ProfileBar = ({
                   boxShadow: 'none'
                 }}
               >
-                {publication?.stats?.upvotes}
+                {upvotes}
               </Button>
             )}
             {/* mirror button */}
@@ -456,7 +474,7 @@ const ProfileBar = ({
                   boxShadow: 'none'
                 }}
               >
-                {publication?.stats?.mirrors}
+                {mirrors}
               </Button>
             )}
 

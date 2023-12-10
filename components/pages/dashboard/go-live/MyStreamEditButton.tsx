@@ -71,7 +71,7 @@ const MyStreamEditButton = ({
               Cancel
             </Button>
             <Button
-              disabled={!isValuesChanged()}
+              disabled={!isValuesChanged() || !streamName.length}
               variant="text"
               onClick={saveChangesAndClose}
             >
@@ -82,9 +82,13 @@ const MyStreamEditButton = ({
       >
         <div className="flex flex-col space-y-4">
           <TextField
-            label="Stream Name"
+            label="Stream Title"
             value={streamName}
             onChange={(e) => setStreamName(e.target.value)}
+            inputProps={{
+              maxLength: 100
+            }}
+            helperText={`${100 - streamName.length} / 100 characters remaining`}
           />
           {/* <TextField
             label="Stream Description"
