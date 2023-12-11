@@ -4,6 +4,7 @@ import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
 import Link from 'next/link'
 import LiveDiv from '../../ui/LiveDiv'
+import LoadingImage from '../../ui/LoadingImage'
 
 const StreamCard = ({ streamer }: { streamer: StreamerWithProfile }) => {
   return (
@@ -14,7 +15,7 @@ const StreamCard = ({ streamer }: { streamer: StreamerWithProfile }) => {
     >
       <div className="w-full aspect-w-16 aspect-h-9 sm:w-[416px] h-[234px] relative mb-2.5 sm:mb-2  overflow-hidden">
         {/* @ts-ignore */}
-        <img
+        <LoadingImage
           // @ts-ignore
           src={streamer?.thumbnail}
           className="w-full h-full transition-transform duration-500 ease-in-out transform hover:scale-110"
