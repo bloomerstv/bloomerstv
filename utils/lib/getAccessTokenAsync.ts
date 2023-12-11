@@ -37,6 +37,22 @@ export const getAccessToken = async (): Promise<null | string> => {
 
     if (!accessToken) return null
 
+    // set refresh token to local storage
+
+    const newRefreshToken = json?.data?.refresh?.refreshToken
+
+    if (!newRefreshToken) return null
+
+    const newCredJson = {
+      ...credJson,
+      data: {
+        ...credJson.data,
+        refreshToken: newRefreshToken
+      }
+    }
+
+    localStorage.setItem(localStorageCredKey, JSON.stringify(newCredJson))
+
     return accessToken
   } catch (e) {
     return null
