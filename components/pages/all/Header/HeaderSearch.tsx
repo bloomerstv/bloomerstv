@@ -1,6 +1,6 @@
 import React from 'react'
 import SearchIcon from '@mui/icons-material/Search'
-import { useSearchProfiles } from '@lens-protocol/react-web'
+import { LimitType, useSearchProfiles } from '@lens-protocol/react-web'
 import {
   ClickAwayListener,
   IconButton,
@@ -19,7 +19,8 @@ const HeaderSearch = () => {
   const [search, setSearch] = React.useState('')
 
   const { data } = useSearchProfiles({
-    query: search
+    query: search,
+    limit: LimitType.Ten
   })
 
   // @ts-ignore

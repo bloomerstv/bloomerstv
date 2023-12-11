@@ -4,7 +4,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import CloseIcon from '@mui/icons-material/Close'
 import { IconButton, List, ListItem, ListItemButton } from '@mui/material'
 import { useRouter } from 'next/navigation'
-import { useSearchProfiles } from '@lens-protocol/react-web'
+import { LimitType, useSearchProfiles } from '@lens-protocol/react-web'
 import formatHandle from '../../utils/lib/formatHandle'
 import MobileProfileList from '../../components/ui/profile/MobileProfileList'
 const SearchPage = () => {
@@ -12,7 +12,8 @@ const SearchPage = () => {
   const [search, setSearch] = React.useState('')
 
   const { data } = useSearchProfiles({
-    query: search
+    query: search,
+    limit: LimitType.Ten
   })
 
   return (
