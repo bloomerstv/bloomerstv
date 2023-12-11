@@ -25,12 +25,14 @@ const UILayout: React.FC<Props> = (props) => {
   const isMobile = useIsMobile()
   const pathname = usePathname()
 
-  const { data } = useLiveStreamersQuery()
+  const { data, loading: streamersLoading } = useLiveStreamersQuery()
   const setStreamersWithProfiles = useStreamersWithProfiles(
     (state) => state.setStreamersWithProfiles
   )
 
-  const { data: profiles } = useProfiles({
+  const setLoading = useStreamersWithProfiles((state) => state.setLoading)
+
+  const { data: profiles, loading: profilesLoading } = useProfiles({
     where: {
       // @ts-ignore
       profileIds: data?.liveStreamers?.map((streamer) => streamer?.profileId)
@@ -48,6 +50,13 @@ const UILayout: React.FC<Props> = (props) => {
     // @ts-ignore
     setStreamersWithProfiles(streamers)
   }, [streamers])
+
+  React.useEffect(() => {
+    if (!streamersLoading && !profilesLoading) {
+      setLoading(false)
+    }
+  }, [streamersLoading, profilesLoading])
+
   return (
     <>
       {isMobile ? (

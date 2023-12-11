@@ -1,11 +1,13 @@
 import React from 'react'
 import { useStreamersWithProfiles } from '../../store/useStreamersWithProfiles'
 import StreamCard from './StreamCard'
+import LoadingVideoCard from '../../ui/LoadingVideoCard'
 
 const LiveStreamerFeed = () => {
   const streamersWithProfiles = useStreamersWithProfiles(
     (state) => state.streamersWithProfiles
   )
+  const loading = useStreamersWithProfiles((state) => state.loading)
   return (
     <div className="sm:m-8 my-4">
       <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
@@ -19,9 +21,17 @@ const LiveStreamerFeed = () => {
           })}
         </div>
       ) : (
-        <div className="text-s-text font-bold text-xl px-2 mb-4 sm:mb-8">
-          No one is live right now
-        </div>
+        <>
+          {loading ? (
+            <>
+              <LoadingVideoCard />
+            </>
+          ) : (
+            <div className="text-s-text font-bold text-xl px-2 mb-4 sm:mb-8">
+              No one is live right now
+            </div>
+          )}
+        </>
       )}
     </div>
   )

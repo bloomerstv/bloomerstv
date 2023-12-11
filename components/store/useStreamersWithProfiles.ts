@@ -12,6 +12,8 @@ interface StreamerWithProfileStore {
     streamersWithProfiles: StreamerWithProfile[]
   ) => void
   resetStreamersWithProfiles: () => void
+  loading: boolean
+  setLoading: (loading: boolean) => void
 }
 
 export const useStreamersWithProfiles = create<StreamerWithProfileStore>(
@@ -19,6 +21,9 @@ export const useStreamersWithProfiles = create<StreamerWithProfileStore>(
     streamersWithProfiles: [],
     setStreamersWithProfiles: (streamersWithProfiles) =>
       set(() => ({ streamersWithProfiles })),
-    resetStreamersWithProfiles: () => set(() => ({ streamersWithProfiles: [] }))
+    resetStreamersWithProfiles: () =>
+      set(() => ({ streamersWithProfiles: [] })),
+    loading: true,
+    setLoading: (loading) => set(() => ({ loading }))
   })
 )
