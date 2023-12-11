@@ -108,7 +108,7 @@ const MyStreamEditButton = ({
             <div className="text-p-text">{`Add "Live Chat on ${
               data?.type === SessionType.WithProfile &&
               `${APP_LINK}/${formatHandle(data?.profile)}`
-            }" the end of content`}</div>
+            }" at the end of content`}</div>
           </div>
 
           {/* <TextField
