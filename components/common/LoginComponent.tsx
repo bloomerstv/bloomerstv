@@ -107,6 +107,13 @@ const LoginComponent = ({
                 </div>
               </div>
             ))}
+
+            {profiles?.length === 0 && !loadingProfiles && (
+              <div className="centered-row w-full p-4">
+                You don't own any lens profiles associated with this wallet
+                address.
+              </div>
+            )}
           </div>
           {/* // disconnect wallet */}
           <div
