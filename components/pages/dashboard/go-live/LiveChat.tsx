@@ -24,8 +24,6 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeOffIcon from '@mui/icons-material/VolumeOff'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 
-const audio = new Audio('/sounds/liveChatPopSound.mp3')
-audio.volume = 0.5
 interface MessageType {
   content: string
   avatarUrl: string
@@ -47,6 +45,8 @@ const LiveChat = ({
   showPopOutChat?: boolean
   preMessages?: MessageType[]
 }) => {
+  const audio = new Audio('/sounds/liveChatPopSound.mp3')
+  audio.volume = 0.5
   const [messages, setMessages] = useState<MessageType[]>(preMessages)
   const [inputMessage, setInputMessage] = useState('')
   const [socket, setSocket] = useState<any>(null)
