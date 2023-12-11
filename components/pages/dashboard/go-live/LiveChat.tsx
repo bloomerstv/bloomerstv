@@ -1,5 +1,5 @@
 import { Button, IconButton, TextareaAutosize } from '@mui/material'
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 
 // import { WebSocket } from 'ws'
 // import { createClient } from 'graphql-ws'
@@ -19,6 +19,12 @@ import Markup from '../../../common/Lexical/Markup'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffectOnce } from 'usehooks-ts'
+import { useMyPreferences } from '../../../store/useMyPreferences'
+import VolumeUpIcon from '@mui/icons-material/VolumeUp'
+import VolumeOffIcon from '@mui/icons-material/VolumeOff'
+
+const audio = new Audio('/sounds/liveChatPopSound.mp3')
+audio.volume = 0.7
 interface MessageType {
   content: string
   avatarUrl: string
@@ -43,7 +49,18 @@ const LiveChat = ({
   const { data } = useSession()
   const [open, setOpen] = React.useState(false)
   const isMobile = useIsMobile()
+  const liveChatPopUpSound = useMyPreferences(
+    (state) => state.liveChatPopUpSound
+  )
+  const setLiveChatPopUpSound = useMyPreferences(
+    (state) => state.setLiveChatPopUpSound
+  )
 
+  const liveChatPopUpSoundRef = useRef(liveChatPopUpSound)
+
+  useEffect(() => {
+    liveChatPopUpSoundRef.current = liveChatPopUpSound
+  }, [liveChatPopUpSound])
   const [uniqueMessages, setUniqueMessages] = useState<MessageType[]>([])
 
   const messagesEndRef = React.useRef(null)
@@ -104,6 +121,11 @@ const LiveChat = ({
       } = receivedData
 
       if (chatProfileId === profileId) {
+        // run pop up sound
+        if (liveChatPopUpSoundRef.current) {
+          audio.play()
+        }
+
         setMessages((prev) => [
           ...prev,
           {
@@ -161,7 +183,15 @@ const LiveChat = ({
       {/* title section */}
 
       <div className="between-row w-full pb-1 px-3 sm:px-4 sm:py-3  border-b border-p-border">
-        <div className="font-semibold">{title}</div>
+        <div className="start-row space-x-2">
+          <div className="font-semibold">{title}</div>
+          <IconButton
+            onClick={() => setLiveChatPopUpSound(!liveChatPopUpSound)}
+            size="small"
+          >
+            {liveChatPopUpSound ? <VolumeUpIcon /> : <VolumeOffIcon />}
+          </IconButton>
+        </div>
         {isMobile && onClose && (
           <IconButton onClick={onClose}>
             <CloseIcon className="text-s-text" />

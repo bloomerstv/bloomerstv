@@ -2,17 +2,11 @@
 import React from 'react'
 import LiveStreamEditor from './LiveStreamEditor'
 import LiveChat from './LiveChat'
-import useIsMobile from '../../../../utils/hooks/useIsMobile'
-import WorkingOnIt from '../../../common/WorkingOnIt'
 import { useSession } from '@lens-protocol/react-web'
 
 const GoLivePage = () => {
   const { data } = useSession()
-  const isMobile = useIsMobile()
 
-  if (isMobile) {
-    return <WorkingOnIt subtitle="This page is live on Desktop" />
-  }
   return (
     <div className="flex flex-row h-full">
       <div className="w-full flex-grow overflow-auto h-full">

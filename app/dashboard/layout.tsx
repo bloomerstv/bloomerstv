@@ -1,6 +1,8 @@
 'use client'
 
 import { SessionType, useSession } from '@lens-protocol/react-web'
+import useIsMobile from '../../utils/hooks/useIsMobile'
+import WorkingOnIt from '../../components/common/WorkingOnIt'
 
 export default function RootLayout({
   children
@@ -8,6 +10,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const { data } = useSession()
+  const isMobile = useIsMobile()
+  if (isMobile) {
+    return <WorkingOnIt subtitle="This page is only on Desktop for now" />
+  }
 
   if (data?.type !== SessionType.WithProfile) {
     return (

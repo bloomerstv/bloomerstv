@@ -2,7 +2,7 @@ import React from 'react'
 
 const WorkingOnIt = ({ subtitle }: { subtitle?: string }) => {
   return (
-    <div className="flex justify-center items-center h-full w-full bg-p-bg">
+    <div className="centered-col h-full w-full bg-p-bg">
       <img
         className="w-full sm:w-[500px] "
         src="https://i.pinimg.com/550x/ac/d6/2b/acd62b8bd713934d8a360b12375dba6d.jpg"
