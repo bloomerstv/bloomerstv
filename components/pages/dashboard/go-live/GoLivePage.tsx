@@ -15,7 +15,10 @@ const GoLivePage = () => {
       <div className="sm:w-[350px] flex-none h-full">
         {/* {createdPublicationId ? ( */}
         {/* @ts-ignore */}
-        {data?.profile?.id && <LiveChat profileId={data?.profile?.id} />}
+        {data?.profile?.id && (
+          // @ts-ignore
+          <LiveChat profileId={data?.profile?.id} showPopOutChat />
+        )}
         {/* // ) : (
         //   <div className="flex bg-s-bg flex-col gap-y-8 items-center justify-center h-full">
         //     <CircularProgress color="secondary" />

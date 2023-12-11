@@ -22,9 +22,10 @@ import { useEffectOnce } from 'usehooks-ts'
 import { useMyPreferences } from '../../../store/useMyPreferences'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeOffIcon from '@mui/icons-material/VolumeOff'
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 
 const audio = new Audio('/sounds/liveChatPopSound.mp3')
-audio.volume = 0.7
+audio.volume = 0.5
 interface MessageType {
   content: string
   avatarUrl: string
@@ -36,18 +37,23 @@ interface MessageType {
 const LiveChat = ({
   profileId,
   title = 'Live Chat',
-  onClose
+  onClose,
+  showPopOutChat = false,
+  preMessages = []
 }: {
   profileId: string
   title?: string
   onClose?: () => void
+  showPopOutChat?: boolean
+  preMessages?: MessageType[]
 }) => {
-  const [messages, setMessages] = useState<MessageType[]>([])
+  const [messages, setMessages] = useState<MessageType[]>(preMessages)
   const [inputMessage, setInputMessage] = useState('')
   const [socket, setSocket] = useState<any>(null)
   // const [isSocketWithAuthToken, setIsSocketWithAuthToken] = useState(false)
   const { data } = useSession()
   const [open, setOpen] = React.useState(false)
+  const [popedOut, setPopedOut] = React.useState(false)
   const isMobile = useIsMobile()
   const liveChatPopUpSound = useMyPreferences(
     (state) => state.liveChatPopUpSound
@@ -57,13 +63,13 @@ const LiveChat = ({
   )
 
   const liveChatPopUpSoundRef = useRef(liveChatPopUpSound)
+  const [uniqueMessages, setUniqueMessages] = useState<MessageType[]>([])
+
+  const messagesEndRef = React.useRef(null)
 
   useEffect(() => {
     liveChatPopUpSoundRef.current = liveChatPopUpSound
   }, [liveChatPopUpSound])
-  const [uniqueMessages, setUniqueMessages] = useState<MessageType[]>([])
-
-  const messagesEndRef = React.useRef(null)
 
   const scrollToBottom = () => {
     // @ts-ignore
@@ -169,6 +175,34 @@ const LiveChat = ({
     }
   }
 
+  const popOutChat = () => {
+    setPopedOut(true)
+    const chatWindow = window.open(
+      `/live-chat/${profileId}`,
+      '_blank',
+      'width=400,height=600,menubar=no,toolbar=no,location=no'
+    )
+    // @ts-ignore
+    chatWindow.chatData = messages
+    chatWindow?.focus()
+  }
+
+  if (popedOut) {
+    return (
+      <div className="centered-col h-full w-full gap-y-8 bg-s-bg">
+        <div className="text-2xl font-bold">Chat popped out</div>
+
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => setPopedOut(false)}
+        >
+          Restore
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <div className="h-full w-full flex flex-col bg-s-bg">
       <ModalWrapper
@@ -195,6 +229,11 @@ const LiveChat = ({
         {isMobile && onClose && (
           <IconButton onClick={onClose}>
             <CloseIcon className="text-s-text" />
+          </IconButton>
+        )}
+        {showPopOutChat && (
+          <IconButton size="small" onClick={popOutChat}>
+            <ArrowOutwardIcon className="text-s-text" />
           </IconButton>
         )}
       </div>

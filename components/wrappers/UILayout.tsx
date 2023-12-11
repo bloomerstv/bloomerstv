@@ -71,7 +71,7 @@ const UILayout: React.FC<Props> = (props) => {
             {props.children}
           </div>
           <div className="shrink-0 w-full">
-            <MobileBottomNavbar />
+            {!pathname.startsWith('/live-chat') && <MobileBottomNavbar />}
           </div>
         </div>
       ) : (
@@ -84,7 +84,10 @@ const UILayout: React.FC<Props> = (props) => {
               {pathname.startsWith('/dashboard') ? (
                 <DashboardSidebar />
               ) : (
-                <>{!pathname.startsWith('/watch/') && <StreamerSidebar />}</>
+                <>
+                  {!pathname.startsWith('/watch/') &&
+                    !pathname.startsWith('/live-chat') && <StreamerSidebar />}
+                </>
               )}
               <div className="h-full overflow-auto w-full">
                 {props.children}
