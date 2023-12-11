@@ -105,10 +105,10 @@ const MyStreamEditButton = ({
               size="small"
               onChange={() => setAddLiveChatAt(!addLiveChatAt)}
             />
-            <div className="text-p-text">{`Add "Live Chat at ${
+            <div className="text-p-text">{`Add "Live Chat on ${
               data?.type === SessionType.WithProfile &&
               `${APP_LINK}/${formatHandle(data?.profile)}`
-            }" at end of content`}</div>
+            }" the end of content`}</div>
           </div>
 
           {/* <TextField
