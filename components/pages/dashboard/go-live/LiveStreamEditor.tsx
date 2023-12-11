@@ -31,11 +31,13 @@ import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
 import clsx from 'clsx'
 import StartLoadingPage from '../../loading/StartLoadingPage'
+import { useMyStreamInfo } from '../../../store/useMyStreamInfo'
 
 const LiveStreamEditor = () => {
   const { data: session } = useSession()
   const { data, error, refetch, loading } = useMyStreamQuery()
   const [startedStreaming, setStartedStreaming] = React.useState(false)
+  const addLiveChatAt = useMyStreamInfo((state) => state.addLiveChatAt)
 
   const client = useApolloClient()
 
@@ -80,9 +82,13 @@ const LiveStreamEditor = () => {
     const id = uuid()
     const locale = getUserLocale()
 
+    const content = `${streamName}${
+      addLiveChatAt ? `\n\nLive Chat at ${profileLink}` : ''
+    }`
+
     const metadata = liveStream({
       title: streamName,
-      content: `${streamName}\n\nLive Chat at ${profileLink}`,
+      content: content,
       marketplace: {
         name: streamName,
         description: `${streamName}\n\nLive on ${profileLink}`,

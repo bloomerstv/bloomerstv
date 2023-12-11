@@ -1,4 +1,4 @@
-import { Button, TextField } from '@mui/material'
+import { Button, Checkbox, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import {
   MyStream,
@@ -6,6 +6,10 @@ import {
 } from '../../../../graphql/generated'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
+import { useMyStreamInfo } from '../../../store/useMyStreamInfo'
+import { SessionType, useSession } from '@lens-protocol/react-web'
+import { APP_LINK } from '../../../../utils/config'
+import formatHandle from '../../../../utils/lib/formatHandle'
 
 const MyStreamEditButton = ({
   refreshStreamInfo,
@@ -14,9 +18,13 @@ const MyStreamEditButton = ({
   refreshStreamInfo: () => void
   myStream: MyStream
 }) => {
+  const { data } = useSession()
   const [updateMyStream] = useUpdateMyStreamMutation()
   const [open, setOpen] = useState(false)
   const [streamName, setStreamName] = useState(myStream?.streamName || '')
+  const addLiveChatAt = useMyStreamInfo((state) => state.addLiveChatAt)
+  const setAddLiveChatAt = useMyStreamInfo((state) => state.setAddLiveChatAt)
+
   // const [streamDescription, setStreamDescription] = useState(
   //   myStream?.streamDescription || ''
   // )
@@ -80,7 +88,7 @@ const MyStreamEditButton = ({
           </div>
         }
       >
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col">
           <TextField
             label="Stream Title"
             value={streamName}
@@ -90,6 +98,19 @@ const MyStreamEditButton = ({
             }}
             helperText={`${100 - streamName.length} / 100 characters remaining`}
           />
+
+          <div className="start-row text-xs">
+            <Checkbox
+              checked={addLiveChatAt}
+              size="small"
+              onChange={() => setAddLiveChatAt(!addLiveChatAt)}
+            />
+            <div className="text-p-text">{`Add "Live Chat at ${
+              data?.type === SessionType.WithProfile &&
+              `${APP_LINK}/${formatHandle(data?.profile)}`
+            }" at end of content`}</div>
+          </div>
+
           {/* <TextField
             label="Stream Description"
             multiline
