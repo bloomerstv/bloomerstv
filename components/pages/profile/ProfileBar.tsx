@@ -42,6 +42,7 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import Markup from '../../common/Lexical/Markup'
 import MobileCommentButton from '../watch/MobileCommentButton'
 import clsx from 'clsx'
+import LiveCount from './LiveCount'
 const ProfileBar = ({
   profile,
   streamer,
@@ -350,6 +351,8 @@ const ProfileBar = ({
 
         <div className="flex flex-col items-end">
           <div className="end-col sm:start-row space-x-4">
+            {profile?.id && <LiveCount profileId={profile?.id} />}
+
             {/* like button  */}
             {!isMobile && publication?.id && (
               <Tooltip title="Like" arrow>

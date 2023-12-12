@@ -50,6 +50,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
             refetch()
           }
         }}
+        muted={false}
         streamOfflineErrorComponent={
           // @ts-ignore
           <StreamerOffline profile={data} streamer={streamer?.streamer} />
@@ -57,7 +58,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         src={getLiveStreamUrl(streamer?.streamer?.playbackId)}
       />
     )
-  }, [streamer?.streamer?.playbackId, streamer?.streamer?.lastSeen])
+  }, [streamer?.streamer?.playbackId])
 
   if (profileLoading || (streamerLoading && !streamer?.streamer)) {
     return <StartLoadingPage />

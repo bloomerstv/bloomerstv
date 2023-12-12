@@ -64,7 +64,7 @@ const LiveChat = ({
   })
 
   useEffect(() => {
-    if (chats) {
+    if (chats && !preMessages.length) {
       const chatsFromDB = chats.streamChats?.map((chat: Chat | null) => {
         if (chat) {
           return {
