@@ -31,6 +31,16 @@ export type Scalars = {
   BigNumber: { input: any; output: any }
 }
 
+export type Chat = {
+  __typename?: 'Chat'
+  avatarUrl?: Maybe<Scalars['String']['output']>
+  content?: Maybe<Scalars['String']['output']>
+  createdAt?: Maybe<Scalars['BigNumber']['output']>
+  handle?: Maybe<Scalars['String']['output']>
+  id?: Maybe<Scalars['String']['output']>
+  profileId?: Maybe<Scalars['String']['output']>
+}
+
 export type IpfsResult = {
   __typename?: 'IpfsResult'
   cid?: Maybe<Scalars['String']['output']>
@@ -76,11 +86,16 @@ export type Query = {
   myStream?: Maybe<MyStream>
   ping?: Maybe<Scalars['String']['output']>
   shouldCreateNewPost?: Maybe<Scalars['Boolean']['output']>
+  streamChats?: Maybe<Array<Maybe<Chat>>>
   streamer?: Maybe<SingleStreamer>
 }
 
 export type QueryGetMyRecordedStreamSessionsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryStreamChatsArgs = {
+  profileId: Scalars['String']['input']
 }
 
 export type QueryStreamerArgs = {
@@ -196,6 +211,23 @@ export type ShouldCreateNewPostQueryVariables = Exact<{ [key: string]: never }>
 export type ShouldCreateNewPostQuery = {
   __typename?: 'Query'
   shouldCreateNewPost?: boolean | null
+}
+
+export type StreamChatsQueryVariables = Exact<{
+  profileId: Scalars['String']['input']
+}>
+
+export type StreamChatsQuery = {
+  __typename?: 'Query'
+  streamChats?: Array<{
+    __typename?: 'Chat'
+    content?: string | null
+    handle?: string | null
+    avatarUrl?: string | null
+    profileId?: string | null
+    id?: string | null
+    createdAt?: any | null
+  } | null> | null
 }
 
 export type StreamerQueryVariables = Exact<{
@@ -583,6 +615,82 @@ export type ShouldCreateNewPostSuspenseQueryHookResult = ReturnType<
 export type ShouldCreateNewPostQueryResult = Apollo.QueryResult<
   ShouldCreateNewPostQuery,
   ShouldCreateNewPostQueryVariables
+>
+export const StreamChatsDocument = gql`
+  query StreamChats($profileId: String!) {
+    streamChats(profileId: $profileId) {
+      content
+      handle
+      avatarUrl
+      profileId
+      id
+      createdAt
+    }
+  }
+`
+
+/**
+ * __useStreamChatsQuery__
+ *
+ * To run a query within a React component, call `useStreamChatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStreamChatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStreamChatsQuery({
+ *   variables: {
+ *      profileId: // value for 'profileId'
+ *   },
+ * });
+ */
+export function useStreamChatsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    StreamChatsQuery,
+    StreamChatsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<StreamChatsQuery, StreamChatsQueryVariables>(
+    StreamChatsDocument,
+    options
+  )
+}
+export function useStreamChatsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    StreamChatsQuery,
+    StreamChatsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<StreamChatsQuery, StreamChatsQueryVariables>(
+    StreamChatsDocument,
+    options
+  )
+}
+export function useStreamChatsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    StreamChatsQuery,
+    StreamChatsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<StreamChatsQuery, StreamChatsQueryVariables>(
+    StreamChatsDocument,
+    options
+  )
+}
+export type StreamChatsQueryHookResult = ReturnType<typeof useStreamChatsQuery>
+export type StreamChatsLazyQueryHookResult = ReturnType<
+  typeof useStreamChatsLazyQuery
+>
+export type StreamChatsSuspenseQueryHookResult = ReturnType<
+  typeof useStreamChatsSuspenseQuery
+>
+export type StreamChatsQueryResult = Apollo.QueryResult<
+  StreamChatsQuery,
+  StreamChatsQueryVariables
 >
 export const StreamerDocument = gql`
   query Streamer($profileId: String!) {

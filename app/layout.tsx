@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'BloomersTV',
-    description: 'Game Streaming platform for Bloomers of Lens.',
+    description: 'Game Streaming platform on Lens Protocol.',
     type: 'profile',
     siteName: 'BloomersTV',
     url: 'https://bloomers.tv',

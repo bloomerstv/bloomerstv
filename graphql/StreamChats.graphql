@@ -1,0 +1,10 @@
+query StreamChats($profileId: String!) {
+  streamChats(profileId: $profileId) {
+    content
+    handle
+    avatarUrl
+    profileId
+    id
+    createdAt
+  }
+}

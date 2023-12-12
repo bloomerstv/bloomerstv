@@ -23,6 +23,7 @@ import { useMyPreferences } from '../../../store/useMyPreferences'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeOffIcon from '@mui/icons-material/VolumeOff'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
+import { Chat, useStreamChatsQuery } from '../../../../graphql/generated'
 
 interface MessageType {
   content: string
@@ -55,6 +56,34 @@ const LiveChat = ({
   const [open, setOpen] = React.useState(false)
   const [popedOut, setPopedOut] = React.useState(false)
   const isMobile = useIsMobile()
+
+  const { data: chats } = useStreamChatsQuery({
+    variables: {
+      profileId: profileId
+    }
+  })
+
+  useEffect(() => {
+    if (chats) {
+      const chatsFromDB = chats.streamChats?.map((chat: Chat | null) => {
+        if (chat) {
+          return {
+            content: chat.content ?? '',
+            avatarUrl: chat.avatarUrl ?? '',
+            handle: chat.handle ?? '',
+            time: timeAgo(chat.createdAt),
+            id: chat.id ?? ''
+          }
+        }
+        return null
+      })
+      setMessages((prev) => {
+        // @ts-ignore
+        return [...chatsFromDB, ...prev]
+      })
+    }
+  }, [chats])
+
   const liveChatPopUpSound = useMyPreferences(
     (state) => state.liveChatPopUpSound
   )
@@ -129,6 +158,7 @@ const LiveChat = ({
       if (chatProfileId === profileId) {
         // run pop up sound
         if (liveChatPopUpSoundRef.current) {
+          console.log('play sound')
           audio.play()
         }
 
@@ -139,7 +169,7 @@ const LiveChat = ({
             avatarUrl,
             handle,
             time: timeAgo(new Date().getTime()),
-            id: id
+            id
           }
         ])
       }
@@ -183,7 +213,7 @@ const LiveChat = ({
       'width=400,height=600,menubar=no,toolbar=no,location=no'
     )
     // @ts-ignore
-    chatWindow.chatData = messages
+    chatWindow.chatData = uniqueMessages
     chatWindow?.focus()
   }
 
