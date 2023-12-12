@@ -118,6 +118,7 @@ export type SingleStreamer = Stream & {
   latestStreamPublicationId?: Maybe<Scalars['String']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   profileId: Scalars['String']['output']
+  startedStreaming?: Maybe<Scalars['String']['output']>
   streamDescription?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
   thumbnail?: Maybe<Scalars['String']['output']>
@@ -138,6 +139,7 @@ export type Streamer = Stream & {
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   isActive?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
+  liveCount?: Maybe<Scalars['Int']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   profileId: Scalars['String']['output']
   streamDescription?: Maybe<Scalars['String']['output']>
@@ -187,6 +189,7 @@ export type LiveStreamersQuery = {
     createdAt?: any | null
     playbackId?: string | null
     thumbnail?: string | null
+    liveCount?: number | null
   } | null> | null
 }
 
@@ -245,6 +248,7 @@ export type StreamerQuery = {
     playbackId?: string | null
     streamName?: string | null
     latestStreamPublicationId?: string | null
+    startedStreaming?: string | null
   } | null
 }
 
@@ -405,6 +409,7 @@ export const LiveStreamersDocument = gql`
       createdAt
       playbackId
       thumbnail
+      liveCount
     }
   }
 `
@@ -702,6 +707,7 @@ export const StreamerDocument = gql`
       playbackId
       streamName
       latestStreamPublicationId
+      startedStreaming
     }
   }
 `

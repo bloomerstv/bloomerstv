@@ -24,6 +24,7 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeOffIcon from '@mui/icons-material/VolumeOff'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 import { Chat, useStreamChatsQuery } from '../../../../graphql/generated'
+import LiveCount from '../../profile/LiveCount'
 
 interface MessageType {
   content: string
@@ -38,13 +39,15 @@ const LiveChat = ({
   title = 'Live Chat',
   onClose,
   showPopOutChat = false,
-  preMessages = []
+  preMessages = [],
+  showLiveCount = false
 }: {
   profileId: string
   title?: string
   onClose?: () => void
   showPopOutChat?: boolean
   preMessages?: MessageType[]
+  showLiveCount?: boolean
 }) => {
   const audio = new Audio('/sounds/liveChatPopSound.mp3')
   audio.volume = 0.5
@@ -255,6 +258,10 @@ const LiveChat = ({
           >
             {liveChatPopUpSound ? <VolumeUpIcon /> : <VolumeOffIcon />}
           </IconButton>
+
+          {showLiveCount && profileId && (
+            <LiveCount profileId={profileId} className="text-sm text-s-text" />
+          )}
         </div>
         {isMobile && onClose && (
           <IconButton onClick={onClose}>

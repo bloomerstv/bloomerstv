@@ -325,28 +325,30 @@ const ProfileBar = ({
               <div className="text-s-text">followers</div>
             </div>
           </div>
-          {!isFollowing && (
-            <Tooltip title="Follow this streamer" arrow>
-              <LoadingButton
-                loading={followLoading}
-                onClick={handleFollow}
-                variant="contained"
-                autoCapitalize="none"
-                size="small"
-                color="primary"
-                startIcon={<StarIcon />}
-                loadingPosition="start"
-                disabled={followLoading || isFollowing}
-                title="Follow this streamer"
-                sx={{
-                  borderRadius: isMobile ? '20px' : '4px',
-                  boxShadow: 'none'
-                }}
-              >
-                {isFollowing ? 'Following' : 'Follow'}
-              </LoadingButton>
-            </Tooltip>
-          )}
+          {!isFollowing &&
+            mySession?.type === SessionType.WithProfile &&
+            mySession.profile?.id !== profile?.id && (
+              <Tooltip title="Follow this streamer" arrow>
+                <LoadingButton
+                  loading={followLoading}
+                  onClick={handleFollow}
+                  variant="contained"
+                  autoCapitalize="none"
+                  size="small"
+                  color="primary"
+                  startIcon={<StarIcon />}
+                  loadingPosition="start"
+                  disabled={followLoading || isFollowing}
+                  title="Follow this streamer"
+                  sx={{
+                    borderRadius: isMobile ? '20px' : '4px',
+                    boxShadow: 'none'
+                  }}
+                >
+                  {isFollowing ? 'Following' : 'Follow'}
+                </LoadingButton>
+              </Tooltip>
+            )}
         </div>
 
         <div className="flex flex-col items-end">

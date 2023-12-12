@@ -7,5 +7,6 @@ query Streamer($profileId: String!) {
     playbackId
     streamName
     latestStreamPublicationId
+    startedStreaming
   }
 }

@@ -17,7 +17,12 @@ const GoLivePage = () => {
         {/* @ts-ignore */}
         {data?.profile?.id && (
           // @ts-ignore
-          <LiveChat profileId={data?.profile?.id} showPopOutChat />
+          <LiveChat
+            // @ts-ignore
+            profileId={data?.profile?.id}
+            showPopOutChat
+            showLiveCount
+          />
         )}
         {/* // ) : (
         //   <div className="flex bg-s-bg flex-col gap-y-8 items-center justify-center h-full">

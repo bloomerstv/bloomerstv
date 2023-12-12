@@ -3,6 +3,7 @@ import { StreamerWithProfile } from '../../store/useStreamersWithProfiles'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
 import Link from 'next/link'
+import PermIdentityIcon from '@mui/icons-material/PermIdentity'
 
 const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
   return (
@@ -24,7 +25,12 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
       </div>
 
       {/* red dot */}
-      {streamer?.isActive && <div className="w-2 h-2 rounded-full bg-brand" />}
+      {streamer?.isActive && (
+        <div className="start-row gap-x-1 text-xl text-brand ">
+          <PermIdentityIcon fontSize="inherit" />
+          <div className="text-base font-semibold">{streamer?.liveCount}</div>
+        </div>
+      )}
     </Link>
   )
 }
