@@ -23,7 +23,6 @@ const LiveCount = ({
     })
 
     newSocket.on('liveCountUpdate', ({ count, profileId: liveProfileId }) => {
-      console.log('liveCountUpdate', { count, profileId: liveProfileId })
       if (liveProfileId === profileId) {
         setCount(count)
       }
