@@ -14,7 +14,11 @@ const page = ({
 
   return (
     <div className="h-full w-full">
-      <LiveChat profileId={params.profileId} preMessages={chatData} />
+      <LiveChat
+        profileId={params.profileId}
+        preMessages={chatData}
+        showLiveCount
+      />
     </div>
   )
 }

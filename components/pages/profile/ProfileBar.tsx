@@ -351,90 +351,88 @@ const ProfileBar = ({
             )}
         </div>
 
-        <div className="flex flex-col items-end">
-          <div className="end-col sm:start-row space-x-4">
-            {profile?.id && <LiveCount profileId={profile?.id} />}
+        <div className="start-row space-x-4">
+          {profile?.id && <LiveCount profileId={profile?.id} />}
 
-            {/* like button  */}
-            {!isMobile && publication?.id && (
-              <Tooltip title="Like" arrow>
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="contained"
-                  onClick={handleLike}
-                  startIcon={
-                    liked ? (
-                      <FavoriteIcon className="text-brand" />
-                    ) : (
-                      <FavoriteBorderIcon />
-                    )
-                  }
-                  sx={{
-                    boxShadow: 'none'
-                  }}
-                >
-                  {upvotes}
-                </Button>
-              </Tooltip>
-            )}
+          {/* like button  */}
+          {!isMobile && publication?.id && (
+            <Tooltip title="Like" arrow>
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                onClick={handleLike}
+                startIcon={
+                  liked ? (
+                    <FavoriteIcon className="text-brand" />
+                  ) : (
+                    <FavoriteBorderIcon />
+                  )
+                }
+                sx={{
+                  boxShadow: 'none'
+                }}
+              >
+                {upvotes}
+              </Button>
+            </Tooltip>
+          )}
 
-            {/* mirror button */}
+          {/* mirror button */}
 
-            {!isMobile && publication?.id && (
-              <Tooltip title="Boost the stream" arrow>
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="contained"
-                  onClick={handleMirror}
-                  startIcon={
-                    <AutorenewIcon
-                      className={clsx(
-                        isMirrored && 'text-brand',
-                        mirroring && 'animate-spin'
-                      )}
-                    />
-                  }
-                  sx={{
-                    boxShadow: 'none'
-                  }}
-                >
-                  {mirrors}
-                </Button>
-              </Tooltip>
-            )}
+          {!isMobile && publication?.id && (
+            <Tooltip title="Boost the stream" arrow>
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                onClick={handleMirror}
+                startIcon={
+                  <AutorenewIcon
+                    className={clsx(
+                      isMirrored && 'text-brand',
+                      mirroring && 'animate-spin'
+                    )}
+                  />
+                }
+                sx={{
+                  boxShadow: 'none'
+                }}
+              >
+                {mirrors}
+              </Button>
+            </Tooltip>
+          )}
 
-            {/* share button */}
-            {!isMobile && (
-              <div className="sm:ml-2">
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="contained"
-                  onClick={handleShare}
-                  startIcon={
-                    <ReplyIcon
-                      style={{
-                        transform: 'scaleX(-1)'
-                      }}
-                    />
-                  }
-                  sx={{
-                    boxShadow: 'none'
-                  }}
-                >
-                  Share
-                </Button>
-              </div>
-            )}
+          {/* share button */}
+          {!isMobile && (
+            <div className="sm:ml-2">
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                onClick={handleShare}
+                startIcon={
+                  <ReplyIcon
+                    style={{
+                      transform: 'scaleX(-1)'
+                    }}
+                  />
+                }
+                sx={{
+                  boxShadow: 'none'
+                }}
+              >
+                Share
+              </Button>
+            </div>
+          )}
 
-            {isFollowing && (
-              <IconButton onClick={handleMenuClick}>
-                <MoreVertIcon className="text-s-text" />
-              </IconButton>
-            )}
-          </div>
+          {isFollowing && (
+            <IconButton onClick={handleMenuClick}>
+              <MoreVertIcon className="text-s-text" />
+            </IconButton>
+          )}
         </div>
       </div>
 
@@ -472,7 +470,12 @@ const ProfileBar = ({
                 variant="contained"
                 onClick={handleMirror}
                 startIcon={
-                  <AutorenewIcon className={isMirrored ? 'text-brand' : ''} />
+                  <AutorenewIcon
+                    className={clsx(
+                      isMirrored && 'text-brand',
+                      mirroring && 'animate-spin'
+                    )}
+                  />
                 }
                 sx={{
                   borderRadius: '20px',
