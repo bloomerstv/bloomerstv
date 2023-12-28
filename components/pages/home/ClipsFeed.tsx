@@ -5,16 +5,16 @@ import {
   usePublications
 } from '@lens-protocol/react-web'
 import React from 'react'
-import HomeVideoCard from '../../common/HomeVideoCard'
 import { APP_ID } from '../../../utils/config'
+import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
 
-const VideosFeed = () => {
+const ClipsFeed = () => {
   const { data, loading } = usePublications({
     where: {
       publicationTypes: [PublicationType.Post],
       metadata: {
-        mainContentFocus: [PublicationMetadataMainFocusType.Video],
+        mainContentFocus: [PublicationMetadataMainFocusType.ShortVideo],
         // @ts-ignore
         publishedOn: [APP_ID]
       }
@@ -23,9 +23,8 @@ const VideosFeed = () => {
   return (
     <div className="sm:m-8 my-4">
       <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
-        Stream Replays
+        Stream Clips
       </div>
-
       {/* @ts-ignore */}
       {data?.length > 0 ? (
         <div className="flex flex-row flex-wrap sm:gap-x-4 gap-y-6 sm:gap-y-12">
@@ -40,4 +39,4 @@ const VideosFeed = () => {
   )
 }
 
-export default VideosFeed
+export default ClipsFeed

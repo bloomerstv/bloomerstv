@@ -1,6 +1,7 @@
 import { Matcher } from 'interweave'
 import Link from 'next/link'
 import { createElement } from 'react'
+import { isMainnet } from '../../../../utils/config'
 
 // import { UrlMatcher } from './UrlMatcher'
 
@@ -48,7 +49,9 @@ export class MentionMatcher extends Matcher {
     //   }
     // }
 
-    return this.doMatch(value, /@lens\/[^.\s]*/, (matches) => {
+    const matcher = isMainnet ? /@lens\/[^.\s]*/ : /@test\/[^.\s]*/
+
+    return this.doMatch(value, matcher, (matches) => {
       return { display: matches[0] }
     })
   }

@@ -14,7 +14,10 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
     where: {
       publicationTypes: [PublicationType.Post],
       metadata: {
-        mainContentFocus: [PublicationMetadataMainFocusType.Video],
+        mainContentFocus: [
+          PublicationMetadataMainFocusType.Video,
+          PublicationMetadataMainFocusType.ShortVideo
+        ],
         // @ts-ignore
         publishedOn: [APP_ID]
       }

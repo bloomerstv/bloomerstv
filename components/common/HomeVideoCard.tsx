@@ -6,6 +6,7 @@ import formatHandle from '../../utils/lib/formatHandle'
 import getPublicationData from '../../utils/lib/getPublicationData'
 import { secondsToTime, timeAgo } from '../../utils/helpers'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import Markup from './Lexical/Markup'
 
 const HomeVideoCard = ({ post }: { post: Post }) => {
   const asset = getPublicationData(post?.metadata)?.asset
@@ -44,7 +45,10 @@ const HomeVideoCard = ({ post }: { post: Post }) => {
         />
         <div className="start-col">
           {/* @ts-ignore */}
-          <div className="text-sm font-semibold">{post?.metadata?.title}</div>
+          <div className="text-sm font-semibold">
+            {/* @ts-ignore */}
+            <Markup>{post?.metadata?.title}</Markup>
+          </div>
           <div className="start-row text-sm text-s-text gap-x-1.5">
             <Link
               prefetch
