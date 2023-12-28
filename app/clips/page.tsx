@@ -1,8 +1,21 @@
+'use client'
+
 import React from 'react'
-import WorkingOnIt from '../../components/common/WorkingOnIt'
+import ClipsFeed from '../../components/pages/home/ClipsFeed'
+import useIsMobile from '../../utils/hooks/useIsMobile'
+import MobileTopHeader from '../../components/common/MobileTopHeader'
 
 const page = () => {
-  return <WorkingOnIt />
+  const isMobile = useIsMobile()
+
+  return (
+    <div className="w-full overflow-x-hidden">
+      {isMobile && <MobileTopHeader />}
+      <div className="mt-4">
+        <ClipsFeed />
+      </div>
+    </div>
+  )
 }
 
 export default page

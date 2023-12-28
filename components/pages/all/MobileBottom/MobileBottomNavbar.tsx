@@ -14,7 +14,7 @@ const MobileBottomNavbar = () => {
   useEffect(() => {
     if (pathname === '/') {
       setValue(0)
-    } else if (pathname === '/categories') {
+    } else if (pathname === '/clips') {
       setValue(1)
     } else if (pathname === '/search') {
       setValue(2)
@@ -27,7 +27,7 @@ const MobileBottomNavbar = () => {
       value={value}
       onChange={(event, newValue) => {
         router.push(
-          newValue === 0 ? '/' : newValue === 1 ? '/categories' : '/search'
+          newValue === 0 ? '/' : newValue === 1 ? '/clips' : '/search'
         )
 
         setValue(newValue)
