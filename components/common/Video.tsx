@@ -15,6 +15,9 @@ interface VideoProps {
   autoPlay?: boolean
   muted?: boolean
   loop?: boolean
+  children?: React.ReactNode
+  showPipButton?: boolean
+  autoHide?: number | undefined
 }
 
 const Video: FC<VideoProps> = ({
@@ -26,7 +29,10 @@ const Video: FC<VideoProps> = ({
   autoPlay = true,
   muted = true,
   loop = false,
-  playbackId
+  playbackId,
+  children = null,
+  showPipButton = true,
+  autoHide = 3000
 }) => {
   //   const currentProfile = useAppStore((state) => state.currentProfile)
   const { data } = useSession()
@@ -44,7 +50,7 @@ const Video: FC<VideoProps> = ({
         objectFit="contain"
         showLoadingSpinner={true}
         showUploadingIndicator
-        showPipButton
+        showPipButton={showPipButton}
         aspectRatio="16to9"
         autoPlay={autoPlay}
         muted={muted}
@@ -52,13 +58,14 @@ const Video: FC<VideoProps> = ({
         viewerId={
           data?.type === SessionType.WithProfile ? data?.address : undefined
         }
-        controls={{ defaultVolume: 1 }}
+        controls={{ defaultVolume: 1, autohide: autoHide }}
         refetchPlaybackInfoInterval={1000 * 60 * 60 * 24}
         autoUrlUpload={{
           fallback: true,
           ipfsGateway: IPFS_GATEWAY,
           arweaveGateway: ARWEAVE_GATEWAY
         }}
+        renderChildrenOutsideContainer
         loop={loop}
         onStreamStatusChange={onStreamStatusChange}
         streamOfflineErrorComponent={streamOfflineErrorComponent}
@@ -78,7 +85,9 @@ const Video: FC<VideoProps> = ({
           //   iconButtonSizeSm: '25px'
           // }
         }}
-      />
+      >
+        {children}
+      </Player>
     </div>
   )
 }

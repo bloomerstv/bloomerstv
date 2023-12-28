@@ -15,7 +15,7 @@ import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
-import Video from '../../../common/Video'
+import VideoWithEditors from './VideoWithEditors'
 
 const PostStreamAsVideo = ({
   publication,
@@ -24,6 +24,7 @@ const PostStreamAsVideo = ({
   publication: Post
   session: RecordedSession
 }) => {
+  console.log('session', session)
   // @ts-ignore
   const [content, setContent] = React.useState('')
 
@@ -47,6 +48,8 @@ const PostStreamAsVideo = ({
   const { execute } = useCreatePost()
 
   const [uploadDataToIpfs] = useUploadDataToIpfsMutation()
+
+  const [showVideoDescription, setShowVideoDescription] = useState(false)
 
   const createLensPost = async () => {
     // @ts-ignore
@@ -131,7 +134,7 @@ const PostStreamAsVideo = ({
         open={open}
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
-        title="Post this stream recording as a Video"
+        title="Post as Video"
         Icon={<EditIcon />}
         classname="w-[600px]"
         BotttomComponent={
@@ -164,29 +167,35 @@ const PostStreamAsVideo = ({
             }}
             helperText={`${100 - title.length} / 100 characters remaining`}
           />
-          <TextareaAutosize
-            className="text-base text-p-text border-p-border outline-none bg-s-bg w-full font-normal font-sans leading-normal px-3 py-1.5 rounded-md "
-            aria-label="empty textarea"
-            placeholder="Video Description... (optional)"
-            style={{
-              resize: 'none',
-              margin: 0
-            }}
-            maxRows={10}
-            minRows={2}
-            onChange={(e) => setContent(e.target.value)}
-            value={content}
-          />
+
+          {showVideoDescription ? (
+            <TextareaAutosize
+              className="text-base text-p-text border-p-border outline-none bg-s-bg w-full font-normal font-sans leading-normal px-3 py-1.5 rounded-md "
+              aria-label="empty textarea"
+              placeholder="Video Description... (optional)"
+              style={{
+                resize: 'none',
+                margin: 0
+              }}
+              maxRows={10}
+              minRows={2}
+              onChange={(e) => setContent(e.target.value)}
+              value={content}
+            />
+          ) : (
+            <div
+              className="text-xs text-s-text cursor-pointer hover:text-p-text px-1 font-bold"
+              onClick={() => {
+                setShowVideoDescription(true)
+              }}
+            >
+              {`Add a description to your video >`}
+            </div>
+          )}
 
           <div className="rounded-md overflow-hidden">
-            {/* @ts-ignore */}
-            <Video autoPlay={false} src={session?.mp4Url?.toString()} />
+            <VideoWithEditors src={session?.mp4Url?.toString()!} />
           </div>
-          {/* <video
-            src={session?.mp4Url?.toString()}
-            controls
-            className="rounded-xl"
-          /> */}
         </div>
       </ModalWrapper>
       <Button
