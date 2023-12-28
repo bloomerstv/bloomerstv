@@ -41,6 +41,13 @@ export type Chat = {
   profileId?: Maybe<Scalars['String']['output']>
 }
 
+export type ClipResult = {
+  __typename?: 'ClipResult'
+  downloadUrl?: Maybe<Scalars['String']['output']>
+  playbackId?: Maybe<Scalars['String']['output']>
+  playbackUrl?: Maybe<Scalars['String']['output']>
+}
+
 export type IpfsResult = {
   __typename?: 'IpfsResult'
   cid?: Maybe<Scalars['String']['output']>
@@ -49,9 +56,18 @@ export type IpfsResult = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  createClip?: Maybe<ClipResult>
   createMyLensStreamSession?: Maybe<Scalars['Boolean']['output']>
   updateMyStream?: Maybe<Scalars['Boolean']['output']>
   uploadDataToIpfs?: Maybe<IpfsResult>
+}
+
+export type MutationCreateClipArgs = {
+  endTime?: InputMaybe<Scalars['BigNumber']['input']>
+  name?: InputMaybe<Scalars['String']['input']>
+  playbackId: Scalars['String']['input']
+  sessionId?: InputMaybe<Scalars['String']['input']>
+  startTime: Scalars['BigNumber']['input']
 }
 
 export type MutationCreateMyLensStreamSessionArgs = {
@@ -150,6 +166,24 @@ export type Streamer = Stream & {
 export type UpdateStreamRequest = {
   streamDescription?: InputMaybe<Scalars['String']['input']>
   streamName?: InputMaybe<Scalars['String']['input']>
+}
+
+export type CreateClipMutationVariables = Exact<{
+  playbackId: Scalars['String']['input']
+  startTime: Scalars['BigNumber']['input']
+  endTime?: InputMaybe<Scalars['BigNumber']['input']>
+  name?: InputMaybe<Scalars['String']['input']>
+  sessionId?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type CreateClipMutation = {
+  __typename?: 'Mutation'
+  createClip?: {
+    __typename?: 'ClipResult'
+    downloadUrl?: string | null
+    playbackId?: string | null
+    playbackUrl?: string | null
+  } | null
 }
 
 export type CreateMyLensStreamSessionMutationVariables = Exact<{
@@ -274,6 +308,73 @@ export type UploadDataToIpfsMutation = {
   } | null
 }
 
+export const CreateClipDocument = gql`
+  mutation CreateClip(
+    $playbackId: String!
+    $startTime: BigNumber!
+    $endTime: BigNumber
+    $name: String
+    $sessionId: String
+  ) {
+    createClip(
+      playbackId: $playbackId
+      startTime: $startTime
+      endTime: $endTime
+      name: $name
+      sessionId: $sessionId
+    ) {
+      downloadUrl
+      playbackId
+      playbackUrl
+    }
+  }
+`
+export type CreateClipMutationFn = Apollo.MutationFunction<
+  CreateClipMutation,
+  CreateClipMutationVariables
+>
+
+/**
+ * __useCreateClipMutation__
+ *
+ * To run a mutation, you first call `useCreateClipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateClipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createClipMutation, { data, loading, error }] = useCreateClipMutation({
+ *   variables: {
+ *      playbackId: // value for 'playbackId'
+ *      startTime: // value for 'startTime'
+ *      endTime: // value for 'endTime'
+ *      name: // value for 'name'
+ *      sessionId: // value for 'sessionId'
+ *   },
+ * });
+ */
+export function useCreateClipMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateClipMutation,
+    CreateClipMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CreateClipMutation, CreateClipMutationVariables>(
+    CreateClipDocument,
+    options
+  )
+}
+export type CreateClipMutationHookResult = ReturnType<
+  typeof useCreateClipMutation
+>
+export type CreateClipMutationResult = Apollo.MutationResult<CreateClipMutation>
+export type CreateClipMutationOptions = Apollo.BaseMutationOptions<
+  CreateClipMutation,
+  CreateClipMutationVariables
+>
 export const CreateMyLensStreamSessionDocument = gql`
   mutation CreateMyLensStreamSession($publicationId: String!) {
     createMyLensStreamSession(publicationId: $publicationId)

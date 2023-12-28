@@ -1,6 +1,6 @@
 import 'plyr-react/plyr.css'
 import cn from '../../utils/ui/cn'
-import { Player } from '@livepeer/react'
+import { Asset, ClipLength, Player } from '@livepeer/react'
 import { ARWEAVE_GATEWAY, IPFS_GATEWAY } from '../../utils/contants'
 import React, { FC, memo } from 'react'
 import { SessionType, useSession } from '@lens-protocol/react-web'
@@ -18,6 +18,10 @@ interface VideoProps {
   children?: React.ReactNode
   showPipButton?: boolean
   autoHide?: number | undefined
+  clipLength?: ClipLength | undefined
+  onClipStarted?: () => void
+  onClipError?: (error: Error) => any
+  onClipCreated?: ((asset: Asset) => any) | undefined
 }
 
 const Video: FC<VideoProps> = ({
@@ -32,7 +36,11 @@ const Video: FC<VideoProps> = ({
   playbackId,
   children = null,
   showPipButton = true,
-  autoHide = 3000
+  autoHide = 3000,
+  clipLength,
+  onClipStarted = () => {},
+  onClipError = () => {},
+  onClipCreated = () => {}
 }) => {
   //   const currentProfile = useAppStore((state) => state.currentProfile)
   const { data } = useSession()
@@ -47,26 +55,34 @@ const Video: FC<VideoProps> = ({
       <Player
         src={src}
         poster={poster}
+        playbackId={playbackId}
+        // configs
         objectFit="contain"
         showLoadingSpinner={true}
         showUploadingIndicator
-        showPipButton={showPipButton}
         aspectRatio="16to9"
+        refetchPlaybackInfoInterval={1000 * 60 * 60 * 24}
+        // controls
+        showPipButton={showPipButton}
         autoPlay={autoPlay}
         muted={muted}
-        playbackId={playbackId}
+        controls={{ defaultVolume: 1, autohide: autoHide }}
+        loop={loop}
+        // clip props
+        clipLength={clipLength}
+        onClipStarted={onClipStarted}
+        onClipError={onClipError}
+        onClipCreated={onClipCreated}
+        // others
         viewerId={
           data?.type === SessionType.WithProfile ? data?.address : undefined
         }
-        controls={{ defaultVolume: 1, autohide: autoHide }}
-        refetchPlaybackInfoInterval={1000 * 60 * 60 * 24}
         autoUrlUpload={{
           fallback: true,
           ipfsGateway: IPFS_GATEWAY,
           arweaveGateway: ARWEAVE_GATEWAY
         }}
         renderChildrenOutsideContainer
-        loop={loop}
         onStreamStatusChange={onStreamStatusChange}
         streamOfflineErrorComponent={streamOfflineErrorComponent}
         theme={{

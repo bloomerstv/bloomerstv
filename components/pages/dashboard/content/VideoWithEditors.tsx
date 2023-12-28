@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 import Video from '../../../common/Video'
-import VideoClipper from './VideoClipper'
+// import VideoClipper from './VideoClipper'
 
 const VideoWithEditors = ({ src }: { src: string }) => {
   return (
@@ -11,7 +11,7 @@ const VideoWithEditors = ({ src }: { src: string }) => {
       showPipButton={false}
       autoHide={0}
     >
-      <VideoClipper url={src!} />
+      {/* <VideoClipper url={src!} /> */}
     </Video>
   )
 }

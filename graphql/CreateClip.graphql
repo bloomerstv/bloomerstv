@@ -1,0 +1,19 @@
+mutation CreateClip(
+  $playbackId: String!
+  $startTime: BigNumber!
+  $endTime: BigNumber
+  $name: String
+  $sessionId: String
+) {
+  createClip(
+    playbackId: $playbackId
+    startTime: $startTime
+    endTime: $endTime
+    name: $name
+    sessionId: $sessionId
+  ) {
+    downloadUrl
+    playbackId
+    playbackUrl
+  }
+}

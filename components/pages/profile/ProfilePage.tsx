@@ -1,9 +1,17 @@
 'use client'
-import { ProfileId, useProfile } from '@lens-protocol/react-web'
+import {
+  ProfileId,
+  SessionType,
+  useProfile,
+  useSession
+} from '@lens-protocol/react-web'
 import React from 'react'
 import { toast } from 'react-toastify'
 import LiveChat from '../dashboard/go-live/LiveChat'
-import { useStreamerQuery } from '../../../graphql/generated'
+import {
+  useCreateClipMutation,
+  useStreamerQuery
+} from '../../../graphql/generated'
 import ProfileInfoWithStream from './ProfileInfoWithStream'
 import StreamerOffline from './StreamerOffline'
 import Video from '../../common/Video'
@@ -12,8 +20,23 @@ import useIsMobile from '../../../utils/hooks/useIsMobile'
 import StartLoadingPage from '../loading/StartLoadingPage'
 import CommentSection from '../watch/CommentSection'
 import AboutProfile from './AboutProfile'
+import formatHandle from '../../../utils/lib/formatHandle'
+import PostClipOnLens from './PostClipOnLens'
+import VideoClipHandler from './VideoClipHandler'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
+  const [clipUrl, setClipUrl] = React.useState<string | null>(null)
+  const [open, setOpen] = React.useState(false)
+
+  // const [clipClicked, setClipClicked] = React.useState(false)
+
+  const [playbackOffsetMs, setPlaybackOffsetMs] = React.useState(0)
+  const playbackOffsetMsRef = React.useRef(playbackOffsetMs)
+  // Update the ref whenever `playbackOffsetMs` changes
+  React.useEffect(() => {
+    playbackOffsetMsRef.current = playbackOffsetMs
+  }, [playbackOffsetMs])
+
   const isMobile = useIsMobile()
   const {
     data,
@@ -22,6 +45,9 @@ const ProfilePage = ({ handle }: { handle: string }) => {
   } = useProfile({
     forHandle: handle
   })
+
+  const [createClip] = useCreateClipMutation()
+  const { data: sessionData } = useSession()
 
   const {
     data: streamer,
@@ -34,8 +60,58 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     skip: !data?.id
   })
 
+  const hasPlaybackId = Boolean(streamer?.streamer?.playbackId)
+
   if (error) {
     toast.error(error.message)
+  }
+
+  // const handleClipClicked = () => {
+  //   setClipClicked(true)
+  // }
+
+  const handleClipClicked = async () => {
+    try {
+      // Use `playbackOffsetMsRef.current` instead of `playbackOffsetMs`
+      const offsetMs = playbackOffsetMsRef.current
+      console.log('playbackOffsetMs in handleClip', offsetMs)
+
+      if (!offsetMs) return
+      // we get the estimated time on the server that the user "clipped"
+      // by subtracting the offset from the recorded clip time
+      const estimatedServerClipTime = Date.now() - (offsetMs ?? 0)
+
+      const startTime = estimatedServerClipTime - 30 * 1000
+      const endTime = estimatedServerClipTime
+
+      console.log('startTime', startTime)
+      console.log('endTime', endTime)
+
+      const result = await toast.promise(
+        createClip({
+          variables: {
+            playbackId: streamer?.streamer?.playbackId as string,
+            startTime,
+            endTime,
+            name: `Clip from ${formatHandle(data)}'s stream`
+          }
+        }),
+        {
+          error: 'Error processing clip',
+          pending: 'Processing clip... (this may take a few minutes)',
+          success: 'Clip processed! Can post on Lens now'
+        }
+      )
+
+      if (result?.data?.createClip?.downloadUrl) {
+        setClipUrl(result?.data?.createClip?.downloadUrl)
+        setOpen(true)
+      } else {
+        toast.error('Something went wrong creating clip')
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const videoComponent = React.useMemo(() => {
@@ -55,10 +131,22 @@ const ProfilePage = ({ handle }: { handle: string }) => {
           // @ts-ignore
           <StreamerOffline profile={data} streamer={streamer?.streamer} />
         }
+        clipLength={
+          sessionData?.type === SessionType.WithProfile ? 30 : undefined
+        }
+        onClipStarted={handleClipClicked}
         src={getLiveStreamUrl(streamer?.streamer?.playbackId)}
-      />
+      >
+        <VideoClipHandler
+          // clipClicked={clipClicked}
+          // setClipClicked={setClipClicked}
+          // playbackId={streamer?.streamer?.playbackId}
+          // profile={data!}
+          setPlaybackOffsetMs={setPlaybackOffsetMs}
+        />
+      </Video>
     )
-  }, [streamer?.streamer?.playbackId])
+  }, [streamer?.streamer?.playbackId, sessionData?.type])
 
   if (profileLoading || (streamerLoading && !streamer?.streamer)) {
     return <StartLoadingPage />
@@ -70,8 +158,16 @@ const ProfilePage = ({ handle }: { handle: string }) => {
 
   return (
     <div className="flex flex-row h-full">
+      {clipUrl && data && sessionData?.type === SessionType.WithProfile && (
+        <PostClipOnLens
+          open={open}
+          setOpen={setOpen}
+          url={clipUrl}
+          profile={data}
+        />
+      )}
       <div className="w-full flex-grow overflow-auto no-scrollbar h-full">
-        {streamer?.streamer?.playbackId ? (
+        {hasPlaybackId ? (
           <>{videoComponent}</>
         ) : (
           <div className="h-[230px] sm:h-[700px]">

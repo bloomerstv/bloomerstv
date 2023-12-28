@@ -9,7 +9,6 @@ import CommentSection from './CommentSection'
 import { getSenitizedContent } from '../../../utils/lib/getSenitizedContent'
 import Markup from '../../common/Lexical/Markup'
 import { timeAgo } from '../../../utils/helpers'
-
 const VideoPage = ({ post }: { post: Post }) => {
   const isMobile = useIsMobile()
 

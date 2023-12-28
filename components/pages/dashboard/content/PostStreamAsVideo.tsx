@@ -9,7 +9,7 @@ import {
 } from '../../../../graphql/generated'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
-import { video } from '@lens-protocol/metadata'
+import { MediaVideoMimeType, video } from '@lens-protocol/metadata'
 import { APP_ID, APP_LINK, defaultSponsored } from '../../../../utils/config'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
@@ -74,17 +74,16 @@ const PostStreamAsVideo = ({
         // @ts-ignore
         animation_url: session?.mp4Url,
         // @ts-ignore
-        image: getThumbnailFromRecordingUrl(session?.mp4Url, 2)
+        image: getThumbnailFromRecordingUrl(session?.mp4Url)
       },
       video: {
         // @ts-ignore
         item: session?.mp4Url,
         // @ts-ignore
-        cover: getThumbnailFromRecordingUrl(session?.mp4Url, 2),
+        cover: getThumbnailFromRecordingUrl(session?.mp4Url),
         // @ts-ignore
         duration: session?.sourceSegmentsDuration,
-        // @ts-ignore
-        type: 'video/mp4',
+        type: MediaVideoMimeType.MP4,
         // @ts-ignore
         altTag: title
       },
