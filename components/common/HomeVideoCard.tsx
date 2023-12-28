@@ -17,10 +17,10 @@ const HomeVideoCard = ({ post }: { post: Post }) => {
       className="no-underline text-p-text group"
       href={`/watch/${post?.id}`}
     >
-      <div className="w-full aspect-w-16 aspect-h-9 sm:w-[410px] h-[234px] relative mb-2 sm:mb-2  overflow-hidden">
+      <div className="w-full aspect-w-16 aspect-h-9 sm:w-[410px] h-[234px] relative mb-2 sm:mb-2  overflow-hidden sm:rounded-xl">
         <img
           src={asset?.cover}
-          className="w-full h-full transition-transform duration-500 ease-in-out transform group-hover:scale-110"
+          className="w-full h-full transition-transform duration-500 ease-in-out transform group-hover:scale-110 "
           alt="thumbnail"
         />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
