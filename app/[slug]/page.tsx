@@ -39,14 +39,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     manifest: '/manifest.json', // we are accessing our manifest file here
-    title: `${handle} - live on BloomersTV`,
+    title: `${handle.split('/')[1]} - Live on BloomersTV`,
     description: 'Live Streaming platform on Lens.',
     icons: [
       { rel: 'icon', url: 'https://bloomers.tv/icon.png' },
       { rel: 'apple-touch-icon', url: 'https://bloomers.tv/apple-icon.png' }
     ],
     openGraph: {
-      title: `${handle} - live on BloomersTV`,
+      title: `${handle.split('/')[1]} - Live on BloomersTV`,
       description: 'Live Streaming platform on Lens.',
       type: 'profile',
       siteName: 'BloomersTV',
