@@ -122,7 +122,7 @@ const PostClipOnLens = ({
           </div>
         }
       >
-        <div className="flex flex-col gap-y-4">
+        <div className="flex flex-col gap-y-4 px-3 sm:px-0">
           <TextField
             label="Clip Title"
             variant="outlined"

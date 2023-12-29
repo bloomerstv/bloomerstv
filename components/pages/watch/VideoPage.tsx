@@ -43,6 +43,7 @@ const VideoPage = ({ post }: { post: Post }) => {
             poster={asset?.cover}
             src={String(asset?.uri)}
             className="w-full"
+            muted={false}
           />
         )}
       </div>
