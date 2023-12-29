@@ -11,14 +11,14 @@ declare global {
 export const metadata: Metadata = {
   manifest: '/manifest.json', // we are accessing our manifest file here
   title: 'BloomersTV',
-  description: 'Game Streaming platform for Bloomers of Lens.',
+  description: 'Live Streaming platform on Lens.',
   icons: [
     { rel: 'icon', url: 'https://bloomers.tv/icon.png' },
     { rel: 'apple-touch-icon', url: 'https://bloomers.tv/apple-icon.png' }
   ],
   openGraph: {
     title: 'BloomersTV',
-    description: 'Game Streaming platform on Lens Protocol.',
+    description: 'Live Streaming platform on Lens.',
     type: 'profile',
     siteName: 'BloomersTV',
     url: 'https://bloomers.tv',

@@ -352,7 +352,9 @@ const ProfileBar = ({
         </div>
 
         <div className="start-row space-x-4">
-          {profile?.id && <LiveCount profileId={profile?.id} />}
+          {profile?.id && streamer?.isActive && (
+            <LiveCount profileId={profile?.id} />
+          )}
 
           {/* like button  */}
           {!isMobile && publication?.id && (
