@@ -54,10 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [
         // logo image
         {
-          url:
-            thumbnail?.length > 0
-              ? thumbnail
-              : 'https://bloomers.tv/banner.png',
+          url: thumbnail ? thumbnail : 'https://bloomers.tv/banner.png',
           width: 1200,
           height: 630,
           alt: 'BloomersTV Logo'
