@@ -14,6 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   try {
     const data = await fetch(NODE_GRAPHQL_URL, {
+      next: { revalidate: 3600 },
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -30,9 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       })
     }).then((res) => res.json())
 
-    console.log(data)
-
     thumbnail = data?.data?.thumbnail
+    console.log('thumbnail', thumbnail)
   } catch (e) {
     console.log(e)
   }
