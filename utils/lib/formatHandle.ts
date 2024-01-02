@@ -1,4 +1,4 @@
-import { HandleInfo, Profile } from '@lens-protocol/react-web'
+import { Profile } from '@lens-protocol/react-web'
 
 /**
  *

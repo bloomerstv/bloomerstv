@@ -11,21 +11,26 @@ import { APP_ID } from '../../../utils/config'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
 
-const ClipsFeed = () => {
+const ClipsFeed = ({ handle }: { handle?: string }) => {
   const { data, loading } = usePublications({
     where: {
       publicationTypes: [PublicationType.Post],
       metadata: {
         mainContentFocus: [PublicationMetadataMainFocusType.ShortVideo],
         // @ts-ignore
-        publishedOn: [APP_ID]
+        publishedOn: [APP_ID],
+        tags: handle
+          ? {
+              oneOf: [`clip-${handle}`]
+            }
+          : undefined
       }
     }
   })
   return (
     <div className="sm:m-8 my-4">
       <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
-        Stream Clips
+        {handle ? `Clips from ${handle}'s Streams` : 'Stream Clips'}
       </div>
       {/* @ts-ignore */}
       {data?.length > 0 ? (

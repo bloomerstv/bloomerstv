@@ -5,7 +5,7 @@ import {
   useProfile,
   useSession
 } from '@lens-protocol/react-web'
-import React from 'react'
+import React, { memo } from 'react'
 import { toast } from 'react-toastify'
 import LiveChat from '../dashboard/go-live/LiveChat'
 import {
@@ -23,6 +23,7 @@ import AboutProfile from './AboutProfile'
 import formatHandle from '../../../utils/lib/formatHandle'
 import PostClipOnLens from './PostClipOnLens'
 import VideoClipHandler from './VideoClipHandler'
+import ClipsFeed from '../home/ClipsFeed'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
@@ -74,7 +75,6 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     try {
       // Use `playbackOffsetMsRef.current` instead of `playbackOffsetMs`
       const offsetMs = playbackOffsetMsRef.current
-      console.log('playbackOffsetMs in handleClip', offsetMs)
 
       if (!offsetMs) return
       // we get the estimated time on the server that the user "clipped"
@@ -83,9 +83,6 @@ const ProfilePage = ({ handle }: { handle: string }) => {
 
       const startTime = estimatedServerClipTime - 30 * 1000
       const endTime = estimatedServerClipTime
-
-      console.log('startTime', startTime)
-      console.log('endTime', endTime)
 
       const result = await toast.promise(
         createClip({
@@ -126,6 +123,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
             refetch()
           }
         }}
+        autoPlay={true}
         muted={false}
         streamOfflineErrorComponent={
           // @ts-ignore
@@ -179,16 +177,20 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         {/* @ts-ignore */}
         <ProfileInfoWithStream profile={data} streamer={streamer?.streamer} />
 
-        {!isMobile && streamer?.streamer?.latestStreamPublicationId && (
-          <div className="m-8 border-t border-p-border">
-            <div className="text-xl font-semibold my-4">Comments</div>
-            <CommentSection
-              publicationId={streamer?.streamer?.latestStreamPublicationId}
-            />
-          </div>
-        )}
+        {!isMobile &&
+          streamer?.streamer?.isActive &&
+          streamer?.streamer?.latestStreamPublicationId && (
+            <div className="m-8 border-t border-p-border">
+              <div className="text-xl font-semibold my-4">Comments</div>
+              <CommentSection
+                publicationId={streamer?.streamer?.latestStreamPublicationId}
+              />
+            </div>
+          )}
 
         <AboutProfile profile={data} />
+
+        <ClipsFeed handle={formatHandle(data)} />
       </div>
       {data?.id && !isMobile && (
         <div className="w-[350px] flex-none h-full">
@@ -203,4 +205,4 @@ const ProfilePage = ({ handle }: { handle: string }) => {
   )
 }
 
-export default ProfilePage
+export default memo(ProfilePage)

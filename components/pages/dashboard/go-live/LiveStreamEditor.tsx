@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { memo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import {
   ShouldCreateNewPostDocument,
@@ -148,10 +148,8 @@ const LiveStreamEditor = () => {
 
   const handleStartedStreaming = async () => {
     try {
-      console.log('started streaming')
       // check if should create new post
       const res = await shouldCreateNewPost()
-      console.log('should create new post', res)
       if (!res) {
         return
       }
@@ -197,6 +195,7 @@ const LiveStreamEditor = () => {
         src={getLiveStreamUrl(myStream?.playbackId)}
         streamOfflineErrorComponent={ConnectStreamMemo}
         onStreamStatusChange={(isLive) => {
+          console.log('isLive', isLive)
           setStartedStreaming(isLive)
         }}
       />
@@ -317,4 +316,4 @@ const LiveStreamEditor = () => {
   )
 }
 
-export default LiveStreamEditor
+export default memo(LiveStreamEditor)

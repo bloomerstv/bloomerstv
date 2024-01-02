@@ -11,6 +11,7 @@ import { Profile, useCreatePost } from '@lens-protocol/react-web'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import { APP_ID, APP_LINK, defaultSponsored } from '../../../utils/config'
 import { useUploadDataToIpfsMutation } from '../../../graphql/generated'
+import formatHandle from '../../../utils/lib/formatHandle'
 
 const PostClipOnLens = ({
   open,
@@ -57,6 +58,7 @@ const PostClipOnLens = ({
         type: MediaVideoMimeType.MP4,
         altTag: title
       },
+      tags: [`clip-${formatHandle(profile)}`],
       appId: APP_ID,
       id,
       locale

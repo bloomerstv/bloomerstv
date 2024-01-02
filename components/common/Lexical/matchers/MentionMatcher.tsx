@@ -21,7 +21,7 @@ export const Mention = ({ ...props }: any) => {
     >
       <Link prefetch href={`/${profile?.handle}`} className="no-underline">
         <span className="hover:underline text-blue-400 cursor-pointer">
-          {profile?.handle && `@${profile?.handle}`}
+          {profile?.handle && `${profile?.handle}`}
         </span>
       </Link>
     </span>
