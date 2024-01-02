@@ -85,6 +85,7 @@ const Video: FC<VideoProps> = ({
         renderChildrenOutsideContainer
         onStreamStatusChange={onStreamStatusChange}
         streamOfflineErrorComponent={streamOfflineErrorComponent}
+        playbackFailedErrorComponent={streamOfflineErrorComponent}
         theme={{
           colors: {
             progressLeft: '#1668b8',
