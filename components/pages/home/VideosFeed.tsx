@@ -28,7 +28,7 @@ const VideosFeed = () => {
 
       {/* @ts-ignore */}
       {data?.length > 0 ? (
-        <div className="flex flex-row flex-wrap sm:gap-x-4 gap-y-6 sm:gap-y-12">
+        <div className="flex flex-row flex-wrap w-full gap-y-6 sm:gap-y-8">
           {data?.map((post) => {
             return <HomeVideoCard key={post?.id} post={post as Post} />
           })}

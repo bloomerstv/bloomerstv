@@ -12,14 +12,15 @@ const StreamCard = ({ streamer }: { streamer: StreamerWithProfile }) => {
     <Link
       prefetch
       href={`/${formatHandle(streamer?.profile)}`}
-      className="no-underline text-p-text w-full"
+      className="no-underline text-p-text w-full lg:w-1/3 sm:px-2"
     >
-      <div className="w-full aspect-w-16 aspect-h-9 sm:w-[416px] h-[234px] relative mb-2.5 sm:mb-2  overflow-hidden">
+      {/* xl:w-[368px] xl:h-[207px] 2xl:w-[392px] 2xl:h-[220px] */}
+      <div className="w-full aspect-video relative mb-2 sm:rounded-xl overflow-hidden">
         {/* @ts-ignore */}
         <LoadingImage
           // @ts-ignore
           src={streamer?.thumbnail}
-          className="w-full h-full transition-transform duration-500 ease-in-out transform hover:scale-110"
+          className="w-full aspect-video bg-p-hover sm:rounded-xl transition-transform duration-500 ease-in-out transform hover:scale-110"
           alt="thumbnail"
         />
         <div className="absolute top-4 left-4 start-row gap-x-2">
@@ -33,15 +34,17 @@ const StreamCard = ({ streamer }: { streamer: StreamerWithProfile }) => {
         {/* live viewers count */}
         {/* <div className="absolute bottom-4 left-4 "></div> */}
       </div>
-      <div className="sm:px-0 px-4 w-full sm:w-[416px] start-row space-x-4">
+      <div className="sm:px-0 px-4 w-full start-row space-x-3">
         <img
           src={getAvatar(streamer?.profile)}
-          className="w-12 h-12 rounded-full"
+          className="w-10 h-10 rounded-full"
           alt="avatar"
         />
         <div className="start-col">
           <div className="font-semibold">{streamer?.streamName}</div>
-          <div className="text-sm">{formatHandle(streamer?.profile)} </div>
+          <div className="text-sm font-semibold text-s-text">
+            {formatHandle(streamer?.profile)}{' '}
+          </div>
         </div>
       </div>
     </Link>

@@ -15,7 +15,7 @@ const LiveStreamerFeed = () => {
       </div>
 
       {streamersWithProfiles?.length > 0 ? (
-        <div className="flex flex-wrap sm:gap-x-4 gap-y-6 sm:gap-y-12">
+        <div className="flex flex-row flex-wrap w-full gap-y-6 sm:gap-y-8">
           {streamersWithProfiles?.map((streamer) => {
             return <StreamCard key={streamer?.profileId} streamer={streamer} />
           })}

@@ -14,13 +14,13 @@ const HomeVideoCard = ({ post }: { post: Post }) => {
   return (
     <Link
       prefetch
-      className="no-underline text-p-text group"
+      className="no-underline text-p-text group w-full lg:w-1/3 sm:px-2"
       href={`/watch/${post?.id}`}
     >
-      <div className="w-full aspect-w-16 aspect-h-9 sm:w-[410px] h-[234px] relative mb-2 sm:mb-2  overflow-hidden sm:rounded-xl">
+      <div className="w-full aspect-video relative mb-2 overflow-hidden sm:rounded-xl">
         <img
           src={asset?.cover}
-          className="w-full h-full transition-transform duration-500 ease-in-out transform group-hover:scale-110 "
+          className="w-full h-full aspect-video transition-transform duration-500 ease-in-out transform group-hover:scale-110 "
           alt="thumbnail"
         />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -37,12 +37,18 @@ const HomeVideoCard = ({ post }: { post: Post }) => {
           </div>
         )}
       </div>
-      <div className="sm:px-0 px-4 w-full sm:w-[416px] start-row space-x-4">
-        <img
-          src={getAvatar(post?.by)}
-          className="w-8 h-8 rounded-full"
-          alt="avatar"
-        />
+      <div className="sm:px-0 px-4 w-full start-row space-x-3">
+        <Link
+          prefetch
+          className="no-underline text-p-text group font-semibold text-s-text"
+          href={`/${formatHandle(post?.by)}`}
+        >
+          <img
+            src={getAvatar(post?.by)}
+            className="w-10 h-10 rounded-full"
+            alt="avatar"
+          />
+        </Link>
         <div className="start-col">
           {/* @ts-ignore */}
           <div className="text-sm font-semibold">
