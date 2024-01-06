@@ -1,6 +1,5 @@
 'use client'
 import React, { memo, useEffect } from 'react'
-import { toast } from 'react-toastify'
 import {
   ShouldCreateNewPostDocument,
   useCreateMyLensStreamSessionMutation,
@@ -32,6 +31,7 @@ import getUserLocale from '../../../../utils/getUserLocale'
 import clsx from 'clsx'
 import StartLoadingPage from '../../loading/StartLoadingPage'
 import { useMyStreamInfo } from '../../../store/useMyStreamInfo'
+import toast from 'react-hot-toast'
 
 const LiveStreamEditor = () => {
   const { data: session } = useSession()
@@ -74,7 +74,7 @@ const LiveStreamEditor = () => {
     // code logic here
     const streamName = myStream?.streamName ?? undefined
     if (!streamName) {
-      toast.info('Please enter a stream name')
+      toast.error('Please enter a stream name')
       throw new Error('No stream name')
     }
     const streamerHandle = formatHandle(session?.profile)
@@ -156,7 +156,7 @@ const LiveStreamEditor = () => {
 
       // if yet, create lens post and get post id
       const publicationId = await toast.promise(createLensPost(), {
-        pending: 'Creating post for your stream...',
+        loading: 'Creating post for your stream...',
         success: 'Post created!',
         error: 'Error creating post'
       })

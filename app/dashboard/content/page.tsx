@@ -6,8 +6,8 @@ import {
   useGetMyRecordedStreamSessionsQuery
 } from '../../../graphql/generated'
 import SessionRow from '../../../components/pages/dashboard/content/SesssionRow'
-import { toast } from 'react-toastify'
 import { Button } from '@mui/material'
+import toast from 'react-hot-toast'
 
 const ContentPage = () => {
   const [sessions, setSessions] = useState<RecordedSession[]>([]) // Change the type to an array of RecordedSession

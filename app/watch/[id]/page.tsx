@@ -3,9 +3,9 @@ import React, { useEffect } from 'react'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import OtherVideosRecommendations from '../../../components/pages/watch/OtherVideosRecommendations'
 import { Post, usePublication } from '@lens-protocol/react-web'
-import { toast } from 'react-toastify'
 import StartLoadingPage from '../../../components/pages/loading/StartLoadingPage'
 import VideoPage from '../../../components/pages/watch/VideoPage'
+import toast from 'react-hot-toast'
 
 const page = ({
   params

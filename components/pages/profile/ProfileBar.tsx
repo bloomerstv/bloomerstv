@@ -15,7 +15,6 @@ import { SingleStreamer } from '../../../graphql/generated'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
 import AutorenewIcon from '@mui/icons-material/Autorenew'
-import { toast } from 'react-toastify'
 import LoadingButton from '@mui/lab/LoadingButton'
 import StarIcon from '@mui/icons-material/Star'
 import {
@@ -43,6 +42,7 @@ import Markup from '../../common/Lexical/Markup'
 import MobileCommentButton from '../watch/MobileCommentButton'
 import clsx from 'clsx'
 import LiveCount from './LiveCount'
+import toast from 'react-hot-toast'
 const ProfileBar = ({
   profile,
   streamer,
@@ -160,7 +160,7 @@ const ProfileBar = ({
   const mustLogin = (infoMsg: string = 'Must Login'): Boolean => {
     if (mySession?.type !== SessionType.WithProfile) {
       setOpen(true)
-      toast.info(infoMsg)
+      toast.error(infoMsg)
       return false
     }
     return true

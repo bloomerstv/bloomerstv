@@ -1,7 +1,6 @@
 import { Button, TextField, TextareaAutosize } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import CreateIcon from '@mui/icons-material/Create'
-import { toast } from 'react-toastify'
 import { Post, useCreatePost, useSession } from '@lens-protocol/react-web'
 import {
   RecordedSession,
@@ -16,6 +15,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import VideoWithEditors from './VideoWithEditors'
+import toast from 'react-hot-toast'
 
 const PostStreamAsVideo = ({
   publication,
@@ -121,7 +121,7 @@ const PostStreamAsVideo = ({
     setOpen(false)
 
     await toast.promise(createLensPost(), {
-      pending: 'Creating Post...',
+      loading: 'Creating Post...',
       success: 'Post Created',
       error: 'Error creating post'
     })

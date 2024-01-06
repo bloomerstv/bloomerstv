@@ -12,9 +12,9 @@ import getUserLocale from '../../../utils/getUserLocale'
 import { textOnly } from '@lens-protocol/metadata'
 import { APP_ID, defaultSponsored } from '../../../utils/config'
 import { useUploadDataToIpfsMutation } from '../../../graphql/generated'
-import { toast } from 'react-toastify'
 import { NewComment } from './CommentSection'
 import clsx from 'clsx'
+import toast from 'react-hot-toast'
 
 const CreateCommentRow = ({
   commentOn,

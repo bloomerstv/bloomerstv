@@ -3,7 +3,6 @@ import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
 import { Button, TextField } from '@mui/material'
 import Video from '../../common/Video'
-import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../utils/getUserLocale'
 import { MediaVideoMimeType, shortVideo } from '@lens-protocol/metadata'
@@ -12,6 +11,7 @@ import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFro
 import { APP_ID, APP_LINK, defaultSponsored } from '../../../utils/config'
 import { useUploadDataToIpfsMutation } from '../../../graphql/generated'
 import formatHandle from '../../../utils/lib/formatHandle'
+import toast from 'react-hot-toast'
 
 const PostClipOnLens = ({
   open,
@@ -94,7 +94,7 @@ const PostClipOnLens = ({
 
     await toast.promise(createLensPost(), {
       error: 'Error creating post',
-      pending: 'Creating post for clip...',
+      loading: 'Creating post for clip...',
       success: 'Post created!'
     })
   }

@@ -6,7 +6,6 @@ import {
   useSession
 } from '@lens-protocol/react-web'
 import React, { memo } from 'react'
-import { toast } from 'react-toastify'
 import LiveChat from '../dashboard/go-live/LiveChat'
 import {
   useCreateClipMutation,
@@ -24,6 +23,7 @@ import formatHandle from '../../../utils/lib/formatHandle'
 import PostClipOnLens from './PostClipOnLens'
 import VideoClipHandler from './VideoClipHandler'
 import ClipsFeed from '../home/ClipsFeed'
+import toast from 'react-hot-toast'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
@@ -95,7 +95,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         }),
         {
           error: 'Error processing clip',
-          pending: 'Processing clip... (this may take a few minutes)',
+          loading: 'Processing clip... (this may take a few minutes)',
           success: 'Clip processed! Can post on Lens now'
         }
       )
