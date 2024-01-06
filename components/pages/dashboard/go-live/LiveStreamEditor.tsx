@@ -2,6 +2,7 @@
 import React, { memo, useEffect } from 'react'
 import {
   ShouldCreateNewPostDocument,
+  ViewType,
   useCreateMyLensStreamSessionMutation,
   useMyStreamQuery,
   useUploadDataToIpfsMutation
@@ -15,7 +16,7 @@ import {
   useCreatePost,
   useSession
 } from '@lens-protocol/react-web'
-import { Button, TextField } from '@mui/material'
+import { Button, MenuItem, Select, TextField } from '@mui/material'
 import {
   APP_ID,
   APP_LINK,
@@ -32,6 +33,7 @@ import clsx from 'clsx'
 import StartLoadingPage from '../../loading/StartLoadingPage'
 import { useMyStreamInfo } from '../../../store/useMyStreamInfo'
 import toast from 'react-hot-toast'
+import { useMyPreferences } from '../../../store/useMyPreferences'
 
 const LiveStreamEditor = () => {
   const { data: session } = useSession()
@@ -40,6 +42,13 @@ const LiveStreamEditor = () => {
   const addLiveChatAt = useMyStreamInfo((state) => state.addLiveChatAt)
 
   const client = useApolloClient()
+
+  const streamReplayViewType = useMyPreferences(
+    (state) => state.streamReplayViewType
+  )
+  const setStreamReplayViewType = useMyPreferences(
+    (state) => state.setStreamReplayViewType
+  )
 
   const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation()
   const { execute, error: createPostError } = useCreatePost()
@@ -165,13 +174,13 @@ const LiveStreamEditor = () => {
         return
       }
 
-      console.log('created publicationId', publicationId)
       // submit the lens post id to create a lens stream session to api
       // so when/if we check for lens post id on the latest session, it will be there
 
       const { data, errors } = await createMyLensStreamSession({
         variables: {
-          publicationId: publicationId
+          publicationId: publicationId,
+          viewType: streamReplayViewType
         }
       })
 
@@ -195,7 +204,6 @@ const LiveStreamEditor = () => {
         src={getLiveStreamUrl(myStream?.playbackId)}
         streamOfflineErrorComponent={ConnectStreamMemo}
         onStreamStatusChange={(isLive) => {
-          console.log('isLive', isLive)
           setStartedStreaming(isLive)
         }}
       />
@@ -227,6 +235,45 @@ const LiveStreamEditor = () => {
                 <div className="text-p-text font-semibold text-md 2xl:text-lg">
                   {myStream?.streamName}
                 </div>
+              </div>
+
+              {/* select stream replay view type and set */}
+
+              <div className="space-y-2">
+                <div className="text-s-text font-bold text-md">
+                  Replay Visibility
+                </div>
+                <Select
+                  value={streamReplayViewType}
+                  onChange={(e) => {
+                    if (!e.target.value) return
+                    setStreamReplayViewType(e.target.value as ViewType)
+                  }}
+                  size="small"
+                >
+                  <MenuItem
+                    value={ViewType.Public}
+                    title="Your stream replay will be visible on Home, Profile, and Post page"
+                    className="text-p-text"
+                  >
+                    Public
+                  </MenuItem>
+                  <MenuItem
+                    title="Your stream replay will be visible only on Post page"
+                    value={ViewType.Unlisted}
+                    className="text-p-text"
+                  >
+                    Unlisted
+                  </MenuItem>
+
+                  <MenuItem
+                    title="Your stream replay will not be visible for anyone but you can find it in dashboard"
+                    value={ViewType.Private}
+                    className="text-p-text"
+                  >
+                    Private
+                  </MenuItem>
+                </Select>
               </div>
 
               {/* <div className="">

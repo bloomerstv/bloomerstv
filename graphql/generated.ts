@@ -58,6 +58,7 @@ export type Mutation = {
   __typename?: 'Mutation'
   createClip?: Maybe<ClipResult>
   createMyLensStreamSession?: Maybe<Scalars['Boolean']['output']>
+  setViewType?: Maybe<Scalars['Boolean']['output']>
   updateMyStream?: Maybe<Scalars['Boolean']['output']>
   uploadDataToIpfs?: Maybe<IpfsResult>
 }
@@ -72,6 +73,12 @@ export type MutationCreateClipArgs = {
 
 export type MutationCreateMyLensStreamSessionArgs = {
   publicationId: Scalars['String']['input']
+  viewType?: InputMaybe<ViewType>
+}
+
+export type MutationSetViewTypeArgs = {
+  publicationId: Scalars['String']['input']
+  viewType: ViewType
 }
 
 export type MutationUpdateMyStreamArgs = {
@@ -104,6 +111,7 @@ export type Query = {
   shouldCreateNewPost?: Maybe<Scalars['Boolean']['output']>
   streamChats?: Maybe<Array<Maybe<Chat>>>
   streamer?: Maybe<SingleStreamer>
+  thumbnail?: Maybe<Scalars['String']['output']>
 }
 
 export type QueryGetMyRecordedStreamSessionsArgs = {
@@ -118,12 +126,16 @@ export type QueryStreamerArgs = {
   profileId: Scalars['String']['input']
 }
 
+export type QueryThumbnailArgs = {
+  handle: Scalars['String']['input']
+}
+
 export type RecordedSession = {
   __typename?: 'RecordedSession'
   mp4Url?: Maybe<Scalars['String']['output']>
   publicationId?: Maybe<Scalars['String']['output']>
   recordingUrl?: Maybe<Scalars['String']['output']>
-  sourceSegmentsDuration?: Maybe<Scalars['Int']['output']>
+  sourceSegmentsDuration?: Maybe<Scalars['Float']['output']>
 }
 
 export type SingleStreamer = Stream & {
@@ -168,6 +180,12 @@ export type UpdateStreamRequest = {
   streamName?: InputMaybe<Scalars['String']['input']>
 }
 
+export enum ViewType {
+  Private = 'private',
+  Public = 'public',
+  Unlisted = 'unlisted'
+}
+
 export type CreateClipMutationVariables = Exact<{
   playbackId: Scalars['String']['input']
   startTime: Scalars['BigNumber']['input']
@@ -188,6 +206,7 @@ export type CreateClipMutation = {
 
 export type CreateMyLensStreamSessionMutationVariables = Exact<{
   publicationId: Scalars['String']['input']
+  viewType?: InputMaybe<ViewType>
 }>
 
 export type CreateMyLensStreamSessionMutation = {
@@ -308,6 +327,16 @@ export type UploadDataToIpfsMutation = {
   } | null
 }
 
+export type SetViewTypeMutationVariables = Exact<{
+  publicationId: Scalars['String']['input']
+  viewType: ViewType
+}>
+
+export type SetViewTypeMutation = {
+  __typename?: 'Mutation'
+  setViewType?: boolean | null
+}
+
 export const CreateClipDocument = gql`
   mutation CreateClip(
     $playbackId: String!
@@ -376,8 +405,14 @@ export type CreateClipMutationOptions = Apollo.BaseMutationOptions<
   CreateClipMutationVariables
 >
 export const CreateMyLensStreamSessionDocument = gql`
-  mutation CreateMyLensStreamSession($publicationId: String!) {
-    createMyLensStreamSession(publicationId: $publicationId)
+  mutation CreateMyLensStreamSession(
+    $publicationId: String!
+    $viewType: ViewType
+  ) {
+    createMyLensStreamSession(
+      publicationId: $publicationId
+      viewType: $viewType
+    )
   }
 `
 export type CreateMyLensStreamSessionMutationFn = Apollo.MutationFunction<
@@ -399,6 +434,7 @@ export type CreateMyLensStreamSessionMutationFn = Apollo.MutationFunction<
  * const [createMyLensStreamSessionMutation, { data, loading, error }] = useCreateMyLensStreamSessionMutation({
  *   variables: {
  *      publicationId: // value for 'publicationId'
+ *      viewType: // value for 'viewType'
  *   },
  * });
  */
@@ -971,6 +1007,55 @@ export type UploadDataToIpfsMutationResult =
 export type UploadDataToIpfsMutationOptions = Apollo.BaseMutationOptions<
   UploadDataToIpfsMutation,
   UploadDataToIpfsMutationVariables
+>
+export const SetViewTypeDocument = gql`
+  mutation SetViewType($publicationId: String!, $viewType: ViewType!) {
+    setViewType(publicationId: $publicationId, viewType: $viewType)
+  }
+`
+export type SetViewTypeMutationFn = Apollo.MutationFunction<
+  SetViewTypeMutation,
+  SetViewTypeMutationVariables
+>
+
+/**
+ * __useSetViewTypeMutation__
+ *
+ * To run a mutation, you first call `useSetViewTypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetViewTypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setViewTypeMutation, { data, loading, error }] = useSetViewTypeMutation({
+ *   variables: {
+ *      publicationId: // value for 'publicationId'
+ *      viewType: // value for 'viewType'
+ *   },
+ * });
+ */
+export function useSetViewTypeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SetViewTypeMutation,
+    SetViewTypeMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<SetViewTypeMutation, SetViewTypeMutationVariables>(
+    SetViewTypeDocument,
+    options
+  )
+}
+export type SetViewTypeMutationHookResult = ReturnType<
+  typeof useSetViewTypeMutation
+>
+export type SetViewTypeMutationResult =
+  Apollo.MutationResult<SetViewTypeMutation>
+export type SetViewTypeMutationOptions = Apollo.BaseMutationOptions<
+  SetViewTypeMutation,
+  SetViewTypeMutationVariables
 >
 
 export interface PossibleTypesResultData {

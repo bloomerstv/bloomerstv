@@ -1,0 +1,3 @@
+mutation SetViewType($publicationId: String!, $viewType: ViewType!) {
+  setViewType(publicationId: $publicationId, viewType: $viewType)
+}
