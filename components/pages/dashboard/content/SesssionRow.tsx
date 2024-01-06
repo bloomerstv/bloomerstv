@@ -11,6 +11,7 @@ import PauseIcon from '@mui/icons-material/Pause'
 import Markup from '../../../common/Lexical/Markup'
 import PostStreamAsVideo from './PostStreamAsVideo'
 import Video from '../../../common/Video'
+import ContentVisibiltyButton from './ContentVisibilty'
 const SessionRow = ({ session }: { session: RecordedSession }) => {
   const { data } = usePublication({
     // @ts-ignore
@@ -84,10 +85,9 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
         </div>
 
         <div className="start-row gap-x-4 shrink-0">
-          {/* repost button */}
+          <ContentVisibiltyButton session={session} />
 
           {data && <PostStreamAsVideo publication={data} session={session} />}
-
           {/* download button */}
           <Button
             size="small"

@@ -24,7 +24,6 @@ const PostStreamAsVideo = ({
   publication: Post
   session: RecordedSession
 }) => {
-  console.log('session', session)
   // @ts-ignore
   const [content, setContent] = React.useState('')
 

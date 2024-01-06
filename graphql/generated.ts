@@ -136,6 +136,7 @@ export type RecordedSession = {
   publicationId?: Maybe<Scalars['String']['output']>
   recordingUrl?: Maybe<Scalars['String']['output']>
   sourceSegmentsDuration?: Maybe<Scalars['Float']['output']>
+  viewType?: Maybe<ViewType>
 }
 
 export type SingleStreamer = Stream & {
@@ -226,6 +227,7 @@ export type GetMyRecordedStreamSessionsQuery = {
     mp4Url?: string | null
     sourceSegmentsDuration?: number | null
     recordingUrl?: string | null
+    viewType?: ViewType | null
   } | null> | null
 }
 
@@ -467,6 +469,7 @@ export const GetMyRecordedStreamSessionsDocument = gql`
       mp4Url
       sourceSegmentsDuration
       recordingUrl
+      viewType
     }
   }
 `

@@ -4,5 +4,6 @@ query GetMyRecordedStreamSessions($skip: Int) {
     mp4Url
     sourceSegmentsDuration
     recordingUrl
+    viewType
   }
 }
