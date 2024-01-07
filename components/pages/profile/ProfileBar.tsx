@@ -495,7 +495,7 @@ const ProfileBar = ({
               </div>
             )}
 
-            {publication?.id && streamer?.isActive && (
+            {publication?.id && (
               <MobileCommentButton postId={publication?.id} />
             )}
 
