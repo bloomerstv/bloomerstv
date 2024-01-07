@@ -1,0 +1,3 @@
+query ReplayRecordingUrl($publicationId: String!) {
+  streamReplayRecordingUrl(publicationId: $publicationId)
+}

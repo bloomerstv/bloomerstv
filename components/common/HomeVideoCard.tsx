@@ -8,7 +8,15 @@ import { secondsToTime, timeAgo } from '../../utils/helpers'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import Markup from './Lexical/Markup'
 
-const HomeVideoCard = ({ post }: { post: Post }) => {
+const HomeVideoCard = ({
+  post,
+  cover,
+  duration
+}: {
+  post: Post
+  cover?: string
+  duration?: number
+}) => {
   const asset = getPublicationData(post?.metadata)?.asset
 
   return (
@@ -19,7 +27,7 @@ const HomeVideoCard = ({ post }: { post: Post }) => {
     >
       <div className="w-full aspect-video relative mb-2 overflow-hidden sm:rounded-xl">
         <img
-          src={asset?.cover}
+          src={cover ?? asset?.cover}
           className="w-full h-full aspect-video transition-transform duration-500 ease-in-out transform group-hover:scale-110 "
           alt="thumbnail"
         />
@@ -29,10 +37,11 @@ const HomeVideoCard = ({ post }: { post: Post }) => {
             className="text-white transform transition-transform group-hover:scale-110 duration-500"
           />
         </div>
-        {asset?.duration && (
+        {(duration || asset?.duration) && (
           <div className="absolute bottom-4 right-4 bg-black bg-opacity-80 px-1.5 rounded">
             <div className="text-xs text-white">
-              {secondsToTime(asset?.duration)}
+              {/* @ts-ignore */}
+              {secondsToTime(duration ?? asset?.duration)}
             </div>
           </div>
         )}
@@ -55,10 +64,10 @@ const HomeVideoCard = ({ post }: { post: Post }) => {
             {/* @ts-ignore */}
             <Markup>{post?.metadata?.title}</Markup>
           </div>
-          <div className="start-row text-sm text-s-text gap-x-1.5">
+          <div className="start-row text-sm font-normal text-s-text gap-x-1.5">
             <Link
               prefetch
-              className="no-underline text-p-text group font-semibold text-s-text"
+              className="no-underline group text-s-text font-semibold"
               href={`/${formatHandle(post?.by)}`}
             >
               <div className="">{formatHandle(post?.by)} </div>

@@ -57,7 +57,10 @@ export const localDateAndTime = (dataTime: string) => {
   return `${day} ${month} ${year} ${time}`
 }
 
-export const secondsToTime = (seconds: number) => {
+export const secondsToTime = (seconds?: number) => {
+  if (!seconds) {
+    return '00:00'
+  }
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds - hours * 3600) / 60)
   const secondsLeft = Math.floor(seconds - hours * 3600 - minutes * 60)

@@ -1,5 +1,5 @@
 import { Post } from '@lens-protocol/react-web'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Video from '../../common/Video'
 import getPublicationData from '../../../utils/lib/getPublicationData'
 import ProfileInfoWithStream from '../profile/ProfileInfoWithStream'
@@ -9,10 +9,25 @@ import CommentSection from './CommentSection'
 import { getSenitizedContent } from '../../../utils/lib/getSenitizedContent'
 import Markup from '../../common/Lexical/Markup'
 import { timeAgo } from '../../../utils/helpers'
+import { useReplayRecordingUrlQuery } from '../../../graphql/generated'
+import toast from 'react-hot-toast'
+import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 const VideoPage = ({ post }: { post: Post }) => {
   const isMobile = useIsMobile()
 
   const asset = getPublicationData(post?.metadata)?.asset
+
+  const { data, error } = useReplayRecordingUrlQuery({
+    variables: {
+      publicationId: post?.id
+    },
+    skip: post?.metadata?.__typename !== 'LiveStreamMetadataV3'
+  })
+
+  useEffect(() => {
+    if (!error) return
+    toast.error(String(error))
+  }, [error])
 
   if (
     post?.metadata?.__typename !== 'VideoMetadataV3' &&
@@ -33,18 +48,37 @@ const VideoPage = ({ post }: { post: Post }) => {
         {post?.metadata?.__typename === 'LiveStreamMetadataV3' ? (
           <>
             {/* //todo here check if there is a recording is allowd to  from api, fetch it and show it here instead of liveUrl  */}
-            <Video
-              src={post?.metadata?.liveURL || post?.metadata?.playbackURL}
-              className="w-full"
-            />
+
+            {data?.streamReplayRecordingUrl ? (
+              <Video
+                src={data?.streamReplayRecordingUrl}
+                className="w-full"
+                muted={false}
+                poster={getThumbnailFromRecordingUrl(
+                  data?.streamReplayRecordingUrl
+                )}
+              />
+            ) : (
+              <div className="w-full aspect-video animate-pulse bg-p-hover centered-row">
+                {error && (
+                  <div className="font-semibold">
+                    This stream is not available for replay right now
+                  </div>
+                )}
+              </div>
+            )}
           </>
         ) : (
-          <Video
-            poster={asset?.cover}
-            src={String(asset?.uri)}
-            className="w-full"
-            muted={false}
-          />
+          <>
+            {asset?.uri && (
+              <Video
+                poster={asset?.cover}
+                src={String(asset?.uri)}
+                className="w-full"
+                muted={false}
+              />
+            )}
+          </>
         )}
       </div>
       <ProfileInfoWithStream profile={post?.by} post={post} />

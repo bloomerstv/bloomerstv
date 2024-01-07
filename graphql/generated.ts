@@ -110,6 +110,8 @@ export type Query = {
   ping?: Maybe<Scalars['String']['output']>
   shouldCreateNewPost?: Maybe<Scalars['Boolean']['output']>
   streamChats?: Maybe<Array<Maybe<Chat>>>
+  streamReplayPublications?: Maybe<Array<Maybe<StreamReplayPublications>>>
+  streamReplayRecordingUrl?: Maybe<Scalars['String']['output']>
   streamer?: Maybe<SingleStreamer>
   thumbnail?: Maybe<Scalars['String']['output']>
 }
@@ -120,6 +122,14 @@ export type QueryGetMyRecordedStreamSessionsArgs = {
 
 export type QueryStreamChatsArgs = {
   profileId: Scalars['String']['input']
+}
+
+export type QueryStreamReplayPublicationsArgs = {
+  skip?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryStreamReplayRecordingUrlArgs = {
+  publicationId: Scalars['String']['input']
 }
 
 export type QueryStreamerArgs = {
@@ -161,6 +171,13 @@ export type Stream = {
   profileId: Scalars['String']['output']
   streamDescription?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
+}
+
+export type StreamReplayPublications = {
+  __typename?: 'StreamReplayPublications'
+  publicationId?: Maybe<Scalars['String']['output']>
+  sourceSegmentsDuration?: Maybe<Scalars['Float']['output']>
+  thumbnail?: Maybe<Scalars['String']['output']>
 }
 
 export type Streamer = Stream & {
@@ -264,6 +281,15 @@ export type MyStreamQuery = {
   } | null
 }
 
+export type ReplayRecordingUrlQueryVariables = Exact<{
+  publicationId: Scalars['String']['input']
+}>
+
+export type ReplayRecordingUrlQuery = {
+  __typename?: 'Query'
+  streamReplayRecordingUrl?: string | null
+}
+
 export type ShouldCreateNewPostQueryVariables = Exact<{ [key: string]: never }>
 
 export type ShouldCreateNewPostQuery = {
@@ -285,6 +311,20 @@ export type StreamChatsQuery = {
     profileId?: string | null
     id?: string | null
     createdAt?: any | null
+  } | null> | null
+}
+
+export type StreamReplayPublicationsQueryVariables = Exact<{
+  skip?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type StreamReplayPublicationsQuery = {
+  __typename?: 'Query'
+  streamReplayPublications?: Array<{
+    __typename?: 'StreamReplayPublications'
+    publicationId?: string | null
+    thumbnail?: string | null
+    sourceSegmentsDuration?: number | null
   } | null> | null
 }
 
@@ -691,6 +731,77 @@ export type MyStreamQueryResult = Apollo.QueryResult<
   MyStreamQuery,
   MyStreamQueryVariables
 >
+export const ReplayRecordingUrlDocument = gql`
+  query ReplayRecordingUrl($publicationId: String!) {
+    streamReplayRecordingUrl(publicationId: $publicationId)
+  }
+`
+
+/**
+ * __useReplayRecordingUrlQuery__
+ *
+ * To run a query within a React component, call `useReplayRecordingUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `useReplayRecordingUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useReplayRecordingUrlQuery({
+ *   variables: {
+ *      publicationId: // value for 'publicationId'
+ *   },
+ * });
+ */
+export function useReplayRecordingUrlQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    ReplayRecordingUrlQuery,
+    ReplayRecordingUrlQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    ReplayRecordingUrlQuery,
+    ReplayRecordingUrlQueryVariables
+  >(ReplayRecordingUrlDocument, options)
+}
+export function useReplayRecordingUrlLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ReplayRecordingUrlQuery,
+    ReplayRecordingUrlQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    ReplayRecordingUrlQuery,
+    ReplayRecordingUrlQueryVariables
+  >(ReplayRecordingUrlDocument, options)
+}
+export function useReplayRecordingUrlSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    ReplayRecordingUrlQuery,
+    ReplayRecordingUrlQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    ReplayRecordingUrlQuery,
+    ReplayRecordingUrlQueryVariables
+  >(ReplayRecordingUrlDocument, options)
+}
+export type ReplayRecordingUrlQueryHookResult = ReturnType<
+  typeof useReplayRecordingUrlQuery
+>
+export type ReplayRecordingUrlLazyQueryHookResult = ReturnType<
+  typeof useReplayRecordingUrlLazyQuery
+>
+export type ReplayRecordingUrlSuspenseQueryHookResult = ReturnType<
+  typeof useReplayRecordingUrlSuspenseQuery
+>
+export type ReplayRecordingUrlQueryResult = Apollo.QueryResult<
+  ReplayRecordingUrlQuery,
+  ReplayRecordingUrlQueryVariables
+>
 export const ShouldCreateNewPostDocument = gql`
   query ShouldCreateNewPost {
     shouldCreateNewPost
@@ -836,6 +947,81 @@ export type StreamChatsSuspenseQueryHookResult = ReturnType<
 export type StreamChatsQueryResult = Apollo.QueryResult<
   StreamChatsQuery,
   StreamChatsQueryVariables
+>
+export const StreamReplayPublicationsDocument = gql`
+  query StreamReplayPublications($skip: Int) {
+    streamReplayPublications(skip: $skip) {
+      publicationId
+      thumbnail
+      sourceSegmentsDuration
+    }
+  }
+`
+
+/**
+ * __useStreamReplayPublicationsQuery__
+ *
+ * To run a query within a React component, call `useStreamReplayPublicationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStreamReplayPublicationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStreamReplayPublicationsQuery({
+ *   variables: {
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useStreamReplayPublicationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    StreamReplayPublicationsQuery,
+    StreamReplayPublicationsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    StreamReplayPublicationsQuery,
+    StreamReplayPublicationsQueryVariables
+  >(StreamReplayPublicationsDocument, options)
+}
+export function useStreamReplayPublicationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    StreamReplayPublicationsQuery,
+    StreamReplayPublicationsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    StreamReplayPublicationsQuery,
+    StreamReplayPublicationsQueryVariables
+  >(StreamReplayPublicationsDocument, options)
+}
+export function useStreamReplayPublicationsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    StreamReplayPublicationsQuery,
+    StreamReplayPublicationsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    StreamReplayPublicationsQuery,
+    StreamReplayPublicationsQueryVariables
+  >(StreamReplayPublicationsDocument, options)
+}
+export type StreamReplayPublicationsQueryHookResult = ReturnType<
+  typeof useStreamReplayPublicationsQuery
+>
+export type StreamReplayPublicationsLazyQueryHookResult = ReturnType<
+  typeof useStreamReplayPublicationsLazyQuery
+>
+export type StreamReplayPublicationsSuspenseQueryHookResult = ReturnType<
+  typeof useStreamReplayPublicationsSuspenseQuery
+>
+export type StreamReplayPublicationsQueryResult = Apollo.QueryResult<
+  StreamReplayPublicationsQuery,
+  StreamReplayPublicationsQueryVariables
 >
 export const StreamerDocument = gql`
   query Streamer($profileId: String!) {

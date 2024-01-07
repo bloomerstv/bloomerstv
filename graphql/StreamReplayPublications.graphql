@@ -1,0 +1,7 @@
+query StreamReplayPublications($skip: Int) {
+  streamReplayPublications(skip: $skip) {
+    publicationId
+    thumbnail
+    sourceSegmentsDuration
+  }
+}
