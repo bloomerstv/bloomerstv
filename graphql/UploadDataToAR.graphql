@@ -1,0 +1,3 @@
+mutation UploadDataToAR($data: String!) {
+  uploadDataToAR(data: $data)
+}

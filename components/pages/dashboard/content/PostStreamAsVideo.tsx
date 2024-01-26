@@ -4,7 +4,7 @@ import CreateIcon from '@mui/icons-material/Create'
 import { Post, useCreatePost, useSession } from '@lens-protocol/react-web'
 import {
   RecordedSession,
-  useUploadDataToIpfsMutation
+  useUploadDataToArMutation
 } from '../../../../graphql/generated'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
@@ -46,7 +46,7 @@ const PostStreamAsVideo = ({
 
   const { execute } = useCreatePost()
 
-  const [uploadDataToIpfs] = useUploadDataToIpfsMutation()
+  const [uploadDataToAR] = useUploadDataToArMutation()
 
   const [showVideoDescription, setShowVideoDescription] = useState(false)
 
@@ -91,21 +91,21 @@ const PostStreamAsVideo = ({
       locale: locale
     })
 
-    const { data: resultIpfs } = await uploadDataToIpfs({
+    const { data: resultIpfs } = await uploadDataToAR({
       variables: {
         data: JSON.stringify(metadata)
       }
     })
 
-    const cid = resultIpfs?.uploadDataToIpfs?.cid
+    const transactionID = resultIpfs?.uploadDataToAR
 
-    if (!cid) {
+    if (!transactionID) {
       throw new Error('Error uploading metadata to IPFS')
     }
 
     // invoke the `execute` function to create the post
     const result = await execute({
-      metadata: `ipfs://${cid}`,
+      metadata: `ar://${transactionID}`,
       sponsored: defaultSponsored
     })
 

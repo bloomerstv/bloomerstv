@@ -9,9 +9,9 @@ import { MediaVideoMimeType, shortVideo } from '@lens-protocol/metadata'
 import { Profile, useCreatePost } from '@lens-protocol/react-web'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import { APP_ID, APP_LINK, defaultSponsored } from '../../../utils/config'
-import { useUploadDataToIpfsMutation } from '../../../graphql/generated'
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
+import { useUploadDataToArMutation } from '../../../graphql/generated'
 
 const PostClipOnLens = ({
   open,
@@ -29,7 +29,7 @@ const PostClipOnLens = ({
   )
   const { execute } = useCreatePost()
 
-  const [uploadDataToIpfs] = useUploadDataToIpfsMutation()
+  const [uploadDataToAR] = useUploadDataToArMutation()
 
   const createLensPost = async () => {
     // @ts-ignore
@@ -64,21 +64,21 @@ const PostClipOnLens = ({
       locale
     })
 
-    const { data: resultIpfs } = await uploadDataToIpfs({
+    const { data: resultIpfs } = await uploadDataToAR({
       variables: {
         data: JSON.stringify(metadata)
       }
     })
 
-    const cid = resultIpfs?.uploadDataToIpfs?.cid
+    const transactionId = resultIpfs?.uploadDataToAR
 
-    if (!cid) {
+    if (!transactionId) {
       throw new Error('Error uploading metadata to IPFS')
     }
 
     // invoke the `execute` function to create the post
     const result = await execute({
-      metadata: `ipfs://${cid}`,
+      metadata: `ar://${transactionId}`,
       sponsored: defaultSponsored
     })
 

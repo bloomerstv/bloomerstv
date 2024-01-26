@@ -60,6 +60,7 @@ export type Mutation = {
   createMyLensStreamSession?: Maybe<Scalars['Boolean']['output']>
   setViewType?: Maybe<Scalars['Boolean']['output']>
   updateMyStream?: Maybe<Scalars['Boolean']['output']>
+  uploadDataToAR?: Maybe<Scalars['String']['output']>
   uploadDataToIpfs?: Maybe<IpfsResult>
 }
 
@@ -83,6 +84,10 @@ export type MutationSetViewTypeArgs = {
 
 export type MutationUpdateMyStreamArgs = {
   request: UpdateStreamRequest
+}
+
+export type MutationUploadDataToArArgs = {
+  data: Scalars['String']['input']
 }
 
 export type MutationUploadDataToIpfsArgs = {
@@ -354,6 +359,15 @@ export type UpdateMyStreamMutationVariables = Exact<{
 export type UpdateMyStreamMutation = {
   __typename?: 'Mutation'
   updateMyStream?: boolean | null
+}
+
+export type UploadDataToArMutationVariables = Exact<{
+  data: Scalars['String']['input']
+}>
+
+export type UploadDataToArMutation = {
+  __typename?: 'Mutation'
+  uploadDataToAR?: string | null
 }
 
 export type UploadDataToIpfsMutationVariables = Exact<{
@@ -1145,6 +1159,54 @@ export type UpdateMyStreamMutationResult =
 export type UpdateMyStreamMutationOptions = Apollo.BaseMutationOptions<
   UpdateMyStreamMutation,
   UpdateMyStreamMutationVariables
+>
+export const UploadDataToArDocument = gql`
+  mutation UploadDataToAR($data: String!) {
+    uploadDataToAR(data: $data)
+  }
+`
+export type UploadDataToArMutationFn = Apollo.MutationFunction<
+  UploadDataToArMutation,
+  UploadDataToArMutationVariables
+>
+
+/**
+ * __useUploadDataToArMutation__
+ *
+ * To run a mutation, you first call `useUploadDataToArMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadDataToArMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadDataToArMutation, { data, loading, error }] = useUploadDataToArMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUploadDataToArMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UploadDataToArMutation,
+    UploadDataToArMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    UploadDataToArMutation,
+    UploadDataToArMutationVariables
+  >(UploadDataToArDocument, options)
+}
+export type UploadDataToArMutationHookResult = ReturnType<
+  typeof useUploadDataToArMutation
+>
+export type UploadDataToArMutationResult =
+  Apollo.MutationResult<UploadDataToArMutation>
+export type UploadDataToArMutationOptions = Apollo.BaseMutationOptions<
+  UploadDataToArMutation,
+  UploadDataToArMutationVariables
 >
 export const UploadDataToIpfsDocument = gql`
   mutation UploadDataToIpfs($data: String!) {

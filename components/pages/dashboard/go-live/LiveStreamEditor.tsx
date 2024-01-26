@@ -5,7 +5,7 @@ import {
   ViewType,
   useCreateMyLensStreamSessionMutation,
   useMyStreamQuery,
-  useUploadDataToIpfsMutation
+  useUploadDataToArMutation
 } from '../../../../graphql/generated'
 import Video from '../../../common/Video'
 import { getLiveStreamUrl } from '../../../../utils/lib/getLiveStreamUrl'
@@ -53,7 +53,7 @@ const LiveStreamEditor = () => {
   const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation()
   const { execute, error: createPostError } = useCreatePost()
 
-  const [uploadDataToIpfs] = useUploadDataToIpfsMutation()
+  const [uploadDataToAR] = useUploadDataToArMutation()
 
   const shouldCreateNewPost = async () => {
     const { data } = await client.query({
@@ -111,20 +111,20 @@ const LiveStreamEditor = () => {
       startsAt: new Date().toISOString()
     })
 
-    const { data } = await uploadDataToIpfs({
+    const { data } = await uploadDataToAR({
       variables: {
         data: JSON.stringify(metadata)
       }
     })
 
-    const cid = data?.uploadDataToIpfs?.cid
+    const transactionId = data?.uploadDataToAR
 
-    if (!cid) {
-      throw new Error('Error uploading metadata to IPFS')
+    if (!transactionId) {
+      throw new Error('Error uploading metadata to Arweave')
     }
     // invoke the `execute` function to create the post
     const result = await execute({
-      metadata: `ipfs://${cid}`,
+      metadata: `ar://${transactionId}`,
       sponsored: defaultSponsored
     })
 

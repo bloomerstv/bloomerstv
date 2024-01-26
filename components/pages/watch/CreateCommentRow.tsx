@@ -11,10 +11,10 @@ import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../utils/getUserLocale'
 import { textOnly } from '@lens-protocol/metadata'
 import { APP_ID, defaultSponsored } from '../../../utils/config'
-import { useUploadDataToIpfsMutation } from '../../../graphql/generated'
 import { NewComment } from './CommentSection'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import { useUploadDataToArMutation } from '../../../graphql/generated'
 
 const CreateCommentRow = ({
   commentOn,
@@ -27,8 +27,8 @@ const CreateCommentRow = ({
 }) => {
   const { data: session } = useSession()
   const [content, setContent] = React.useState('')
-  const [uploadDataToIpfs] = useUploadDataToIpfsMutation()
   const { execute } = useCreateComment()
+  const [uploadDataToAR] = useUploadDataToArMutation()
 
   const [creating, setCreating] = React.useState(false)
 
@@ -48,20 +48,20 @@ const CreateCommentRow = ({
         locale: locale
       })
 
-      const { data } = await uploadDataToIpfs({
+      const { data } = await uploadDataToAR({
         variables: {
           data: JSON.stringify(metadata)
         }
       })
 
-      const cid = data?.uploadDataToIpfs?.cid
+      const txId = data?.uploadDataToAR
 
-      if (!cid) {
+      if (!txId) {
         throw new Error('Error uploading metadata to IPFS')
       }
       // invoke the `execute` function to create the post
       const result = await execute({
-        metadata: `ipfs://${cid}`,
+        metadata: `ar://${txId}`,
         sponsored: defaultSponsored,
         commentOn: commentOn
       })
