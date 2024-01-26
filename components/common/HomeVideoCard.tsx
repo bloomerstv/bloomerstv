@@ -7,6 +7,7 @@ import getPublicationData from '../../utils/lib/getPublicationData'
 import { secondsToTime, timeAgo } from '../../utils/helpers'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import Markup from './Lexical/Markup'
+import { THUMBNAIL_FALLBACK } from '../../utils/config'
 
 const HomeVideoCard = ({
   post,
@@ -30,6 +31,12 @@ const HomeVideoCard = ({
           src={cover ?? asset?.cover}
           className="w-full h-full aspect-video transition-transform duration-500 ease-in-out transform group-hover:scale-110 "
           alt="thumbnail"
+          onError={(e) => {
+            // @ts-ignore
+            e.target.onerror = null // Prevents infinite looping in case the fallback image also fails to load
+            // @ts-ignore
+            e.target.src = THUMBNAIL_FALLBACK // Replace with your default background image
+          }}
         />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
           <PlayArrowIcon

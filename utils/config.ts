@@ -48,3 +48,5 @@ export const GITHUB_URL = 'https://github.com/bloomerstv/bloomerstv'
 export const FEEDBACK_URL = 'https://forms.gle/mbz1xyUQXdosJZSp8'
 export const HEY_URL = 'https://hey.xyz/u/bloomerstv'
 export const DISCORD_INVITE_URL = 'https://discord.gg/rXUBVm7JxA'
+export const THUMBNAIL_FALLBACK =
+  'https://npwelch.com/wp-content/uploads/2022/06/video-placeholder-brain-bites.png'
