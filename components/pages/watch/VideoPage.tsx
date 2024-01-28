@@ -9,15 +9,15 @@ import CommentSection from './CommentSection'
 import { getSenitizedContent } from '../../../utils/lib/getSenitizedContent'
 import Markup from '../../common/Lexical/Markup'
 import { timeAgo } from '../../../utils/helpers'
-import { useReplayRecordingUrlQuery } from '../../../graphql/generated'
 import toast from 'react-hot-toast'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
+import { useStreamReplayRecordingQuery } from '../../../graphql/generated'
 const VideoPage = ({ post }: { post: Post }) => {
   const isMobile = useIsMobile()
 
   const asset = getPublicationData(post?.metadata)?.asset
 
-  const { data, error } = useReplayRecordingUrlQuery({
+  const { data, error } = useStreamReplayRecordingQuery({
     variables: {
       publicationId: post?.id
     },
@@ -49,13 +49,13 @@ const VideoPage = ({ post }: { post: Post }) => {
           <>
             {/* //todo here check if there is a recording is allowd to  from api, fetch it and show it here instead of liveUrl  */}
 
-            {data?.streamReplayRecordingUrl ? (
+            {data?.streamReplayRecording?.recordingUrl ? (
               <Video
-                src={data?.streamReplayRecordingUrl}
+                src={data?.streamReplayRecording?.recordingUrl}
                 className="w-full"
                 muted={false}
                 poster={getThumbnailFromRecordingUrl(
-                  data?.streamReplayRecordingUrl
+                  data?.streamReplayRecording?.recordingUrl
                 )}
               />
             ) : (

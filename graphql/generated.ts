@@ -116,7 +116,7 @@ export type Query = {
   shouldCreateNewPost?: Maybe<Scalars['Boolean']['output']>
   streamChats?: Maybe<Array<Maybe<Chat>>>
   streamReplayPublications?: Maybe<Array<Maybe<StreamReplayPublications>>>
-  streamReplayRecordingUrl?: Maybe<Scalars['String']['output']>
+  streamReplayRecording?: Maybe<StreamReplayRecording>
   streamer?: Maybe<SingleStreamer>
   thumbnail?: Maybe<Scalars['String']['output']>
 }
@@ -133,8 +133,9 @@ export type QueryStreamReplayPublicationsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>
 }
 
-export type QueryStreamReplayRecordingUrlArgs = {
-  publicationId: Scalars['String']['input']
+export type QueryStreamReplayRecordingArgs = {
+  profileId?: InputMaybe<Scalars['String']['input']>
+  publicationId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type QueryStreamerArgs = {
@@ -183,6 +184,12 @@ export type StreamReplayPublications = {
   publicationId?: Maybe<Scalars['String']['output']>
   sourceSegmentsDuration?: Maybe<Scalars['Float']['output']>
   thumbnail?: Maybe<Scalars['String']['output']>
+}
+
+export type StreamReplayRecording = {
+  __typename?: 'StreamReplayRecording'
+  publicationId?: Maybe<Scalars['String']['output']>
+  recordingUrl?: Maybe<Scalars['String']['output']>
 }
 
 export type Streamer = Stream & {
@@ -286,13 +293,18 @@ export type MyStreamQuery = {
   } | null
 }
 
-export type ReplayRecordingUrlQueryVariables = Exact<{
-  publicationId: Scalars['String']['input']
+export type StreamReplayRecordingQueryVariables = Exact<{
+  publicationId?: InputMaybe<Scalars['String']['input']>
+  profileId?: InputMaybe<Scalars['String']['input']>
 }>
 
-export type ReplayRecordingUrlQuery = {
+export type StreamReplayRecordingQuery = {
   __typename?: 'Query'
-  streamReplayRecordingUrl?: string | null
+  streamReplayRecording?: {
+    __typename?: 'StreamReplayRecording'
+    publicationId?: string | null
+    recordingUrl?: string | null
+  } | null
 }
 
 export type ShouldCreateNewPostQueryVariables = Exact<{ [key: string]: never }>
@@ -745,76 +757,83 @@ export type MyStreamQueryResult = Apollo.QueryResult<
   MyStreamQuery,
   MyStreamQueryVariables
 >
-export const ReplayRecordingUrlDocument = gql`
-  query ReplayRecordingUrl($publicationId: String!) {
-    streamReplayRecordingUrl(publicationId: $publicationId)
+export const StreamReplayRecordingDocument = gql`
+  query StreamReplayRecording($publicationId: String, $profileId: String) {
+    streamReplayRecording(
+      publicationId: $publicationId
+      profileId: $profileId
+    ) {
+      publicationId
+      recordingUrl
+    }
   }
 `
 
 /**
- * __useReplayRecordingUrlQuery__
+ * __useStreamReplayRecordingQuery__
  *
- * To run a query within a React component, call `useReplayRecordingUrlQuery` and pass it any options that fit your needs.
- * When your component renders, `useReplayRecordingUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useStreamReplayRecordingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStreamReplayRecordingQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useReplayRecordingUrlQuery({
+ * const { data, loading, error } = useStreamReplayRecordingQuery({
  *   variables: {
  *      publicationId: // value for 'publicationId'
+ *      profileId: // value for 'profileId'
  *   },
  * });
  */
-export function useReplayRecordingUrlQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    ReplayRecordingUrlQuery,
-    ReplayRecordingUrlQueryVariables
+export function useStreamReplayRecordingQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    StreamReplayRecordingQuery,
+    StreamReplayRecordingQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    ReplayRecordingUrlQuery,
-    ReplayRecordingUrlQueryVariables
-  >(ReplayRecordingUrlDocument, options)
+    StreamReplayRecordingQuery,
+    StreamReplayRecordingQueryVariables
+  >(StreamReplayRecordingDocument, options)
 }
-export function useReplayRecordingUrlLazyQuery(
+export function useStreamReplayRecordingLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    ReplayRecordingUrlQuery,
-    ReplayRecordingUrlQueryVariables
+    StreamReplayRecordingQuery,
+    StreamReplayRecordingQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    ReplayRecordingUrlQuery,
-    ReplayRecordingUrlQueryVariables
-  >(ReplayRecordingUrlDocument, options)
+    StreamReplayRecordingQuery,
+    StreamReplayRecordingQueryVariables
+  >(StreamReplayRecordingDocument, options)
 }
-export function useReplayRecordingUrlSuspenseQuery(
+export function useStreamReplayRecordingSuspenseQuery(
   baseOptions?: Apollo.SuspenseQueryHookOptions<
-    ReplayRecordingUrlQuery,
-    ReplayRecordingUrlQueryVariables
+    StreamReplayRecordingQuery,
+    StreamReplayRecordingQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    ReplayRecordingUrlQuery,
-    ReplayRecordingUrlQueryVariables
-  >(ReplayRecordingUrlDocument, options)
+    StreamReplayRecordingQuery,
+    StreamReplayRecordingQueryVariables
+  >(StreamReplayRecordingDocument, options)
 }
-export type ReplayRecordingUrlQueryHookResult = ReturnType<
-  typeof useReplayRecordingUrlQuery
+export type StreamReplayRecordingQueryHookResult = ReturnType<
+  typeof useStreamReplayRecordingQuery
 >
-export type ReplayRecordingUrlLazyQueryHookResult = ReturnType<
-  typeof useReplayRecordingUrlLazyQuery
+export type StreamReplayRecordingLazyQueryHookResult = ReturnType<
+  typeof useStreamReplayRecordingLazyQuery
 >
-export type ReplayRecordingUrlSuspenseQueryHookResult = ReturnType<
-  typeof useReplayRecordingUrlSuspenseQuery
+export type StreamReplayRecordingSuspenseQueryHookResult = ReturnType<
+  typeof useStreamReplayRecordingSuspenseQuery
 >
-export type ReplayRecordingUrlQueryResult = Apollo.QueryResult<
-  ReplayRecordingUrlQuery,
-  ReplayRecordingUrlQueryVariables
+export type StreamReplayRecordingQueryResult = Apollo.QueryResult<
+  StreamReplayRecordingQuery,
+  StreamReplayRecordingQueryVariables
 >
 export const ShouldCreateNewPostDocument = gql`
   query ShouldCreateNewPost {

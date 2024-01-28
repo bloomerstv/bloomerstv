@@ -7,6 +7,7 @@ import { SessionType, useSession } from '@lens-protocol/react-web'
 
 interface VideoProps {
   src: string
+  title?: string | null
   poster?: string
   className?: string
   playbackId?: string
@@ -27,6 +28,7 @@ interface VideoProps {
 const Video: FC<VideoProps> = ({
   src,
   poster,
+  title,
   className = '',
   streamOfflineErrorComponent = null,
   onStreamStatusChange = () => {},
@@ -53,6 +55,7 @@ const Video: FC<VideoProps> = ({
       }}
     >
       <Player
+        title={title ?? undefined}
         src={src}
         poster={poster}
         playbackId={playbackId}

@@ -9,6 +9,7 @@ import React, { memo } from 'react'
 import LiveChat from '../dashboard/go-live/LiveChat'
 import {
   useCreateClipMutation,
+  useStreamReplayRecordingQuery,
   useStreamerQuery
 } from '../../../graphql/generated'
 import ProfileInfoWithStream from './ProfileInfoWithStream'
@@ -59,6 +60,14 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       profileId: data?.id as ProfileId
     },
     skip: !data?.id
+  })
+
+  const { data: replayRecording } = useStreamReplayRecordingQuery({
+    variables: {
+      profileId: streamer?.streamer?.profileId
+    },
+    skip:
+      !streamer?.streamer?.profileId || Boolean(streamer?.streamer?.isActive)
   })
 
   const hasPlaybackId = Boolean(streamer?.streamer?.playbackId)
@@ -126,8 +135,14 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         autoPlay={true}
         muted={false}
         streamOfflineErrorComponent={
-          // @ts-ignore
-          <StreamerOffline profile={data} streamer={streamer?.streamer} />
+          <StreamerOffline
+            // @ts-ignore
+            streamReplayRecording={replayRecording?.streamReplayRecording}
+            // @ts-ignore
+            profile={data}
+            // @ts-ignore
+            streamer={streamer?.streamer}
+          />
         }
         clipLength={
           sessionData?.type === SessionType.WithProfile ? 30 : undefined
@@ -144,7 +159,11 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         />
       </Video>
     )
-  }, [streamer?.streamer?.playbackId, sessionData?.type])
+  }, [
+    streamer?.streamer?.playbackId,
+    sessionData?.type,
+    replayRecording?.streamReplayRecording?.recordingUrl
+  ])
 
   if (profileLoading || (streamerLoading && !streamer?.streamer)) {
     return <StartLoadingPage />
@@ -169,8 +188,13 @@ const ProfilePage = ({ handle }: { handle: string }) => {
           <>{videoComponent}</>
         ) : (
           <div className="h-[230px] sm:h-[700px]">
-            {/* @ts-ignore */}
-            <StreamerOffline profile={data} streamer={streamer?.streamer} />
+            <StreamerOffline
+              // @ts-ignore
+              streamReplayRecording={replayRecording?.streamReplayRecording}
+              profile={data}
+              // @ts-ignore
+              streamer={streamer?.streamer}
+            />
           </div>
         )}
 
