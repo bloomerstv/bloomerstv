@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { THUMBNAIL_FALLBACK } from '../../utils/config'
 
 interface LoadingImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   loaderClassName?: string
@@ -25,9 +26,13 @@ const LoadingImage: React.FC<LoadingImageProps> = ({
       <img
         {...props}
         src={!error ? props.src : defaultImage}
-        onError={() => {
+        onError={(e) => {
           setLoading(false)
           setError(true)
+          // @ts-ignore
+          e.target.onerror = null // Prevents infinite looping in case the fallback image also fails to load
+          // @ts-ignore
+          e.target.src = THUMBNAIL_FALLBACK // Replace with your default background image
         }}
         onLoad={() => {
           setLoading(false)
