@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   try {
     const data = await fetch(NODE_GRAPHQL_URL, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 360 },
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
