@@ -341,7 +341,7 @@ const ProfileBar = ({
                   disabled={followLoading || isFollowing}
                   title="Follow this streamer"
                   sx={{
-                    borderRadius: isMobile ? '20px' : '4px',
+                    borderRadius: isMobile ? '20px' : '15px',
                     boxShadow: 'none'
                   }}
                 >
@@ -372,7 +372,8 @@ const ProfileBar = ({
                   )
                 }
                 sx={{
-                  boxShadow: 'none'
+                  boxShadow: 'none',
+                  borderRadius: '20px'
                 }}
               >
                 {upvotes}
@@ -398,7 +399,8 @@ const ProfileBar = ({
                   />
                 }
                 sx={{
-                  boxShadow: 'none'
+                  boxShadow: 'none',
+                  borderRadius: '20px'
                 }}
               >
                 {mirrors}
@@ -422,7 +424,8 @@ const ProfileBar = ({
                   />
                 }
                 sx={{
-                  boxShadow: 'none'
+                  boxShadow: 'none',
+                  borderRadius: '20px'
                 }}
               >
                 Share
