@@ -25,6 +25,7 @@ import PostClipOnLens from './PostClipOnLens'
 import VideoClipHandler from './VideoClipHandler'
 import ClipsFeed from '../home/ClipsFeed'
 import toast from 'react-hot-toast'
+import LiveStreamPublicReplays from '../home/LiveStreamPublicReplays'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
@@ -64,10 +65,9 @@ const ProfilePage = ({ handle }: { handle: string }) => {
 
   const { data: replayRecording } = useStreamReplayRecordingQuery({
     variables: {
-      profileId: streamer?.streamer?.profileId
+      profileId: data?.id
     },
-    skip:
-      !streamer?.streamer?.profileId || Boolean(streamer?.streamer?.isActive)
+    skip: !data?.id || Boolean(streamer?.streamer?.isActive)
   })
 
   const hasPlaybackId = Boolean(streamer?.streamer?.playbackId)
@@ -215,6 +215,9 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         <AboutProfile profile={data} />
 
         <ClipsFeed handle={formatHandle(data)} />
+        <div className="mt-4">
+          <LiveStreamPublicReplays profileId={data?.id} />
+        </div>
       </div>
       {data?.id && !isMobile && (
         <div className="w-[350px] flex-none h-full">

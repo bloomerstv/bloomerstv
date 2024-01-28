@@ -59,11 +59,12 @@ const PublicationsHomeCards = ({
   )
 }
 
-const LiveStreamPublicReplays = () => {
+const LiveStreamPublicReplays = ({ profileId }: { profileId?: string }) => {
   const { data, loading: streamReplayLoading } =
     useStreamReplayPublicationsQuery({
       variables: {
-        skip: 0
+        skip: 0,
+        profileId: profileId
       }
     })
 

@@ -130,6 +130,7 @@ export type QueryStreamChatsArgs = {
 }
 
 export type QueryStreamReplayPublicationsArgs = {
+  profileId?: InputMaybe<Scalars['String']['input']>
   skip?: InputMaybe<Scalars['Int']['input']>
 }
 
@@ -333,6 +334,7 @@ export type StreamChatsQuery = {
 
 export type StreamReplayPublicationsQueryVariables = Exact<{
   skip?: InputMaybe<Scalars['Int']['input']>
+  profileId?: InputMaybe<Scalars['String']['input']>
 }>
 
 export type StreamReplayPublicationsQuery = {
@@ -982,8 +984,8 @@ export type StreamChatsQueryResult = Apollo.QueryResult<
   StreamChatsQueryVariables
 >
 export const StreamReplayPublicationsDocument = gql`
-  query StreamReplayPublications($skip: Int) {
-    streamReplayPublications(skip: $skip) {
+  query StreamReplayPublications($skip: Int, $profileId: String) {
+    streamReplayPublications(skip: $skip, profileId: $profileId) {
       publicationId
       thumbnail
       sourceSegmentsDuration
@@ -1004,6 +1006,7 @@ export const StreamReplayPublicationsDocument = gql`
  * const { data, loading, error } = useStreamReplayPublicationsQuery({
  *   variables: {
  *      skip: // value for 'skip'
+ *      profileId: // value for 'profileId'
  *   },
  * });
  */

@@ -1,5 +1,5 @@
-query StreamReplayPublications($skip: Int) {
-  streamReplayPublications(skip: $skip) {
+query StreamReplayPublications($skip: Int, $profileId: String) {
+  streamReplayPublications(skip: $skip, profileId: $profileId) {
     publicationId
     thumbnail
     sourceSegmentsDuration
