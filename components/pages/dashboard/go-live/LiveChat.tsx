@@ -7,9 +7,18 @@ import React, { memo, useEffect, useRef, useState } from 'react'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import { timeAgo } from '../../../../utils/helpers'
 // import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
-import { LIVE_CHAT_WEB_SOCKET_URL } from '../../../../utils/config'
+import {
+  APP_ID,
+  LIVE_CHAT_WEB_SOCKET_URL,
+  defaultSponsored
+} from '../../../../utils/config'
 import io from 'socket.io-client'
-import { SessionType, useSession } from '@lens-protocol/react-web'
+import {
+  PublicationId,
+  SessionType,
+  useCreateComment,
+  useSession
+} from '@lens-protocol/react-web'
 import getAvatar from '../../../../utils/lib/getAvatar'
 import SendIcon from '@mui/icons-material/Send'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
@@ -23,9 +32,16 @@ import { useMyPreferences } from '../../../store/useMyPreferences'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeOffIcon from '@mui/icons-material/VolumeOff'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
-import { Chat, useStreamChatsQuery } from '../../../../graphql/generated'
+import {
+  Chat,
+  useStreamChatsQuery,
+  useUploadDataToArMutation
+} from '../../../../graphql/generated'
 import LiveCount from '../../profile/LiveCount'
-
+import getUserLocale from '../../../../utils/getUserLocale'
+import { textOnly } from '@lens-protocol/metadata'
+import { v4 as uuid } from 'uuid'
+import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
 interface MessageType {
   content: string
   avatarUrl: string
@@ -59,6 +75,8 @@ const LiveChat = ({
   const [open, setOpen] = React.useState(false)
   const [popedOut, setPopedOut] = React.useState(false)
   const isMobile = useIsMobile()
+  const [uploadDataToAR] = useUploadDataToArMutation()
+  const { execute } = useCreateComment()
 
   const { data: chats } = useStreamChatsQuery({
     variables: {
@@ -204,8 +222,49 @@ const LiveChat = ({
         avatarUrl: getAvatar(data?.profile),
         handle: formatHandle(data?.profile)
       })
+
       setInputMessage('')
+
+      createComment(inputMessage)
     }
+  }
+
+  const createComment = async (inputMessage: string) => {
+    // create a comment under live stream publication
+
+    const lastStreamPublicationId = await getLastStreamPublicationId(profileId)
+
+    if (!lastStreamPublicationId) return
+    const id = uuid()
+    const locale = getUserLocale()
+
+    const metadata = textOnly({
+      content: inputMessage,
+      marketplace: {
+        name: inputMessage
+      },
+      appId: APP_ID,
+      id: id,
+      locale: locale
+    })
+
+    const { data: txData } = await uploadDataToAR({
+      variables: {
+        data: JSON.stringify(metadata)
+      }
+    })
+
+    const txId = txData?.uploadDataToAR
+
+    if (!txId) {
+      throw new Error('Error uploading metadata to IPFS')
+    }
+    // invoke the `execute` function to create the post
+    await execute({
+      metadata: `ar://${txId}`,
+      sponsored: defaultSponsored,
+      commentOn: lastStreamPublicationId as PublicationId
+    })
   }
 
   const popOutChat = () => {

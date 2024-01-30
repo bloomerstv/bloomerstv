@@ -18,7 +18,7 @@ import Video from '../../common/Video'
 import { getLiveStreamUrl } from '../../../utils/lib/getLiveStreamUrl'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import StartLoadingPage from '../loading/StartLoadingPage'
-import CommentSection from '../watch/CommentSection'
+// import CommentSection from '../watch/CommentSection'
 import AboutProfile from './AboutProfile'
 import formatHandle from '../../../utils/lib/formatHandle'
 import PostClipOnLens from './PostClipOnLens'
@@ -201,7 +201,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         {/* @ts-ignore */}
         <ProfileInfoWithStream profile={data} streamer={streamer?.streamer} />
 
-        {!isMobile &&
+        {/* {!isMobile &&
           streamer?.streamer?.isActive &&
           streamer?.streamer?.latestStreamPublicationId && (
             <div className="m-8 border-t border-p-border">
@@ -210,7 +210,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
                 publicationId={streamer?.streamer?.latestStreamPublicationId}
               />
             </div>
-          )}
+          )} */}
 
         <AboutProfile profile={data} />
 

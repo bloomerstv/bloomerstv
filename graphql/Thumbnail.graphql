@@ -1,0 +1,3 @@
+query Thumbnail($handle: String!) {
+  thumbnail(handle: $handle)
+}

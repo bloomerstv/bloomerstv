@@ -366,6 +366,12 @@ export type StreamerQuery = {
   } | null
 }
 
+export type ThumbnailQueryVariables = Exact<{
+  handle: Scalars['String']['input']
+}>
+
+export type ThumbnailQuery = { __typename?: 'Query'; thumbnail?: string | null }
+
 export type UpdateMyStreamMutationVariables = Exact<{
   request: UpdateStreamRequest
 }>
@@ -1133,6 +1139,72 @@ export type StreamerSuspenseQueryHookResult = ReturnType<
 export type StreamerQueryResult = Apollo.QueryResult<
   StreamerQuery,
   StreamerQueryVariables
+>
+export const ThumbnailDocument = gql`
+  query Thumbnail($handle: String!) {
+    thumbnail(handle: $handle)
+  }
+`
+
+/**
+ * __useThumbnailQuery__
+ *
+ * To run a query within a React component, call `useThumbnailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useThumbnailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useThumbnailQuery({
+ *   variables: {
+ *      handle: // value for 'handle'
+ *   },
+ * });
+ */
+export function useThumbnailQuery(
+  baseOptions: Apollo.QueryHookOptions<ThumbnailQuery, ThumbnailQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<ThumbnailQuery, ThumbnailQueryVariables>(
+    ThumbnailDocument,
+    options
+  )
+}
+export function useThumbnailLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ThumbnailQuery,
+    ThumbnailQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<ThumbnailQuery, ThumbnailQueryVariables>(
+    ThumbnailDocument,
+    options
+  )
+}
+export function useThumbnailSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    ThumbnailQuery,
+    ThumbnailQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<ThumbnailQuery, ThumbnailQueryVariables>(
+    ThumbnailDocument,
+    options
+  )
+}
+export type ThumbnailQueryHookResult = ReturnType<typeof useThumbnailQuery>
+export type ThumbnailLazyQueryHookResult = ReturnType<
+  typeof useThumbnailLazyQuery
+>
+export type ThumbnailSuspenseQueryHookResult = ReturnType<
+  typeof useThumbnailSuspenseQuery
+>
+export type ThumbnailQueryResult = Apollo.QueryResult<
+  ThumbnailQuery,
+  ThumbnailQueryVariables
 >
 export const UpdateMyStreamDocument = gql`
   mutation UpdateMyStream($request: UpdateStreamRequest!) {

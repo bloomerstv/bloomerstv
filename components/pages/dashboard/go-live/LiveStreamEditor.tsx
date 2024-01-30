@@ -5,6 +5,7 @@ import {
   ViewType,
   useCreateMyLensStreamSessionMutation,
   useMyStreamQuery,
+  // useThumbnailQuery,
   useUploadDataToArMutation
 } from '../../../../graphql/generated'
 import Video from '../../../common/Video'
@@ -54,6 +55,19 @@ const LiveStreamEditor = () => {
   const { execute, error: createPostError } = useCreatePost()
 
   const [uploadDataToAR] = useUploadDataToArMutation()
+  // const {data: thumbnail} = useThumbnailQuery({
+  //   variables: {
+  //     // @ts-ignore
+  //     handle:
+  //       session?.type === SessionType.WithProfile
+  //         ? session?.profile?.handle?.fullHandle
+  //         : ''
+  //   },
+  //   skip:
+  //     session?.type !== SessionType.WithProfile &&
+  //     // @ts-ignore
+  //     !session?.profile?.handle?.fullHandle
+  // })
 
   const shouldCreateNewPost = async () => {
     const { data } = await client.query({
@@ -102,6 +116,7 @@ const LiveStreamEditor = () => {
         name: streamName,
         description: `${streamName}\n\nLive on ${profileLink}`,
         external_url: profileLink
+        // image: thumbnail?.thumbnail
       },
       id: id,
       locale: locale,
