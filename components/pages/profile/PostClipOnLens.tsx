@@ -73,7 +73,7 @@ const PostClipOnLens = ({
     const transactionId = resultIpfs?.uploadDataToAR
 
     if (!transactionId) {
-      throw new Error('Error uploading metadata to IPFS')
+      throw new Error('Error uploading metadata to AR')
     }
 
     // invoke the `execute` function to create the post
