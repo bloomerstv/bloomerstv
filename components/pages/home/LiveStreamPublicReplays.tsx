@@ -1,17 +1,25 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
   StreamReplayPublicationsQuery,
   useStreamReplayPublicationsQuery
 } from '../../../graphql/generated'
-import { Post, usePublications } from '@lens-protocol/react-web'
+import { Post, usePublications, useSession } from '@lens-protocol/react-web'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
+import { useStreamersWithProfiles } from '../../store/useStreamersWithProfiles'
 
 const PublicationsHomeCards = ({
-  data
+  data,
+  allowSetProfilesFromPublicReplays = true
 }: {
   data?: StreamReplayPublicationsQuery
+  allowSetProfilesFromPublicReplays?: boolean
 }) => {
+  const { data: session } = useSession()
+  const setProfilesFromPublicReplays = useStreamersWithProfiles(
+    (state) => state.setProfilesFromPublicReplays
+  )
+
   const { data: publications, loading } = usePublications({
     where: {
       // @ts-ignore
@@ -20,6 +28,22 @@ const PublicationsHomeCards = ({
       )
     }
   })
+
+  useEffect(() => {
+    if (
+      publications &&
+      publications?.length > 0 &&
+      allowSetProfilesFromPublicReplays
+    ) {
+      // get unique profileIds from publications
+      const uniqueProfiles = Array.from(
+        new Set(publications.map((p) => p?.by))
+        // @ts-ignore
+      ).filter((profile) => profile?.id !== session?.profile?.id)
+
+      setProfilesFromPublicReplays(uniqueProfiles)
+    }
+  }, [publications, allowSetProfilesFromPublicReplays, session])
 
   const getStreamReplay = useCallback(
     (publicationId: string) => {
@@ -75,7 +99,10 @@ const LiveStreamPublicReplays = ({ profileId }: { profileId?: string }) => {
       </div>
 
       {data?.streamReplayPublications ? (
-        <PublicationsHomeCards data={data} />
+        <PublicationsHomeCards
+          data={data}
+          allowSetProfilesFromPublicReplays={!profileId}
+        />
       ) : (
         <>{streamReplayLoading && <LoadingVideoCard />}</>
       )}

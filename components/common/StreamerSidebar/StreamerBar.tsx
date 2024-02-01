@@ -17,19 +17,21 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
         <img
           src={getAvatar(streamer?.profile)}
           alt="avatar"
-          className="w-8 h-8 rounded-full"
+          className="w-7 h-7 rounded-full"
         />
-        <div className="text-s-text font-bold text-lg ml-2">
+        <div className="text-s-text font-bold ml-2">
           {formatHandle(streamer?.profile)}
         </div>
       </div>
 
       {/* red dot */}
-      {streamer?.isActive && (
+      {streamer?.isActive ? (
         <div className="start-row gap-x-1 text-xl text-brand ">
           <PermIdentityIcon fontSize="inherit" />
           <div className="text-base font-semibold">{streamer?.liveCount}</div>
         </div>
+      ) : (
+        <div className="text-s-text text-xs">Offline</div>
       )}
     </Link>
   )

@@ -11,7 +11,10 @@ interface StreamerWithProfileStore {
   setStreamersWithProfiles: (
     streamersWithProfiles: StreamerWithProfile[]
   ) => void
+  profilesFromPublicReplays: Profile[]
+  setProfilesFromPublicReplays: (profilesFromPublicReplays: Profile[]) => void
   resetStreamersWithProfiles: () => void
+  resetProfilesFromPublicReplays: () => void
   loading: boolean
   setLoading: (loading: boolean) => void
 }
@@ -23,6 +26,11 @@ export const useStreamersWithProfiles = create<StreamerWithProfileStore>(
       set(() => ({ streamersWithProfiles })),
     resetStreamersWithProfiles: () =>
       set(() => ({ streamersWithProfiles: [] })),
+    profilesFromPublicReplays: [],
+    setProfilesFromPublicReplays: (profilesFromPublicReplays) =>
+      set(() => ({ profilesFromPublicReplays })),
+    resetProfilesFromPublicReplays: () =>
+      set(() => ({ profilesFromPublicReplays: [] })),
     loading: true,
     setLoading: (loading) => set(() => ({ loading }))
   })
