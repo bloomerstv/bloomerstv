@@ -17,7 +17,7 @@ import ToggleOnIcon from '@mui/icons-material/ToggleOn'
 import { useDisconnect } from 'wagmi'
 import { useRouter } from 'next/navigation'
 import Settings from '@mui/icons-material/Settings'
-import CircleIcon from '@mui/icons-material/Circle'
+// import CircleIcon from '@mui/icons-material/Circle'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import LoginComponent from '../../../common/LoginComponent'
@@ -136,7 +136,7 @@ const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
 
           {!isMobile && (
             <>
-              <MenuItem
+              {/* <MenuItem
                 onClick={() => {
                   push(`/dashboard/go-live`)
                   handleClose()
@@ -146,7 +146,7 @@ const AvatarWithOptions = ({ profile }: { profile: Profile }) => {
                   <CircleIcon fontSize="small" />
                 </ListItemIcon>
                 Go live
-              </MenuItem>
+              </MenuItem> */}
 
               <MenuItem
                 onClick={() => {

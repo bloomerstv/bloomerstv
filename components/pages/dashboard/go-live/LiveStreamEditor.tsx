@@ -59,8 +59,8 @@ const LiveStreamEditor = () => {
             setStreamFromBrowser={setStreamFromBrowser}
           />
           <div className="flex flex-row justify-between items-start px-8 pt-8 w-full">
-            <div className="space-y-3">
-              <div className="between-row gap-x-1">
+            <div className="space-y-3 w-full">
+              <div className="between-row gap-x-1 w-full">
                 <div className="">
                   <div className="text-s-text font-bold text-md">Title</div>
                   <div className="text-p-text font-semibold text-md 2xl:text-base">

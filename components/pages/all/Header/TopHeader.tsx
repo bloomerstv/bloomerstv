@@ -5,8 +5,15 @@ import HeaderSearch from './HeaderSearch'
 import Link from 'next/link'
 import { useTheme } from '../../../wrappers/TailwindThemeProvider'
 import clsx from 'clsx'
+import { SessionType, useSession } from '@lens-protocol/react-web'
+import { IconButton, Tooltip } from '@mui/material'
+import { useRouter } from 'next/navigation'
+import VideoCallIcon from '@mui/icons-material/VideoCall'
+
 const TopHeader = () => {
   const { theme } = useTheme()
+  const { data } = useSession()
+  const { push } = useRouter()
   return (
     <div
       className={clsx(
@@ -21,7 +28,18 @@ const TopHeader = () => {
         </div>
       </Link>
       <HeaderSearch />
-      <div className="centered-row space-x-2">
+      <div className="centered-row">
+        {data?.type === SessionType.WithProfile && (
+          <Tooltip title="Go Live">
+            <IconButton
+              onClick={() => {
+                push(`/dashboard/go-live`)
+              }}
+            >
+              <VideoCallIcon />
+            </IconButton>
+          </Tooltip>
+        )}
         <LoginButton />
       </div>
     </div>
