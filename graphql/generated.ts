@@ -286,6 +286,7 @@ export type MyStreamQuery = {
     __typename?: 'MyStream'
     profileId: string
     streamName?: string | null
+    streamDescription?: string | null
     lastSeen?: any | null
     playbackId?: string | null
     streamKey?: string | null
@@ -697,6 +698,7 @@ export const MyStreamDocument = gql`
     myStream {
       profileId
       streamName
+      streamDescription
       lastSeen
       playbackId
       streamKey

@@ -71,6 +71,7 @@ const LiveVideoComponent = ({
     }
     // code logic here
     const streamName = myStream?.streamName ?? undefined
+
     if (!streamName) {
       toast.error('Please enter a stream name')
       throw new Error('No stream name')
@@ -81,8 +82,8 @@ const LiveVideoComponent = ({
     const locale = getUserLocale()
 
     const content = `${streamName}${
-      addLiveChatAt ? `\n\nLive Chat at ${profileLink}` : ''
-    }`
+      myStream?.streamDescription ? `\n\n${myStream?.streamDescription}` : ''
+    }${addLiveChatAt ? `\n\nLive Chat at ${profileLink}` : ''}`
 
     const metadata = liveStream({
       title: streamName,

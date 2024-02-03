@@ -11,6 +11,8 @@ import StartLoadingPage from '../../loading/StartLoadingPage'
 import toast from 'react-hot-toast'
 import { useMyPreferences } from '../../../store/useMyPreferences'
 import LiveVideoComponent from './LiveVideoComponent'
+import { stringToLength } from '../../../../utils/stringToLength'
+import Markup from '../../../common/Lexical/Markup'
 
 const LiveStreamEditor = () => {
   const [startedStreaming, setStartedStreaming] = React.useState(false)
@@ -56,12 +58,28 @@ const LiveStreamEditor = () => {
             streamFromBrowser={streamFromBrowser}
             setStreamFromBrowser={setStreamFromBrowser}
           />
-          <div className="flex flex-row justify-between items-start p-8 w-full">
-            <div className="space-y-4">
+          <div className="flex flex-row justify-between items-start px-8 pt-8 w-full">
+            <div className="space-y-3">
+              <div className="between-row gap-x-1">
+                <div className="">
+                  <div className="text-s-text font-bold text-md">Title</div>
+                  <div className="text-p-text font-semibold text-md 2xl:text-base">
+                    {myStream?.streamName}
+                  </div>
+                </div>
+                <MyStreamEditButton
+                  refreshStreamInfo={refetch}
+                  myStream={myStream}
+                />
+              </div>
+
               <div className="">
-                <div className="text-s-text font-bold text-md">Title</div>
-                <div className="text-p-text font-semibold text-md 2xl:text-lg">
-                  {myStream?.streamName}
+                <div className="text-s-text font-bold text-md">Description</div>
+                <div className="text-p-text text-xs 2xl:text-sm font-semibold ">
+                  <Markup>
+                    {stringToLength(myStream?.streamDescription, 180) ||
+                      'No description provided'}
+                  </Markup>
                 </div>
               </div>
 
@@ -103,20 +121,7 @@ const LiveStreamEditor = () => {
                   </MenuItem>
                 </Select>
               </div>
-
-              {/* <div className="">
-                <div className="text-s-text font-bold text-sm">Description</div>
-                <div className="text-p-text font-semibold ">
-                  {stringToLength(myStream?.streamDescription, 100) ||
-                    'No description provided'}
-                </div>
-              </div> */}
             </div>
-
-            <MyStreamEditButton
-              refreshStreamInfo={refetch}
-              myStream={myStream}
-            />
           </div>
         </div>
         <div className="px-4 py-3 start-row space-x-4">
@@ -135,7 +140,7 @@ const LiveStreamEditor = () => {
                     ? 'You can Stop streaming by pressing stop button.'
                     : 'You can Stop streaming from your software.'
                 }`
-              : 'Stream is offline right now.'}
+              : 'Stream is offline. Recommended to use streaming software for best quality.'}
           </div>
         </div>
       </div>

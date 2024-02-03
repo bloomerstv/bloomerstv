@@ -25,15 +25,14 @@ const MyStreamEditButton = ({
   const addLiveChatAt = useMyStreamInfo((state) => state.addLiveChatAt)
   const setAddLiveChatAt = useMyStreamInfo((state) => state.setAddLiveChatAt)
 
-  // const [streamDescription, setStreamDescription] = useState(
-  //   myStream?.streamDescription || ''
-  // )
+  const [streamDescription, setStreamDescription] = useState(
+    myStream?.streamDescription || ''
+  )
 
   const isValuesChanged = () => {
     return (
-      myStream?.streamName !== streamName
-      // ||
-      // myStream?.streamDescription !== streamDescription
+      myStream?.streamName !== streamName ||
+      myStream?.streamDescription !== streamDescription
     )
   }
 
@@ -45,7 +44,7 @@ const MyStreamEditButton = ({
     await updateMyStream({
       variables: {
         request: {
-          // streamDescription: streamDescription,
+          streamDescription: streamDescription,
           streamName: streamName
         }
       }
@@ -112,13 +111,13 @@ const MyStreamEditButton = ({
             }" at the end of content`}</div>
           </div>
 
-          {/* <TextField
+          <TextField
             label="Stream Description"
             multiline
             rows={4}
             value={streamDescription}
             onChange={(e) => setStreamDescription(e.target.value)}
-          /> */}
+          />
         </div>
       </ModalWrapper>
     </div>

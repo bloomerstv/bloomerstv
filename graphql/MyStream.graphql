@@ -2,6 +2,7 @@ query MyStream {
   myStream {
     profileId
     streamName
+    streamDescription
     lastSeen
     playbackId
     streamKey
