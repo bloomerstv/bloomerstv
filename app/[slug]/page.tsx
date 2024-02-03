@@ -32,7 +32,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }).then((res) => res.json())
 
     thumbnail = data?.data?.thumbnail
-    console.log('thumbnail', thumbnail)
   } catch (e) {
     console.log(e)
   }

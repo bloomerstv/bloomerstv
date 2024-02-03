@@ -3,11 +3,15 @@ import React, { memo, useState } from 'react'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import InfoIcon from '@mui/icons-material/Info'
 import Markup from '../../../common/Lexical/Markup'
-
-const ConnectStream = () => {
+import VideocamIcon from '@mui/icons-material/Videocam'
+const ConnectStream = ({
+  handleGoLiveFromBrowser
+}: {
+  handleGoLiveFromBrowser: () => void
+}) => {
   const [open, setOpen] = useState(false)
   return (
-    <div className="space-y-4 font-bold flex flex-col items-center justify-center">
+    <div className="font-bold flex flex-col items-center justify-center">
       <CircularProgress
         sx={{
           color: '#7a7a81'
@@ -15,7 +19,7 @@ const ConnectStream = () => {
         className="w-fit"
       />
 
-      <div className="text-sm text-[#7a7a81]">
+      <div className="text-sm mt-4 text-[#7a7a81]">
         Connect streaming software to go live
       </div>
       <Button
@@ -23,10 +27,27 @@ const ConnectStream = () => {
         onClick={() => {
           setOpen(true)
         }}
+        size="small"
       >
         OBS Setup Guide
       </Button>
 
+      <div className="text-sm font-bold text-[#7a7a81] mb-3">OR</div>
+
+      {/* // button to go live from browser */}
+
+      <Button
+        variant="contained"
+        className="w-full opacity-90"
+        size="small"
+        color="secondary"
+        onClick={handleGoLiveFromBrowser}
+        startIcon={<VideocamIcon />}
+      >
+        Go Live from Browser
+      </Button>
+
+      {/* obs setup guide */}
       <ModalWrapper
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}

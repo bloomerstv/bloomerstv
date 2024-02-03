@@ -62,8 +62,9 @@ const MyStreamEditButton = ({
         onClick={() => {
           setOpen(true)
         }}
+        size="small"
       >
-        Edit{' '}
+        Edit
       </Button>
       <ModalWrapper
         open={open}

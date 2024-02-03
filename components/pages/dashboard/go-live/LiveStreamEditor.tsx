@@ -1,48 +1,23 @@
 'use client'
 import React, { memo, useEffect } from 'react'
-import {
-  ShouldCreateNewPostDocument,
-  ViewType,
-  useCreateMyLensStreamSessionMutation,
-  useMyStreamQuery,
-  // useThumbnailQuery,
-  useUploadDataToArMutation
-} from '../../../../graphql/generated'
-import Video from '../../../common/Video'
-import { getLiveStreamUrl } from '../../../../utils/lib/getLiveStreamUrl'
-import ConnectStream from './ConnectStream'
+import { ViewType, useMyStreamQuery } from '../../../../graphql/generated'
+
 import MyStreamEditButton from './MyStreamEditButton'
-import {
-  SessionType,
-  useCreatePost,
-  useSession
-} from '@lens-protocol/react-web'
+import { SessionType, useSession } from '@lens-protocol/react-web'
 import { Button, MenuItem, Select, TextField } from '@mui/material'
-import {
-  APP_ID,
-  APP_LINK,
-  LIVE_PEER_RTMP_URL,
-  defaultSponsored
-} from '../../../../utils/config'
-import { useApolloClient } from '@apollo/client'
-import { liveStream } from '@lens-protocol/metadata'
-import formatHandle from '../../../../utils/lib/formatHandle'
-// import { stringToLength } from '../../../../utils/stringToLength'
-import { v4 as uuid } from 'uuid'
-import getUserLocale from '../../../../utils/getUserLocale'
+import { LIVE_PEER_RTMP_URL } from '../../../../utils/config'
 import clsx from 'clsx'
 import StartLoadingPage from '../../loading/StartLoadingPage'
-import { useMyStreamInfo } from '../../../store/useMyStreamInfo'
 import toast from 'react-hot-toast'
 import { useMyPreferences } from '../../../store/useMyPreferences'
+import LiveVideoComponent from './LiveVideoComponent'
 
 const LiveStreamEditor = () => {
+  const [startedStreaming, setStartedStreaming] = React.useState(false)
+  const [streamFromBrowser, setStreamFromBrowser] = React.useState(false)
+
   const { data: session } = useSession()
   const { data, error, refetch, loading } = useMyStreamQuery()
-  const [startedStreaming, setStartedStreaming] = React.useState(false)
-  const addLiveChatAt = useMyStreamInfo((state) => state.addLiveChatAt)
-
-  const client = useApolloClient()
 
   const streamReplayViewType = useMyPreferences(
     (state) => state.streamReplayViewType
@@ -51,180 +26,12 @@ const LiveStreamEditor = () => {
     (state) => state.setStreamReplayViewType
   )
 
-  const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation()
-  const { execute, error: createPostError } = useCreatePost()
-
-  const [uploadDataToAR] = useUploadDataToArMutation()
-  // const {data: thumbnail} = useThumbnailQuery({
-  //   variables: {
-  //     // @ts-ignore
-  //     handle:
-  //       session?.type === SessionType.WithProfile
-  //         ? session?.profile?.handle?.fullHandle
-  //         : ''
-  //   },
-  //   skip:
-  //     session?.type !== SessionType.WithProfile &&
-  //     // @ts-ignore
-  //     !session?.profile?.handle?.fullHandle
-  // })
-
-  const shouldCreateNewPost = async () => {
-    const { data } = await client.query({
-      query: ShouldCreateNewPostDocument
-    })
-
-    return data?.shouldCreateNewPost
-  }
-
-  useEffect(() => {
-    if (createPostError) {
-      toast.error(createPostError.message)
-    }
-  }, [createPostError])
-
   useEffect(() => {
     if (!error) return
     toast.error(error?.message)
   }, [error])
 
   const myStream = data?.myStream
-
-  const createLensPost = async (): Promise<string | undefined> => {
-    if (session?.type !== SessionType.WithProfile) {
-      return
-    }
-    // code logic here
-    const streamName = myStream?.streamName ?? undefined
-    if (!streamName) {
-      toast.error('Please enter a stream name')
-      throw new Error('No stream name')
-    }
-    const streamerHandle = formatHandle(session?.profile)
-    const profileLink = `${APP_LINK}/${streamerHandle}`
-    const id = uuid()
-    const locale = getUserLocale()
-
-    const content = `${streamName}${
-      addLiveChatAt ? `\n\nLive Chat at ${profileLink}` : ''
-    }`
-
-    const metadata = liveStream({
-      title: streamName,
-      content: content,
-      marketplace: {
-        name: streamName,
-        description: `${streamName}\n\nLive on ${profileLink}`,
-        external_url: profileLink
-        // image: thumbnail?.thumbnail
-      },
-      id: id,
-      locale: locale,
-      appId: APP_ID,
-      liveUrl: getLiveStreamUrl(myStream?.playbackId),
-      playbackUrl: getLiveStreamUrl(myStream?.playbackId),
-      startsAt: new Date().toISOString()
-    })
-
-    const { data } = await uploadDataToAR({
-      variables: {
-        data: JSON.stringify(metadata)
-      }
-    })
-
-    const transactionId = data?.uploadDataToAR
-
-    if (!transactionId) {
-      throw new Error('Error uploading metadata to Arweave')
-    }
-    // invoke the `execute` function to create the post
-    const result = await execute({
-      metadata: `ar://${transactionId}`,
-      sponsored: defaultSponsored
-    })
-
-    if (!result.isSuccess()) {
-      toast.error(result.error.message)
-      // handle failure scenarios
-      throw new Error('Error creating post')
-    }
-
-    // this might take a while, depends on the type of tx (on-chain or Momoka)
-    // and the congestion of the network
-    const completion = await result.value.waitForCompletion()
-
-    if (completion.isFailure()) {
-      toast.error(completion.error.message)
-      throw new Error('Error creating post during tx processing')
-    }
-
-    // the post is now ready to be used
-    const post = completion.value
-
-    return post?.id
-  }
-
-  useEffect(() => {
-    if (startedStreaming) {
-      handleStartedStreaming()
-    }
-  }, [startedStreaming])
-
-  const handleStartedStreaming = async () => {
-    try {
-      // check if should create new post
-      const res = await shouldCreateNewPost()
-      if (!res) {
-        return
-      }
-
-      // if yet, create lens post and get post id
-      const publicationId = await toast.promise(createLensPost(), {
-        loading: 'Creating post for your stream...',
-        success: 'Post created!',
-        error: 'Error creating post'
-      })
-
-      if (!publicationId) {
-        return
-      }
-
-      // submit the lens post id to create a lens stream session to api
-      // so when/if we check for lens post id on the latest session, it will be there
-
-      const { data, errors } = await createMyLensStreamSession({
-        variables: {
-          publicationId: publicationId,
-          viewType: streamReplayViewType
-        }
-      })
-
-      if (errors?.[0] && !data?.createMyLensStreamSession) {
-        toast.error(errors[0].message)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  // memoized connect stream component
-  const ConnectStreamMemo = React.useMemo(() => {
-    return <ConnectStream />
-  }, [])
-
-  const videoComponent = React.useMemo(
-    () => (
-      <Video
-        className="w-[360px] 2xl:w-[480px] shrink-0"
-        src={getLiveStreamUrl(myStream?.playbackId)}
-        streamOfflineErrorComponent={ConnectStreamMemo}
-        onStreamStatusChange={(isLive) => {
-          setStartedStreaming(isLive)
-        }}
-      />
-    ),
-    [myStream?.playbackId]
-  )
 
   if (session?.type !== SessionType.WithProfile) {
     return <div>You must be logged in to stream.</div>
@@ -242,7 +49,13 @@ const LiveStreamEditor = () => {
     <div className="p-8">
       <div className="bg-s-bg shadow-md">
         <div className="flex flex-row">
-          {videoComponent}
+          <LiveVideoComponent
+            myStream={myStream}
+            setStartedStreaming={setStartedStreaming}
+            startedStreaming={startedStreaming}
+            streamFromBrowser={streamFromBrowser}
+            setStreamFromBrowser={setStreamFromBrowser}
+          />
           <div className="flex flex-row justify-between items-start p-8 w-full">
             <div className="space-y-4">
               <div className="">
@@ -317,8 +130,12 @@ const LiveStreamEditor = () => {
 
           <div className="font-semibold ">
             {startedStreaming
-              ? `You're live! You can end your stream from obs or your streaming software.`
-              : 'Start streaming from obs or your streaming software to go live'}
+              ? `You're live! ${
+                  streamFromBrowser
+                    ? 'You can Stop streaming by pressing stop button.'
+                    : 'You can Stop streaming from your software.'
+                }`
+              : 'Stream is offline right now.'}
           </div>
         </div>
       </div>
