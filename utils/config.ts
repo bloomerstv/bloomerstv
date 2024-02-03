@@ -45,8 +45,11 @@ export const defaultSponsored = process.env.NEXT_PUBLIC_DEFAULT_SPONSORED
   : true
 export const SHARE_LENS_URL = 'https://share.lens.xyz'
 export const GITHUB_URL = 'https://github.com/bloomerstv/bloomerstv'
-export const FEEDBACK_URL = 'https://forms.gle/mbz1xyUQXdosJZSp8'
+export const FEEDBACK_URL =
+  'https://github.com/bloomerstv/bloomerstv/issues/new'
+export const REPORT_URL = 'https://github.com/bloomerstv/bloomerstv/issues/new'
 export const HEY_URL = 'https://hey.xyz/u/bloomerstv'
 export const DISCORD_INVITE_URL = 'https://discord.gg/rXUBVm7JxA'
+export const X_URL = 'https://twitter.com/useDiverseHQ'
 export const THUMBNAIL_FALLBACK =
   'https://npwelch.com/wp-content/uploads/2022/06/video-placeholder-brain-bites.png'
