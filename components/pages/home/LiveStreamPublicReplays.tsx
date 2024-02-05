@@ -95,7 +95,7 @@ const LiveStreamPublicReplays = ({ profileId }: { profileId?: string }) => {
   return (
     <div className="sm:m-8 my-4">
       <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
-        Stream Replays
+        Past Streams
       </div>
 
       {data?.streamReplayPublications ? (

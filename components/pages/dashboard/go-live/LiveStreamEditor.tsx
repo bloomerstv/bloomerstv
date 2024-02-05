@@ -58,7 +58,7 @@ const LiveStreamEditor = () => {
             streamFromBrowser={streamFromBrowser}
             setStreamFromBrowser={setStreamFromBrowser}
           />
-          <div className="flex flex-row justify-between items-start px-8 pt-8 w-full">
+          <div className="flex flex-row justify-between items-start px-4 pt-4 2xl:px-6 2xl:pt-6 w-full">
             <div className="space-y-3 w-full">
               <div className="between-row gap-x-1 w-full">
                 <div className="">
@@ -76,7 +76,7 @@ const LiveStreamEditor = () => {
               <div className="">
                 <div className="text-s-text font-bold text-md">Description</div>
                 <div className="text-p-text text-xs 2xl:text-sm font-semibold ">
-                  <Markup>
+                  <Markup className="whitespace-pre-wrap break-words ">
                     {stringToLength(myStream?.streamDescription, 180) ||
                       'No description provided'}
                   </Markup>

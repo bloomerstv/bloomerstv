@@ -16,14 +16,14 @@ export default function Home() {
       {isMobile && <MobileTopHeader />}
 
       <LiveStreamerFeed />
+      <div className="mt-4">
+        <LiveStreamPublicReplays />
+      </div>
       {!isMobile && (
         <div className="mt-4 ">
           <ClipsFeed />
         </div>
       )}
-      <div className="mt-4">
-        <LiveStreamPublicReplays />
-      </div>
       <div className="mt-4">
         <VideosFeed />
       </div>

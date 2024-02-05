@@ -83,9 +83,9 @@ const VideoPage = ({ post }: { post: Post }) => {
       </div>
       <ProfileInfoWithStream profile={post?.by} post={post} />
 
-      <div className="sm:mx-8 sm:my-6 text-p-text text-sm font-semibold sm:p-4 m-2 p-2 gap-y-2 start-col  rounded-xl shadow-sm bg-p-hover sm:bg-s-bg">
+      <div className="sm:mx-8 sm:mt-6 sm:mb-0 text-p-text font-semibold sm:text-base text-sm sm:p-6 m-2 p-2 gap-y-1 start-col  rounded-xl shadow-sm bg-p-hover sm:bg-s-bg">
         {/* // add total views count here */}
-        <div className=""> {timeAgo(post?.createdAt)} </div>
+        <div className="">Posted {timeAgo(post?.createdAt)} </div>
         <Markup className="">
           {String(
             getSenitizedContent(post?.metadata?.content, post?.metadata?.title)

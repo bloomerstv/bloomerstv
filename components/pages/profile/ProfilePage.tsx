@@ -26,6 +26,8 @@ import VideoClipHandler from './VideoClipHandler'
 import ClipsFeed from '../home/ClipsFeed'
 import toast from 'react-hot-toast'
 import LiveStreamPublicReplays from '../home/LiveStreamPublicReplays'
+import { timeAgo } from '../../../utils/helpers'
+import Markup from '../../common/Lexical/Markup'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
@@ -211,6 +213,28 @@ const ProfilePage = ({ handle }: { handle: string }) => {
               />
             </div>
           )} */}
+
+        {(streamer?.streamer?.startedStreaming ||
+          streamer?.streamer?.streamDescription) && (
+          <div className="sm:mx-8 sm:mt-6 sm:mb-0 text-p-text font-semibold sm:text-base text-sm sm:p-6 m-2 p-2 gap-y-1 start-col  rounded-xl shadow-sm bg-p-hover sm:bg-s-bg">
+            {/* // add total views count here */}
+            {streamer?.streamer?.startedStreaming && (
+              <div className="">
+                {`${
+                  streamer?.streamer?.isActive
+                    ? 'Started streaming '
+                    : 'Last streamed '
+                } ${timeAgo(streamer?.streamer?.startedStreaming)}`}
+              </div>
+            )}
+            {streamer?.streamer?.streamDescription && (
+              <Markup className="">
+                {String(streamer?.streamer?.streamDescription)}
+              </Markup>
+            )}
+            {/* links */}
+          </div>
+        )}
 
         <AboutProfile profile={data} />
 

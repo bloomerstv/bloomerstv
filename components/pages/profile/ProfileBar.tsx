@@ -43,6 +43,7 @@ import MobileCommentButton from '../watch/MobileCommentButton'
 import clsx from 'clsx'
 import LiveCount from './LiveCount'
 import toast from 'react-hot-toast'
+import Link from 'next/link'
 const ProfileBar = ({
   profile,
   streamer,
@@ -310,15 +311,27 @@ const ProfileBar = ({
       <div className="m-2 sm:m-4 sm:mx-8 between-row text-p-text">
         <div className="centered-row space-x-2 sm:space-x-5">
           <div className="sm:w-12 sm:h-12 w-8 h-8 rounded-full relative">
-            <img
-              src={getAvatar(profile)}
-              className="sm:w-12 sm:h-12 w-8 h-8 rounded-full"
-            />
+            <Link
+              href={`/${formatHandle(profile)}`}
+              prefetch
+              className="no-underline text-p-text"
+            >
+              <img
+                src={getAvatar(profile)}
+                className="sm:w-12 sm:h-12 w-8 h-8 rounded-full"
+              />
+            </Link>
           </div>
           <div className="start-col sm:pr-3">
-            <div className="font-semibold sm:text-xl">
-              {formatHandle(profile)}
-            </div>
+            <Link
+              href={`/${formatHandle(profile)}`}
+              prefetch
+              className="no-underline text-p-text"
+            >
+              <div className="font-semibold sm:text-xl">
+                {formatHandle(profile)}
+              </div>
+            </Link>
 
             <div className="start-row space-x-1 text-sm">
               <div className="">{profile?.stats?.followers}</div>
