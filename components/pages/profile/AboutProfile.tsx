@@ -28,7 +28,7 @@ const AboutProfile = ({ profile }: { profile: Profile }) => {
     getWebsiteLinksFromProfile(profile)
 
   return (
-    <div className="sm:m-8 sm:p-6 m-2 p-4 rounded-xl shadow-sm bg-s-bg">
+    <div className="sm:m-8 sm:p-6 m-2 p-3 rounded-xl shadow-sm bg-p-hover sm:bg-s-bg">
       <div className="text-2xl font-bold mb-4">
         About {formatHandle(profile)}
       </div>

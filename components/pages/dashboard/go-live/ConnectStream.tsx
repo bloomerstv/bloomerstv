@@ -63,6 +63,13 @@ const ConnectStream = ({
           </div>
         }
       >
+        <video
+          src="/HowToStream.mp4"
+          autoPlay
+          muted
+          loop
+          className="w-full rounded-xl shadow-sm"
+        />
         <div className="font-bold space-y-2 ">
           <div className="flex flex-row items-start">
             <div className="mr-2">1.</div>
@@ -77,8 +84,8 @@ const ConnectStream = ({
           <div className="flex flex-row items-start">
             <div className="mr-2">3.</div>
             <div>
-              Keep the Default Server and paste the Stream Key into the “Stream
-              Key” field.
+              Keep the Default Server and paste the Stream Key from go-live page
+              into the “Stream Key” field of OBS.
             </div>
           </div>
           <div className="flex flex-row items-start text-s-text text-sm px-6">
