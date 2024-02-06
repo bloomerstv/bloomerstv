@@ -48,20 +48,25 @@ const LiveVideoComponent = ({
   const [uploadDataToAR] = useUploadDataToArMutation()
   const { data: session } = useSession()
   const client = useApolloClient()
-  const shouldCreateNewPost = async () => {
-    const { data } = await client.query({
-      query: ShouldCreateNewPostDocument
-    })
+  // const shouldCreateNewPost = async () => {
+  //   const { data } = await client.query({
+  //     query: ShouldCreateNewPostDocument
+  //   })
 
-    return data?.shouldCreateNewPost
-  }
+  //   return data?.shouldCreateNewPost
+  // }
 
   useEffect(() => {
     if (startedStreaming) {
       // call handleStartedStreaming after 3 seconds
-      setTimeout(() => {
+
+      if (!streamFromBrowser) {
         handleStartedStreaming()
-      }, 5000)
+      } else {
+        setTimeout(() => {
+          handleStartedStreaming()
+        }, 10000)
+      }
     }
   }, [startedStreaming])
 
@@ -142,9 +147,13 @@ const LiveVideoComponent = ({
 
   const handleStartedStreaming = async () => {
     try {
+      const { data: shouldCreateNewPostRes } = await client.query({
+        query: ShouldCreateNewPostDocument
+      })
+
+      // return data?.shouldCreateNewPost
       // check if should create new post
-      const res = await shouldCreateNewPost()
-      console.log('res', res)
+      const res = shouldCreateNewPostRes?.shouldCreateNewPost
       if (!res) {
         return
       }
@@ -205,7 +214,6 @@ const LiveVideoComponent = ({
         <Broadcast
           streamKey={myStream?.streamKey}
           onPlaybackStatusUpdate={(state) => {
-            console.log('state?.live', state?.live)
             setStartedStreaming(state.live)
           }}
           controls={{
