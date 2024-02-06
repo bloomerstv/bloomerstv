@@ -60,13 +60,9 @@ const LiveVideoComponent = ({
     if (startedStreaming) {
       // call handleStartedStreaming after 3 seconds
 
-      if (!streamFromBrowser) {
+      setTimeout(() => {
         handleStartedStreaming()
-      } else {
-        setTimeout(() => {
-          handleStartedStreaming()
-        }, 10000)
-      }
+      }, 10000)
     }
   }, [startedStreaming])
 
