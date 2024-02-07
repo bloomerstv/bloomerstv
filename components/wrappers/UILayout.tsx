@@ -13,6 +13,7 @@ import DashboardSidebar from '../pages/dashboard/DashboardSidebar'
 import { useLiveStreamersQuery } from '../../graphql/generated'
 import { useStreamersWithProfiles } from '../store/useStreamersWithProfiles'
 import { useProfiles } from '@lens-protocol/react-web'
+import { useStreamReplayPublications } from '../../utils/hooks/useStreamReplayPublications'
 
 interface Props {
   // Define any props that the component will accept
@@ -24,6 +25,8 @@ const inter = Inter({ subsets: ['latin'] })
 const UILayout: React.FC<Props> = (props) => {
   const isMobile = useIsMobile()
   const pathname = usePathname()
+
+  useStreamReplayPublications({})
 
   const { data, loading: streamersLoading } = useLiveStreamersQuery()
   const setStreamersWithProfiles = useStreamersWithProfiles(
@@ -85,6 +88,7 @@ const UILayout: React.FC<Props> = (props) => {
                 <DashboardSidebar />
               ) : (
                 <>
+                  {/* {pathname === '/' && <StreamerSidebar />} */}
                   {!pathname.startsWith('/watch/') &&
                     !pathname.startsWith('/live-chat') && <StreamerSidebar />}
                 </>

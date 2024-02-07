@@ -8,6 +8,8 @@ import { secondsToTime, timeAgo } from '../../utils/helpers'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import Markup from './Lexical/Markup'
 import { THUMBNAIL_FALLBACK } from '../../utils/config'
+import { usePathname } from 'next/navigation'
+import clsx from 'clsx'
 
 const HomeVideoCard = ({
   post,
@@ -18,12 +20,16 @@ const HomeVideoCard = ({
   cover?: string
   duration?: number
 }) => {
+  const pathname = usePathname()
   const asset = getPublicationData(post?.metadata)?.asset
 
   return (
     <Link
       prefetch
-      className="no-underline text-p-text group w-full lg:w-1/3 sm:px-2"
+      className={clsx(
+        'no-underline text-p-text group w-full sm:px-2',
+        pathname === '/' ? 'lg:w-1/3 2xl:w-1/4' : 'lg:w-1/3'
+      )}
       href={`/watch/${post?.id}`}
     >
       <div className="w-full aspect-video relative mb-2 overflow-hidden sm:rounded-xl">

@@ -85,7 +85,13 @@ const VideoPage = ({ post }: { post: Post }) => {
 
       <div className="sm:mx-8 sm:mt-6 sm:mb-0 text-p-text font-semibold sm:text-base text-sm sm:p-6 m-2 p-3 gap-y-1 start-col  rounded-xl shadow-sm bg-p-hover sm:bg-s-bg">
         {/* // add total views count here */}
-        <div className="">Posted {timeAgo(post?.createdAt)} </div>
+        <div className="">
+          {`${
+            post?.metadata?.__typename === 'LiveStreamMetadataV3'
+              ? 'Streamed'
+              : 'Posted'
+          } ${timeAgo(post?.createdAt)}`}{' '}
+        </div>
         <Markup className="">
           {String(
             getSenitizedContent(post?.metadata?.content, post?.metadata?.title)

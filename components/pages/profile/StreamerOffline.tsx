@@ -25,8 +25,8 @@ const StreamerOffline = ({
   return (
     <div className="w-full h-full relative">
       <div className="absolute w-full h-full sm:px-8 flex flex-row items-center justify-between z-20">
-        <div className="py-4 px-10 sm:p-8 bg-s-bg flex sm:flex-row flex-col sm:space-x-8">
-          <div className="flex flex-row sm:items-start items-center  sm:space-y-4 sm:space-x-0 space-x-2 sm:flex-col pb-1">
+        <div className="py-4 w-full px-6 sm:p-8 bg-s-bg flex sm:flex-row flex-col sm:space-x-8">
+          <div className="flex shrink-0 flex-row sm:items-start items-center  sm:space-y-4 sm:space-x-0 space-x-2 sm:flex-col pb-1">
             <img
               src={getAvatar(profile)}
               className="sm:w-16 sm:h-16 w-4 h-4 rounded-full hidden sm:block"
@@ -42,7 +42,7 @@ const StreamerOffline = ({
             </div>
           </div>
           {streamReplayRecording?.recordingUrl && (
-            <div className="sm:rounded-xl rounded-md overflow-hidden w-fit">
+            <div className="sm:rounded-xl rounded-md overflow-hidden w-full">
               <Video
                 src={streamReplayRecording?.recordingUrl}
                 className="w-full"
@@ -69,7 +69,7 @@ const StreamerOffline = ({
               src={banner}
               alt="logo"
             />
-            <div className="absolute inset-0 bg-black bg-opacity-50" />
+            <div className="absolute inset-0 bg-black bg-opacity-70" />
           </>
         ) : (
           <div className="h-full w-full bg-black" />
