@@ -25,7 +25,7 @@ const StreamerOffline = ({
   return (
     <div className="w-full h-full relative">
       <div className="absolute w-full h-full sm:px-8 flex flex-row items-center justify-between z-20">
-        <div className="py-4 w-full px-6 sm:p-8 bg-s-bg flex sm:flex-row flex-col sm:space-x-8">
+        <div className="py-4 w-fit px-6 sm:p-8 bg-s-bg flex sm:flex-row flex-col sm:space-x-8 rounded-xl">
           <div className="flex shrink-0 flex-row sm:items-start items-center  sm:space-y-4 sm:space-x-0 space-x-2 sm:flex-col pb-1">
             <img
               src={getAvatar(profile)}
@@ -37,7 +37,7 @@ const StreamerOffline = ({
 
             <div className="text-s-text text-xs sm:text-base font-bold">
               {streamer?.lastSeen
-                ? `Last streamed ${timeAgo(streamer?.lastSeen)}`
+                ? `Streamed ${timeAgo(streamer?.lastSeen)}`
                 : 'Never streamed before'}
             </div>
           </div>

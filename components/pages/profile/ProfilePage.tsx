@@ -223,8 +223,12 @@ const ProfilePage = ({ handle }: { handle: string }) => {
                 {`${
                   streamer?.streamer?.isActive
                     ? 'Started streaming '
-                    : 'Last streamed '
-                } ${timeAgo(streamer?.streamer?.startedStreaming)}`}
+                    : 'Streamed '
+                } ${
+                  streamer?.streamer?.isActive
+                    ? timeAgo(streamer?.streamer?.startedStreaming)
+                    : timeAgo(streamer?.streamer?.lastSeen)
+                }`}
               </div>
             )}
             {streamer?.streamer?.streamDescription && (
