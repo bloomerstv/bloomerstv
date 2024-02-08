@@ -48,7 +48,7 @@ const LiveCount = ({
       )}
     >
       <PermIdentityIcon fontSize="inherit" />
-      <div className="text-base sm:text-xl font-semibold">{count}</div>
+      <div className="text-base sm:text-lg font-semibold">{count}</div>
     </div>
   )
 }

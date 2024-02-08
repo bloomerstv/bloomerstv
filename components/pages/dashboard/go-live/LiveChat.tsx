@@ -81,7 +81,8 @@ const LiveChat = ({
   const { data: chats } = useStreamChatsQuery({
     variables: {
       profileId: profileId
-    }
+    },
+    fetchPolicy: 'no-cache'
   })
 
   useEffect(() => {
