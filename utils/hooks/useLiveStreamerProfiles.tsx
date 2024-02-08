@@ -31,9 +31,7 @@ const useLiveStreamerProfiles = () => {
   }, [streamers])
 
   React.useEffect(() => {
-    if (!streamersLoading && !profilesLoading) {
-      setLoading(false)
-    }
+    setLoading(streamersLoading || profilesLoading)
   }, [streamersLoading, profilesLoading])
 }
 
