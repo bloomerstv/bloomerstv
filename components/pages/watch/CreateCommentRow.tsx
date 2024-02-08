@@ -91,7 +91,12 @@ const CreateCommentRow = ({
     return null
   }
   return (
-    <div className={clsx('start-row w-full gap-x-2 pl-2.5 py-2.5', className)}>
+    <div
+      className={clsx(
+        'start-center-row w-full gap-x-2 pl-2.5 py-2.5',
+        className
+      )}
+    >
       <img src={getAvatar(session.profile)} className="w-8 h-8 rounded-full" />
       <div className="border border-p-border rounded-lg overflow-hidden w-full">
         <input

@@ -333,7 +333,7 @@ const ProfileBar = ({
               </div>
             </Link>
 
-            <div className="start-row space-x-1 text-sm">
+            <div className="start-center-row space-x-1 text-sm">
               <div className="">{profile?.stats?.followers}</div>
               <div className="text-s-text">followers</div>
             </div>
@@ -364,7 +364,7 @@ const ProfileBar = ({
             )}
         </div>
 
-        <div className="start-row space-x-4">
+        <div className="start-center-row space-x-4">
           {profile?.id && streamer?.isActive && (
             <LiveCount profileId={profile?.id} />
           )}
@@ -456,7 +456,7 @@ const ProfileBar = ({
 
       {isMobile && (
         <div className="py-3 w-full">
-          <div className="start-row gap-x-3 px-2 py-1 w-full no-scrollbar  overflow-x-auto">
+          <div className="start-center-row gap-x-3 px-2 py-1 w-full no-scrollbar  overflow-x-auto">
             {/* like button */}
             {publication?.id && (
               <Button

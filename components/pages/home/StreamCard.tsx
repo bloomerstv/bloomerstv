@@ -23,9 +23,9 @@ const StreamCard = ({ streamer }: { streamer: StreamerWithProfile }) => {
           className="w-full aspect-video bg-p-hover sm:rounded-xl transition-transform duration-500 ease-in-out transform hover:scale-110"
           alt="thumbnail"
         />
-        <div className="absolute top-4 left-4 start-row gap-x-2">
+        <div className="absolute top-4 left-4 start-center-row gap-x-2">
           <LiveDiv />
-          <div className="start-row gap-x-1 text-white text-base bg-black bg-opacity-80 px-1.5 rounded-md">
+          <div className="centered-row gap-x-1 text-white text-base bg-black bg-opacity-80 px-1.5 rounded-md">
             <PermIdentityIcon fontSize="inherit" />
             <div className="text-sm font-semibold">{streamer?.liveCount}</div>
           </div>

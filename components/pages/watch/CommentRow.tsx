@@ -75,7 +75,7 @@ const CommentRow = ({
         </Markup>
 
         {comment?.id && (
-          <div className="start-row pt-1 gap-x-3 ml-[-10px]">
+          <div className="start-center-row pt-1 gap-x-3 ml-[-10px]">
             {/* like button */}
             <Button
               size="small"

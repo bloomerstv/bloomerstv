@@ -13,7 +13,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
       key={streamer?.profileId}
       className="flex flex-row no-underline w-full items-center px-4 py-2 justify-between hover:bg-p-hover cursor-pointer"
     >
-      <div className="start-row">
+      <div className="centered-row">
         <img
           src={getAvatar(streamer?.profile)}
           alt="avatar"
@@ -26,7 +26,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
 
       {/* red dot */}
       {streamer?.isActive ? (
-        <div className="start-row gap-x-1 text-xl text-brand ">
+        <div className="centered-row gap-x-1 text-xl text-brand ">
           <PermIdentityIcon fontSize="inherit" />
           <div className="text-base font-semibold">{streamer?.liveCount}</div>
         </div>

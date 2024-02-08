@@ -73,7 +73,7 @@ const LoginComponent = ({
                 )}
                 key={profile?.id}
               >
-                <div className="start-row space-x-4">
+                <div className="centered-row space-x-4">
                   <img
                     src={getAvatar(profile)}
                     alt="avatar"

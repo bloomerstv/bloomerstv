@@ -124,7 +124,7 @@ const LiveStreamEditor = () => {
             </div>
           </div>
         </div>
-        <div className="px-4 py-3 start-row space-x-4">
+        <div className="px-4 py-3 start-center-row space-x-4">
           {/* dot that goes red when live and green when not */}
           <div
             className={clsx(
@@ -148,7 +148,7 @@ const LiveStreamEditor = () => {
       <div className="mt-8 p-8 bg-s-bg shadow-md ">
         <div className="space-y-8 w-[400px]">
           <div className="font-bold text-lg text-s-text">Stream Key</div>
-          <div className="start-row space-x-2">
+          <div className="start-center-row space-x-2">
             {/* mui input with copy button  */}
             <TextField
               type="password"
@@ -173,7 +173,7 @@ const LiveStreamEditor = () => {
           </div>
 
           {/* stream url */}
-          <div className="start-row space-x-2">
+          <div className="start-center-row space-x-2">
             <TextField
               label="Stream URL"
               value={LIVE_PEER_RTMP_URL}

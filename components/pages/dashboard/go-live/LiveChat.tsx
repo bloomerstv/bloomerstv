@@ -309,7 +309,7 @@ const LiveChat = ({
       {/* title section */}
 
       <div className="between-row w-full pb-1 px-3 sm:px-4 sm:py-3  border-b border-p-border">
-        <div className="start-row space-x-2">
+        <div className="centered-row space-x-2">
           <div className="font-semibold">{title}</div>
           <IconButton
             onClick={() => setLiveChatPopUpSound(!liveChatPopUpSound)}

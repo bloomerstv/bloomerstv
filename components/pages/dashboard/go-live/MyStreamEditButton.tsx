@@ -99,7 +99,7 @@ const MyStreamEditButton = ({
             helperText={`${100 - streamName.length} / 100 characters remaining`}
           />
 
-          <div className="start-row text-xs">
+          <div className="start-center-row text-xs">
             <Checkbox
               checked={addLiveChatAt}
               size="small"

@@ -95,7 +95,7 @@ const ModalWrapper = ({
         <Box sx={style}>
           <div className="min-w-[400px] bg-s-bg rounded-xl shadow-xl">
             <div className="between-row p-4 border-b border-p-border">
-              <div className="start-row space-x-4">
+              <div className="start-center-row space-x-2">
                 <div className="centered-row">{Icon}</div>
                 <div className="text-p-text font-bold">{title}</div>
               </div>
