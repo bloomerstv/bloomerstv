@@ -1,5 +1,5 @@
 import { Post } from '@lens-protocol/react-web'
-import React, { useEffect } from 'react'
+import React, { memo, useEffect } from 'react'
 import Video from '../../common/Video'
 import getPublicationData from '../../../utils/lib/getPublicationData'
 import ProfileInfoWithStream from '../profile/ProfileInfoWithStream'
@@ -29,6 +29,32 @@ const VideoPage = ({ post }: { post: Post }) => {
     toast.error(String(error))
   }, [error])
 
+  const memoizedVideo = React.useMemo(() => {
+    if (!data?.streamReplayRecording?.recordingUrl) return null
+    return (
+      <Video
+        src={data?.streamReplayRecording?.recordingUrl}
+        className="w-full"
+        muted={false}
+        poster={getThumbnailFromRecordingUrl(
+          data?.streamReplayRecording?.recordingUrl
+        )}
+      />
+    )
+  }, [data?.streamReplayRecording?.recordingUrl])
+
+  const memoizedAsset = React.useMemo(() => {
+    if (!asset?.uri) return null
+    return (
+      <Video
+        poster={asset?.cover}
+        src={String(asset?.uri)}
+        className="w-full"
+        muted={false}
+      />
+    )
+  }, [asset?.uri])
+
   if (
     post?.metadata?.__typename !== 'VideoMetadataV3' &&
     post?.metadata?.__typename !== 'LiveStreamMetadataV3'
@@ -50,14 +76,7 @@ const VideoPage = ({ post }: { post: Post }) => {
             {/* //todo here check if there is a recording is allowd to  from api, fetch it and show it here instead of liveUrl  */}
 
             {data?.streamReplayRecording?.recordingUrl ? (
-              <Video
-                src={data?.streamReplayRecording?.recordingUrl}
-                className="w-full"
-                muted={false}
-                poster={getThumbnailFromRecordingUrl(
-                  data?.streamReplayRecording?.recordingUrl
-                )}
-              />
+              memoizedVideo
             ) : (
               <div className="w-full aspect-video animate-pulse bg-p-hover centered-row">
                 {error && (
@@ -69,16 +88,7 @@ const VideoPage = ({ post }: { post: Post }) => {
             )}
           </>
         ) : (
-          <>
-            {asset?.uri && (
-              <Video
-                poster={asset?.cover}
-                src={String(asset?.uri)}
-                className="w-full"
-                muted={false}
-              />
-            )}
-          </>
+          <>{asset?.uri && memoizedAsset}</>
         )}
       </div>
       <ProfileInfoWithStream profile={post?.by} post={post} />
@@ -117,4 +127,4 @@ const VideoPage = ({ post }: { post: Post }) => {
   )
 }
 
-export default VideoPage
+export default memo(VideoPage)

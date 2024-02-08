@@ -1,14 +1,14 @@
-import { useSession } from '@lens-protocol/react-web'
 import React from 'react'
-import { useIsMounted } from 'usehooks-ts'
 import StartLoadingPage from '../pages/loading/StartLoadingPage'
 
 const ShowLoadingWrapper = ({ children }: { children: React.ReactNode }) => {
-  const isMounted = useIsMounted()
+  const [mounted, setMounted] = React.useState(false)
 
-  const { loading, data } = useSession()
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
-  if (!isMounted() || loading || !data) {
+  if (!mounted) {
     return (
       <div className="h-screen">
         <StartLoadingPage />

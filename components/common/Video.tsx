@@ -3,7 +3,6 @@ import cn from '../../utils/ui/cn'
 import { Asset, ClipLength, Player } from '@livepeer/react'
 import { ARWEAVE_GATEWAY, IPFS_GATEWAY } from '../../utils/contants'
 import React, { FC, memo } from 'react'
-import { SessionType, useSession } from '@lens-protocol/react-web'
 
 interface VideoProps {
   src: string
@@ -44,9 +43,6 @@ const Video: FC<VideoProps> = ({
   onClipError = () => {},
   onClipCreated = () => {}
 }) => {
-  //   const currentProfile = useAppStore((state) => state.currentProfile)
-  const { data } = useSession()
-
   return (
     <div
       className={cn('lp-player', className)}
@@ -76,10 +72,6 @@ const Video: FC<VideoProps> = ({
         onClipStarted={onClipStarted}
         onClipError={onClipError}
         onClipCreated={onClipCreated}
-        // others
-        viewerId={
-          data?.type === SessionType.WithProfile ? data?.address : undefined
-        }
         autoUrlUpload={{
           fallback: true,
           ipfsGateway: IPFS_GATEWAY,

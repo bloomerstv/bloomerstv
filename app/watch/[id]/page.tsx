@@ -20,6 +20,11 @@ const page = ({
     forId: params.id
   })
 
+  const memoizedVideoPage = React.useMemo(() => {
+    if (!data) return null
+    return <VideoPage post={data as Post} />
+  }, [data?.id])
+
   useEffect(() => {
     if (!error) return
     toast.error(String(error))
@@ -49,9 +54,7 @@ const page = ({
 
   return (
     <div className="h-full w-full flex flex-row sm:pt-8 sm:px-8 gap-x-8">
-      <div className="w-full flex-grow h-full">
-        <VideoPage post={data as Post} />
-      </div>
+      <div className="w-full flex-grow h-full">{memoizedVideoPage}</div>
       {!isMobile && (
         <div className="sm:w-[600px] w-full">
           <OtherVideosRecommendations />
