@@ -11,7 +11,6 @@ export const useMyStreamInfo = create<MyStreamStore>(
       addLiveChatAt: true,
       setAddLiveChatAt: (addLiveChatAt) => set(() => ({ addLiveChatAt }))
     }),
-
     {
       name: 'myStreamInfo',
       partialize: (state: MyStreamStore) => {

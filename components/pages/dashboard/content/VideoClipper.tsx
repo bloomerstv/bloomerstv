@@ -3,10 +3,15 @@ import { useMediaController } from '@livepeer/react'
 import { getListOfThumbnailsFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import Draggable from 'react-draggable'
 import clsx from 'clsx'
+import { useStreamAsVideo } from '../../../store/useStreamAsVideo'
+import { THUMBNAIL_FALLBACK } from '../../../../utils/config'
 
 const VideoClipper = ({ url }: { url: string }) => {
   const { duration, playing, loading, progress, requestSeek, togglePlay } =
     useMediaController((state) => state)
+
+  const setStartTime = useStreamAsVideo((state) => state.setStartTime)
+  const setEndTime = useStreamAsVideo((state) => state.setEndTime)
 
   const [startPosition, setStartPosition] = useState(0)
   const [endPosition, setEndPosition] = useState(0)
@@ -16,7 +21,7 @@ const VideoClipper = ({ url }: { url: string }) => {
 
   useEffect(() => {
     if (!containerRef?.current?.offsetWidth) return
-    setEndPosition(containerRef.current.offsetWidth)
+    setEndPosition(containerRef.current.offsetWidth - 8)
     setTotalWidth(containerRef.current.offsetWidth)
   }, [containerRef?.current?.offsetWidth])
   // const [value, setValue] = useState([0, duration])
@@ -47,18 +52,21 @@ const VideoClipper = ({ url }: { url: string }) => {
   )
 
   const startTime = useCallback(() => {
-    if (!containerRef?.current?.offsetWidth) return
-    const time = (startPosition / containerRef.current.offsetWidth) * duration
+    if (!totalWidth) return
+    const time = (startPosition / totalWidth) * duration
+    setStartTime(time)
+
     return formatTime(time) || '00:00'
-  }, [startPosition, containerRef?.current?.offsetWidth, duration])
+  }, [startPosition, totalWidth, duration])
 
   const endTime = useCallback(() => {
-    if (!containerRef?.current?.offsetWidth) return
-    const time = (endPosition / containerRef.current.offsetWidth) * duration
+    if (!totalWidth) return
+    const time = ((endPosition + 8) / totalWidth) * duration
+    setEndTime(time)
     return formatTime(time) || '00:00'
-  }, [endPosition, containerRef?.current?.offsetWidth, duration])
+  }, [endPosition, totalWidth, duration])
 
-  const thumbnails = getListOfThumbnailsFromRecordingUrl(url, duration, 15)
+  const thumbnails = getListOfThumbnailsFromRecordingUrl(url, duration, 25)
   if (loading) return null
 
   return (
@@ -84,6 +92,12 @@ const VideoClipper = ({ url }: { url: string }) => {
               className={clsx(
                 'w-full h-20 object-cover image-unselectable block'
               )}
+              onError={(e) => {
+                // @ts-ignore
+                e.target.onerror = null // Prevents infinite looping in case the fallback image also fails to load
+                // @ts-ignore
+                e.target.src = THUMBNAIL_FALLBACK // Replace with your default background image
+              }}
             />
           </div>
         ))}
@@ -94,9 +108,9 @@ const VideoClipper = ({ url }: { url: string }) => {
           style={{
             left: '0%',
             right: `${
-              100 - ((startPosition + 4) / (totalWidth || startPosition)) * 100
+              100 - (startPosition / (totalWidth || startPosition)) * 100
             }%`,
-            backgroundColor: 'rgba(0, 0, 0, 0.2)'
+            backgroundColor: 'rgba(0, 0, 0, 0.7)'
           }}
         ></div>
 
@@ -104,9 +118,9 @@ const VideoClipper = ({ url }: { url: string }) => {
         <div
           className="absolute top-0 h-full rounded-r-lg"
           style={{
-            left: `${(endPosition / (totalWidth || endPosition)) * 100}%`,
+            left: `${((endPosition + 8) / (totalWidth || endPosition)) * 100}%`,
             right: '0%',
-            backgroundColor: 'rgba(0, 0, 0, 0.2)'
+            backgroundColor: 'rgba(0, 0, 0, 0.7)'
           }}
         ></div>
 
@@ -115,9 +129,11 @@ const VideoClipper = ({ url }: { url: string }) => {
           className="absolute top-0 h-1 bg-brand"
           style={{
             left: `${
-              ((startPosition + 4) / (totalWidth || startPosition + 4)) * 100
+              (startPosition / (totalWidth || startPosition + 4)) * 100
             }%`,
-            right: `${100 - (endPosition / (totalWidth || endPosition)) * 100}%`
+            right: `${
+              100 - ((endPosition + 9) / (totalWidth || endPosition)) * 100
+            }%`
           }}
         ></div>
 
@@ -126,9 +142,11 @@ const VideoClipper = ({ url }: { url: string }) => {
           className="absolute bottom-0 h-1 bg-brand"
           style={{
             left: `${
-              ((startPosition + 4) / (totalWidth || startPosition + 4)) * 100
+              (startPosition / (totalWidth || startPosition + 4)) * 100
             }%`,
-            right: `${100 - (endPosition / (totalWidth || endPosition)) * 100}%`
+            right: `${
+              100 - ((endPosition + 9) / (totalWidth || endPosition)) * 100
+            }%`
           }}
         ></div>
 
@@ -143,7 +161,6 @@ const VideoClipper = ({ url }: { url: string }) => {
             requestSeek(newProgress * duration)
           }}
           onStop={() => {
-            console.log('Stopped dragging')
             if (playing) {
               togglePlay(false)
             }
@@ -164,17 +181,14 @@ const VideoClipper = ({ url }: { url: string }) => {
           position={{ x: startPosition, y: 0 }}
           onDrag={(e, data) => {
             if (!containerRef?.current?.offsetWidth) return
-            if (data.x < endPosition - 8) {
+            if (data.x < endPosition + 8) {
               setStartPosition(data.x)
-              const time =
-                (data.x / containerRef.current.offsetWidth) * duration
-              console.log('Start time:', formatTime(time))
             }
           }}
         >
-          <div className="absolute top-0 h-full w-1 bg-transparent">
+          <div className="absolute top-0 h-full bg-transparent">
             <div
-              className="h-full w-2  bg-brand rounded-l-lg centered-row"
+              className="h-full w-2  bg-brand rounded-l-lg centered-row  transform -translate-x-2"
               style={{
                 cursor: 'ew-resize'
               }}
@@ -191,17 +205,14 @@ const VideoClipper = ({ url }: { url: string }) => {
           position={{ x: endPosition, y: 0 }}
           onDrag={(e, data) => {
             if (!containerRef?.current?.offsetWidth) return
-            if (data.x > startPosition + 8) {
+            if (data.x + 8 > startPosition) {
               setEndPosition(data.x)
-              const time =
-                ((data.x + 4) / containerRef.current.offsetWidth) * duration
-              console.log('End time:', formatTime(time))
             }
           }}
         >
-          <div className="absolute top-0 h-full w-1 bg-transparent">
+          <div className="absolute top-0 h-full bg-transparent ">
             <div
-              className="h-full w-2  bg-brand rounded-r-lg centered-row"
+              className="h-full w-2  bg-brand rounded-r-lg centered-row transform translate-x-2"
               style={{
                 cursor: 'ew-resize'
               }}

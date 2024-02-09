@@ -1,9 +1,15 @@
 import { Button, TextField, TextareaAutosize } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import CreateIcon from '@mui/icons-material/Create'
-import { Post, useCreatePost, useSession } from '@lens-protocol/react-web'
+import {
+  Post,
+  SessionType,
+  useCreatePost,
+  useSession
+} from '@lens-protocol/react-web'
 import {
   RecordedSession,
+  useCreateClipMutation,
   useUploadDataToArMutation
 } from '../../../../graphql/generated'
 import { v4 as uuid } from 'uuid'
@@ -16,6 +22,7 @@ import formatHandle from '../../../../utils/lib/formatHandle'
 import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import VideoWithEditors from './VideoWithEditors'
 import toast from 'react-hot-toast'
+import { useStreamAsVideo } from '../../../store/useStreamAsVideo'
 
 const PostStreamAsVideo = ({
   publication,
@@ -50,12 +57,67 @@ const PostStreamAsVideo = ({
 
   const [showVideoDescription, setShowVideoDescription] = useState(false)
 
+  const startTime = useStreamAsVideo((state) => state.startTime)
+  const endTime = useStreamAsVideo((state) => state.endTime)
+
+  const [createClip] = useCreateClipMutation()
+
   const createLensPost = async () => {
+    if (profile?.type !== SessionType.WithProfile) {
+      toast.error('You need to login a profile to post')
+      return
+    }
     // @ts-ignore
     if (title.trim().length === 0) {
       toast.error('Please enter a title')
       return
     }
+
+    let url = session?.mp4Url
+    let duration = session?.sourceSegmentsDuration as number
+
+    // create clip if applicable and set as
+
+    const timeDiffernce = endTime - startTime
+
+    // if difference time difference is 0 (which means, its unmoved) or the difference between timeDifference and duration is less than 5 seconds, then we can use the original video
+
+    if (timeDiffernce !== 0 && Math.abs(timeDiffernce - duration) > 5) {
+      // create clip
+
+      const startTimeinMs = Math.floor(startTime * 1000)
+      const endTimeinMs = Math.floor(endTime * 1000)
+      const startEpochTime = session?.createdAt + startTimeinMs
+      const endEpochTime = session?.createdAt + endTimeinMs
+
+      const result = await toast.promise(
+        createClip({
+          variables: {
+            playbackId: session?.playbackId as string,
+            startTime: startEpochTime,
+            endTime: endEpochTime,
+            name: title,
+            sessionId: session?.sessionId as string
+          }
+        }),
+        {
+          error: 'Error processing clip',
+          loading:
+            'Processing clip... (this may take a few minutes, the longer the clip, the longer it will take to process)',
+          success: 'Clip processed!'
+        }
+      )
+
+      if (result?.data?.createClip?.downloadUrl) {
+        url = result?.data?.createClip?.downloadUrl
+        duration = Math.round(timeDiffernce)
+      } else {
+        toast.error('Something went wrong creating clip')
+        return
+      }
+    }
+
+    // return
 
     const id = uuid()
     const locale = getUserLocale()
@@ -71,21 +133,22 @@ const PostStreamAsVideo = ({
         // @ts-ignore
         external_url: `${APP_LINK}/${formatHandle(profile?.profile)}`,
         // @ts-ignore
-        animation_url: session?.mp4Url,
+        animation_url: url,
         // @ts-ignore
-        image: getThumbnailFromRecordingUrl(session?.mp4Url)
+        image: getThumbnailFromRecordingUrl(url)
       },
       video: {
         // @ts-ignore
-        item: session?.mp4Url,
+        item: url,
         // @ts-ignore
-        cover: getThumbnailFromRecordingUrl(session?.mp4Url),
+        cover: getThumbnailFromRecordingUrl(url),
         // @ts-ignore
-        duration: session?.sourceSegmentsDuration,
+        duration: duration,
         type: MediaVideoMimeType.MP4,
         // @ts-ignore
         altTag: title
       },
+      tags: [`clip-${formatHandle(profile?.profile)}`],
       appId: APP_ID,
       id: id,
       locale: locale
@@ -134,7 +197,7 @@ const PostStreamAsVideo = ({
         onOpen={() => setOpen(true)}
         title="Post as Video"
         Icon={<EditIcon />}
-        classname="w-[600px]"
+        classname="w-[60vw] h-[80vh] max-h-[80vh]"
         BotttomComponent={
           <div className="flex flex-row justify-end">
             {/* cancle button & save button */}
@@ -196,6 +259,7 @@ const PostStreamAsVideo = ({
           </div>
         </div>
       </ModalWrapper>
+
       <Button
         size="small"
         variant="contained"

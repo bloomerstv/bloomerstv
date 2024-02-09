@@ -149,9 +149,12 @@ export type QueryThumbnailArgs = {
 
 export type RecordedSession = {
   __typename?: 'RecordedSession'
+  createdAt?: Maybe<Scalars['BigNumber']['output']>
   mp4Url?: Maybe<Scalars['String']['output']>
+  playbackId?: Maybe<Scalars['String']['output']>
   publicationId?: Maybe<Scalars['String']['output']>
   recordingUrl?: Maybe<Scalars['String']['output']>
+  sessionId?: Maybe<Scalars['String']['output']>
   sourceSegmentsDuration?: Maybe<Scalars['Float']['output']>
   viewType?: Maybe<ViewType>
 }
@@ -258,6 +261,9 @@ export type GetMyRecordedStreamSessionsQuery = {
     sourceSegmentsDuration?: number | null
     recordingUrl?: string | null
     viewType?: ViewType | null
+    createdAt?: any | null
+    playbackId?: string | null
+    sessionId?: string | null
   } | null> | null
 }
 
@@ -546,6 +552,9 @@ export const GetMyRecordedStreamSessionsDocument = gql`
       sourceSegmentsDuration
       recordingUrl
       viewType
+      createdAt
+      playbackId
+      sessionId
     }
   }
 `

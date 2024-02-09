@@ -16,7 +16,10 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
     where: {
       publicationTypes: [PublicationType.Post],
       metadata: {
-        mainContentFocus: [PublicationMetadataMainFocusType.ShortVideo],
+        mainContentFocus: [
+          PublicationMetadataMainFocusType.ShortVideo,
+          PublicationMetadataMainFocusType.Video
+        ],
         // @ts-ignore
         publishedOn: [APP_ID],
         tags: handle
