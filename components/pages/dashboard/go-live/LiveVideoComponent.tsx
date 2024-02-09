@@ -58,11 +58,7 @@ const LiveVideoComponent = ({
 
   useEffect(() => {
     if (startedStreaming) {
-      // call handleStartedStreaming after 3 seconds
-
-      setTimeout(() => {
-        handleStartedStreaming()
-      }, 10000)
+      handleStartedStreaming()
     }
   }, [startedStreaming])
 
@@ -103,11 +99,16 @@ const LiveVideoComponent = ({
       startsAt: new Date().toISOString()
     })
 
-    const { data } = await uploadDataToAR({
+    const { data, errors } = await uploadDataToAR({
       variables: {
         data: JSON.stringify(metadata)
       }
     })
+
+    if (errors?.[0]) {
+      toast.error(errors[0].message)
+      throw new Error('Error uploading metadata to Arweave')
+    }
 
     const transactionId = data?.uploadDataToAR
 
@@ -143,6 +144,7 @@ const LiveVideoComponent = ({
 
   const handleStartedStreaming = async () => {
     try {
+      await new Promise((resolve) => setTimeout(resolve, 10000))
       const { data: shouldCreateNewPostRes } = await client.query({
         query: ShouldCreateNewPostDocument
       })
