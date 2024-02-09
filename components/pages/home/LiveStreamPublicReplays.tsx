@@ -4,12 +4,17 @@ import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
 import { useStreamReplayPublications } from '../../../utils/hooks/useStreamReplayPublications'
 import { usePublicationsStore } from '../../store/usePublications'
-
+import { Button } from '@mui/material'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import useIsMobile from '../../../utils/hooks/useIsMobile'
 const HomePageCards = () => {
+  const [showAll, setShowAll] = React.useState(false)
   const publications = usePublicationsStore((state) => state.publications)
   const streamReplayPublication = usePublicationsStore(
     (state) => state.streamReplayPublication
   )
+
+  const isMobile = useIsMobile()
 
   const getStreamReplay = useCallback(
     (publicationId: string) => {
@@ -35,19 +40,35 @@ const HomePageCards = () => {
       {/* @ts-ignore */}
       <div className="flex flex-row flex-wrap w-full gap-y-6 sm:gap-y-8">
         {publications && publications?.length > 0
-          ? publications?.map((post) => {
-              return (
-                <HomeVideoCard
-                  // @ts-ignore
-                  cover={getStreamReplay(post?.id)?.thumbnail}
-                  // @ts-ignore
-                  duration={getStreamReplay(post?.id)?.duration}
-                  key={post?.id}
-                  post={post as Post}
-                />
-              )
-            })
+          ? publications
+              ?.slice(0, showAll || isMobile ? publications?.length : 12)
+              ?.map((post) => {
+                return (
+                  <HomeVideoCard
+                    // @ts-ignore
+                    cover={getStreamReplay(post?.id)?.thumbnail}
+                    // @ts-ignore
+                    duration={getStreamReplay(post?.id)?.duration}
+                    key={post?.id}
+                    post={post as Post}
+                  />
+                )
+              })
           : renderLoadingCards()}
+
+        {!showAll && !isMobile && (
+          <div className="w-full centered-row">
+            <Button
+              endIcon={<KeyboardArrowDownIcon />}
+              variant="text"
+              autoCapitalize=""
+              onClick={() => setShowAll(true)}
+              sx={{ textTransform: 'none' }}
+            >
+              Show more
+            </Button>
+          </div>
+        )}
       </div>
     </>
   )
