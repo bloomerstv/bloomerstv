@@ -2,12 +2,18 @@ import React, { memo } from 'react'
 import Video from '../../../common/Video'
 import VideoClipper from './VideoClipper'
 
-const VideoWithEditors = ({ src }: { src: string }) => {
+const VideoWithEditors = ({
+  recordingUrl,
+  src
+}: {
+  recordingUrl: string
+  src: string
+}) => {
   return (
     <Video
       autoPlay={false}
       // @ts-ignore
-      src={src}
+      src={recordingUrl}
       showPipButton={false}
       autoHide={0}
     >
