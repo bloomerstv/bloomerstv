@@ -24,28 +24,31 @@ const HomePageCards = () => {
     },
     [streamReplayPublication]
   )
-
+  const renderLoadingCards = () => {
+    // Create an array of 8 elements and map over it
+    return Array(8)
+      .fill(null)
+      .map((_, i) => <LoadingVideoCard key={i} />)
+  }
   return (
     <>
       {/* @ts-ignore */}
-      {publications?.length > 0 ? (
-        <div className="flex flex-row flex-wrap w-full gap-y-6 sm:gap-y-8">
-          {publications?.map((post) => {
-            return (
-              <HomeVideoCard
-                // @ts-ignore
-                cover={getStreamReplay(post?.id)?.thumbnail}
-                // @ts-ignore
-                duration={getStreamReplay(post?.id)?.duration}
-                key={post?.id}
-                post={post as Post}
-              />
-            )
-          })}
-        </div>
-      ) : (
-        <>{<LoadingVideoCard />}</>
-      )}
+      <div className="flex flex-row flex-wrap w-full gap-y-6 sm:gap-y-8">
+        {publications && publications?.length > 0
+          ? publications?.map((post) => {
+              return (
+                <HomeVideoCard
+                  // @ts-ignore
+                  cover={getStreamReplay(post?.id)?.thumbnail}
+                  // @ts-ignore
+                  duration={getStreamReplay(post?.id)?.duration}
+                  key={post?.id}
+                  post={post as Post}
+                />
+              )
+            })
+          : renderLoadingCards()}
+      </div>
     </>
   )
 }

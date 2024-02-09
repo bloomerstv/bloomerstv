@@ -24,7 +24,7 @@ const LiveStreamerFeed = () => {
         <>
           {loading ? (
             <>
-              <LoadingVideoCard />
+              <LoadingVideoCard className="2xl:w-1/3" />
             </>
           ) : (
             <div className="text-s-text font-bold text-xl px-2 mb-4 sm:mb-8">
