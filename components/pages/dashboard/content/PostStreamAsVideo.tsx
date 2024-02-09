@@ -255,7 +255,7 @@ const PostStreamAsVideo = ({
           )}
 
           <div className="rounded-md overflow-hidden">
-            <VideoWithEditors src={session?.mp4Url?.toString()!} />
+            {open && <VideoWithEditors src={session?.mp4Url?.toString()!} />}
           </div>
         </div>
       </ModalWrapper>
