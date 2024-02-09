@@ -77,7 +77,7 @@ const HomeVideoCard = ({
             {/* @ts-ignore */}
             <Markup>{post?.metadata?.title}</Markup>
           </div>
-          <div className="start-row text-sm font-normal text-s-text gap-x-1.5">
+          <div className="start-row flex-wrap text-sm lg:text-xs 2xl:text-sm font-normal text-s-text gap-x-1">
             <Link
               prefetch
               className="no-underline group text-s-text font-semibold"
