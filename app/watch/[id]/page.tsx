@@ -6,6 +6,7 @@ import { Post, usePublication } from '@lens-protocol/react-web'
 import StartLoadingPage from '../../../components/pages/loading/StartLoadingPage'
 import VideoPage from '../../../components/pages/watch/VideoPage'
 import toast from 'react-hot-toast'
+import clsx from 'clsx'
 
 const page = ({
   params
@@ -53,7 +54,12 @@ const page = ({
   }
 
   return (
-    <div className="h-full overflow-y-auto w-full flex flex-row sm:pt-8 sm:px-8 gap-x-8">
+    <div
+      className={clsx(
+        'h-full overflow-y-auto w-full flex flex-row sm:pt-8 sm:px-8 gap-x-8',
+        isMobile && 'no-scrollbar'
+      )}
+    >
       <div className="w-full flex-grow h-full">{memoizedVideoPage}</div>
       {!isMobile && (
         <div className="sm:w-[600px] w-full">

@@ -1,4 +1,5 @@
 'use client'
+import clsx from 'clsx'
 import MobileTopHeader from '../components/common/MobileTopHeader'
 // import Video from '../components/common/Video'
 import ClipsFeed from '../components/pages/home/ClipsFeed'
@@ -11,7 +12,12 @@ export default function Home() {
   const isMobile = useIsMobile()
 
   return (
-    <div className="w-full h-full overflow-x-hidden overflow-y-auto">
+    <div
+      className={clsx(
+        'w-full h-full overflow-x-hidden overflow-y-auto',
+        isMobile && 'no-scrollbar'
+      )}
+    >
       {/* top header */}
       {isMobile && <MobileTopHeader />}
 
