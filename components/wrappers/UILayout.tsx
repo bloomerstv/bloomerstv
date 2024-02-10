@@ -55,7 +55,7 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
                     !pathname.startsWith('/live-chat') && <StreamerSidebar />}
                 </>
               )}
-              <div className="h-full overflow-auto w-full">{children}</div>
+              <div className="h-full w-full">{children}</div>
             </div>
           </div>
         </div>

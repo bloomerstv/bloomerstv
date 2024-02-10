@@ -53,7 +53,7 @@ const page = ({
   }
 
   return (
-    <div className="h-full w-full flex flex-row sm:pt-8 sm:px-8 gap-x-8">
+    <div className="h-full overflow-y-auto w-full flex flex-row sm:pt-8 sm:px-8 gap-x-8">
       <div className="w-full flex-grow h-full">{memoizedVideoPage}</div>
       {!isMobile && (
         <div className="sm:w-[600px] w-full">

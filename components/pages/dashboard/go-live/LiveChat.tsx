@@ -145,7 +145,7 @@ const LiveChat = ({
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [uniqueMessages, messagesEndRef.current])
 
   useEffectOnce(() => {
     // const listenToSocket = async () => {
@@ -338,7 +338,7 @@ const LiveChat = ({
       {/* messages section */}
       <div
         style={{ minWidth: 0 }}
-        className="h-full flex-grow flex-col justify-end flex overflow-auto py-1"
+        className="h-full flex-grow overflow-y-auto py-1"
       >
         {uniqueMessages.map((msg, index) => (
           <div key={index} className="flex flex-row px-3 my-1.5">

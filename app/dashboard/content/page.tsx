@@ -40,7 +40,7 @@ const ContentPage = () => {
   }, [error])
 
   return (
-    <div className="h-full">
+    <div className="h-full overflow-y-auto">
       <div className="m-8 text-3xl font-bold">Channel Content</div>
 
       <div className="m-8">

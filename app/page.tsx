@@ -11,7 +11,7 @@ export default function Home() {
   const isMobile = useIsMobile()
 
   return (
-    <div className="w-full overflow-x-hidden">
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto">
       {/* top header */}
       {isMobile && <MobileTopHeader />}
 
