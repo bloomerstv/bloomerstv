@@ -17,11 +17,20 @@ import {
   useSession
 } from '@lens-protocol/react-web'
 import formatHandle from '../../../../utils/lib/formatHandle'
-import { APP_ID, APP_LINK, defaultSponsored } from '../../../../utils/config'
+import {
+  APP_ID,
+  APP_LINK,
+  NODE_API_URL,
+  defaultSponsored
+} from '../../../../utils/config'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
 import { useMyStreamInfo } from '../../../store/useMyStreamInfo'
-import { liveStream } from '@lens-protocol/metadata'
+import {
+  MediaVideoMimeType,
+  MetadataAttributeType,
+  liveStream
+} from '@lens-protocol/metadata'
 import { useMyPreferences } from '../../../store/useMyPreferences'
 import { Broadcast } from '@livepeer/react'
 import { Button } from '@mui/material'
@@ -40,12 +49,16 @@ const LiveVideoComponent = ({
   setStreamFromBrowser: (value: boolean) => void
 }) => {
   const { execute } = useCreatePost()
-  const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation()
+  const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation({
+    fetchPolicy: 'no-cache'
+  })
   const streamReplayViewType = useMyPreferences(
     (state) => state.streamReplayViewType
   )
   const addLiveChatAt = useMyStreamInfo((state) => state.addLiveChatAt)
-  const [uploadDataToAR] = useUploadDataToArMutation()
+  const [uploadDataToAR] = useUploadDataToArMutation({
+    fetchPolicy: 'no-cache'
+  })
   const { data: session } = useSession()
   const client = useApolloClient()
   // const shouldCreateNewPost = async () => {
@@ -62,10 +75,16 @@ const LiveVideoComponent = ({
     }
   }, [startedStreaming])
 
-  const createLensPost = async (): Promise<string | undefined> => {
+  const createLensPost = async (
+    sessionId: string
+  ): Promise<string | undefined> => {
     if (session?.type !== SessionType.WithProfile) {
       return
     }
+    const m3u8Url = `${NODE_API_URL}/api/livestream?sessionId=${sessionId}&format=.m3u8`
+    const mp4Url = `${NODE_API_URL}/api/livestream?sessionId=${sessionId}&format=.mp4`
+    const thumbnail = `${NODE_API_URL}/api/livestream?sessionId=${sessionId}&format=.png`
+    const duration = `${NODE_API_URL}/api/livestream?sessionId=${sessionId}&format=seconds`
     // code logic here
     const streamName = myStream?.streamName ?? undefined
 
@@ -91,11 +110,25 @@ const LiveVideoComponent = ({
         external_url: profileLink
         // image: thumbnail?.thumbnail
       },
+      attachments: [
+        {
+          type: MediaVideoMimeType.MP4,
+          item: mp4Url,
+          cover: thumbnail
+        }
+      ],
+      attributes: [
+        {
+          key: 'livestream-duration',
+          value: duration,
+          type: MetadataAttributeType.STRING
+        }
+      ],
       id: id,
       locale: locale,
       appId: APP_ID,
-      liveUrl: getLiveStreamUrl(myStream?.playbackId),
-      playbackUrl: getLiveStreamUrl(myStream?.playbackId),
+      liveUrl: m3u8Url,
+      playbackUrl: m3u8Url,
       startsAt: new Date().toISOString()
     })
 
@@ -142,26 +175,47 @@ const LiveVideoComponent = ({
     return post?.id
   }
 
-  const handleStartedStreaming = async () => {
+  const getLatestSessionId = async (): Promise<string | null> => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 5000))
       const { data: shouldCreateNewPostRes } = await client.query({
-        query: ShouldCreateNewPostDocument
+        query: ShouldCreateNewPostDocument,
+        fetchPolicy: 'no-cache'
       })
 
       // return data?.shouldCreateNewPost
       // check if should create new post
-      const res = shouldCreateNewPostRes?.shouldCreateNewPost
-      if (!res) {
+      const sessionId = shouldCreateNewPostRes?.shouldCreateNewPost
+
+      return sessionId
+    } catch (error) {
+      console.log(error)
+      return null
+    }
+  }
+
+  const handleStartedStreaming = async () => {
+    try {
+      const latestSessionId = await toast.promise(getLatestSessionId(), {
+        loading: 'Checking if post already created...',
+        success: null,
+        error: null
+      })
+
+      console.log('latestSessionId', latestSessionId)
+
+      if (!latestSessionId) {
         return
       }
 
       // if yet, create lens post and get post id
-      const publicationId = await toast.promise(createLensPost(), {
-        loading: 'Creating post for your stream...',
-        success: 'Post created!',
-        error: 'Error creating post'
-      })
+      const publicationId = await toast.promise(
+        createLensPost(latestSessionId),
+        {
+          loading: 'Creating post for this stream...',
+          success: 'Post created!',
+          error: 'Error creating post'
+        }
+      )
 
       if (!publicationId) {
         return
@@ -174,7 +228,8 @@ const LiveVideoComponent = ({
         variables: {
           publicationId: publicationId,
           viewType: streamReplayViewType
-        }
+        },
+        fetchPolicy: 'no-cache'
       })
 
       if (errors?.[0] && !data?.createMyLensStreamSession) {

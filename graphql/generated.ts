@@ -113,7 +113,7 @@ export type Query = {
   liveStreamers?: Maybe<Array<Maybe<Streamer>>>
   myStream?: Maybe<MyStream>
   ping?: Maybe<Scalars['String']['output']>
-  shouldCreateNewPost?: Maybe<Scalars['Boolean']['output']>
+  shouldCreateNewPost?: Maybe<Scalars['String']['output']>
   streamChats?: Maybe<Array<Maybe<Chat>>>
   streamReplayPublications?: Maybe<Array<Maybe<StreamReplayPublications>>>
   streamReplayRecording?: Maybe<StreamReplayRecording>
@@ -319,7 +319,7 @@ export type ShouldCreateNewPostQueryVariables = Exact<{ [key: string]: never }>
 
 export type ShouldCreateNewPostQuery = {
   __typename?: 'Query'
-  shouldCreateNewPost?: boolean | null
+  shouldCreateNewPost?: string | null
 }
 
 export type StreamChatsQueryVariables = Exact<{
