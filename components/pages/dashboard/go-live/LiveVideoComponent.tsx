@@ -81,10 +81,10 @@ const LiveVideoComponent = ({
     if (session?.type !== SessionType.WithProfile) {
       return
     }
-    const m3u8Url = `${REDIRECTOR_URL}/api/livestream?sessionId=${sessionId}&format=.m3u8`
-    const mp4Url = `${REDIRECTOR_URL}/api/livestream?sessionId=${sessionId}&format=.mp4`
-    const thumbnail = `${REDIRECTOR_URL}/api/livestream?sessionId=${sessionId}&format=.png`
-    const duration = `${REDIRECTOR_URL}/api/livestream?sessionId=${sessionId}&format=seconds`
+    const m3u8Url = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=.m3u8`
+    const mp4Url = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=.mp4`
+    const thumbnail = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=.png`
+    const duration = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=seconds`
     // code logic here
     const streamName = myStream?.streamName ?? undefined
 
