@@ -22,7 +22,11 @@ export default function Home() {
       {/* top header */}
       {isMobile && <MobileTopHeader />}
 
-      <Video src="https://dev-bloomerstv-api.onrender.com/api/livestream?sessionId=5084354e-7900-458d-b3bc-ff650ffd3da6&format=.m3u8" />
+      {/* <Video src="https://dev-bloomerstv-api.onrender.com/api/livestream?sessionId=5084354e-7900-458d-b3bc-ff650ffd3da6&format=.m3u8" /> */}
+
+      {/* <Video src="http://localhost:8000/api/livestream?sessionId=5084354e-7900-458d-b3bc-ff650ffd3da6&format=.m3u8" /> */}
+
+      <Video src="https://test-api-bloomerstv.onrender.com/api/livestream?sessionId=5084354e-7900-458d-b3bc-ff650ffd3da6&format=.m3u8" />
 
       <LiveStreamerFeed />
       <div className="mt-4">

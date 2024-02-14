@@ -17,7 +17,7 @@ export const NODE_API_MODE =
 export const LOCAL_NODE_API_URL = 'http://localhost:8000'
 export const PRODUCTION_NODE_API_URL = 'https://api.bloomers.tv'
 export const DEVELOPMENT_NODE_API_URL =
-  'https://dev-bloomerstv-api.onrender.com'
+  'https://test-api-bloomerstv.onrender.com'
 
 export const NODE_API_URL =
   NODE_API_MODE === 'local'
@@ -31,7 +31,12 @@ export const LIVE_CHAT_WEB_SOCKET_URL =
     ? `ws://localhost:8000`
     : NODE_API_MODE === 'production'
       ? `wss://api.bloomers.tv`
-      : 'wss://dev-bloomerstv-api.onrender.com'
+      : `wss://test-api-bloomerstv.onrender.com`
+export const REDIRECTOR_URL =
+  NODE_API_MODE === 'production'
+    ? 'https://redirect.bloomers.tv'
+    : 'https://redirector-git-dev-diversehq-xyz.vercel.app'
+
 export const NODE_GRAPHQL_URL = `${NODE_API_URL}/graphql`
 export const LIVE_PEER_RTMP_URL = 'rtmp://rtmp.livepeer.com/live'
 

@@ -20,7 +20,7 @@ import formatHandle from '../../../../utils/lib/formatHandle'
 import {
   APP_ID,
   APP_LINK,
-  NODE_API_URL,
+  REDIRECTOR_URL,
   defaultSponsored
 } from '../../../../utils/config'
 import { v4 as uuid } from 'uuid'
@@ -81,10 +81,10 @@ const LiveVideoComponent = ({
     if (session?.type !== SessionType.WithProfile) {
       return
     }
-    const m3u8Url = `${NODE_API_URL}/api/livestream?sessionId=${sessionId}&format=.m3u8`
-    const mp4Url = `${NODE_API_URL}/api/livestream?sessionId=${sessionId}&format=.mp4`
-    const thumbnail = `${NODE_API_URL}/api/livestream?sessionId=${sessionId}&format=.png`
-    const duration = `${NODE_API_URL}/api/livestream?sessionId=${sessionId}&format=seconds`
+    const m3u8Url = `${REDIRECTOR_URL}/api/livestream?sessionId=${sessionId}&format=.m3u8`
+    const mp4Url = `${REDIRECTOR_URL}/api/livestream?sessionId=${sessionId}&format=.mp4`
+    const thumbnail = `${REDIRECTOR_URL}/api/livestream?sessionId=${sessionId}&format=.png`
+    const duration = `${REDIRECTOR_URL}/api/livestream?sessionId=${sessionId}&format=seconds`
     // code logic here
     const streamName = myStream?.streamName ?? undefined
 
