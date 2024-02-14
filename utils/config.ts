@@ -27,7 +27,11 @@ export const NODE_API_URL =
       : DEVELOPMENT_NODE_API_URL
 
 export const LIVE_CHAT_WEB_SOCKET_URL =
-  NODE_API_MODE === 'local' ? `ws://localhost:8000` : `wss://api.bloomers.tv`
+  NODE_API_MODE === 'local'
+    ? `ws://localhost:8000`
+    : NODE_API_MODE === 'production'
+      ? `wss://api.bloomers.tv`
+      : 'wss://dev-bloomerstv-api.onrender.com'
 export const NODE_GRAPHQL_URL = `${NODE_API_URL}/graphql`
 export const LIVE_PEER_RTMP_URL = 'rtmp://rtmp.livepeer.com/live'
 
