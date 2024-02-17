@@ -31,7 +31,6 @@ const AvatarWithOptions = ({
   const isMobile = useIsMobile()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
-  const [isOpen, setIsOpen] = React.useState(false)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
