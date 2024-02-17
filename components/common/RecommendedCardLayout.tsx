@@ -6,6 +6,7 @@ import { Profile, PublicationStats } from '@lens-protocol/react-web'
 import { timeAgo } from '../../utils/helpers'
 import { stringToLength } from '../../utils/stringToLength'
 import { THUMBNAIL_FALLBACK } from '../../utils/config'
+import Markup from './Lexical/Markup'
 
 const RecommendedCardLayout = ({
   postLink,
@@ -45,7 +46,9 @@ const RecommendedCardLayout = ({
           </div>
         </div>
         <div>
-          <div className="text-sm">{stringToLength(title, 55)}</div>
+          <div className="text-sm">
+            <Markup>{stringToLength(title, 55)}</Markup>
+          </div>
           <Link
             prefetch
             className="no-underline text-p-text w-full text-sm"

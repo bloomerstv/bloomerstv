@@ -54,9 +54,8 @@ const LoginButton = () => {
           {/* )} */}
         </>
       )}
-      {data?.type === SessionType.WithProfile && (
-        <AvatarWithOptions profile={data.profile} />
-      )}
+      {/* @ts-ignore */}
+      <AvatarWithOptions profile={data?.profile} handleOpen={handleOpen} />
     </>
   )
 }
