@@ -10,8 +10,9 @@ import PauseIcon from '@mui/icons-material/Pause'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import Markup from '../../../common/Lexical/Markup'
 import PostStreamAsVideo from './PostStreamAsVideo'
-import Video from '../../../common/Video'
 import ContentVisibiltyButton from './ContentVisibilty'
+import Player from '../../../common/Player'
+
 const SessionRow = ({ session }: { session: RecordedSession }) => {
   const { data } = usePublication({
     // @ts-ignore
@@ -125,7 +126,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
 
       {watching && session?.recordingUrl && (
         <div className="mt-4">
-          <Video src={session?.recordingUrl} className="w-[640px]" />
+          <Player src={session?.recordingUrl} className="rounded-2xl" />
         </div>
       )}
     </div>

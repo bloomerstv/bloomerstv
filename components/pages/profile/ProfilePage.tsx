@@ -14,7 +14,6 @@ import {
 } from '../../../graphql/generated'
 import ProfileInfoWithStream from './ProfileInfoWithStream'
 import StreamerOffline from './StreamerOffline'
-import Video from '../../common/Video'
 import { getLiveStreamUrl } from '../../../utils/lib/getLiveStreamUrl'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import StartLoadingPage from '../loading/StartLoadingPage'
@@ -22,25 +21,16 @@ import StartLoadingPage from '../loading/StartLoadingPage'
 import AboutProfile from './AboutProfile'
 import formatHandle from '../../../utils/lib/formatHandle'
 import PostClipOnLens from './PostClipOnLens'
-import VideoClipHandler from './VideoClipHandler'
 import ClipsFeed from '../home/ClipsFeed'
 import toast from 'react-hot-toast'
 import LiveStreamPublicReplays from '../home/LiveStreamPublicReplays'
 import { timeAgo } from '../../../utils/helpers'
 import Markup from '../../common/Lexical/Markup'
+import Player from '../../common/Player'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
   const [open, setOpen] = React.useState(false)
-
-  // const [clipClicked, setClipClicked] = React.useState(false)
-
-  const [playbackOffsetMs, setPlaybackOffsetMs] = React.useState(0)
-  const playbackOffsetMsRef = React.useRef(playbackOffsetMs)
-  // Update the ref whenever `playbackOffsetMs` changes
-  React.useEffect(() => {
-    playbackOffsetMsRef.current = playbackOffsetMs
-  }, [playbackOffsetMs])
 
   const isMobile = useIsMobile()
   const {
@@ -78,27 +68,27 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     toast.error(error.message)
   }
 
-  // const handleClipClicked = () => {
-  //   setClipClicked(true)
-  // }
-
-  const handleClipClicked = async () => {
+  const handleClipClicked = async (
+    playbackId: string,
+    startTime: number,
+    endTime: number
+  ) => {
     try {
       // Use `playbackOffsetMsRef.current` instead of `playbackOffsetMs`
-      const offsetMs = playbackOffsetMsRef.current
+      // const offsetMs = playbackOffsetMsRef.current
 
-      if (!offsetMs) return
+      if (!playbackId || !startTime || !endTime) return
       // we get the estimated time on the server that the user "clipped"
       // by subtracting the offset from the recorded clip time
-      const estimatedServerClipTime = Date.now() - (offsetMs ?? 0)
+      // const estimatedServerClipTime = Date.now() - (offsetMs ?? 0)
 
-      const startTime = estimatedServerClipTime - 30 * 1000
-      const endTime = estimatedServerClipTime
+      // const startTime = estimatedServerClipTime - 30 * 1000
+      // const endTime = estimatedServerClipTime
 
       const result = await toast.promise(
         createClip({
           variables: {
-            playbackId: streamer?.streamer?.playbackId as string,
+            playbackId: playbackId,
             startTime,
             endTime,
             name: `Clip from ${formatHandle(data)}'s stream`
@@ -128,10 +118,10 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     }
 
     return (
-      <Video
-        onStreamStatusChange={(isLive) => {
+      <Player
+        onStreamStatusChange={async (isLive) => {
           if (isLive !== streamer?.streamer?.isActive) {
-            refetch()
+            await refetch()
           }
         }}
         autoPlay={true}
@@ -149,17 +139,9 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         clipLength={
           sessionData?.type === SessionType.WithProfile ? 30 : undefined
         }
-        onClipStarted={handleClipClicked}
+        createClip={handleClipClicked}
         src={getLiveStreamUrl(streamer?.streamer?.playbackId)}
-      >
-        <VideoClipHandler
-          // clipClicked={clipClicked}
-          // setClipClicked={setClipClicked}
-          // playbackId={streamer?.streamer?.playbackId}
-          // profile={data!}
-          setPlaybackOffsetMs={setPlaybackOffsetMs}
-        />
-      </Video>
+      />
     )
   }, [
     streamer?.streamer?.playbackId,
@@ -187,9 +169,9 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       )}
       <div className="w-full flex-grow overflow-auto no-scrollbar h-full">
         {hasPlaybackId ? (
-          <>{videoComponent}</>
+          <div className="w-full">{videoComponent}</div>
         ) : (
-          <div className="h-[230px] sm:h-[700px]">
+          <div className="h-[230px] sm:h-[700px] w-full">
             <StreamerOffline
               // @ts-ignore
               streamReplayRecording={replayRecording?.streamReplayRecording}

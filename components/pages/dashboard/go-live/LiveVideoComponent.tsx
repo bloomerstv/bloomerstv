@@ -1,6 +1,5 @@
 'use client'
 import React, { memo, useEffect } from 'react'
-import Video from '../../../common/Video'
 import { getLiveStreamUrl } from '../../../../utils/lib/getLiveStreamUrl'
 import ConnectStream from './ConnectStream'
 import toast from 'react-hot-toast'
@@ -32,9 +31,10 @@ import {
   liveStream
 } from '@lens-protocol/metadata'
 import { useMyPreferences } from '../../../store/useMyPreferences'
-import { Broadcast } from '@livepeer/react'
-import { Button } from '@mui/material'
-import CancelPresentationIcon from '@mui/icons-material/CancelPresentation'
+import { IconButton } from '@mui/material'
+import { BroadcastLive } from './Broadcast'
+import Player from '../../../common/Player'
+import CloseIcon from '@mui/icons-material/Close'
 const LiveVideoComponent = ({
   myStream,
   startedStreaming,
@@ -250,21 +250,30 @@ const LiveVideoComponent = ({
 
   const videoComponent = React.useMemo(() => {
     return (
-      <Video
-        className="w-[360px] 2xl:w-[480px] shrink-0"
+      <Player
+        className="w-full"
         src={getLiveStreamUrl(myStream?.playbackId)}
         streamOfflineErrorComponent={ConnectStreamMemo}
         onStreamStatusChange={(isLive) => {
           setStartedStreaming(isLive)
         }}
+        clipLength={30}
       />
     )
   }, [])
 
   const broadcastComponent = React.useMemo(() => {
     return (
-      <div className="w-[360px] 2xl:w-[480px] shrink-0 relative">
-        <Broadcast
+      <div className="w-full relative">
+        <BroadcastLive
+          // @ts-ignore
+          streamKey={myStream?.streamKey}
+          onStreamStatusChange={(isLive) => {
+            setStartedStreaming(isLive)
+          }}
+        />
+
+        {/* <Broadcast
           streamKey={myStream?.streamKey}
           onPlaybackStatusUpdate={(state) => {
             setStartedStreaming(state.live)
@@ -293,27 +302,34 @@ const LiveVideoComponent = ({
               liveIndicator: '#1668b8'
             }
           }}
-        />
+        /> */}
         {/* stop streaming button */}
-        <div className="absolute top-2 right-2 z-50">
-          <Button
-            variant="contained"
-            color="secondary"
-            size="small"
-            className="opacity-80"
-            startIcon={<CancelPresentationIcon />}
+        <div className="absolute top-2 right-2 z-50 text-xs text-white">
+          <IconButton
             onClick={() => {
               setStreamFromBrowser(false)
             }}
+            className="rounded-full bg-black/40 backdrop-blur-sm"
+            sx={{
+              backgroundColor: 'rgba(0,0,0,0.4)',
+              backdropFilter: 'blur(4px)',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.2)'
+              }
+            }}
           >
-            Stop
-          </Button>
+            <CloseIcon className="text-white rounded-full" />
+          </IconButton>
         </div>
       </div>
     )
   }, [])
 
-  return <div>{streamFromBrowser ? broadcastComponent : videoComponent}</div>
+  return (
+    <div className="w-[360px] 2xl:w-[480px] shrink-0">
+      {streamFromBrowser ? broadcastComponent : videoComponent}
+    </div>
+  )
 }
 
 export default memo(LiveVideoComponent)

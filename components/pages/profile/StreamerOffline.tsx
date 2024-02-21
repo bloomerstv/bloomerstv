@@ -5,8 +5,9 @@ import { getBanner } from '../../../utils/lib/getBannner'
 import { timeAgo } from '../../../utils/helpers'
 import formatHandle from '../../../utils/lib/formatHandle'
 import getAvatar from '../../../utils/lib/getAvatar'
-import Video from '../../common/Video'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
+import Player from '../../common/Player'
+import clsx from 'clsx'
 
 const StreamerOffline = ({
   profile,
@@ -25,7 +26,12 @@ const StreamerOffline = ({
   return (
     <div className="w-full h-full relative">
       <div className="absolute w-full h-full sm:px-8 flex flex-row items-center justify-between z-20">
-        <div className="py-4 w-fit px-6 sm:p-8 bg-s-bg flex sm:flex-row flex-col sm:space-x-8 rounded-xl">
+        <div
+          className={clsx(
+            streamReplayRecording?.recordingUrl && 'w-full',
+            'py-4 px-6 sm:p-8 bg-s-bg flex sm:flex-row flex-col sm:space-x-8 rounded-xl'
+          )}
+        >
           <div className="flex shrink-0 flex-row sm:items-start items-center  sm:space-y-4 sm:space-x-0 space-x-2 sm:flex-col pb-1">
             <img
               src={getAvatar(profile)}
@@ -43,13 +49,13 @@ const StreamerOffline = ({
           </div>
           {streamReplayRecording?.recordingUrl && (
             <div className="sm:rounded-xl rounded-md overflow-hidden w-full">
-              <Video
+              <Player
+                // @ts-ignore
                 src={streamReplayRecording?.recordingUrl}
-                className="w-full"
-                muted={false}
                 poster={getThumbnailFromRecordingUrl(
                   streamReplayRecording?.recordingUrl
                 )}
+                // @ts-ignore
                 title={
                   data?.__typename === 'Post'
                     ? data?.metadata?.marketplace?.name

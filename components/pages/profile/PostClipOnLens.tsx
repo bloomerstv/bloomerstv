@@ -2,7 +2,6 @@ import React from 'react'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
 import { Button, TextField } from '@mui/material'
-import Video from '../../common/Video'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../utils/getUserLocale'
 import { MediaVideoMimeType, shortVideo } from '@lens-protocol/metadata'
@@ -12,6 +11,7 @@ import { APP_ID, APP_LINK, defaultSponsored } from '../../../utils/config'
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
 import { useUploadDataToArMutation } from '../../../graphql/generated'
+import Player from '../../common/Player'
 
 const PostClipOnLens = ({
   open,
@@ -139,9 +139,7 @@ const PostClipOnLens = ({
             helperText={`${100 - title.length} / 100 characters remaining`}
           />
 
-          <div className="rounded-md overflow-hidden">
-            <Video src={url} autoPlay={false} showPipButton={false} />
-          </div>
+          <Player className="rounded-md" src={url} showPipButton={false} />
         </div>
       </ModalWrapper>
     </>

@@ -1,14 +1,34 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
-import { useMediaController } from '@livepeer/react'
 import { getListOfThumbnailsFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import Draggable from 'react-draggable'
 import clsx from 'clsx'
 import { useStreamAsVideo } from '../../../store/useStreamAsVideo'
 import { THUMBNAIL_FALLBACK } from '../../../../utils/config'
+import {
+  MediaScopedProps,
+  useMediaContext,
+  useStore
+} from '@livepeer/react/player'
 
-const VideoClipper = ({ url }: { url: string }) => {
-  const { duration, playing, loading, progress, requestSeek, togglePlay } =
-    useMediaController((state) => state)
+const VideoClipper = ({
+  url,
+  __scopeMedia
+}: MediaScopedProps<{ url: string }>) => {
+  console.log('url', url)
+  const context = useMediaContext('CurrentSource', __scopeMedia)
+  const { duration, playing, loading, progress, __controlsFunctions } =
+    useStore(
+      context.store,
+      ({ duration, playing, loading, progress, __controlsFunctions }) => ({
+        duration,
+        playing,
+        loading,
+        progress,
+        __controlsFunctions
+      })
+    )
+  // const { duration, playing, loading, progress, requestSeek, togglePlay } =
+  //   useMediaController((state) => state)
 
   const setStartTime = useStreamAsVideo((state) => state.setStartTime)
   const setEndTime = useStreamAsVideo((state) => state.setEndTime)
@@ -158,11 +178,11 @@ const VideoClipper = ({ url }: { url: string }) => {
           onDrag={(e, data) => {
             if (!containerRef?.current?.offsetWidth) return
             const newProgress = data.x / containerRef.current.offsetWidth
-            requestSeek(newProgress * duration)
+            __controlsFunctions.requestSeek(newProgress * duration)
           }}
           onStop={() => {
             if (playing) {
-              togglePlay(false)
+              __controlsFunctions.togglePlay(false)
             }
           }}
         >

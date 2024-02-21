@@ -4,7 +4,6 @@ import RainbowKitWrapper from './RainbowKitWrapper'
 import UILayout from './UILayout'
 import { useOnlyPWAOnMobile } from '../../utils/config'
 import AddPWAPage from '../pages/home/AddPWAPage'
-import LivePeerWrapper from './LivePeerWrapper'
 import LensWrapper from './LensWrapper'
 import ThemeProvider from './TailwindThemeProvider'
 import MuiThemeWrapper from './MuiThemeWrapper'
@@ -37,15 +36,13 @@ const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
             <>
               <RainbowKitWrapper>
                 <LensWrapper>
-                  <LivePeerWrapper>
-                    <ApolloWrapper>
-                      <ShowLoadingWrapper>
-                        <ToastWrapper>
-                          <UILayout>{children}</UILayout>
-                        </ToastWrapper>
-                      </ShowLoadingWrapper>
-                    </ApolloWrapper>
-                  </LivePeerWrapper>
+                  <ApolloWrapper>
+                    <ShowLoadingWrapper>
+                      <ToastWrapper>
+                        <UILayout>{children}</UILayout>
+                      </ToastWrapper>
+                    </ShowLoadingWrapper>
+                  </ApolloWrapper>
                 </LensWrapper>
               </RainbowKitWrapper>
             </>

@@ -1,6 +1,5 @@
 import { Post } from '@lens-protocol/react-web'
 import React, { memo, useEffect } from 'react'
-import Video from '../../common/Video'
 import getPublicationData from '../../../utils/lib/getPublicationData'
 import ProfileInfoWithStream from '../profile/ProfileInfoWithStream'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
@@ -12,6 +11,7 @@ import { timeAgo } from '../../../utils/helpers'
 import toast from 'react-hot-toast'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import { useStreamReplayRecordingQuery } from '../../../graphql/generated'
+import Player from '../../common/Player'
 const VideoPage = ({ post }: { post: Post }) => {
   const isMobile = useIsMobile()
 
@@ -32,7 +32,8 @@ const VideoPage = ({ post }: { post: Post }) => {
   const memoizedVideo = React.useMemo(() => {
     if (!data?.streamReplayRecording?.recordingUrl) return null
     return (
-      <Video
+      <Player
+        // @ts-ignore
         src={data?.streamReplayRecording?.recordingUrl}
         className="w-full"
         muted={false}
@@ -46,11 +47,12 @@ const VideoPage = ({ post }: { post: Post }) => {
   const memoizedAsset = React.useMemo(() => {
     if (!asset?.uri) return null
     return (
-      <Video
-        poster={asset?.cover}
-        src={String(asset?.uri)}
+      <Player
+        // @ts-ignore
+        src={asset?.uri}
         className="w-full"
         muted={false}
+        poster={asset?.cover}
       />
     )
   }, [asset?.uri])
