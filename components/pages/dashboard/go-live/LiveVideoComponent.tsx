@@ -11,7 +11,14 @@ import {
   useUploadDataToArMutation
 } from '../../../../graphql/generated'
 import {
+  BroadcastingError,
+  InsufficientGasError,
+  PendingSigningRequestError,
+  PostAsyncResult,
+  Result,
   SessionType,
+  UserRejectedError,
+  WalletConnectionError,
   useCreatePost,
   useSession
 } from '@lens-protocol/react-web'
@@ -148,11 +155,49 @@ const LiveVideoComponent = ({
     if (!transactionId) {
       throw new Error('Error uploading metadata to Arweave')
     }
-    // invoke the `execute` function to create the post
-    const result = await execute({
-      metadata: `ar://${transactionId}`,
-      sponsored: defaultSponsored
-    })
+
+    const MAX_RETRIES = 3 // Maximum number of retries
+    let retries = 0
+    // @ts-ignore
+    let result: Result<
+      PostAsyncResult,
+      | BroadcastingError
+      | InsufficientGasError
+      | PendingSigningRequestError
+      | UserRejectedError
+      | WalletConnectionError
+    > = null
+
+    while (retries < MAX_RETRIES) {
+      try {
+        result = await execute({
+          metadata: `ar://${transactionId}`,
+          sponsored: defaultSponsored
+        })
+
+        if (result.isSuccess()) {
+          // If the execution is successful, break the loop
+          break
+        } else {
+          // If the execution fails, increment the retry counter
+          retries++
+          if (retries === MAX_RETRIES) {
+            // If the maximum number of retries has been reached, throw an error
+            toast.error(result.error.message)
+            throw new Error('Error creating post')
+          }
+        }
+      } catch (error) {
+        retries++
+        if (retries === MAX_RETRIES) {
+          // If the maximum number of retries has been reached, throw an error
+          toast.error(String(error))
+          throw new Error('Error creating post')
+        } else {
+          console.log(error)
+        }
+      }
+    }
 
     if (!result.isSuccess()) {
       toast.error(result.error.message)

@@ -29,7 +29,7 @@ const PlayerWithControls = ({
   createClip,
   autoPlay = true,
   muted = true,
-  loop = false,
+  loop = true,
   autoHide = 3000,
   showPipButton = true,
   clipLength,
