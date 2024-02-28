@@ -7,7 +7,12 @@ import getUserLocale from '../../../utils/getUserLocale'
 import { MediaVideoMimeType, shortVideo } from '@lens-protocol/metadata'
 import { Profile, useCreatePost } from '@lens-protocol/react-web'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
-import { APP_ID, APP_LINK, defaultSponsored } from '../../../utils/config'
+import {
+  APP_ID,
+  APP_LINK,
+  GAMING_TAGS,
+  defaultSponsored
+} from '../../../utils/config'
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
 import { useUploadDataToArMutation } from '../../../graphql/generated'
@@ -58,7 +63,7 @@ const PostClipOnLens = ({
         type: MediaVideoMimeType.MP4,
         altTag: title
       },
-      tags: [`clip-${formatHandle(profile)}`],
+      tags: [`clip-${formatHandle(profile)}`, ...GAMING_TAGS],
       appId: APP_ID,
       id,
       locale

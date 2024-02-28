@@ -26,6 +26,7 @@ import formatHandle from '../../../../utils/lib/formatHandle'
 import {
   APP_ID,
   APP_LINK,
+  GAMING_TAGS,
   REDIRECTOR_URL,
   defaultSponsored
 } from '../../../../utils/config'
@@ -114,8 +115,9 @@ const LiveVideoComponent = ({
       marketplace: {
         name: streamName,
         description: `${streamName}\n\nLive on ${profileLink}`,
-        external_url: profileLink
-        // image: thumbnail?.thumbnail
+        external_url: profileLink,
+        animation_url: mp4Url,
+        image: thumbnail
       },
       attachments: [
         {
@@ -136,6 +138,7 @@ const LiveVideoComponent = ({
       appId: APP_ID,
       liveUrl: m3u8Url,
       playbackUrl: m3u8Url,
+      tags: GAMING_TAGS,
       startsAt: new Date().toISOString()
     })
 
