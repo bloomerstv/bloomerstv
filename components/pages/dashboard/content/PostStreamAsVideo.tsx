@@ -15,7 +15,12 @@ import {
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
 import { MediaVideoMimeType, video } from '@lens-protocol/metadata'
-import { APP_ID, APP_LINK, defaultSponsored } from '../../../../utils/config'
+import {
+  APP_ID,
+  APP_LINK,
+  GAMING_TAGS,
+  defaultSponsored
+} from '../../../../utils/config'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
 import formatHandle from '../../../../utils/lib/formatHandle'
@@ -148,7 +153,7 @@ const PostStreamAsVideo = ({
         // @ts-ignore
         altTag: title
       },
-      tags: [`clip-${formatHandle(profile?.profile)}`],
+      tags: [`clip-${formatHandle(profile?.profile)}`, ...GAMING_TAGS],
       appId: APP_ID,
       id: id,
       locale: locale

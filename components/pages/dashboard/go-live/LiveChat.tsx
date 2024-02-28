@@ -134,6 +134,13 @@ const LiveChat = ({
   }, [data?.type])
 
   useEffect(() => {
+    if (data?.type === SessionType.WithProfile && socket) {
+      // emit joined chat room
+      socket.emit('joined-chat', profileId, formatHandle(data?.profile))
+    }
+  }, [socket, data?.type])
+
+  useEffect(() => {
     const seen = new Set()
     const filteredArr = messages.filter((el) => {
       const duplicate = seen.has(el.id)
@@ -176,6 +183,8 @@ const LiveChat = ({
         handle,
         id
       } = receivedData
+
+      console.log('receivedData', receivedData)
 
       if (chatProfileId === profileId) {
         // run pop up sound
@@ -340,27 +349,43 @@ const LiveChat = ({
         style={{ minWidth: 0 }}
         className="h-full flex-grow overflow-y-auto py-1"
       >
-        {uniqueMessages.map((msg, index) => (
-          <div key={index} className="flex flex-row px-3 my-1.5">
-            <img
-              src={msg.avatarUrl}
-              alt="avatar"
-              className="w-7 h-7 rounded-full"
-              style={{ flexShrink: 0 }}
-            />
-            <div
-              className="pl-2.5 font-bold text-sm pt-1"
-              style={{ minWidth: 0, flexShrink: 1 }}
-            >
-              <span className="text-s-text mr-1">{msg.handle}</span>
-              <span>
-                <Markup className="break-words whitespace-pre-wrap">
+        {uniqueMessages.map((msg, index) => {
+          // this mean its a message from the system
+          if (msg.handle === 'System' && !msg?.avatarUrl) {
+            return (
+              <div
+                key={index}
+                className="centered-row text-s-text text-xs my-2"
+              >
+                <div className="bg-p-bg  rounded-lg px-4 py-1">
                   {msg.content}
-                </Markup>
-              </span>
+                </div>
+              </div>
+            )
+          }
+          return (
+            <div key={index} className="flex flex-row px-3 my-1.5">
+              <img
+                src={msg.avatarUrl}
+                alt="avatar"
+                className="w-7 h-7 rounded-full"
+                style={{ flexShrink: 0 }}
+              />
+              <div
+                className="pl-2.5 font-bold text-sm pt-1"
+                style={{ minWidth: 0, flexShrink: 1 }}
+              >
+                <span className="text-s-text mr-1">{msg.handle}</span>
+                <span>
+                  <Markup className="break-words whitespace-pre-wrap">
+                    {msg.content}
+                  </Markup>
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
+
         <div ref={messagesEndRef} />
       </div>
 

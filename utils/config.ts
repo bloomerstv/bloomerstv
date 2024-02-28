@@ -60,6 +60,8 @@ export const FEEDBACK_URL =
 export const REPORT_URL = 'https://github.com/bloomerstv/bloomerstv/issues/new'
 export const HEY_URL = 'https://hey.xyz/u/bloomerstv'
 export const DISCORD_INVITE_URL = 'https://discord.gg/rXUBVm7JxA'
-export const X_URL = 'https://twitter.com/useDiverseHQ'
+export const X_URL = 'https://twitter.com/bloomerstv'
 export const THUMBNAIL_FALLBACK =
   'https://npwelch.com/wp-content/uploads/2022/06/video-placeholder-brain-bites.png'
+
+export const GAMING_TAGS = ['orbcommunitiesgaming', 'gaming']

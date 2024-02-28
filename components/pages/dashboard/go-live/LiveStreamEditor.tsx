@@ -140,7 +140,7 @@ const LiveStreamEditor = () => {
                     ? 'You can Stop streaming by pressing stop button.'
                     : 'You can Stop streaming from your software.'
                 }`
-              : 'Stream is offline. Recommended to use streaming software for best quality.'}
+              : 'Stream is offline. Stay on this page for post creation after stream starts. Use software for best quality.'}
           </div>
         </div>
       </div>
