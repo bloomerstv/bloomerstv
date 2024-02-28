@@ -19,6 +19,12 @@ import {
   production
 } from '@lens-protocol/react-web'
 import { bindings } from '@lens-protocol/wagmi'
+// import {
+//   rainbowWallet,
+//   walletConnectWallet,
+//   metaMaskWallet,
+//   zerionWallet
+// } from '@rainbow-me/rainbowkit/wallets'
 
 const defaultChains = isMainnet ? [polygon] : [polygonMumbai]
 const defaultTransports = {
@@ -31,7 +37,8 @@ const config = getDefaultConfig({
   projectId: String(process.env.NEXT_PUBLIC_RAINBOW_KIT_PROJECT_ID),
   // @ts-ignore
   chains: defaultChains,
-  transports: defaultTransports
+  transports: defaultTransports,
+  ssr: true
 })
 
 const lensConfig: LensConfig = {
