@@ -4,7 +4,6 @@ import RainbowKitWrapper from './RainbowKitWrapper'
 import UILayout from './UILayout'
 import { useOnlyPWAOnMobile } from '../../utils/config'
 import AddPWAPage from '../pages/home/AddPWAPage'
-import LensWrapper from './LensWrapper'
 import ThemeProvider from './TailwindThemeProvider'
 import MuiThemeWrapper from './MuiThemeWrapper'
 import ApolloWrapper from './ApolloWrapper'
@@ -35,15 +34,13 @@ const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
           ) : (
             <>
               <RainbowKitWrapper>
-                <LensWrapper>
-                  <ApolloWrapper>
-                    <ShowLoadingWrapper>
-                      <ToastWrapper>
-                        <UILayout>{children}</UILayout>
-                      </ToastWrapper>
-                    </ShowLoadingWrapper>
-                  </ApolloWrapper>
-                </LensWrapper>
+                <ApolloWrapper>
+                  <ShowLoadingWrapper>
+                    <ToastWrapper>
+                      <UILayout>{children}</UILayout>
+                    </ToastWrapper>
+                  </ShowLoadingWrapper>
+                </ApolloWrapper>
               </RainbowKitWrapper>
             </>
           )}

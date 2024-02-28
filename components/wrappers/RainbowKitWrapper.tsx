@@ -1,44 +1,55 @@
 'use client'
-
 import React from 'react'
 
 import '@rainbow-me/rainbowkit/styles.css'
 import {
-  getDefaultWallets,
   RainbowKitProvider,
-  darkTheme
+  darkTheme,
+  getDefaultConfig
 } from '@rainbow-me/rainbowkit'
-import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { polygon, polygonMumbai } from 'wagmi/chains'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { publicProvider } from 'wagmi/providers/public'
 import { APP_NAME, isMainnet } from '@/utils/config'
+import { WagmiProvider, http } from 'wagmi'
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+import {
+  LensConfig,
+  LensProvider,
+  development,
+  production
+} from '@lens-protocol/react-web'
+import { bindings } from '@lens-protocol/wagmi'
 
 const defaultChains = isMainnet ? [polygon] : [polygonMumbai]
+const defaultTransports = {
+  [polygon.id]: http(),
+  [polygonMumbai.id]: http()
+}
 
-// @ts-ignore
-const { chains, publicClient } = configureChains(defaultChains, [
-  // alchemyProvider({ apiKey: String(process.env.ALCHEMY_ID) }),
-  publicProvider()
-])
-const { connectors } = getDefaultWallets({
+const config = getDefaultConfig({
   appName: APP_NAME,
   projectId: String(process.env.NEXT_PUBLIC_RAINBOW_KIT_PROJECT_ID),
-  chains
+  // @ts-ignore
+  chains: defaultChains,
+  transports: defaultTransports
 })
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient
-})
+
+const lensConfig: LensConfig = {
+  environment: isMainnet ? production : development,
+  bindings: bindings(config)
+}
+
+const queryClient = new QueryClient()
 
 const RainbowKitWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider theme={darkTheme()} chains={chains}>
-        {children}
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider theme={darkTheme()}>
+          <LensProvider config={lensConfig}>{children}</LensProvider>
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   )
 }
 
