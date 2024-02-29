@@ -401,7 +401,7 @@ const LiveChat = ({
               />
             )}
             <TextareaAutosize
-              className="text-sm text-p-text border-p-border outline-none bg-s-bg w-full font-normal font-sans leading-normal px-3 py-1.5 mb-0.5 rounded-xl "
+              className="text-sm text-p-text resize-none  border-p-border outline-none bg-s-bg w-full font-normal font-sans leading-normal px-3 py-1.5 mb-0.5 rounded-xl "
               aria-label="empty textarea"
               placeholder="Chat..."
               style={{

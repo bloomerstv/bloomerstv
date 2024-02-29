@@ -49,7 +49,10 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
               {pathname.startsWith('/dashboard') ? (
                 <DashboardSidebar />
               ) : (
-                <>{pathname === '/' && <StreamerSidebar />}</>
+                <>
+                  {!pathname.startsWith('/dashboard') &&
+                    !pathname.startsWith('/watch/') && <StreamerSidebar />}
+                </>
               )}
               <div className="h-full w-full">{children}</div>
             </div>

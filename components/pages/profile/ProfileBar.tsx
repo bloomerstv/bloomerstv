@@ -300,17 +300,16 @@ const ProfileBar = ({
       </ModalWrapper>
       {/* @ts-ignore   */}
       {(streamer?.streamName || publication?.metadata?.title) && (
-        <div className="m-2 sm:mx-8 sm:mt-6 ">
-          <Markup className="font-bold text-lg break-words whitespace-pre-wrap">
+        <div className="m-2 sm:mx-8 sm:mt-6 sm:hidden">
+          <Markup className="font-bold text-lg sm:text-xl break-words whitespace-pre-wrap">
             {/* @ts-ignore   */}
             {streamer?.streamName || publication?.metadata?.title}
           </Markup>
         </div>
       )}
-
-      <div className="m-2 sm:m-4 sm:mx-8 between-row text-p-text">
-        <div className="centered-row space-x-2 sm:space-x-5">
-          <div className="sm:w-12 sm:h-12 w-8 h-8 rounded-full relative">
+      <div className="m-2 sm:mt-5 sm:mx-8 flex flex-row justify-between items-start text-p-text">
+        <div className="flex flex-row items-center gap-x-2 sm:gap-x-4 w-full">
+          <div className="">
             <Link
               href={`/${formatHandle(profile)}`}
               prefetch
@@ -318,50 +317,70 @@ const ProfileBar = ({
             >
               <img
                 src={getAvatar(profile)}
-                className="sm:w-12 sm:h-12 w-8 h-8 rounded-full"
+                className="sm:w-16 sm:h-16 w-8 h-8 rounded-full"
               />
             </Link>
           </div>
-          <div className="start-col sm:pr-3">
-            <Link
-              href={`/${formatHandle(profile)}`}
-              prefetch
-              className="no-underline text-p-text"
-            >
-              <div className="font-semibold sm:text-xl">
-                {formatHandle(profile)}
-              </div>
-            </Link>
+          <div className="sm:pr-3 w-full">
+            {/* @ts-ignore   */}
+            {(streamer?.streamName || publication?.metadata?.title) &&
+              !isMobile && (
+                <Markup className="font-bold text-lg break-words whitespace-pre-wrap">
+                  {/* @ts-ignore   */}
+                  {streamer?.streamName || publication?.metadata?.title}
+                </Markup>
+              )}
 
-            <div className="start-center-row space-x-1 text-sm">
-              <div className="">{profile?.stats?.followers}</div>
-              <div className="text-s-text">followers</div>
+            <div className="flex flex-row items-center justify-between w-full space-x-6 ">
+              <div>
+                <Link
+                  href={`/${formatHandle(profile)}`}
+                  prefetch
+                  className="no-underline text-p-text"
+                >
+                  <div className="font-semibold sm:text-sm">
+                    {formatHandle(profile)}
+                  </div>
+                </Link>
+
+                <div className="start-center-row space-x-1 text-sm">
+                  <div className="">{profile?.stats?.followers}</div>
+                  <div className="text-s-text">followers</div>
+                </div>
+              </div>
+              {isMobile &&
+                !isFollowing &&
+                mySession?.type === SessionType.WithProfile &&
+                mySession.profile?.id !== profile?.id && (
+                  <Tooltip title="Follow this streamer" arrow>
+                    <LoadingButton
+                      loading={followLoading}
+                      onClick={handleFollow}
+                      variant="contained"
+                      autoCapitalize="none"
+                      size="small"
+                      color="primary"
+                      startIcon={<StarIcon />}
+                      loadingPosition="start"
+                      disabled={followLoading || isFollowing}
+                      title="Follow this streamer"
+                      sx={{
+                        borderRadius: isMobile ? '20px' : '15px',
+                        boxShadow: 'none'
+                      }}
+                    >
+                      {isFollowing ? 'Following' : 'Follow'}
+                    </LoadingButton>
+                  </Tooltip>
+                )}
+
+              {isFollowing && isMobile && (
+                <IconButton onClick={handleMenuClick}>
+                  <MoreVertIcon className="text-s-text" />
+                </IconButton>
+              )}
             </div>
           </div>
-          {!isFollowing &&
-            mySession?.type === SessionType.WithProfile &&
-            mySession.profile?.id !== profile?.id && (
-              <Tooltip title="Follow this streamer" arrow>
-                <LoadingButton
-                  loading={followLoading}
-                  onClick={handleFollow}
-                  variant="contained"
-                  autoCapitalize="none"
-                  size="small"
-                  color="primary"
-                  startIcon={<StarIcon />}
-                  loadingPosition="start"
-                  disabled={followLoading || isFollowing}
-                  title="Follow this streamer"
-                  sx={{
-                    borderRadius: isMobile ? '20px' : '15px',
-                    boxShadow: 'none'
-                  }}
-                >
-                  {isFollowing ? 'Following' : 'Follow'}
-                </LoadingButton>
-              </Tooltip>
-            )}
         </div>
 
         <div className="start-center-row space-x-4">
@@ -421,6 +440,32 @@ const ProfileBar = ({
             </Tooltip>
           )}
 
+          {!isMobile &&
+            !isFollowing &&
+            mySession?.type === SessionType.WithProfile &&
+            mySession.profile?.id !== profile?.id && (
+              <Tooltip title="Follow this streamer" arrow>
+                <LoadingButton
+                  loading={followLoading}
+                  onClick={handleFollow}
+                  variant="contained"
+                  autoCapitalize="none"
+                  size="small"
+                  color="primary"
+                  startIcon={<StarIcon />}
+                  loadingPosition="start"
+                  disabled={followLoading || isFollowing}
+                  title="Follow this streamer"
+                  sx={{
+                    borderRadius: isMobile ? '20px' : '15px',
+                    boxShadow: 'none'
+                  }}
+                >
+                  {isFollowing ? 'Following' : 'Follow'}
+                </LoadingButton>
+              </Tooltip>
+            )}
+
           {/* share button */}
           {!isMobile && (
             <div className="sm:ml-2">
@@ -446,7 +491,7 @@ const ProfileBar = ({
             </div>
           )}
 
-          {isFollowing && (
+          {isFollowing && !isMobile && (
             <IconButton onClick={handleMenuClick}>
               <MoreVertIcon className="text-s-text" />
             </IconButton>
