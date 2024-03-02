@@ -199,10 +199,10 @@ const CollectButton = ({
   // @ts-ignore
   const followerOnly = collectModule?.followerOnly
 
-  if (!timeRemaining || post?.stats?.collects - Number(collectLimit) <= 0) {
+  if (!timeRemaining || Number(collectLimit) - post?.stats?.collects <= 0) {
     if (!timeRemaining) {
       return (
-        <div className="centered-row px-3 text-p-text py-1 gap-x-2 cursor-pointer rounded-full bg-p-hover">
+        <div className="centered-row px-3 text-p-text py-1 gap-x-1.5 cursor-pointer rounded-full bg-p-hover shrink-0">
           <LayersIcon fontSize="small" />
           <div className="start-col">
             <div className="font-semibold text-base leading-6">Expired</div>
@@ -213,7 +213,7 @@ const CollectButton = ({
 
     if (Number(collectLimit) - post?.stats?.collects <= 0) {
       return (
-        <div className="centered-row px-3 text-p-text py-1 gap-x-2 cursor-pointer rounded-full bg-p-hover">
+        <div className="centered-row px-3 text-p-text py-1 gap-x-1.5 cursor-pointer rounded-full bg-p-hover shrink-0">
           <LayersIcon fontSize="small" />
           <div className="start-col">
             <div className="font-semibold text-base leading-6">
@@ -303,14 +303,16 @@ const CollectButton = ({
         </motion.button>
       ) : (
         <motion.div
-          className="centered-row sm:block hidden px-3 text-brand py-1 gap-x-2 cursor-pointer rounded-full bg-p-hover"
+          className="sm:block hidden px-3 text-brand py-1 cursor-pointer rounded-full bg-p-hover shrink-0"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
         >
-          <LayersIcon fontSize="small" />
-          <div className="start-col">
-            <div className="font-semibold text-base leading-6">Collected</div>
+          <div className="shrink-0 centered-row  gap-x-1.5">
+            <LayersIcon fontSize="small" />
+            <div className="start-col">
+              <div className="font-semibold text-base leading-6">Collected</div>
+            </div>
           </div>
         </motion.div>
       )}
