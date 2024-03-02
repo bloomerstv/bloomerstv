@@ -6,12 +6,7 @@ const ToastWrapper = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useIsMobile()
   return (
     <>
-      <Toaster
-        position={isMobile ? 'top-center' : 'bottom-left'}
-        toastOptions={{
-          duration: 3000
-        }}
-      />
+      <Toaster position={isMobile ? 'top-center' : 'bottom-left'} />
       {children}
     </>
   )

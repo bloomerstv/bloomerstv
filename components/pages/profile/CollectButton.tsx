@@ -303,7 +303,7 @@ const CollectButton = ({
         </motion.button>
       ) : (
         <motion.div
-          className="centered-row px-3 text-brand py-1 gap-x-2 cursor-pointer rounded-full bg-p-hover"
+          className="centered-row sm:block hidden px-3 text-brand py-1 gap-x-2 cursor-pointer rounded-full bg-p-hover"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}

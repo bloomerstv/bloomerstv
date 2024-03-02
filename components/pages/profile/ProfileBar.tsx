@@ -349,126 +349,133 @@ const ProfileBar = ({
                   <div className="text-s-text">followers</div>
                 </div>
               </div>
-              {isMobile &&
-                !isFollowing &&
-                mySession?.type === SessionType.WithProfile &&
-                mySession.profile?.id !== profile?.id && (
-                  <Tooltip title="Follow this streamer" arrow>
-                    <LoadingButton
-                      loading={followLoading}
-                      onClick={handleFollow}
-                      variant="contained"
-                      autoCapitalize="none"
-                      size="small"
-                      color="primary"
-                      startIcon={<StarIcon />}
-                      loadingPosition="start"
-                      disabled={followLoading || isFollowing}
-                      title="Follow this streamer"
-                      sx={{
-                        borderRadius: isMobile ? '20px' : '15px',
-                        boxShadow: 'none'
-                      }}
-                    >
-                      {isFollowing ? 'Following' : 'Follow'}
-                    </LoadingButton>
-                  </Tooltip>
-                )}
 
-              {isFollowing && isMobile && (
-                <IconButton onClick={handleMenuClick}>
-                  <MoreVertIcon className="text-s-text" />
-                </IconButton>
+              {isMobile && (
+                <div className="centered-row gap-x-2">
+                  {!isFollowing &&
+                    mySession?.type === SessionType.WithProfile &&
+                    mySession.profile?.id !== profile?.id && (
+                      <Tooltip title="Follow this streamer" arrow>
+                        <LoadingButton
+                          loading={followLoading}
+                          onClick={handleFollow}
+                          variant="contained"
+                          autoCapitalize="none"
+                          size="small"
+                          color="primary"
+                          startIcon={<StarIcon />}
+                          loadingPosition="start"
+                          disabled={followLoading || isFollowing}
+                          title="Follow this streamer"
+                          sx={{
+                            borderRadius: isMobile ? '20px' : '15px',
+                            boxShadow: 'none'
+                          }}
+                        >
+                          {isFollowing ? 'Following' : 'Follow'}
+                        </LoadingButton>
+                      </Tooltip>
+                    )}
+
+                  {profile?.id && streamer?.isActive && (
+                    <LiveCount profileId={profile?.id} />
+                  )}
+
+                  {isFollowing && (
+                    <IconButton onClick={handleMenuClick}>
+                      <MoreVertIcon className="text-s-text" />
+                    </IconButton>
+                  )}
+                </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="start-center-row gap-x-3 shrink-0">
-          {profile?.id && streamer?.isActive && (
-            <LiveCount profileId={profile?.id} />
-          )}
+        {!isMobile && (
+          <div className="start-center-row gap-x-3 shrink-0">
+            {profile?.id && streamer?.isActive && (
+              <LiveCount profileId={profile?.id} />
+            )}
 
-          {/* like button  */}
-          {!isMobile && publication?.id && (
-            <Tooltip title="Like" arrow>
-              <Button
-                size="small"
-                color="secondary"
-                variant="contained"
-                onClick={handleLike}
-                startIcon={
-                  liked ? (
-                    <FavoriteIcon className="text-brand" />
-                  ) : (
-                    <FavoriteBorderIcon />
-                  )
-                }
-                sx={{
-                  boxShadow: 'none',
-                  borderRadius: '20px'
-                }}
-              >
-                {upvotes}
-              </Button>
-            </Tooltip>
-          )}
-
-          {/* mirror button */}
-
-          {!isMobile && publication?.id && (
-            <Tooltip title="Boost the stream" arrow>
-              <Button
-                size="small"
-                color="secondary"
-                variant="contained"
-                onClick={handleMirror}
-                startIcon={
-                  <AutorenewIcon
-                    className={clsx(
-                      isMirrored && 'text-brand',
-                      mirroring && 'animate-spin'
-                    )}
-                  />
-                }
-                sx={{
-                  boxShadow: 'none',
-                  borderRadius: '20px'
-                }}
-              >
-                {mirrors}
-              </Button>
-            </Tooltip>
-          )}
-
-          {!isMobile &&
-            !isFollowing &&
-            mySession?.type === SessionType.WithProfile &&
-            mySession.profile?.id !== profile?.id && (
-              <Tooltip title="Follow this streamer" arrow>
-                <LoadingButton
-                  loading={followLoading}
-                  onClick={handleFollow}
-                  variant="contained"
-                  autoCapitalize="none"
+            {/* like button  */}
+            {publication?.id && (
+              <Tooltip title="Like" arrow>
+                <Button
                   size="small"
-                  color="primary"
-                  startIcon={<StarIcon />}
-                  loadingPosition="start"
-                  disabled={followLoading || isFollowing}
-                  title="Follow this streamer"
+                  color="secondary"
+                  variant="contained"
+                  onClick={handleLike}
+                  startIcon={
+                    liked ? (
+                      <FavoriteIcon className="text-brand" />
+                    ) : (
+                      <FavoriteBorderIcon />
+                    )
+                  }
                   sx={{
-                    borderRadius: isMobile ? '20px' : '15px',
-                    boxShadow: 'none'
+                    boxShadow: 'none',
+                    borderRadius: '20px'
                   }}
                 >
-                  {isFollowing ? 'Following' : 'Follow'}
-                </LoadingButton>
+                  {upvotes}
+                </Button>
               </Tooltip>
             )}
 
-          {/* share button */}
-          {!isMobile && (
+            {/* mirror button */}
+
+            {publication?.id && (
+              <Tooltip title="Boost the stream" arrow>
+                <Button
+                  size="small"
+                  color="secondary"
+                  variant="contained"
+                  onClick={handleMirror}
+                  startIcon={
+                    <AutorenewIcon
+                      className={clsx(
+                        isMirrored && 'text-brand',
+                        mirroring && 'animate-spin'
+                      )}
+                    />
+                  }
+                  sx={{
+                    boxShadow: 'none',
+                    borderRadius: '20px'
+                  }}
+                >
+                  {mirrors}
+                </Button>
+              </Tooltip>
+            )}
+
+            {!isFollowing &&
+              mySession?.type === SessionType.WithProfile &&
+              mySession.profile?.id !== profile?.id && (
+                <Tooltip title="Follow this streamer" arrow>
+                  <LoadingButton
+                    loading={followLoading}
+                    onClick={handleFollow}
+                    variant="contained"
+                    autoCapitalize="none"
+                    size="small"
+                    color="primary"
+                    startIcon={<StarIcon />}
+                    loadingPosition="start"
+                    disabled={followLoading || isFollowing}
+                    title="Follow this streamer"
+                    sx={{
+                      borderRadius: isMobile ? '20px' : '15px',
+                      boxShadow: 'none'
+                    }}
+                  >
+                    {isFollowing ? 'Following' : 'Follow'}
+                  </LoadingButton>
+                </Tooltip>
+              )}
+
+            {/* share button */}
             <div className="">
               <Button
                 size="small"
@@ -490,23 +497,30 @@ const ProfileBar = ({
                 Share
               </Button>
             </div>
-          )}
 
-          {!isMobile && publication && (
-            <CollectButton post={publication} isFollowing={isFollowing} />
-          )}
+            {publication && (
+              <CollectButton post={publication} isFollowing={isFollowing} />
+            )}
 
-          {isFollowing && !isMobile && (
-            <IconButton onClick={handleMenuClick}>
-              <MoreVertIcon className="text-s-text" />
-            </IconButton>
-          )}
-        </div>
+            {isFollowing && (
+              <IconButton onClick={handleMenuClick}>
+                <MoreVertIcon className="text-s-text" />
+              </IconButton>
+            )}
+          </div>
+        )}
       </div>
 
       {isMobile && (
-        <div className="py-3 w-full">
-          <div className="start-center-row gap-x-3 px-2 py-1 w-full no-scrollbar  overflow-x-auto">
+        <div className="w-full">
+          <div className="centered-row">
+            <CollectButton
+              className="mb-2"
+              post={publication}
+              isFollowing={isFollowing}
+            />
+          </div>
+          <div className="start-center-row gap-x-3 pt-2 px-2 w-full no-scrollbar  overflow-x-auto">
             {/* like button */}
             {publication?.id && (
               <Button
