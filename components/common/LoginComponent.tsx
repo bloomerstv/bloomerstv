@@ -158,9 +158,14 @@ const LoginComponent = ({
                     loadingPosition="start"
                     startIcon={<AutoAwesomeIcon />}
                     onClick={async () => {
-                      await enableProfileManager({
-                        approveSignless: true
-                      })
+                      try {
+                        await enableProfileManager({
+                          approveSignless: true
+                        })
+                      } catch (e) {
+                        // @ts-ignore
+                        toast.error(e.message)
+                      }
                     }}
                     disabled={loading || data?.profile?.signless}
                   >
