@@ -13,6 +13,8 @@ import {
 import {
   BroadcastingError,
   InsufficientGasError,
+  OpenActionConfig,
+  OpenActionType,
   PendingSigningRequestError,
   PostAsyncResult,
   Result,
@@ -43,6 +45,7 @@ import { IconButton } from '@mui/material'
 import { BroadcastLive } from './Broadcast'
 import Player from '../../../common/Player'
 import CloseIcon from '@mui/icons-material/Close'
+import useCollectSettings from '../../../common/Collect/useCollectSettings'
 const LiveVideoComponent = ({
   myStream,
   startedStreaming,
@@ -56,6 +59,15 @@ const LiveVideoComponent = ({
   streamFromBrowser: boolean
   setStreamFromBrowser: (value: boolean) => void
 }) => {
+  const {
+    type,
+    amount,
+    collectLimit,
+    endsAt,
+    followerOnly,
+    recipients,
+    referralFee
+  } = useCollectSettings()
   const { execute } = useCreatePost()
   const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation({
     fetchPolicy: 'no-cache'
@@ -159,6 +171,27 @@ const LiveVideoComponent = ({
       throw new Error('Error uploading metadata to Arweave')
     }
 
+    let actions: OpenActionConfig[] | undefined = undefined
+
+    if (type) {
+      actions = [
+        {
+          type,
+          // @ts-ignore
+          amount,
+          collectLimit,
+          endsAt,
+          followerOnly,
+          referralFee: amount ? referralFee : undefined
+        }
+      ]
+
+      if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
+        // @ts-ignore
+        actions[0]['recipients'] = recipients
+      }
+    }
+
     const MAX_RETRIES = 3 // Maximum number of retries
     let retries = 0
     // @ts-ignore
@@ -175,7 +208,8 @@ const LiveVideoComponent = ({
       try {
         result = await execute({
           metadata: `ar://${transactionId}`,
-          sponsored: defaultSponsored
+          sponsored: defaultSponsored,
+          actions: actions
         })
 
         if (result.isSuccess()) {

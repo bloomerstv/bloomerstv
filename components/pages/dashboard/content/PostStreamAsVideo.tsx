@@ -2,6 +2,8 @@ import { Button, TextField, TextareaAutosize } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import CreateIcon from '@mui/icons-material/Create'
 import {
+  OpenActionConfig,
+  OpenActionType,
   Post,
   SessionType,
   useCreatePost,
@@ -28,6 +30,8 @@ import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnail
 import VideoWithEditors from './VideoWithEditors'
 import toast from 'react-hot-toast'
 import { useStreamAsVideo } from '../../../store/useStreamAsVideo'
+import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
+import useCollectSettings from '../../../common/Collect/useCollectSettings'
 
 const PostStreamAsVideo = ({
   publication,
@@ -36,6 +40,15 @@ const PostStreamAsVideo = ({
   publication: Post
   session: RecordedSession
 }) => {
+  const {
+    type,
+    amount,
+    collectLimit,
+    endsAt,
+    followerOnly,
+    recipients,
+    referralFee
+  } = useCollectSettings()
   // @ts-ignore
   const [content, setContent] = React.useState('')
 
@@ -56,7 +69,7 @@ const PostStreamAsVideo = ({
 
   const { data: profile } = useSession()
 
-  const { execute } = useCreatePost()
+  const { execute, error } = useCreatePost()
 
   const [uploadDataToAR] = useUploadDataToArMutation()
 
@@ -66,6 +79,12 @@ const PostStreamAsVideo = ({
   const endTime = useStreamAsVideo((state) => state.endTime)
 
   const [createClip] = useCreateClipMutation()
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message)
+    }
+  }, [error])
 
   const createLensPost = async () => {
     if (profile?.type !== SessionType.WithProfile) {
@@ -148,7 +167,7 @@ const PostStreamAsVideo = ({
         // @ts-ignore
         cover: getThumbnailFromRecordingUrl(url),
         // @ts-ignore
-        duration: duration,
+        duration: Math.round(duration),
         type: MediaVideoMimeType.MP4,
         // @ts-ignore
         altTag: title
@@ -171,10 +190,32 @@ const PostStreamAsVideo = ({
       throw new Error('Error uploading metadata to IPFS')
     }
 
+    let actions: OpenActionConfig[] | undefined = undefined
+
+    if (type) {
+      actions = [
+        {
+          type,
+          // @ts-ignore
+          amount,
+          collectLimit,
+          endsAt,
+          followerOnly,
+          referralFee: amount ? referralFee : undefined
+        }
+      ]
+
+      if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
+        // @ts-ignore
+        actions[0]['recipients'] = recipients
+      }
+    }
+
     // invoke the `execute` function to create the post
     const result = await execute({
       metadata: `ar://${transactionID}`,
-      sponsored: defaultSponsored
+      sponsored: defaultSponsored,
+      actions: actions
     })
 
     if (!result.isSuccess()) {
@@ -220,19 +261,24 @@ const PostStreamAsVideo = ({
         }
       >
         <div className="flex flex-col gap-y-4">
-          <TextField
-            label="Video Title"
-            variant="outlined"
-            onChange={
-              // @ts-ignore
-              (e) => setTitle(e.target.value)
-            }
-            value={title}
-            inputProps={{
-              maxLength: 100
-            }}
-            helperText={`${100 - title.length} / 100 characters remaining`}
-          />
+          <div className="flex flex-row items-start gap-x-8">
+            <TextField
+              label="Video Title"
+              variant="outlined"
+              size="small"
+              className="w-full"
+              onChange={
+                // @ts-ignore
+                (e) => setTitle(e.target.value)
+              }
+              value={title}
+              inputProps={{
+                maxLength: 100
+              }}
+              helperText={`${100 - title.length} / 100 characters remaining`}
+            />
+            <CollectSettingButton />
+          </div>
 
           {showVideoDescription ? (
             <TextareaAutosize

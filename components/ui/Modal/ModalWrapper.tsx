@@ -127,4 +127,4 @@ const ModalWrapper = ({
   )
 }
 
-export default ModalWrapper
+export default React.memo(ModalWrapper)

@@ -14,7 +14,6 @@ const VideoClipper = ({
   url,
   __scopeMedia
 }: MediaScopedProps<{ url: string }>) => {
-  console.log('url', url)
   const context = useMediaContext('CurrentSource', __scopeMedia)
   const { duration, playing, loading, progress, __controlsFunctions } =
     useStore(

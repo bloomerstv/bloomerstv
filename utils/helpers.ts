@@ -69,3 +69,24 @@ export const secondsToTime = (seconds?: number) => {
     minutes ? `${minutes < 10 ? `0${minutes}` : minutes}:` : '00:'
   }${secondsLeft < 10 ? `0${secondsLeft}` : secondsLeft}`
 }
+
+export const getRemainingTime = (endsAt: Date): string => {
+  const now = new Date()
+  const diffInMilliseconds = endsAt.getTime() - now.getTime()
+
+  if (diffInMilliseconds <= 0) {
+    return '0m'
+  }
+
+  const diffInMinutes = Math.round(diffInMilliseconds / 60000)
+  const diffInHours = Math.round(diffInMinutes / 60)
+  const diffInDays = Math.round(diffInHours / 24)
+
+  if (diffInDays > 0) {
+    return `${diffInDays}d`
+  } else if (diffInHours > 0) {
+    return `${diffInHours}h`
+  } else {
+    return `${diffInMinutes}m`
+  }
+}

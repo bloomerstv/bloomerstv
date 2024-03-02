@@ -13,6 +13,7 @@ import { useMyPreferences } from '../../../store/useMyPreferences'
 import LiveVideoComponent from './LiveVideoComponent'
 import { stringToLength } from '../../../../utils/stringToLength'
 import Markup from '../../../common/Lexical/Markup'
+import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
 
 const LiveStreamEditor = () => {
   const [startedStreaming, setStartedStreaming] = React.useState(false)
@@ -48,8 +49,8 @@ const LiveStreamEditor = () => {
   }
 
   return (
-    <div className="p-8">
-      <div className="bg-s-bg shadow-md">
+    <div className="p-6">
+      <div className="bg-s-bg shadow-sm rounded-xl overflow-hidden">
         <div className="flex flex-row">
           <LiveVideoComponent
             myStream={myStream}
@@ -85,41 +86,50 @@ const LiveStreamEditor = () => {
 
               {/* select stream replay view type and set */}
 
-              <div className="space-y-2">
-                <div className="text-s-text font-bold text-md">
-                  Replay Visibility
-                </div>
-                <Select
-                  value={streamReplayViewType}
-                  onChange={(e) => {
-                    if (!e.target.value) return
-                    setStreamReplayViewType(e.target.value as ViewType)
-                  }}
-                  size="small"
-                >
-                  <MenuItem
-                    value={ViewType.Public}
-                    title="Your stream replay will be visible on Home, Profile, and Post page"
-                    className="text-p-text"
+              <div className="flex flex-row gap-x-8">
+                <div className="space-y-2">
+                  <div className="text-s-text font-bold text-md">
+                    Replay Visibility
+                  </div>
+                  <Select
+                    value={streamReplayViewType}
+                    onChange={(e) => {
+                      if (!e.target.value) return
+                      setStreamReplayViewType(e.target.value as ViewType)
+                    }}
+                    size="small"
                   >
-                    Public
-                  </MenuItem>
-                  <MenuItem
-                    title="Your stream replay will be visible only on Post page"
-                    value={ViewType.Unlisted}
-                    className="text-p-text"
-                  >
-                    Unlisted
-                  </MenuItem>
+                    <MenuItem
+                      value={ViewType.Public}
+                      title="Your stream replay will be visible on Home, Profile, and Post page"
+                      className="text-p-text"
+                    >
+                      Public
+                    </MenuItem>
+                    <MenuItem
+                      title="Your stream replay will be visible only on Post page"
+                      value={ViewType.Unlisted}
+                      className="text-p-text"
+                    >
+                      Unlisted
+                    </MenuItem>
 
-                  <MenuItem
-                    title="Your stream replay will not be visible for anyone but you can find it in dashboard"
-                    value={ViewType.Private}
-                    className="text-p-text"
-                  >
-                    Private
-                  </MenuItem>
-                </Select>
+                    <MenuItem
+                      title="Your stream replay will not be visible for anyone but you can find it in dashboard"
+                      value={ViewType.Private}
+                      className="text-p-text"
+                    >
+                      Private
+                    </MenuItem>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="text-s-text font-bold text-md">
+                    Collect Setting
+                  </div>
+                  <CollectSettingButton />
+                </div>
               </div>
             </div>
           </div>
@@ -145,7 +155,7 @@ const LiveStreamEditor = () => {
         </div>
       </div>
 
-      <div className="mt-8 p-8 bg-s-bg shadow-md ">
+      <div className="mt-6 p-8 bg-s-bg shadow-sm rounded-xl">
         <div className="space-y-8 w-[400px]">
           <div className="font-bold text-lg text-s-text">Stream Key</div>
           <div className="start-center-row space-x-2">

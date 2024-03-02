@@ -5,7 +5,12 @@ import { Button, TextField } from '@mui/material'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../utils/getUserLocale'
 import { MediaVideoMimeType, shortVideo } from '@lens-protocol/metadata'
-import { Profile, useCreatePost } from '@lens-protocol/react-web'
+import {
+  OpenActionConfig,
+  OpenActionType,
+  Profile,
+  useCreatePost
+} from '@lens-protocol/react-web'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import {
   APP_ID,
@@ -17,6 +22,8 @@ import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
 import { useUploadDataToArMutation } from '../../../graphql/generated'
 import Player from '../../common/Player'
+import useCollectSettings from '../../common/Collect/useCollectSettings'
+import CollectSettingButton from '../../common/Collect/CollectSettingButton'
 
 const PostClipOnLens = ({
   open,
@@ -29,6 +36,15 @@ const PostClipOnLens = ({
   url: string
   profile?: Profile
 }) => {
+  const {
+    type,
+    amount,
+    collectLimit,
+    endsAt,
+    followerOnly,
+    recipients,
+    referralFee
+  } = useCollectSettings()
   const [title, setTitle] = React.useState(
     `Clip from @${profile?.handle?.fullHandle} 's stream`
   )
@@ -81,10 +97,32 @@ const PostClipOnLens = ({
       throw new Error('Error uploading metadata to AR')
     }
 
+    let actions: OpenActionConfig[] | undefined = undefined
+
+    if (type) {
+      actions = [
+        {
+          type,
+          // @ts-ignore
+          amount,
+          collectLimit,
+          endsAt,
+          followerOnly,
+          referralFee: amount ? referralFee : undefined
+        }
+      ]
+
+      if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
+        // @ts-ignore
+        actions[0]['recipients'] = recipients
+      }
+    }
+
     // invoke the `execute` function to create the post
     const result = await execute({
       metadata: `ar://${transactionId}`,
-      sponsored: defaultSponsored
+      sponsored: defaultSponsored,
+      actions: actions
     })
 
     if (!result.isSuccess()) {
@@ -143,6 +181,13 @@ const PostClipOnLens = ({
             }}
             helperText={`${100 - title.length} / 100 characters remaining`}
           />
+
+          <div className="space-y-1">
+            <div className="text-sm font-semibold text-s-text">
+              Collect Settings
+            </div>
+            <CollectSettingButton />
+          </div>
 
           <Player className="rounded-md" src={url} showPipButton={false} />
         </div>

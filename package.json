@@ -60,6 +60,7 @@
     "@rainbow-me/rainbowkit": "^2.0.1",
     "@tanstack/react-query": "^5.24.1",
     "aws-crt": "^1.21.1",
+    "framer-motion": "^11.0.8",
     "graphql-ws": "^5.15.0",
     "interweave": "^13.1.0",
     "lexical": "^0.12.4",

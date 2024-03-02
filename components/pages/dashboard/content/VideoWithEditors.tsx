@@ -16,7 +16,6 @@ const VideoWithEditors = ({
       setIsMounted(true)
     }
   }, [])
-  console.log('src', src)
   // todo : use portal from livepeer to use VideoClipper
   return (
     <>
