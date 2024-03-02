@@ -132,7 +132,6 @@ const ContextComponent = ({
   }))
 
   React.useEffect(() => {
-    console.log('broadcast status', status)
     if (onStreamStatusChange) {
       onStreamStatusChange?.(status === 'live')
     }

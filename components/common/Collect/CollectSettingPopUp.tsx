@@ -21,7 +21,6 @@ import {
   Erc20,
   RecipientWithSplit,
   SessionType,
-  useCurrencies,
   useSession
 } from '@lens-protocol/react-web'
 import { CURRENCIES, PROJECT_ADDRESS } from '../../../utils/config'
@@ -95,9 +94,6 @@ const CollectSettingPopUp = () => {
   >(undefined)
 
   const { data } = useSession()
-
-  const { data: currencies } = useCurrencies()
-  console.log('currencies', currencies)
 
   useEffect(() => {
     if (collectLimit) {
@@ -211,9 +207,6 @@ const CollectSettingPopUp = () => {
       setAmount(Amount.erc20(currency as Erc20, amountValue))
     }
   }, [amountValue, amountCurrency])
-
-  console.log('settingRecipients', settingRecipients)
-  console.log('recipients', recipients)
 
   return (
     <div className="w-full space-y-8 font-bold sm:px-0 px-2">

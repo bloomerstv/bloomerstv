@@ -184,12 +184,9 @@ const LiveChat = ({
         id
       } = receivedData
 
-      console.log('receivedData', receivedData)
-
       if (chatProfileId === profileId) {
         // run pop up sound
         if (liveChatPopUpSoundRef.current) {
-          console.log('play sound')
           audio.play()
         }
 

@@ -17,8 +17,6 @@ const CollectSettingButton = ({ className }: { className?: string }) => {
   const { amount, disableCollect, collectLimit, referalFee, numberOfDays } =
     useCollectPreferences((state) => state)
 
-  console.log('amount', amount)
-
   return (
     <>
       <ModalWrapper
