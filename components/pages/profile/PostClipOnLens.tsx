@@ -43,7 +43,8 @@ const PostClipOnLens = ({
     endsAt,
     followerOnly,
     recipients,
-    referralFee
+    referralFee,
+    recipient
   } = useCollectSettings()
   const [title, setTitle] = React.useState(
     `Clip from @${profile?.handle?.fullHandle} 's stream`
@@ -115,6 +116,11 @@ const PostClipOnLens = ({
       if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
         // @ts-ignore
         actions[0]['recipients'] = recipients
+      }
+
+      if (type === OpenActionType.SIMPLE_COLLECT) {
+        // @ts-ignore
+        actions[0]['recipient'] = recipient
       }
     }
 

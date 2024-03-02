@@ -70,12 +70,22 @@ export const secondsToTime = (seconds?: number) => {
   }${secondsLeft < 10 ? `0${secondsLeft}` : secondsLeft}`
 }
 
-export const getRemainingTime = (endsAt: Date): string => {
+export const getRemainingTime = (
+  endsAt: Date | null | string
+): string | null => {
+  if (!endsAt) {
+    return null
+  }
+
+  if (typeof endsAt === 'string') {
+    endsAt = new Date(endsAt)
+  }
+
   const now = new Date()
   const diffInMilliseconds = endsAt.getTime() - now.getTime()
 
   if (diffInMilliseconds <= 0) {
-    return '0m'
+    return null
   }
 
   const diffInMinutes = Math.round(diffInMilliseconds / 60000)

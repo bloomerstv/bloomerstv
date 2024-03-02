@@ -47,7 +47,8 @@ const PostStreamAsVideo = ({
     endsAt,
     followerOnly,
     recipients,
-    referralFee
+    referralFee,
+    recipient
   } = useCollectSettings()
   // @ts-ignore
   const [content, setContent] = React.useState('')
@@ -208,6 +209,11 @@ const PostStreamAsVideo = ({
       if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
         // @ts-ignore
         actions[0]['recipients'] = recipients
+      }
+
+      if (type === OpenActionType.SIMPLE_COLLECT) {
+        // @ts-ignore
+        actions[0]['recipient'] = recipient
       }
     }
 

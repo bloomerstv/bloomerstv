@@ -44,6 +44,7 @@ import clsx from 'clsx'
 import LiveCount from './LiveCount'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import CollectButton from './CollectButton'
 const ProfileBar = ({
   profile,
   streamer,
@@ -383,7 +384,7 @@ const ProfileBar = ({
           </div>
         </div>
 
-        <div className="start-center-row space-x-4">
+        <div className="start-center-row gap-x-3 shrink-0">
           {profile?.id && streamer?.isActive && (
             <LiveCount profileId={profile?.id} />
           )}
@@ -468,7 +469,7 @@ const ProfileBar = ({
 
           {/* share button */}
           {!isMobile && (
-            <div className="sm:ml-2">
+            <div className="">
               <Button
                 size="small"
                 color="secondary"
@@ -489,6 +490,10 @@ const ProfileBar = ({
                 Share
               </Button>
             </div>
+          )}
+
+          {!isMobile && publication && (
+            <CollectButton post={publication} isFollowing={isFollowing} />
           )}
 
           {isFollowing && !isMobile && (

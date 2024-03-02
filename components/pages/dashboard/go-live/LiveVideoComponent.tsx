@@ -66,7 +66,8 @@ const LiveVideoComponent = ({
     endsAt,
     followerOnly,
     recipients,
-    referralFee
+    referralFee,
+    recipient
   } = useCollectSettings()
   const { execute } = useCreatePost()
   const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation({
@@ -189,6 +190,10 @@ const LiveVideoComponent = ({
       if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
         // @ts-ignore
         actions[0]['recipients'] = recipients
+      }
+      if (type === OpenActionType.SIMPLE_COLLECT) {
+        // @ts-ignore
+        actions[0]['recipient'] = recipient
       }
     }
 

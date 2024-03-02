@@ -52,7 +52,8 @@ const useCollectSettings = (): CollectSettingsResponse => {
       referalFee && referalFee > 0 && referalFee < 100 ? referalFee : undefined,
     recipients:
       amount && recipients && recipients?.length > 0 ? recipients : undefined,
-    followerOnly: followerOnly
+    followerOnly: followerOnly,
+    recipient: data?.address
   }
 }
 
