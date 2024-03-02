@@ -41,8 +41,8 @@ const CollectSettingButton = ({ className }: { className?: string }) => {
         <div className="centered-row gap-x-2">
           <LayersIcon fontSize="small" />
 
-          <div className="start-col">
-            <div className={clsx('font-semibold text-sm')}>
+          <div className="centered-col">
+            <div className={clsx('font-semibold text-base')}>
               {disableCollect ? 'Collect disabled' : 'Hold to collect'}
             </div>
 

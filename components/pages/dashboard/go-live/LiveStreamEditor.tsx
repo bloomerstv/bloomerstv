@@ -126,7 +126,7 @@ const LiveStreamEditor = () => {
 
                 <div className="space-y-2">
                   <div className="text-s-text font-bold text-md">
-                    Collect Setting
+                    Collect Setting Preview
                   </div>
                   <CollectSettingButton />
                 </div>

@@ -514,11 +514,9 @@ const ProfileBar = ({
       {isMobile && (
         <div className="w-full">
           <div className="centered-row">
-            <CollectButton
-              className="mb-2"
-              post={publication}
-              isFollowing={isFollowing}
-            />
+            {publication && (
+              <CollectButton post={publication} isFollowing={isFollowing} />
+            )}
           </div>
           <div className="start-center-row gap-x-3 pt-2 px-2 w-full no-scrollbar  overflow-x-auto">
             {/* like button */}
