@@ -16,8 +16,9 @@ export const NODE_API_MODE =
 
 export const LOCAL_NODE_API_URL = 'http://localhost:8000'
 export const PRODUCTION_NODE_API_URL = 'https://api.bloomers.tv'
+// export const PRODUCTION_NODE_API_URL = 'https://bloomerstv-api.onrender.com'
 export const DEVELOPMENT_NODE_API_URL =
-  'https://test-api-bloomerstv.onrender.com'
+  'https://bloomerstv-api-dev.onrender.com'
 
 export const NODE_API_URL =
   NODE_API_MODE === 'local'
