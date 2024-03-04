@@ -236,8 +236,17 @@ const CollectButton = ({
       {!hasCollected ? (
         <motion.button
           onTapStart={
+            () => {
+              if (
+                followerOnly &&
+                !isFollowing &&
+                post?.by?.id !== data?.profile?.id
+              ) {
+                return
+              }
+              handleMouseDown()
+            }
             // start filling the background with black color from bottom
-            handleMouseDown
           }
           onTap={
             // if the background is filled with black color do nothing

@@ -450,6 +450,29 @@ const ProfileBar = ({
               </Tooltip>
             )}
 
+            {/* share button */}
+            <div className="">
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                onClick={handleShare}
+                startIcon={
+                  <ReplyIcon
+                    style={{
+                      transform: 'scaleX(-1)'
+                    }}
+                  />
+                }
+                sx={{
+                  boxShadow: 'none',
+                  borderRadius: '20px'
+                }}
+              >
+                Share
+              </Button>
+            </div>
+
             {!isFollowing &&
               mySession?.type === SessionType.WithProfile &&
               mySession.profile?.id !== profile?.id && (
@@ -474,29 +497,6 @@ const ProfileBar = ({
                   </LoadingButton>
                 </Tooltip>
               )}
-
-            {/* share button */}
-            <div className="">
-              <Button
-                size="small"
-                color="secondary"
-                variant="contained"
-                onClick={handleShare}
-                startIcon={
-                  <ReplyIcon
-                    style={{
-                      transform: 'scaleX(-1)'
-                    }}
-                  />
-                }
-                sx={{
-                  boxShadow: 'none',
-                  borderRadius: '20px'
-                }}
-              >
-                Share
-              </Button>
-            </div>
 
             {publication && (
               <CollectButton post={publication} isFollowing={isFollowing} />
