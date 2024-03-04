@@ -207,7 +207,9 @@ const CollectButton = ({
         <div className="centered-row px-3 text-p-text py-1 gap-x-1.5 cursor-pointer rounded-full bg-p-hover shrink-0">
           <LayersIcon fontSize="small" />
           <div className="start-col">
-            <div className="font-semibold text-base leading-6">Expired</div>
+            <div className="font-semibold text-base leading-6">
+              Time Expired
+            </div>
           </div>
         </div>
       )
@@ -223,7 +225,7 @@ const CollectButton = ({
           <LayersIcon fontSize="small" />
           <div className="start-col">
             <div className="font-semibold text-base leading-6">
-              Collect limit reached
+              Limit Reached
             </div>
           </div>
         </div>

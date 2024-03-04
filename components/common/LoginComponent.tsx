@@ -65,7 +65,8 @@ const LoginComponent = ({
         onClose()
       }
     }
-  }, [data?.type])
+    // @ts-ignore
+  }, [data?.type, data?.profile?.signless])
 
   return (
     <div className="p-4 sm:p-0">
