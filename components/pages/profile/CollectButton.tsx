@@ -201,7 +201,8 @@ const CollectButton = ({
 
   // @ts-ignore
   if (collectModule?.endsAt || collectLimit) {
-    if (!timeRemaining) {
+    // @ts-ignore
+    if (!timeRemaining && collectModule?.endsAt) {
       return (
         <div className="centered-row px-3 text-p-text py-1 gap-x-1.5 cursor-pointer rounded-full bg-p-hover shrink-0">
           <LayersIcon fontSize="small" />

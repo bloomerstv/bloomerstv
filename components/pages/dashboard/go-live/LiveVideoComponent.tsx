@@ -339,10 +339,12 @@ const LiveVideoComponent = ({
   }, [])
 
   const videoComponent = React.useMemo(() => {
+    const liveStreamUrl = getLiveStreamUrl(myStream?.playbackId)
+
     return (
       <Player
         className="w-full"
-        src={getLiveStreamUrl(myStream?.playbackId)}
+        src={liveStreamUrl}
         streamOfflineErrorComponent={ConnectStreamMemo}
         onStreamStatusChange={(isLive) => {
           setStartedStreaming(isLive)

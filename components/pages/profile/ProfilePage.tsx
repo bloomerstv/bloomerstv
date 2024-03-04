@@ -117,6 +117,8 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       return null
     }
 
+    const liveStreamUrl = getLiveStreamUrl(streamer?.streamer?.playbackId)
+
     return (
       <Player
         onStreamStatusChange={async (isLive) => {
@@ -140,7 +142,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
           sessionData?.type === SessionType.WithProfile ? 30 : undefined
         }
         createClip={handleClipClicked}
-        src={getLiveStreamUrl(streamer?.streamer?.playbackId)}
+        src={liveStreamUrl}
       />
     )
   }, [

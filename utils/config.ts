@@ -32,7 +32,7 @@ export const LIVE_CHAT_WEB_SOCKET_URL =
     ? `ws://localhost:8000`
     : NODE_API_MODE === 'production'
       ? `wss://api.bloomers.tv`
-      : `wss://test-api-bloomerstv.onrender.com`
+      : `wss://bloomerstv-api-dev.onrender.com`
 export const REDIRECTOR_URL =
   NODE_API_MODE === 'production'
     ? 'https://redirect.bloomers.tv'
