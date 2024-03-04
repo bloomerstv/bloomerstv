@@ -49,10 +49,67 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
     [streamReplayPublication]
   )
 
+  // add type streamClips to data
+  const streamClips =
+    data?.map((post) => {
+      return {
+        ...post,
+        type: 'streamClips'
+      }
+    }) ?? []
+
+  // add type streamReplays to publications
+  const streamReplays =
+    publications?.map((post) => {
+      return {
+        ...post,
+        type: 'streamReplays'
+      }
+    }) ?? []
+
+  const combinedData = [...streamClips, ...streamReplays].sort(
+    (a, b) =>
+      new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+  )
+
   if (!data) return null
   return (
     <div className={clsx('flex flex-col w-full h-full gap-y-6', className)}>
-      {data?.map((post) => {
+      {combinedData?.map((post) => {
+        if (post?.type === 'streamClips') {
+          return <RecommendedVideoCard key={post?.id} post={post as Post} />
+        } else {
+          if (isMobile) {
+            return (
+              <HomeVideoCard
+                post={post as Post}
+                // @ts-ignore
+                cover={getStreamReplay(post?.id)?.thumbnail}
+                // @ts-ignore
+                duration={getStreamReplay(post?.id)?.duration}
+                key={post?.id}
+              />
+            )
+          } else {
+            return (
+              <RecommendedCardLayout
+                createdAt={post?.createdAt}
+                // @ts-ignore
+                coverUrl={getStreamReplay(post?.id)?.thumbnail}
+                postLink={`/watch/${post?.id}`}
+                profile={post?.by}
+                // @ts-ignore
+                stats={post?.stats}
+                // @ts-ignore
+                title={post?.metadata?.title}
+                key={post?.id}
+              />
+            )
+          }
+        }
+      })}
+
+      {/* {data?.map((post) => {
         return <RecommendedVideoCard key={post?.id} post={post as Post} />
       })}
       {publications?.map((post) => {
@@ -83,7 +140,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
             />
           )
         }
-      })}
+      })} */}
     </div>
   )
 }
