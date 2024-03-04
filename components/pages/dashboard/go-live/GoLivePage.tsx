@@ -12,7 +12,7 @@ const GoLivePage = () => {
       <div className="w-full flex-grow overflow-auto h-full">
         <LiveStreamEditor />
       </div>
-      <div className="sm:w-[350px] flex-none h-full">
+      <div className="w-[280px] 2xl:w-[350px] flex-none h-full">
         {/* {createdPublicationId ? ( */}
         {/* @ts-ignore */}
         {data?.profile?.id && (

@@ -88,7 +88,7 @@ const MyStreamEditButton = ({
           </div>
         }
       >
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-y-3">
           <TextField
             label="Stream Title"
             value={streamName}
@@ -96,10 +96,18 @@ const MyStreamEditButton = ({
             inputProps={{
               maxLength: 100
             }}
+            size="small"
             helperText={`${100 - streamName.length} / 100 characters remaining`}
           />
 
-          <div className="start-center-row text-xs">
+          <TextField
+            label="Stream Description"
+            multiline
+            rows={4}
+            value={streamDescription}
+            onChange={(e) => setStreamDescription(e.target.value)}
+          />
+          <div className="start-center-row text-xs -mt-4">
             <Checkbox
               checked={addLiveChatAt}
               size="small"
@@ -110,14 +118,6 @@ const MyStreamEditButton = ({
               `${APP_LINK}/${formatHandle(data?.profile)}`
             }" at the end of content`}</div>
           </div>
-
-          <TextField
-            label="Stream Description"
-            multiline
-            rows={4}
-            value={streamDescription}
-            onChange={(e) => setStreamDescription(e.target.value)}
-          />
         </div>
       </ModalWrapper>
     </div>

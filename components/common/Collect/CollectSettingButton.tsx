@@ -42,7 +42,7 @@ const CollectSettingButton = ({ className }: { className?: string }) => {
           <LayersIcon fontSize="small" />
 
           <div className="centered-col">
-            <div className={clsx('font-semibold text-base')}>
+            <div className={clsx('font-semibold text-base leading-4')}>
               {disableCollect ? 'Collect disabled' : 'Hold to collect'}
             </div>
 
@@ -81,7 +81,7 @@ const CollectSettingButton = ({ className }: { className?: string }) => {
           <IconButton
             className="text-xs"
             sx={{
-              fontSize: '20px'
+              fontSize: '16px'
             }}
           >
             <SettingsIcon fontSize="inherit" className="text-[#848491]" />

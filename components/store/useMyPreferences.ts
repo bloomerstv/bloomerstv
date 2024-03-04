@@ -7,6 +7,8 @@ interface MyPreferencesStore {
   setLiveChatPopUpSound: (liveChatPopUpSound: boolean) => void
   streamReplayViewType: ViewType
   setStreamReplayViewType: (viewType: ViewType) => void
+  category: string
+  setCategory: (category: string) => void
 }
 
 export const useMyPreferences = create<MyPreferencesStore>(
@@ -17,7 +19,9 @@ export const useMyPreferences = create<MyPreferencesStore>(
         set(() => ({ liveChatPopUpSound })),
       streamReplayViewType: ViewType.Public,
       setStreamReplayViewType: (viewType) =>
-        set(() => ({ streamReplayViewType: viewType }))
+        set(() => ({ streamReplayViewType: viewType })),
+      category: 'Gaming',
+      setCategory: (category) => set(() => ({ category }))
     }),
     {
       name: 'myPreferences',
@@ -25,7 +29,8 @@ export const useMyPreferences = create<MyPreferencesStore>(
         // allow persisting only the `liveChatPopUpSound` state
         return {
           liveChatPopUpSound: state.liveChatPopUpSound,
-          streamReplayViewType: state.streamReplayViewType
+          streamReplayViewType: state.streamReplayViewType,
+          category: state.category
         }
       }
     }

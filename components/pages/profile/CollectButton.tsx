@@ -241,7 +241,7 @@ const CollectButton = ({
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="relative overflow-hidden outline-none border-none centered-row cursor-pointer text-white bg-brand rounded-full pl-2 pr-4 py-0.5 space-x-2 text-xs shrink-0"
+          className="relative overflow-hidden outline-none border-none centered-row cursor-pointer text-white bg-brand rounded-full pl-1 pr-4 py-0.5 space-x-2 text-xs shrink-0"
         >
           <motion.div
             animate={controls}
@@ -268,7 +268,7 @@ const CollectButton = ({
             <LayersIcon fontSize="small" style={{ zIndex: 2 }} />
           )}
 
-          <div className="start-col" style={{ zIndex: 2 }}>
+          <div className="centered-col" style={{ zIndex: 2 }}>
             <div className={'font-semibold text-base leading-6'}>
               {followerOnly &&
               !isFollowing &&

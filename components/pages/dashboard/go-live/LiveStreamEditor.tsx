@@ -11,9 +11,9 @@ import StartLoadingPage from '../../loading/StartLoadingPage'
 import toast from 'react-hot-toast'
 import { useMyPreferences } from '../../../store/useMyPreferences'
 import LiveVideoComponent from './LiveVideoComponent'
-import { stringToLength } from '../../../../utils/stringToLength'
-import Markup from '../../../common/Lexical/Markup'
 import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
+import { CATEGORIES_LIST } from '../../../../utils/categories'
+import { stringToLength } from '../../../../utils/stringToLength'
 
 const LiveStreamEditor = () => {
   const [startedStreaming, setStartedStreaming] = React.useState(false)
@@ -22,12 +22,19 @@ const LiveStreamEditor = () => {
   const { data: session } = useSession()
   const { data, error, refetch, loading } = useMyStreamQuery()
 
-  const streamReplayViewType = useMyPreferences(
-    (state) => state.streamReplayViewType
-  )
-  const setStreamReplayViewType = useMyPreferences(
-    (state) => state.setStreamReplayViewType
-  )
+  const {
+    category,
+    setCategory,
+    setStreamReplayViewType,
+    streamReplayViewType
+  } = useMyPreferences((state) => {
+    return {
+      streamReplayViewType: state.streamReplayViewType,
+      setStreamReplayViewType: state.setStreamReplayViewType,
+      category: state.category,
+      setCategory: state.setCategory
+    }
+  })
 
   useEffect(() => {
     if (!error) return
@@ -49,7 +56,7 @@ const LiveStreamEditor = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 2xl:p-6">
       <div className="bg-s-bg shadow-sm rounded-xl overflow-hidden">
         <div className="flex flex-row">
           <LiveVideoComponent
@@ -59,12 +66,12 @@ const LiveStreamEditor = () => {
             streamFromBrowser={streamFromBrowser}
             setStreamFromBrowser={setStreamFromBrowser}
           />
-          <div className="flex flex-row justify-between items-start px-4 pt-4 2xl:px-6 2xl:pt-6 w-full">
-            <div className="space-y-3 w-full">
+          <div className="flex flex-row justify-between items-start px-4 pt-4 w-full">
+            <div className="space-y-1.5 2xl:space-y-2.5 w-full">
               <div className="between-row gap-x-1 w-full">
                 <div className="">
                   <div className="text-s-text font-bold text-md">Title</div>
-                  <div className="text-p-text font-semibold text-md 2xl:text-base">
+                  <div className="text-p-text font-semibold text-sm 2xl:text-base">
                     {myStream?.streamName}
                   </div>
                 </div>
@@ -76,59 +83,81 @@ const LiveStreamEditor = () => {
 
               <div className="">
                 <div className="text-s-text font-bold text-md">Description</div>
-                <div className="text-p-text text-xs 2xl:text-sm font-semibold ">
-                  <Markup className="whitespace-pre-wrap break-words ">
-                    {stringToLength(myStream?.streamDescription, 180) ||
+                <div className="text-p-text text-sm 2xl:text-base font-semibold ">
+                  <div className="whitespace-pre-wrap break-words ">
+                    {stringToLength(myStream?.streamDescription, 50) ||
                       'No description provided'}
-                  </Markup>
+                  </div>
                 </div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-s-text font-bold text-md">
+                  Collect Preview
+                </div>
+                <CollectSettingButton />
               </div>
 
               {/* select stream replay view type and set */}
 
-              <div className="flex flex-row gap-x-8">
-                <div className="space-y-2">
-                  <div className="text-s-text font-bold text-md">
-                    Replay Visibility
-                  </div>
-                  <Select
-                    value={streamReplayViewType}
-                    onChange={(e) => {
-                      if (!e.target.value) return
-                      setStreamReplayViewType(e.target.value as ViewType)
-                    }}
-                    size="small"
-                  >
-                    <MenuItem
-                      value={ViewType.Public}
-                      title="Your stream replay will be visible on Home, Profile, and Post page"
-                      className="text-p-text"
+              <div className="flex flex-row gap-x-6">
+                <div className="flex flex-row gap-x-8">
+                  <div className="space-y-1">
+                    <div className="text-s-text font-bold text-md">
+                      Replay Visibility
+                    </div>
+                    <Select
+                      value={streamReplayViewType}
+                      onChange={(e) => {
+                        if (!e.target.value) return
+                        setStreamReplayViewType(e.target.value as ViewType)
+                      }}
+                      variant="standard"
+                      size="small"
                     >
-                      Public
-                    </MenuItem>
-                    <MenuItem
-                      title="Your stream replay will be visible only on Post page"
-                      value={ViewType.Unlisted}
-                      className="text-p-text"
-                    >
-                      Unlisted
-                    </MenuItem>
+                      <MenuItem
+                        value={ViewType.Public}
+                        title="Your stream replay will be visible on Home, Profile, and Post page"
+                        className="text-p-text"
+                      >
+                        Public
+                      </MenuItem>
+                      <MenuItem
+                        title="Your stream replay will be visible only on Post page"
+                        value={ViewType.Unlisted}
+                        className="text-p-text"
+                      >
+                        Unlisted
+                      </MenuItem>
 
-                    <MenuItem
-                      title="Your stream replay will not be visible for anyone but you can find it in dashboard"
-                      value={ViewType.Private}
-                      className="text-p-text"
-                    >
-                      Private
-                    </MenuItem>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="text-s-text font-bold text-md">
-                    Collect Setting Preview
+                      <MenuItem
+                        title="Your stream replay will not be visible for anyone but you can find it in dashboard"
+                        value={ViewType.Private}
+                        className="text-p-text"
+                      >
+                        Private
+                      </MenuItem>
+                    </Select>
                   </div>
-                  <CollectSettingButton />
+                  <div className="space-y-1">
+                    <div className="text-s-text font-bold text-md">
+                      Category
+                    </div>
+                    <Select
+                      value={category}
+                      onChange={(e) => {
+                        if (!e.target.value) return
+                        setCategory(e.target.value as string)
+                      }}
+                      variant="standard"
+                      size="small"
+                    >
+                      {CATEGORIES_LIST.map((category) => (
+                        <MenuItem value={category} key={category}>
+                          {category}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -155,7 +184,7 @@ const LiveStreamEditor = () => {
         </div>
       </div>
 
-      <div className="mt-6 p-8 bg-s-bg shadow-sm rounded-xl">
+      <div className="mt-4 2xl:mt-6 p-8 bg-s-bg shadow-sm rounded-xl">
         <div className="space-y-8 w-[400px]">
           <div className="font-bold text-lg text-s-text">Stream Key</div>
           <div className="start-center-row space-x-2">

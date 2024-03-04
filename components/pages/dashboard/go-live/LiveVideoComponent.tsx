@@ -28,7 +28,6 @@ import formatHandle from '../../../../utils/lib/formatHandle'
 import {
   APP_ID,
   APP_LINK,
-  GAMING_TAGS,
   REDIRECTOR_URL,
   defaultSponsored
 } from '../../../../utils/config'
@@ -46,6 +45,7 @@ import { BroadcastLive } from './Broadcast'
 import Player from '../../../common/Player'
 import CloseIcon from '@mui/icons-material/Close'
 import useCollectSettings from '../../../common/Collect/useCollectSettings'
+import { getTagsForCategory } from '../../../../utils/categories'
 const LiveVideoComponent = ({
   myStream,
   startedStreaming,
@@ -73,9 +73,12 @@ const LiveVideoComponent = ({
   const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation({
     fetchPolicy: 'no-cache'
   })
-  const streamReplayViewType = useMyPreferences(
-    (state) => state.streamReplayViewType
-  )
+  const { category, streamReplayViewType } = useMyPreferences((state) => {
+    return {
+      streamReplayViewType: state.streamReplayViewType,
+      category: state.category
+    }
+  })
   const addLiveChatAt = useMyStreamInfo((state) => state.addLiveChatAt)
   const [uploadDataToAR] = useUploadDataToArMutation({
     fetchPolicy: 'no-cache'
@@ -151,7 +154,7 @@ const LiveVideoComponent = ({
       appId: APP_ID,
       liveUrl: m3u8Url,
       playbackUrl: m3u8Url,
-      tags: GAMING_TAGS,
+      tags: getTagsForCategory(category),
       startsAt: new Date().toISOString()
     })
 
@@ -413,7 +416,7 @@ const LiveVideoComponent = ({
   }, [])
 
   return (
-    <div className="w-[360px] 2xl:w-[480px] shrink-0">
+    <div className="w-[450px] 2xl:w-[500px] shrink-0">
       {streamFromBrowser ? broadcastComponent : videoComponent}
     </div>
   )

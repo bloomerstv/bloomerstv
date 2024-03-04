@@ -1,7 +1,7 @@
 import React from 'react'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
-import { Button, TextField } from '@mui/material'
+import { Button, MenuItem, Select, TextField } from '@mui/material'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../utils/getUserLocale'
 import { MediaVideoMimeType, shortVideo } from '@lens-protocol/metadata'
@@ -12,18 +12,14 @@ import {
   useCreatePost
 } from '@lens-protocol/react-web'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
-import {
-  APP_ID,
-  APP_LINK,
-  GAMING_TAGS,
-  defaultSponsored
-} from '../../../utils/config'
+import { APP_ID, APP_LINK, defaultSponsored } from '../../../utils/config'
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
 import { useUploadDataToArMutation } from '../../../graphql/generated'
 import Player from '../../common/Player'
 import useCollectSettings from '../../common/Collect/useCollectSettings'
 import CollectSettingButton from '../../common/Collect/CollectSettingButton'
+import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
 
 const PostClipOnLens = ({
   open,
@@ -46,6 +42,8 @@ const PostClipOnLens = ({
     referralFee,
     recipient
   } = useCollectSettings()
+  const [category, setCategory] = React.useState<string>('Gaming')
+
   const [title, setTitle] = React.useState(
     `Clip from @${profile?.handle?.fullHandle} 's stream`
   )
@@ -80,7 +78,7 @@ const PostClipOnLens = ({
         type: MediaVideoMimeType.MP4,
         altTag: title
       },
-      tags: [`clip-${formatHandle(profile)}`, ...GAMING_TAGS],
+      tags: [`clip-${formatHandle(profile)}`, ...getTagsForCategory(category)],
       appId: APP_ID,
       id,
       locale
@@ -193,6 +191,28 @@ const PostClipOnLens = ({
               Collect Settings
             </div>
             <CollectSettingButton />
+          </div>
+
+          <div className="space-y-1">
+            <div className="text-s-text font-bold text-md">Category</div>
+            <Select
+              value={category}
+              onChange={(e) => {
+                if (!e.target.value) return
+                setCategory(e.target.value as string)
+              }}
+              variant="outlined"
+              size="small"
+              sx={{
+                borderRadius: '100px'
+              }}
+            >
+              {CATEGORIES_LIST.map((category) => (
+                <MenuItem value={category} key={category}>
+                  {category}
+                </MenuItem>
+              ))}
+            </Select>
           </div>
 
           <Player className="rounded-md" src={url} showPipButton={false} />

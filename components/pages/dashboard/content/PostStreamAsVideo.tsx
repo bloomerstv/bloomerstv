@@ -1,4 +1,10 @@
-import { Button, TextField, TextareaAutosize } from '@mui/material'
+import {
+  Button,
+  MenuItem,
+  Select,
+  TextField,
+  TextareaAutosize
+} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import CreateIcon from '@mui/icons-material/Create'
 import {
@@ -17,12 +23,7 @@ import {
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
 import { MediaVideoMimeType, video } from '@lens-protocol/metadata'
-import {
-  APP_ID,
-  APP_LINK,
-  GAMING_TAGS,
-  defaultSponsored
-} from '../../../../utils/config'
+import { APP_ID, APP_LINK, defaultSponsored } from '../../../../utils/config'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
 import formatHandle from '../../../../utils/lib/formatHandle'
@@ -32,6 +33,10 @@ import toast from 'react-hot-toast'
 import { useStreamAsVideo } from '../../../store/useStreamAsVideo'
 import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
 import useCollectSettings from '../../../common/Collect/useCollectSettings'
+import {
+  CATEGORIES_LIST,
+  getTagsForCategory
+} from '../../../../utils/categories'
 
 const PostStreamAsVideo = ({
   publication,
@@ -50,6 +55,8 @@ const PostStreamAsVideo = ({
     referralFee,
     recipient
   } = useCollectSettings()
+
+  const [category, setCategory] = useState<string>('Gaming')
   // @ts-ignore
   const [content, setContent] = React.useState('')
 
@@ -173,7 +180,10 @@ const PostStreamAsVideo = ({
         // @ts-ignore
         altTag: title
       },
-      tags: [`clip-${formatHandle(profile?.profile)}`, ...GAMING_TAGS],
+      tags: [
+        `clip-${formatHandle(profile?.profile)}`,
+        ...getTagsForCategory(category)
+      ],
       appId: APP_ID,
       id: id,
       locale: locale
@@ -266,7 +276,7 @@ const PostStreamAsVideo = ({
           </div>
         }
       >
-        <div className="flex flex-col gap-y-4">
+        <div className="flex flex-col gap-y-2">
           <div className="flex flex-row items-start gap-x-8">
             <TextField
               label="Video Title"
@@ -283,7 +293,6 @@ const PostStreamAsVideo = ({
               }}
               helperText={`${100 - title.length} / 100 characters remaining`}
             />
-            <CollectSettingButton />
           </div>
 
           {showVideoDescription ? (
@@ -310,6 +319,36 @@ const PostStreamAsVideo = ({
               {`Add a description to your video >`}
             </div>
           )}
+
+          <div className="start-row gap-x-10 px-1 pb-1">
+            <div className="space-y-1">
+              <div className="text-s-text font-bold text-md">
+                Collect Preview
+              </div>
+              <CollectSettingButton />
+            </div>
+            <div className="space-y-1">
+              <div className="text-s-text font-bold text-md">Category</div>
+              <Select
+                value={category}
+                onChange={(e) => {
+                  if (!e.target.value) return
+                  setCategory(e.target.value as string)
+                }}
+                variant="outlined"
+                size="small"
+                sx={{
+                  borderRadius: '100px'
+                }}
+              >
+                {CATEGORIES_LIST.map((category) => (
+                  <MenuItem value={category} key={category}>
+                    {category}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+          </div>
 
           <div className="rounded-md overflow-hidden">
             {open && (

@@ -67,7 +67,6 @@ export const THUMBNAIL_FALLBACK =
 
 export const PROJECT_ADDRESS = '0xC8D0E78379d96D0A436b8597835670b13445A6Db'
 
-export const GAMING_TAGS = ['orbcommunitiesgaming', 'gaming']
 export const TESTNET_CURRENCIES = [
   {
     kind: 1,
