@@ -199,7 +199,8 @@ const CollectButton = ({
   // @ts-ignore
   const followerOnly = collectModule?.followerOnly
 
-  if (!timeRemaining || Number(collectLimit) - post?.stats?.collects <= 0) {
+  // @ts-ignore
+  if (collectModule?.endsAt || collectLimit) {
     if (!timeRemaining) {
       return (
         <div className="centered-row px-3 text-p-text py-1 gap-x-1.5 cursor-pointer rounded-full bg-p-hover shrink-0">
@@ -211,7 +212,11 @@ const CollectButton = ({
       )
     }
 
-    if (Number(collectLimit) - post?.stats?.collects <= 0) {
+    if (
+      collectLimit &&
+      post?.stats?.collects &&
+      Number(collectLimit) - post?.stats?.collects <= 0
+    ) {
       return (
         <div className="centered-row px-3 text-p-text py-1 gap-x-1.5 cursor-pointer rounded-full bg-p-hover shrink-0">
           <LayersIcon fontSize="small" />
@@ -241,7 +246,7 @@ const CollectButton = ({
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="relative overflow-hidden outline-none border-none centered-row cursor-pointer text-white bg-brand rounded-full pl-1 pr-4 py-0.5 space-x-2 text-xs shrink-0"
+          className="relative overflow-hidden outline-none border-none centered-row cursor-pointer text-white bg-brand rounded-full pl-1 pr-4 py-1 space-x-2 text-xs shrink-0"
         >
           <motion.div
             animate={controls}
