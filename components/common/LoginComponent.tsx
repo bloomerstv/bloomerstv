@@ -150,7 +150,7 @@ const LoginComponent = ({
                     Enable signless transactions
                   </div>
                   <div className="text-s-text font-semibold text-sm mb-4">
-                    This will allow you to post on chain without signing
+                    This will allow you to post onchain without signing
                   </div>
 
                   <LoadingButton

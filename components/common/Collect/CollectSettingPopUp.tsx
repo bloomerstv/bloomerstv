@@ -461,7 +461,7 @@ const CollectSettingPopUp = () => {
                 <motion.div variants={itemWithHeightAndMt} className="w-full">
                   <div className="text-sm font-semibold">Revenue Split</div>
                   <div className="text-xs text-s-text font-normal">
-                    5% share is allocated for maintain this open source project
+                    5% is allocated to maintain this open source project
                   </div>
                 </motion.div>
                 {settingRecipients.map((recipient, index) => {

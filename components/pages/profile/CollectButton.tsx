@@ -28,11 +28,12 @@ const CollectButton = ({
 }) => {
   const { data } = useSession()
   const { execute: approve } = useApproveModule()
-  const { execute, error, loading } = useOpenAction({
+  const { execute, error } = useOpenAction({
     action: {
       kind: OpenActionKind.COLLECT
     }
   })
+  const [isLoading, setIsLoading] = React.useState(false)
   const [hasCollected, setHasCollected] = React.useState(
     post?.operations?.hasCollected?.value
   )
@@ -43,28 +44,48 @@ const CollectButton = ({
 
   const handleMouseDown = () => {
     controls.start({ height: '100%' })
-    timerRef.current = setTimeout(() => {
-      handleCollect(post)
+    timerRef.current = setTimeout(async () => {
+      try {
+        setIsLoading(true)
+        await handleCollect(post)
+      } catch (error) {
+        // @ts-ignore
+        toast.error(error?.message)
+      } finally {
+        setIsLoading(false)
+        handleMouseUp(true)
+      }
     }, 1000) // adjust this value as needed
   }
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (force: boolean = false) => {
     if (timerRef.current) {
       clearTimeout(timerRef.current)
       timerRef.current = null
     }
-    if (!loading) {
+    if (!isLoading || force) {
       controls.start({ height: '0%' })
     }
   }
-  const approveCollectModuleFor = async (publication: Post) => {
-    const result = await approve({ on: publication })
 
+  const approveAllowance = async (publication: Post) => {
+    const result = await approve({ on: publication })
     if (result.isFailure()) {
       console.log(result.error.message)
+      throw new Error(result.error.message)
+    }
+    return result
+  }
+  const approveCollectModuleFor = async (publication: Post) => {
+    const result = await toast.promise(approveAllowance(publication), {
+      loading: 'Approve Allowance...',
+      success: 'Allowance Approved!',
+      error: 'Error approving allowance'
+    })
+
+    if (!result?.isSuccess()) {
       return
     }
-
     // try again the collect operation
     return handleCollect(publication)
   }
@@ -200,7 +221,7 @@ const CollectButton = ({
   const followerOnly = collectModule?.followerOnly
 
   // @ts-ignore
-  if (collectModule?.endsAt || collectLimit) {
+  if ((collectModule?.endsAt || collectLimit) && !hasCollected) {
     // @ts-ignore
     if (!timeRemaining && collectModule?.endsAt) {
       return (
@@ -246,6 +267,7 @@ const CollectButton = ({
               ) {
                 return
               }
+              if (isLoading) return
               handleMouseDown()
             }
             // start filling the background with black color from bottom
@@ -253,7 +275,9 @@ const CollectButton = ({
           onTap={
             // if the background is filled with black color do nothing
             // else bring the black color that was filling down to the bottom
-            handleMouseUp
+            () => {
+              handleMouseUp()
+            }
           }
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -273,17 +297,23 @@ const CollectButton = ({
               transition: 'height 0.5s ease-in' // adjust this value as needed
             }}
           />
-          {loading ? (
-            <motion.div
-              animate={{ y: ['0%', '30%', '0%'] }}
-              style={{ zIndex: 2 }}
-              transition={{ duration: 0.5, loop: Infinity, ease: 'easeInOut' }}
-            >
-              <LayersIcon fontSize="small" style={{ zIndex: 2 }} />
-            </motion.div>
-          ) : (
+          <motion.div
+            animate={
+              isLoading
+                ? {
+                    y: ['0%', '20%', '0%', '-10%', '0%']
+                  }
+                : {
+                    y: ['0%', '0%', '0%', '0%', '0%']
+                  }
+            }
+            style={{
+              zIndex: 3
+            }}
+            transition={{ duration: 0.5, repeat: Infinity, type: 'keyframes' }}
+          >
             <LayersIcon fontSize="small" style={{ zIndex: 2 }} />
-          )}
+          </motion.div>
 
           <div className="centered-col" style={{ zIndex: 2 }}>
             <div className={'font-semibold text-base leading-6'}>

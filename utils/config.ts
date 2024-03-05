@@ -143,71 +143,79 @@ export const MAINNET_CURRENCIES = [
     address: '0x9B8cc6320F22325759B7D2CA5CD27347bB4eCD86',
     chainType: 'polygon'
   },
-
   {
     kind: 1,
-    name: 'Carlos Money',
+    name: 'Bonsai Token',
+    symbol: 'BONSAI',
     decimals: 18,
-    symbol: 'CMONEY',
-    address: '0x8F0cc4c9810678fAc61B2AF921cCEBca9c78d0f6',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'POOR Token',
-    decimals: 18,
-    symbol: 'POOR',
-    address: '0x3881c079958CC8c89543C1199De7b714e26A9CF7',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'SHELLZ Token',
-    decimals: 18,
-    symbol: 'SHELLZ',
-    address: '0x3223af86fcf0d2c7dEACD8FA7702e387Ae996620',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'ISH Token',
-    decimals: 18,
-    symbol: 'ISH',
-    address: '0x7ED2e70E7C3D24766a025f57907948CBF1d7E9EA',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'KURO Token',
-    decimals: 18,
-    symbol: 'KURO',
-    address: '0xa057521169C9C10aAe0e2036B586cf68fF8241C5',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'Monavale',
-    decimals: 18,
-    symbol: 'MONA',
-    address: '0x6968105460f67c3BF751bE7C15f92F5286Fd0CE5',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'MOSH Token',
-    decimals: 18,
-    symbol: 'MOSH',
-    address: '0x48777A9ff1B703d3d29EDd6E4DC0DcfcFa0533e5',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'Toucan Protocol: Nature Carbon Tonne',
-    decimals: 18,
-    symbol: 'NCT',
-    address: '0xD838290e877E0188a4A44700463419ED96c16107',
+    address: '0x3d2bD0e15829AA5C362a4144FdF4A1112fa29B5c',
     chainType: 'polygon'
   }
+
+  // {
+  //   kind: 1,
+  //   name: 'Carlos Money',
+  //   decimals: 18,
+  //   symbol: 'CMONEY',
+  //   address: '0x8F0cc4c9810678fAc61B2AF921cCEBca9c78d0f6',
+  //   chainType: 'polygon'
+  // },
+  // {
+  //   kind: 1,
+  //   name: 'POOR Token',
+  //   decimals: 18,
+  //   symbol: 'POOR',
+  //   address: '0x3881c079958CC8c89543C1199De7b714e26A9CF7',
+  //   chainType: 'polygon'
+  // },
+  // {
+  //   kind: 1,
+  //   name: 'SHELLZ Token',
+  //   decimals: 18,
+  //   symbol: 'SHELLZ',
+  //   address: '0x3223af86fcf0d2c7dEACD8FA7702e387Ae996620',
+  //   chainType: 'polygon'
+  // },
+  // {
+  //   kind: 1,
+  //   name: 'ISH Token',
+  //   decimals: 18,
+  //   symbol: 'ISH',
+  //   address: '0x7ED2e70E7C3D24766a025f57907948CBF1d7E9EA',
+  //   chainType: 'polygon'
+  // },
+  // {
+  //   kind: 1,
+  //   name: 'KURO Token',
+  //   decimals: 18,
+  //   symbol: 'KURO',
+  //   address: '0xa057521169C9C10aAe0e2036B586cf68fF8241C5',
+  //   chainType: 'polygon'
+  // },
+  // {
+  //   kind: 1,
+  //   name: 'Monavale',
+  //   decimals: 18,
+  //   symbol: 'MONA',
+  //   address: '0x6968105460f67c3BF751bE7C15f92F5286Fd0CE5',
+  //   chainType: 'polygon'
+  // },
+  // {
+  //   kind: 1,
+  //   name: 'MOSH Token',
+  //   decimals: 18,
+  //   symbol: 'MOSH',
+  //   address: '0x48777A9ff1B703d3d29EDd6E4DC0DcfcFa0533e5',
+  //   chainType: 'polygon'
+  // },
+  // {
+  //   kind: 1,
+  //   name: 'Toucan Protocol: Nature Carbon Tonne',
+  //   decimals: 18,
+  //   symbol: 'NCT',
+  //   address: '0xD838290e877E0188a4A44700463419ED96c16107',
+  //   chainType: 'polygon'
+  // }
 ]
 
 export const CURRENCIES = isMainnet ? MAINNET_CURRENCIES : TESTNET_CURRENCIES
