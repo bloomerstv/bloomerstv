@@ -227,8 +227,47 @@ const LiveVideoComponent = ({
           // If the execution fails, increment the retry counter
           retries++
           if (retries === MAX_RETRIES) {
+            if (result.isFailure()) {
+              switch (result.error.name) {
+                case 'BroadcastingError':
+                  console.log(
+                    'There was an error broadcasting the transaction',
+                    result.error.message
+                  )
+                  toast.error('Error broadcasting the transaction')
+                  break
+
+                case 'PendingSigningRequestError':
+                  console.log(
+                    'There is a pending signing request in your wallet. ' +
+                      'Approve it or discard it and try again.'
+                  )
+                  toast.error(
+                    'There is a pending signing request in your wallet. ' +
+                      'Approve it or discard it and try again.'
+                  )
+                  break
+
+                case 'WalletConnectionError':
+                  console.log(
+                    'There was an error connecting to your wallet',
+                    result.error.message
+                  )
+                  toast.error(
+                    'Error connecting to your wallet' + result.error.message
+                  )
+                  break
+
+                case 'UserRejectedError':
+                  // the user decided to not sign, usually this is silently ignored by UIs
+                  break
+
+                default:
+                  toast.error('Error from Lens API' + result.error.message)
+              }
+            }
             // If the maximum number of retries has been reached, throw an error
-            toast.error(result.error.message)
+            // toast.error(result.error.message)
             throw new Error('Error creating post')
           }
         }
