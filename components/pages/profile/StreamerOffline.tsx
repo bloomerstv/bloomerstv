@@ -37,7 +37,7 @@ const StreamerOffline = ({
               src={getAvatar(profile)}
               className="sm:w-16 sm:h-16 w-4 h-4 rounded-full hidden sm:block"
             />
-            <div className="text-xs sm:text-2xl font-bold">
+            <div className="text-xs sm:text-2xl font-bold text-p-text">
               {`${formatHandle(profile)} is offline.`}
             </div>
 
