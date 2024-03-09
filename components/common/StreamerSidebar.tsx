@@ -79,12 +79,12 @@ const StreamerSidebar = () => {
   return (
     <div
       className={clsx(
-        'h-full bg-s-bg overflow-auto',
+        'h-full bg-s-bg overflow-auto no-scrollbar',
         !minimize ? 'min-w-[250px] w-1/6 py-6' : 'py-4'
       )}
     >
       <div className="flex flex-col w-full h-full justify-between">
-        <div className="flex flex-col w-full h-full overflow-y-auto">
+        <div className="flex flex-col w-full h-full overflow-y-auto no-scrollbar">
           {minimize && (
             <IconButton
               sx={{
@@ -116,6 +116,12 @@ const StreamerSidebar = () => {
                     )
                   })}
 
+                  {offlineFollowingStreamers?.map((profile) => {
+                    return (
+                      // @ts-ignore
+                      <StreamerBar key={profile?.id} streamer={{ profile }} />
+                    )
+                  })}
                   {offlineFollowingStreamers?.map((profile) => {
                     return (
                       // @ts-ignore
