@@ -45,7 +45,10 @@ import { BroadcastLive } from './Broadcast'
 import Player from '../../../common/Player'
 import CloseIcon from '@mui/icons-material/Close'
 import useCollectSettings from '../../../common/Collect/useCollectSettings'
-import { getTagsForCategory } from '../../../../utils/categories'
+import {
+  getTagsForCategory,
+  getTagsForSymbol
+} from '../../../../utils/categories'
 const LiveVideoComponent = ({
   myStream,
   startedStreaming,
@@ -125,6 +128,13 @@ const LiveVideoComponent = ({
       myStream?.streamDescription ? `\n\n${myStream?.streamDescription}` : ''
     }${addLiveChatAt ? `\n\nLive Chat at ${profileLink}` : ''}`
 
+    const tags = [
+      ...getTagsForCategory(category),
+      ...getTagsForSymbol(
+        type && amount?.asset?.symbol ? amount.asset.symbol : undefined
+      )
+    ]
+
     const metadata = liveStream({
       title: streamName,
       content: content,
@@ -154,7 +164,7 @@ const LiveVideoComponent = ({
       appId: APP_ID,
       liveUrl: m3u8Url,
       playbackUrl: m3u8Url,
-      tags: getTagsForCategory(category),
+      tags: tags,
       startsAt: new Date().toISOString()
     })
 

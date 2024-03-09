@@ -35,12 +35,7 @@ export const CATEGORIES = [
   },
   {
     name: 'Crypto & Blockchain',
-    tags: [
-      'crypto',
-      'orbcommunitiesairdrop',
-      'orbcommunitiesDeFi',
-      'blockchain'
-    ]
+    tags: ['crypto', 'orbcommunitiesDeFi', 'blockchain']
   },
   {
     name: 'Pets & Animals',
@@ -88,10 +83,27 @@ export const CATEGORIES = [
   }
 ]
 
+export const TOKEN_TAGS = [
+  {
+    symbol: 'pointless',
+    tags: ['orbcommunitiespointless']
+  },
+  {
+    symbol: 'BONSAI',
+    tags: ['orbcommunitiesbonsai']
+  }
+]
+
 export const CATEGORIES_LIST = CATEGORIES.map((category) => category.name)
 
 export const getTagsForCategory = (category?: string) => {
   if (!category) return []
   const categoryObj = CATEGORIES.find((c) => c.name === category)
   return categoryObj?.tags ?? []
+}
+
+export const getTagsForSymbol = (symbol?: string) => {
+  if (!symbol) return []
+  const tokenObj = TOKEN_TAGS.find((c) => c.symbol === symbol)
+  return tokenObj?.tags ?? []
 }

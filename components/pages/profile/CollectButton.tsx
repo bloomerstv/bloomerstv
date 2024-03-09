@@ -205,9 +205,6 @@ const CollectButton = ({
   )
     return null
 
-  console.log('collectModule', collectModule)
-  console.log('post?.operations?.canCollect', post?.operations?.canCollect)
-
   // @ts-ignore
   const amount = collectModule?.amount as Amount<Erc20> | undefined
   // @ts-ignore

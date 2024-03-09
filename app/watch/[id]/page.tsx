@@ -62,7 +62,7 @@ const page = ({
     >
       <div className="w-full flex-grow h-full">{memoizedVideoPage}</div>
       {!isMobile && (
-        <div className="sm:w-[600px] w-full">
+        <div className="sm:w-[500px] w-full">
           <OtherVideosRecommendations />
         </div>
       )}
