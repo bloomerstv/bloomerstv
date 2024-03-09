@@ -494,7 +494,7 @@ const CollectSettingPopUp = () => {
                           newRecipients[index].split = Number(e.target.value)
                           setSettingRecipients(newRecipients)
                         }}
-                        className="w-full"
+                        className="w-[110px]"
                         size="small"
                         inputProps={{
                           max: 90,

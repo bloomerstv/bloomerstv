@@ -48,7 +48,8 @@ const CollectSettingButton = ({ className }: { className?: string }) => {
 
             {!disableCollect ? (
               <div className="start-center-row space-x-2">
-                {amount && (
+                {/* @ts-ignore */}
+                {amount?.value && amount?.asset?.symbol && (
                   // @ts-ignore
                   <span>{`${amount?.value} ${amount.asset.symbol}`}</span>
                 )}

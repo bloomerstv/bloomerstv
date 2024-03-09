@@ -80,7 +80,7 @@ const StreamerSidebar = () => {
     <div
       className={clsx(
         'h-full bg-s-bg overflow-auto no-scrollbar',
-        !minimize ? 'min-w-[250px] w-1/6 py-6' : 'py-4'
+        !minimize ? 'min-w-[250px] w-1/6 py-4' : 'py-4'
       )}
     >
       <div className="flex flex-col w-full h-full justify-between">

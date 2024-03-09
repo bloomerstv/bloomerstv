@@ -44,6 +44,33 @@ export const timeAgo = (time: number | string) => {
   return 'just now'
 }
 
+export const timeAgoShort = (time: number | string) => {
+  const now = new Date().getTime()
+
+  if (typeof time === 'string') {
+    time = new Date(time).getTime()
+  }
+  const diff = now - time
+  const seconds = Math.floor(diff / 1000)
+  const minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60)
+  const days = Math.floor(hours / 24)
+
+  if (days > 0) {
+    return `${days}d`
+  }
+  if (hours > 0) {
+    return `${hours}h`
+  }
+  if (minutes > 0) {
+    return `${minutes}m`
+  }
+  if (seconds > 0) {
+    return `${seconds}s`
+  }
+  return 'now'
+}
+
 export const localDateAndTime = (dataTime: string) => {
   const date = new Date(dataTime)
   const year = date.getFullYear()
