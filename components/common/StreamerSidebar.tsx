@@ -122,12 +122,6 @@ const StreamerSidebar = () => {
                       <StreamerBar key={profile?.id} streamer={{ profile }} />
                     )
                   })}
-                  {offlineFollowingStreamers?.map((profile) => {
-                    return (
-                      // @ts-ignore
-                      <StreamerBar key={profile?.id} streamer={{ profile }} />
-                    )
-                  })}
                 </div>
               ) : (
                 <>
