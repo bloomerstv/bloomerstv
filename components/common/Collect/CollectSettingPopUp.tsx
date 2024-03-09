@@ -26,6 +26,7 @@ import {
 import { CURRENCIES, PROJECT_ADDRESS } from '../../../utils/config'
 import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1'
 import clsx from 'clsx'
+import WalletAddressTextField from './WalletAddressTextField'
 interface SettingRecipientType {
   recipient?: string
   split?: number
@@ -469,20 +470,14 @@ const CollectSettingPopUp = () => {
                     <motion.div
                       variants={itemWithHeightAndMt}
                       key={index}
-                      className="flex flex-row items-center space-x-2"
+                      className="flex flex-row items-center space-x-2 w-full"
                     >
-                      <TextField
-                        type="text"
-                        label="Recipient"
+                      <WalletAddressTextField
+                        index={index}
                         value={recipient.recipient}
-                        onChange={(e) => {
-                          const newRecipients = [...settingRecipients]
-                          newRecipients[index].recipient = e.target.value
-                          setSettingRecipients(newRecipients)
-                        }}
-                        disabled={index === 0}
-                        className="w-full"
-                        size="small"
+                        setSettingRecipients={setSettingRecipients}
+                        settingRecipients={settingRecipients}
+                        key={index}
                       />
                       <TextField
                         type="number"
