@@ -1,4 +1,4 @@
-import { Button, IconButton, TextareaAutosize } from '@mui/material'
+import { Button, IconButton } from '@mui/material'
 import React, { memo, useEffect, useRef, useState } from 'react'
 
 // import { WebSocket } from 'ws'
@@ -20,7 +20,6 @@ import {
   useSession
 } from '@lens-protocol/react-web'
 import getAvatar from '../../../../utils/lib/getAvatar'
-import SendIcon from '@mui/icons-material/Send'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import LoginComponent from '../../../common/LoginComponent'
 import LoginIcon from '@mui/icons-material/Login'
@@ -42,6 +41,7 @@ import getUserLocale from '../../../../utils/getUserLocale'
 import { textOnly } from '@lens-protocol/metadata'
 import { v4 as uuid } from 'uuid'
 import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
+import LiveChatInput from './LiveChatInput'
 interface MessageType {
   content: string
   avatarUrl: string
@@ -389,44 +389,12 @@ const LiveChat = ({
       {/* input section */}
       <div className="w-full py-2 px-3 border-t border-p-border">
         {data?.type === SessionType.WithProfile && socket ? (
-          <div className="w-full flex flex-row items-end gap-x-2">
-            {inputMessage.trim().length > 0 && (
-              <img
-                src={getAvatar(data?.profile)}
-                alt="avatar"
-                className="w-7 h-7 rounded-full mb-1"
-              />
-            )}
-            <TextareaAutosize
-              className="text-sm text-p-text resize-none  border-p-border outline-none bg-s-bg w-full font-normal font-sans leading-normal px-3 py-1.5 mb-0.5 rounded-xl "
-              aria-label="empty textarea"
-              placeholder="Chat..."
-              style={{
-                resize: 'none'
-              }}
-              maxRows={5}
-              onChange={(e) => setInputMessage(e.target.value)}
-              value={inputMessage}
-              onKeyDown={(e) => {
-                if (
-                  e.key === 'Enter' &&
-                  !e.shiftKey &&
-                  inputMessage.trim().length > 0
-                ) {
-                  e.preventDefault()
-                  sendMessage()
-                }
-              }}
-            />
-            <IconButton
-              onClick={sendMessage}
-              className=" rounded-full"
-              size="small"
-              disabled={inputMessage.trim().length === 0}
-            >
-              <SendIcon />
-            </IconButton>
-          </div>
+          <LiveChatInput
+            profile={data?.profile}
+            inputMessage={inputMessage}
+            sendMessage={sendMessage}
+            setInputMessage={setInputMessage}
+          />
         ) : (
           <Button
             variant="contained"

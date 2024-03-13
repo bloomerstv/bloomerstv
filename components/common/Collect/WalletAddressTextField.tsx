@@ -16,7 +16,6 @@ const WalletAddressTextField = ({
   index: number
   setSettingRecipients: (value: SettingRecipientType[]) => void
 }) => {
-  console.log('value', value)
   const { data } = useSearchProfiles({
     query: value,
     limit: LimitType.Ten
@@ -27,7 +26,6 @@ const WalletAddressTextField = ({
   // @ts-ignore
   const open = data && data?.length > 0 && Boolean(textRef?.current)
 
-  console.log('open', open)
   const id = open ? 'transition-popper' : undefined
 
   return (
@@ -42,12 +40,17 @@ const WalletAddressTextField = ({
         })}
       </div> */}
       {open && (
-        <div className="p-2 start-col text-p-text space-y-2 z-30 bg-s-bg shadow-md border-s-border rounded-md absolute w-full bottom-14">
+        <div className="p-2 start-col text-p-text space-y-1 z-30 bg-s-bg shadow-md border-s-border rounded-md absolute w-full bottom-14">
           {data?.slice(0, 4)?.map((profile: Profile) => {
             return (
               <Button
                 variant="text"
-                style={{ justifyContent: 'flex-start' }}
+                size="small"
+                style={{
+                  justifyContent: 'flex-start',
+                  paddingLeft: '10px',
+                  borderRadius: '6px'
+                }}
                 key={profile?.id}
                 className="text-p-text"
                 onClick={() => {
@@ -86,6 +89,7 @@ const WalletAddressTextField = ({
         <TextField
           type="text"
           label="Recipient"
+          placeholder="kontak or 0x..."
           value={value}
           onChange={(e) => {
             const newRecipients = [...settingRecipients]
