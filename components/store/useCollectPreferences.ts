@@ -1,6 +1,7 @@
 import { Erc20Amount, RecipientWithSplit } from '@lens-protocol/react-web'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { SettingRecipientType } from '../common/Collect/CollectSettingPopUp'
 
 interface CollectPreferencesStore {
   amount?: Erc20Amount
@@ -10,6 +11,7 @@ interface CollectPreferencesStore {
   followerOnly: boolean
   numberOfDays?: number
   recipients?: RecipientWithSplit[]
+  settingRecipients?: SettingRecipientType[]
   setAmount: (amount?: Erc20Amount) => void
   setCollectLimit: (collectLimit?: number) => void
   setReferalFee: (referalFee?: number) => void
@@ -17,6 +19,7 @@ interface CollectPreferencesStore {
   setFollowerOnly: (followerOnly: boolean) => void
   setNumberOfDays: (numberOfDays?: number) => void
   setRecipients: (recipients?: RecipientWithSplit[]) => void
+  setSettingRecipients: (settingRecipients: SettingRecipientType[]) => void
 }
 
 export const useCollectPreferences = create<CollectPreferencesStore>(
@@ -29,6 +32,7 @@ export const useCollectPreferences = create<CollectPreferencesStore>(
       numberOfDays: undefined,
       followerOnly: true,
       recipients: undefined,
+      settingRecipients: [],
       setAmount: (amount?: Erc20Amount) => set(() => ({ amount })),
       setCollectLimit: (collectLimit?: number) => set(() => ({ collectLimit })),
       setReferalFee: (referalFee?: number) => set(() => ({ referalFee })),
@@ -37,7 +41,9 @@ export const useCollectPreferences = create<CollectPreferencesStore>(
       setNumberOfDays: (numberOfDays?: number) => set(() => ({ numberOfDays })),
       setFollowerOnly: (followerOnly: boolean) => set(() => ({ followerOnly })),
       setRecipients: (recipients?: RecipientWithSplit[]) =>
-        set(() => ({ recipients }))
+        set(() => ({ recipients })),
+      setSettingRecipients: (settingRecipients: SettingRecipientType[]) =>
+        set(() => ({ settingRecipients }))
     }),
     {
       name: 'collectPreferences',
@@ -49,7 +55,8 @@ export const useCollectPreferences = create<CollectPreferencesStore>(
           disableCollect: state.disableCollect,
           followerOnly: state.followerOnly,
           numberOfDays: state.numberOfDays,
-          recipients: state.recipients
+          recipients: state.recipients,
+          settingRecipients: state.settingRecipients
         }
       }
     }

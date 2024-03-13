@@ -27,9 +27,10 @@ import { CURRENCIES, PROJECT_ADDRESS } from '../../../utils/config'
 import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1'
 import clsx from 'clsx'
 import WalletAddressTextField from './WalletAddressTextField'
-interface SettingRecipientType {
+export interface SettingRecipientType {
   recipient?: string
   split?: number
+  handle?: string
 }
 
 const item = {
@@ -65,13 +66,15 @@ const CollectSettingPopUp = () => {
     numberOfDays,
     followerOnly,
     recipients,
+    settingRecipients,
     setAmount,
     setDisableCollect,
     setCollectLimit,
     setReferalFee,
     setNumberOfDays,
     setFollowerOnly,
-    setRecipients
+    setRecipients,
+    setSettingRecipients
   } = useCollectPreferences((state) => state)
 
   const [isCollectLimit, setIsCollectLimit] = React.useState(false)
@@ -82,9 +85,7 @@ const CollectSettingPopUp = () => {
   const [amountCurrency, setAmountCurrency] = React.useState<
     String | undefined
   >()
-  const [settingRecipients, setSettingRecipients] = React.useState<
-    SettingRecipientType[]
-  >([])
+
   const [recipientError, setRecipientError] = React.useState<
     | "Split doesn't add up to 100%"
     | 'There is a recipient with invalid address'
@@ -116,11 +117,31 @@ const CollectSettingPopUp = () => {
       setAmountCurrency(amount?.asset?.symbol)
     }
 
-    if (settingRecipients.length === 0 && recipients) {
+    if (
+      settingRecipients?.length === 0 &&
+      recipients &&
+      data?.type === SessionType.WithProfile
+    ) {
       // @ts-ignore
-      setSettingRecipients(recipients)
+      // for project address add bloomerstv as handle & data?.address as data?.handle
+      const initRecipients = recipients.map((recipient) => {
+        if (recipient.recipient === PROJECT_ADDRESS) {
+          return {
+            recipient: recipient.recipient,
+            split: recipient.split,
+            handle: 'bloomerstv'
+          }
+        } else if (recipient.recipient === data?.address) {
+          return {
+            recipient: recipient.recipient,
+            split: recipient.split,
+            handle: data?.profile?.handle?.localName
+          }
+        }
+      })
+      setSettingRecipients(initRecipients as SettingRecipientType[])
     }
-  }, [collectLimit, amount, referalFee, numberOfDays, recipients])
+  }, [collectLimit, amount, referalFee, numberOfDays, recipients, data?.type])
 
   useEffect(() => {
     if (data?.type === SessionType.WithProfile && !recipients) {
@@ -465,16 +486,16 @@ const CollectSettingPopUp = () => {
                     5% is allocated to maintain this open source project
                   </div>
                 </motion.div>
-                {settingRecipients.map((recipient, index) => {
+                {settingRecipients?.map((recipient, index) => {
                   return (
                     <motion.div
                       variants={itemWithHeightAndMt}
                       key={index}
-                      className="flex flex-row items-center space-x-2 w-full"
+                      className="start-row space-x-2 w-full"
                     >
                       <WalletAddressTextField
                         index={index}
-                        value={recipient.recipient}
+                        value={String(recipient.recipient)}
                         setSettingRecipients={setSettingRecipients}
                         settingRecipients={settingRecipients}
                         key={index}
@@ -522,7 +543,7 @@ const CollectSettingPopUp = () => {
                 )}
 
                 {/* add recipient button */}
-                {settingRecipients.length < 5 && (
+                {settingRecipients && settingRecipients.length < 5 && (
                   <motion.div variants={itemWithHeightAndMt} className="w-full">
                     <Button
                       variant="outlined"

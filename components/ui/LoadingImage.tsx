@@ -15,7 +15,7 @@ const LoadingImage: React.FC<LoadingImageProps> = ({
   const [error, setError] = useState(false)
 
   return (
-    <>
+    <div>
       {loading && (
         <div
           className={`${
@@ -38,7 +38,7 @@ const LoadingImage: React.FC<LoadingImageProps> = ({
           setLoading(false)
         }}
       />
-    </>
+    </div>
   )
 }
 
