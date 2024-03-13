@@ -120,6 +120,7 @@ const CollectSettingPopUp = () => {
     if (
       settingRecipients?.length === 0 &&
       recipients &&
+      recipients.length > 0 &&
       data?.type === SessionType.WithProfile
     ) {
       // @ts-ignore
@@ -128,13 +129,13 @@ const CollectSettingPopUp = () => {
         if (recipient?.recipient === PROJECT_ADDRESS) {
           return {
             recipient: recipient?.recipient,
-            split: recipient.split,
+            split: recipient?.split,
             handle: 'bloomerstv'
           }
         } else if (recipient?.recipient === data?.address) {
           return {
             recipient: recipient?.recipient,
-            split: recipient.split,
+            split: recipient?.split,
             handle: data?.profile?.handle?.localName
           }
         }
@@ -503,7 +504,7 @@ const CollectSettingPopUp = () => {
                       <TextField
                         type="number"
                         label="Split %"
-                        value={recipient.split}
+                        value={recipient?.split}
                         disabled={index === 0}
                         onChange={(e) => {
                           const newRecipients = [...settingRecipients]
