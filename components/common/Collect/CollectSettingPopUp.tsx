@@ -125,15 +125,15 @@ const CollectSettingPopUp = () => {
       // @ts-ignore
       // for project address add bloomerstv as handle & data?.address as data?.handle
       const initRecipients = recipients.map((recipient) => {
-        if (recipient.recipient === PROJECT_ADDRESS) {
+        if (recipient?.recipient === PROJECT_ADDRESS) {
           return {
-            recipient: recipient.recipient,
+            recipient: recipient?.recipient,
             split: recipient.split,
             handle: 'bloomerstv'
           }
-        } else if (recipient.recipient === data?.address) {
+        } else if (recipient?.recipient === data?.address) {
           return {
-            recipient: recipient.recipient,
+            recipient: recipient?.recipient,
             split: recipient.split,
             handle: data?.profile?.handle?.localName
           }
@@ -206,7 +206,7 @@ const CollectSettingPopUp = () => {
     // check if there are duplicate addresses
 
     const uniqueRecipients = new Set(
-      settingRecipients.map((recipient) => recipient.recipient)
+      settingRecipients.map((recipient) => recipient?.recipient)
     )
 
     if (uniqueRecipients.size !== settingRecipients.length) {
@@ -495,7 +495,7 @@ const CollectSettingPopUp = () => {
                     >
                       <WalletAddressTextField
                         index={index}
-                        value={String(recipient.recipient)}
+                        value={String(recipient?.recipient)}
                         setSettingRecipients={setSettingRecipients}
                         settingRecipients={settingRecipients}
                         key={index}
