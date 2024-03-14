@@ -377,7 +377,7 @@ const ProfileBar = ({
                       </Tooltip>
                     )}
 
-                  {profile?.id && streamer?.isActive && (
+                  {profile?.id && !post && (
                     <LiveCount profileId={profile?.id} />
                   )}
 
@@ -394,9 +394,7 @@ const ProfileBar = ({
 
         {!isMobile && (
           <div className="start-center-row gap-x-3 shrink-0">
-            {profile?.id && streamer?.isActive && (
-              <LiveCount profileId={profile?.id} />
-            )}
+            {profile?.id && !post && <LiveCount profileId={profile?.id} />}
 
             {/* like button  */}
             {publication?.id && (
@@ -567,7 +565,7 @@ const ProfileBar = ({
             )}
 
             {/* live chat button */}
-            {profile?.id && !post && streamer?.isActive && (
+            {profile?.id && !post && (
               <div className="shrink-0">
                 <MobileChatButton profileId={profile?.id} />
               </div>
