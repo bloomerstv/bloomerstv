@@ -32,10 +32,9 @@ import MobileChatButton from './MobileChatButton'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import ReplyIcon from '@mui/icons-material/Reply'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import LoginComponent from '../../common/LoginComponent'
-
+import IosShareIcon from '@mui/icons-material/IosShare'
 import LoginIcon from '@mui/icons-material/Login'
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import Markup from '../../common/Lexical/Markup'
@@ -276,17 +275,26 @@ const ProfileBar = ({
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuList>
-          <MenuItem
-            onClick={async () => {
-              await handleUnFollow()
-              handleMenuClose()
-            }}
-            disabled={unFollowing}
-          >
+          {isFollowing && (
+            <MenuItem
+              onClick={async () => {
+                await handleUnFollow()
+                handleMenuClose()
+              }}
+              disabled={unFollowing}
+            >
+              <ListItemIcon>
+                <PersonRemoveIcon fontSize="small" />
+              </ListItemIcon>
+              Unfollow
+            </MenuItem>
+          )}
+
+          <MenuItem onClick={handleShare}>
             <ListItemIcon>
-              <PersonRemoveIcon fontSize="small" />
+              <IosShareIcon fontSize="small" />
             </ListItemIcon>
-            Unfollow
+            Share
           </MenuItem>
         </MenuList>
       </Menu>
@@ -309,7 +317,7 @@ const ProfileBar = ({
         </div>
       )}
       <div className="m-2 sm:mt-5 sm:mx-8 flex flex-row justify-between items-start text-p-text">
-        <div className="flex flex-row items-center gap-x-2 sm:gap-x-4 w-full">
+        <div className="start-center-row gap-x-2 sm:gap-x-4 w-full">
           <div className="">
             <Link
               href={`/${formatHandle(profile)}`}
@@ -333,59 +341,58 @@ const ProfileBar = ({
               )}
 
             <div className="flex flex-row items-center justify-between w-full space-x-6 ">
-              <div>
-                <Link
-                  href={`/${formatHandle(profile)}`}
-                  prefetch
-                  className="no-underline text-p-text"
-                >
-                  <div className="font-semibold sm:text-sm">
-                    {formatHandle(profile)}
-                  </div>
-                </Link>
+              <div className="centered-row gap-x-4">
+                <div>
+                  <Link
+                    href={`/${formatHandle(profile)}`}
+                    prefetch
+                    className="no-underline text-p-text"
+                  >
+                    <div className="font-semibold sm:text-sm">
+                      {formatHandle(profile)}
+                    </div>
+                  </Link>
 
-                <div className="start-center-row space-x-1 text-sm">
-                  <div className="">{profile?.stats?.followers}</div>
-                  <div className="text-s-text">followers</div>
+                  <div className="start-center-row space-x-1 sm:text-sm text-xs">
+                    <div className="">{profile?.stats?.followers}</div>
+                    <div className="text-s-text">followers</div>
+                  </div>
                 </div>
+                {!isFollowing &&
+                  mySession?.type === SessionType.WithProfile &&
+                  mySession.profile?.id !== profile?.id && (
+                    <Tooltip title="Follow this streamer" arrow>
+                      <LoadingButton
+                        loading={followLoading}
+                        onClick={handleFollow}
+                        variant="contained"
+                        autoCapitalize="none"
+                        size="small"
+                        color="primary"
+                        startIcon={<StarIcon />}
+                        loadingPosition="start"
+                        disabled={followLoading || isFollowing}
+                        title="Follow this streamer"
+                        sx={{
+                          borderRadius: isMobile ? '20px' : '15px',
+                          boxShadow: 'none'
+                        }}
+                      >
+                        {isFollowing ? 'Following' : 'Follow'}
+                      </LoadingButton>
+                    </Tooltip>
+                  )}
               </div>
 
               {isMobile && (
                 <div className="centered-row gap-x-2">
-                  {!isFollowing &&
-                    mySession?.type === SessionType.WithProfile &&
-                    mySession.profile?.id !== profile?.id && (
-                      <Tooltip title="Follow this streamer" arrow>
-                        <LoadingButton
-                          loading={followLoading}
-                          onClick={handleFollow}
-                          variant="contained"
-                          autoCapitalize="none"
-                          size="small"
-                          color="primary"
-                          startIcon={<StarIcon />}
-                          loadingPosition="start"
-                          disabled={followLoading || isFollowing}
-                          title="Follow this streamer"
-                          sx={{
-                            borderRadius: isMobile ? '20px' : '15px',
-                            boxShadow: 'none'
-                          }}
-                        >
-                          {isFollowing ? 'Following' : 'Follow'}
-                        </LoadingButton>
-                      </Tooltip>
-                    )}
-
                   {profile?.id && !post && (
                     <LiveCount profileId={profile?.id} />
                   )}
 
-                  {isFollowing && (
-                    <IconButton onClick={handleMenuClick}>
-                      <MoreVertIcon className="text-s-text" />
-                    </IconButton>
-                  )}
+                  <IconButton onClick={handleMenuClick}>
+                    <MoreVertIcon className="text-s-text" />
+                  </IconButton>
                 </div>
               )}
             </div>
@@ -448,30 +455,7 @@ const ProfileBar = ({
               </Tooltip>
             )}
 
-            {/* share button */}
-            <div className="">
-              <Button
-                size="small"
-                color="secondary"
-                variant="contained"
-                onClick={handleShare}
-                startIcon={
-                  <ReplyIcon
-                    style={{
-                      transform: 'scaleX(-1)'
-                    }}
-                  />
-                }
-                sx={{
-                  boxShadow: 'none',
-                  borderRadius: '20px'
-                }}
-              >
-                Share
-              </Button>
-            </div>
-
-            {!isFollowing &&
+            {/* {!isFollowing &&
               mySession?.type === SessionType.WithProfile &&
               mySession.profile?.id !== profile?.id && (
                 <Tooltip title="Follow this streamer" arrow>
@@ -494,29 +478,27 @@ const ProfileBar = ({
                     {isFollowing ? 'Following' : 'Follow'}
                   </LoadingButton>
                 </Tooltip>
-              )}
+              )} */}
 
             {publication && (
               <CollectButton post={publication} isFollowing={isFollowing} />
             )}
 
-            {isFollowing && (
+            <div className="-mx-2.5">
               <IconButton onClick={handleMenuClick}>
                 <MoreVertIcon className="text-s-text" />
               </IconButton>
-            )}
+            </div>
           </div>
         )}
       </div>
 
       {isMobile && (
         <div className="w-full">
-          <div className="centered-row">
+          <div className="start-center-row gap-x-2 px-2 w-full no-scrollbar  overflow-x-auto">
             {publication && (
               <CollectButton post={publication} isFollowing={isFollowing} />
             )}
-          </div>
-          <div className="start-center-row gap-x-3 pt-2 px-2 w-full no-scrollbar  overflow-x-auto">
             {/* like button */}
             {publication?.id && (
               <Button
@@ -574,28 +556,6 @@ const ProfileBar = ({
             {publication?.id && !streamer?.isActive && (
               <MobileCommentButton postId={publication?.id} />
             )}
-
-            {/* share button */}
-            <Button
-              size="small"
-              color="secondary"
-              variant="contained"
-              onClick={handleShare}
-              sx={{
-                borderRadius: '20px',
-                boxShadow: 'none'
-              }}
-              className="shrink-0"
-              startIcon={
-                <ReplyIcon
-                  style={{
-                    transform: 'scaleX(-1)'
-                  }}
-                />
-              }
-            >
-              Share
-            </Button>
           </div>
         </div>
       )}
