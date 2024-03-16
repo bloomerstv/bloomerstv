@@ -42,11 +42,11 @@ const LoginPage = () => {
     return null
   }
   return (
-    <div className="absolute z-50 top-0 bottom-0 left-0 right-0 w-full h-screen bg-p-bg p-8">
+    <div className="absolute z-50 top-0 bottom-0 left-0 right-0 w-full h-screen bg-p-bg p-8 overflow-auto no-scrollbar">
       {isConnected ? (
         // login page
         <div className="between-col h-full">
-          <div className="font-bold text-7xl mt-16 mb-8">
+          <div className="font-bold text-5xl mt-16 mb-8">
             Login with your profile
           </div>
 
