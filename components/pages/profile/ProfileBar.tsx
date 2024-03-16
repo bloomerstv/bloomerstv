@@ -431,7 +431,7 @@ const ProfileBar = ({
             {/* mirror button */}
 
             {publication?.id && (
-              <Tooltip title="Boost the stream" arrow>
+              <Tooltip title="Mirror" arrow>
                 <Button
                   size="small"
                   color="secondary"

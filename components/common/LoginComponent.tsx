@@ -73,7 +73,8 @@ const LoginComponent = ({
         <>
           {data?.type !== SessionType.WithProfile ? (
             <>
-              <div className="text-2xl font-bold">Login with your profile</div>
+              <div className="text-2xl font-bold">Login with your handle</div>
+
               <div className="start-col my-4 w-full rounded-xl bg-s-bg border border-p-border">
                 {loadingProfiles && (
                   <div className="centered-row w-full p-4">
@@ -131,6 +132,7 @@ const LoginComponent = ({
                   </div>
                 )}
               </div>
+
               {/* // disconnect wallet */}
               <div
                 onClick={async () => {
