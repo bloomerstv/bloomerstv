@@ -334,7 +334,6 @@ function Clip({
   const [isPending, startTransition] = useTransition()
 
   const createClipComposed = useCallback((opts: any) => {
-    console.log('opts', opts)
     startTransition(async () => {
       await createClip(opts.playbackId, opts.startTime, opts.endTime)
     })

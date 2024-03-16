@@ -16,7 +16,6 @@ import { APP_ID, APP_LINK, defaultSponsored } from '../../../utils/config'
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
 import { useUploadDataToArMutation } from '../../../graphql/generated'
-import Player from '../../common/Player'
 import useCollectSettings from '../../common/Collect/useCollectSettings'
 import CollectSettingButton from '../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
@@ -215,7 +214,13 @@ const PostClipOnLens = ({
             </Select>
           </div>
 
-          <Player className="rounded-md" src={url} showPipButton={false} />
+          <video
+            controls
+            src={url}
+            className="w-full rounded-xl"
+            autoPlay
+            muted
+          />
         </div>
       </ModalWrapper>
     </>
