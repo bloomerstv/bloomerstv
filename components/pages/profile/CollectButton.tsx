@@ -347,7 +347,7 @@ const CollectButton = ({
         </motion.button>
       ) : (
         <motion.div
-          className="sm:block hidden px-3 text-brand py-1 cursor-pointer rounded-full bg-p-hover shrink-0"
+          className=" px-3 text-brand py-1 cursor-pointer rounded-full bg-p-hover shrink-0"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
