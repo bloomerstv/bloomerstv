@@ -1,7 +1,7 @@
 import {
   SessionType,
   useLogin,
-  useProfiles,
+  useProfilesManaged,
   useSession
 } from '@lens-protocol/react-web'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -25,11 +25,10 @@ const LoginPage = () => {
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
   const { openConnectModal } = useConnectModal()
   const [selectedProfileId, setSelectedProfileId] = React.useState<string>()
-  const { data: profiles, loading: loadingProfiles } = useProfiles({
-    where: {
-      // @ts-ignore
-      ownedBy: [address]
-    }
+  const { data: profiles, loading: loadingProfiles } = useProfilesManaged({
+    // @ts-ignore
+    for: address,
+    includeOwned: true
   })
 
   const { execute, loading: logging } = useLogin()
