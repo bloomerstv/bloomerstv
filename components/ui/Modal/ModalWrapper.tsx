@@ -28,7 +28,8 @@ const ModalWrapper = ({
   open,
   classname,
   BotttomComponent,
-  hideBackdrop = false
+  hideBackdrop = false,
+  keepOpenOnBgClick = false
 }: {
   children: React.ReactNode
   title?: string
@@ -39,6 +40,7 @@ const ModalWrapper = ({
   classname?: string
   BotttomComponent?: React.ReactNode
   hideBackdrop?: boolean
+  keepOpenOnBgClick?: boolean
 }) => {
   const isMobile = useIsMobile()
   const { theme } = useTheme()
@@ -49,7 +51,10 @@ const ModalWrapper = ({
         hideBackdrop={hideBackdrop}
         anchor="bottom"
         open={open}
-        onClose={onClose}
+        onClose={(e) => {
+          if (keepOpenOnBgClick && Boolean(e)) return
+          onClose()
+        }}
         onOpen={onOpen}
         disableSwipeToOpen
         sx={{
@@ -80,7 +85,7 @@ const ModalWrapper = ({
       aria-labelledby="transition-modal-title"
       aria-describedby="transition-modal-description"
       open={open}
-      onClose={onClose}
+      onClose={keepOpenOnBgClick ? undefined : onClose}
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
       slotProps={{

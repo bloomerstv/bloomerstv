@@ -153,6 +153,7 @@ const PostClipOnLens = ({
         onOpen={() => setOpen(true)}
         title="Post Clip on Lens"
         Icon={<EditIcon />}
+        keepOpenOnBgClick
         classname="w-[600px]"
         BotttomComponent={
           <div className="flex flex-row justify-end">
