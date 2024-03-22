@@ -67,7 +67,7 @@
 }
 
 @layer utilities {
-  .image-unselectable {
+  .unselectable {
     -webkit-user-drag: none;
     user-select: none;
     -moz-user-select: none;

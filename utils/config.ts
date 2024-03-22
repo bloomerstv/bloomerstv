@@ -20,6 +20,17 @@ export const PRODUCTION_NODE_API_URL = 'https://api.bloomers.tv'
 export const DEVELOPMENT_NODE_API_URL =
   'https://bloomerstv-api-dev.onrender.com'
 
+export const LOCAL_WIDGETS_URL = 'http://localhost:3001'
+export const PRODUCTION_WIDGETS_URL = 'https://widgets.bloomers.tv'
+export const DEVELOPMENT_WIDGETS_URL = 'https://widgets.bloomers.tv'
+
+export const WIDGETS_URL =
+  NODE_API_MODE === 'local'
+    ? LOCAL_WIDGETS_URL
+    : NODE_API_MODE === 'production'
+      ? PRODUCTION_WIDGETS_URL
+      : DEVELOPMENT_WIDGETS_URL
+
 export const NODE_API_URL =
   NODE_API_MODE === 'local'
     ? LOCAL_NODE_API_URL
