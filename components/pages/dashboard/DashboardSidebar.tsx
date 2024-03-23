@@ -7,6 +7,7 @@ import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
 import CircleIcon from '@mui/icons-material/Circle'
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary'
+import WidgetsIcon from '@mui/icons-material/Widgets'
 const DashboardSidebar = () => {
   const pathname = usePathname()
   const { data } = useSession()
@@ -46,6 +47,17 @@ const DashboardSidebar = () => {
         >
           <VideoLibraryIcon className="mr-2" />
           Content
+        </ListItemButton>
+        <ListItemButton
+          selected={pathname.startsWith('/dashboard/widgets')}
+          LinkComponent={Link}
+          href="/dashboard/widgets"
+          sx={{
+            padding: '10px 20px'
+          }}
+        >
+          <WidgetsIcon className="mr-2" />
+          Widgets
         </ListItemButton>
       </div>
     </div>

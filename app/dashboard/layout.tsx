@@ -19,7 +19,7 @@ export default function RootLayout({
     return (
       <div className="h-full w-full bg-s-bg centered-col">
         <div className="text-s-text font-semibold">
-          You need to be logged in to go view your content
+          You need to be logged in to go view this page
         </div>
       </div>
     )

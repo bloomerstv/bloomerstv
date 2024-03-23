@@ -108,9 +108,7 @@ const VideoClipper = ({
             <img
               src={thumbnail}
               alt={`Thumbnail ${index}`}
-              className={clsx(
-                'w-full h-20 object-cover image-unselectable block'
-              )}
+              className={clsx('w-full h-20 object-cover unselectable block')}
               onError={(e) => {
                 // @ts-ignore
                 e.target.onerror = null // Prevents infinite looping in case the fallback image also fails to load
