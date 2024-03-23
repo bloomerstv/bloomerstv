@@ -236,3 +236,5 @@ export const CHAT_BOX_PREVIEW_VIDEO =
   'https://vod-cdn.lp-playback.studio/raw/jxf4iblf6wlsyor6526t4tcmtmqa/catalyst-vod-com/hls/b40azu14uorpov6u/720p0.mp4'
 export const ALERT_BOX_PREVIEW_VIDEO =
   'https://vod-cdn.lp-playback.studio/raw/jxf4iblf6wlsyor6526t4tcmtmqa/catalyst-vod-com/hls/1d46hps10mofkmpj/720p0.mp4'
+export const HOW_TO_ADD_WIDGETS_VIDEO =
+  'https://vod-cdn.lp-playback.studio/raw/jxf4iblf6wlsyor6526t4tcmtmqa/catalyst-vod-com/hls/6913ct06fo4vrc9p/1080p0.mp4'
