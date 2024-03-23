@@ -6,10 +6,13 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import { WIDGETS_URL } from '../../../../utils/config'
 import { SessionType, useSession } from '@lens-protocol/react-web'
 import toast from 'react-hot-toast'
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
+import Link from 'next/link'
 const ChatBoxWidgetPage = () => {
   const { data } = useSession()
   const [width, setWidth] = useState(300)
-  const [height, setHeight] = useState(400)
+  const [height, setHeight] = useState(300)
+  const [limit, setLimit] = useState(3)
   const [iframeKey, setIframeKey] = useState(Date.now())
 
   const refreshIframe = () => {
@@ -21,7 +24,7 @@ const ChatBoxWidgetPage = () => {
   }
 
   const handleCopy = () => {
-    const chatSourceUrl = `${WIDGETS_URL}/live-chat/${data?.profile?.id}`
+    const chatSourceUrl = `${WIDGETS_URL}/live-chat/${data?.profile?.id}?limit=${limit}`
     navigator.clipboard.writeText(chatSourceUrl)
     toast.success('Copied to clipboard')
   }
@@ -29,8 +32,13 @@ const ChatBoxWidgetPage = () => {
   return (
     <div>
       <div className="">
-        <div className="text-3xl font-bold">Chat Box Widget</div>
-        <div className="text-sm font-semibold text-s-text">
+        <Link href="/dashboard/widgets" className="text-p-text no-underline">
+          <div className="start-center-row gap-x-2 text-3xl font-bold cursor-pointer">
+            <ArrowBackIosNewIcon className="cursor-pointer" />
+            <div>Chat Box </div>
+          </div>
+        </Link>
+        <div className="text-sm font-semibold text-s-text mt-2">
           The chat box allows you to display your live chat on your stream
         </div>
       </div>
@@ -38,25 +46,41 @@ const ChatBoxWidgetPage = () => {
       <div className="flex flex-row justify-between mt-6">
         {/* options */}
         <div className="start-col gap-y-3">
-          <div className="start-center-row gap-x-4">
-            <div>Width</div>
-            <Input
-              type="number"
-              defaultValue={400}
-              inputProps={{ min: 100, max: 800 }}
-              value={width}
-              onChange={(e) => setWidth(Number(e.target.value))}
-            />
-          </div>
-          <div className="start-center-row gap-x-4">
-            <div>Height</div>
-            <Input
-              type="number"
-              defaultValue={400}
-              inputProps={{ min: 100, max: 800 }}
-              value={height}
-              onChange={(e) => setHeight(Number(e.target.value))}
-            />
+          <div className="start-col gap-y-3 w-fit">
+            <div className="between-row w-full gap-x-6">
+              <div>Width in px</div>
+              <Input
+                type="number"
+                defaultValue={400}
+                inputProps={{ min: 100, max: 800 }}
+                value={width}
+                className="w-[70px]"
+                onChange={(e) => setWidth(Number(e.target.value))}
+              />
+            </div>
+            <div className="between-row w-full gap-x-6">
+              <div>Height in px</div>
+              <Input
+                type="number"
+                defaultValue={400}
+                inputProps={{ min: 100, max: 800 }}
+                value={height}
+                className="w-[70px]"
+                onChange={(e) => setHeight(Number(e.target.value))}
+              />
+            </div>
+
+            <div className="between-row w-full gap-x-6">
+              <div>Limit No. of Chat</div>
+              <Input
+                type="number"
+                defaultValue={4}
+                inputProps={{ min: 1, max: 10 }}
+                value={limit}
+                className="w-[70px]"
+                onChange={(e) => setLimit(Number(e.target.value))}
+              />
+            </div>
           </div>
           <div className="start-center-row gap-x-4 mt-4">
             {/* // copy source url */}
@@ -92,7 +116,7 @@ const ChatBoxWidgetPage = () => {
                 border: 'none'
               }}
               key={iframeKey}
-              src={`${WIDGETS_URL}/live-chat/${data?.profile?.id}?emulate=true`}
+              src={`${WIDGETS_URL}/live-chat/${data?.profile?.id}?emulate=true&limit=${limit}`}
             />
           </div>
         </div>

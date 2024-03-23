@@ -29,7 +29,6 @@ const CommentRow = ({
   const [showComments, setShowComments] = useState(false)
   const [liked, setLiked] = useState<Boolean>(false)
   const [likesCount, setLikeCount] = useState<number>(comment?.stats?.upvotes)
-
   const isMobile = useIsMobile()
 
   useEffect(() => {

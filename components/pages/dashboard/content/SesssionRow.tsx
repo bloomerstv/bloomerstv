@@ -31,6 +31,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
       </div>
     )
   }
+
   // @ts-ignore
   return (
     <div className=" border-b border-p-border py-4">

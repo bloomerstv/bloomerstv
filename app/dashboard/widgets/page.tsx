@@ -1,6 +1,10 @@
 'use client'
 import Link from 'next/link'
 import React from 'react'
+import {
+  ALERT_BOX_PREVIEW_VIDEO,
+  CHAT_BOX_PREVIEW_VIDEO
+} from '../../../utils/config'
 
 const Widgets = () => {
   return (
@@ -21,7 +25,15 @@ const Widgets = () => {
             className="text-p-text no-underline"
           >
             <div className="shadow-sm bg-p-bg hover:shadow-md rounded-xl cursor-pointer overflow-hidden transition-all ease-in-out duration-250">
-              <img src={'/banner.png'} alt="banner" className="w-full" />
+              <video
+                autoPlay
+                muted
+                loop
+                controls={false}
+                src={CHAT_BOX_PREVIEW_VIDEO}
+                className="w-full"
+              />
+              {/* <img src={'/banner.png'} alt="banner" className="w-full" /> */}
               <div className="text-lg pt-2 px-4 font-bold">Chat Box</div>
               <div className="text-sm pb-4 px-4 font-semibold text-s-text">
                 The chat box allows you to display your live chat on your stream
@@ -35,7 +47,14 @@ const Widgets = () => {
             className="text-p-text no-underline"
           >
             <div className="shadow-sm bg-p-bg hover:shadow-md rounded-xl cursor-pointer overflow-hidden transition-all ease-in-out duration-250">
-              <img src={'/banner.png'} alt="banner" className="w-full" />
+              <video
+                autoPlay
+                muted
+                loop
+                controls={false}
+                src={ALERT_BOX_PREVIEW_VIDEO}
+                className="w-full"
+              />
               <div className="text-lg pt-2 px-4 font-bold">Alert Box</div>
               <div className="text-sm pb-4 px-4 font-semibold text-s-text">
                 Use the alert box to display alerts, such as notifications for
