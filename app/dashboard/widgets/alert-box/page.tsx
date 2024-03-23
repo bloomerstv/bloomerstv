@@ -73,7 +73,7 @@ const AlexBoxWidgetPage = () => {
               />
             </div>
             <div className="between-row w-full gap-x-6">
-              <div>Show Collect Alerts</div>
+              <div>Show collect alerts</div>
               <Checkbox
                 checked={collectAlert}
                 onChange={(e) => setCollectAlert(e.target.checked)}
@@ -82,7 +82,7 @@ const AlexBoxWidgetPage = () => {
               />
             </div>
             <div className="between-row w-full gap-x-6">
-              <div>Show New Follower Alert</div>
+              <div>Show new follower alerts</div>
               <Checkbox
                 checked={followerAlert}
                 onChange={(e) => setFollowerAlert(e.target.checked)}
