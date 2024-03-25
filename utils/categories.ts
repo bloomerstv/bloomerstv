@@ -38,6 +38,14 @@ export const CATEGORIES = [
     tags: ['crypto', 'orbcommunitiesDeFi', 'blockchain']
   },
   {
+    name: 'Metaverse',
+    tags: ['metaverse', 'orbcommunitiesmetaverse']
+  },
+  {
+    name: 'Fashion & Beauty',
+    tags: ['fashion', 'beauty', 'orbcommunitiesfashion']
+  },
+  {
     name: 'Pets & Animals',
     tags: ['pets', 'orbcommunitiespets']
   },
