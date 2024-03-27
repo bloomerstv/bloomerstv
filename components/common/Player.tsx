@@ -364,16 +364,18 @@ const Settings = React.forwardRef(
   ) => {
     return (
       <Popover.Root>
-        <Popover.Trigger ref={ref} asChild>
-          <button
-            type="button"
-            className={className}
-            aria-label="Playback settings"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <SettingsIcon className="text-white w-5 h-5" />
-          </button>
-        </Popover.Trigger>
+        <Player.LiveIndicator matcher={false}>
+          <Popover.Trigger ref={ref} asChild>
+            <button
+              type="button"
+              className={className}
+              aria-label="Playback settings"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <SettingsIcon className="text-white w-5 h-5" />
+            </button>
+          </Popover.Trigger>
+        </Player.LiveIndicator>
         <Popover.Portal>
           <Popover.Content
             className="w-60 rounded-xl bg-black/40 backdrop-blur-sm p-4 shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
@@ -434,7 +436,7 @@ const Settings = React.forwardRef(
                   </Player.SelectPortal>
                 </Player.RateSelect>
               </Player.LiveIndicator>
-              <div className="gap-2 flex-col flex">
+              {/* <div className="gap-2 flex-col flex">
                 <label
                   className="text-xs text-white font-bold"
                   htmlFor="qualitySelect"
@@ -493,7 +495,7 @@ const Settings = React.forwardRef(
                     </Player.SelectContent>
                   </Player.SelectPortal>
                 </Player.VideoQualitySelect>
-              </div>
+              </div> */}
             </div>
             {/* <Popover.Close
               className="rounded-full h-5 w-5 inline-flex items-center justify-center absolute top-2.5 right-2.5 outline-none"
@@ -532,23 +534,23 @@ const RateSelectItem = React.forwardRef<
 })
 
 // eslint-disable-next-line react/display-name
-const VideoQualitySelectItem = React.forwardRef<
-  HTMLDivElement,
-  Player.VideoQualitySelectItemProps
->(({ children, className, ...props }, forwardedRef) => {
-  return (
-    <Player.VideoQualitySelectItem
-      className={cn(
-        'text-xs leading-none rounded-sm flex items-center h-7 pr-[35px] pl-[25px] relative select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-white/20',
-        className
-      )}
-      {...props}
-      ref={forwardedRef}
-    >
-      <Player.SelectItemText>{children}</Player.SelectItemText>
-      <Player.SelectItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-        <CheckIcon className="w-4 h-4" />
-      </Player.SelectItemIndicator>
-    </Player.VideoQualitySelectItem>
-  )
-})
+// const VideoQualitySelectItem = React.forwardRef<
+//   HTMLDivElement,
+//   Player.VideoQualitySelectItemProps
+// >(({ children, className, ...props }, forwardedRef) => {
+//   return (
+//     <Player.VideoQualitySelectItem
+//       className={cn(
+//         'text-xs leading-none rounded-sm flex items-center h-7 pr-[35px] pl-[25px] relative select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-white/20',
+//         className
+//       )}
+//       {...props}
+//       ref={forwardedRef}
+//     >
+//       <Player.SelectItemText>{children}</Player.SelectItemText>
+//       <Player.SelectItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
+//         <CheckIcon className="w-4 h-4" />
+//       </Player.SelectItemIndicator>
+//     </Player.VideoQualitySelectItem>
+//   )
+// })
