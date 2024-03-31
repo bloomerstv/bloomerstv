@@ -18,13 +18,18 @@ import { defaultSponsored } from '../../../utils/config'
 import toast from 'react-hot-toast'
 import { AnimatePresence, motion, useAnimation } from 'framer-motion'
 import { useRef } from 'react'
+import clsx from 'clsx'
 
 const CollectButton = ({
   post,
-  isFollowing
+  isFollowing,
+  handleFollow,
+  followLoading
 }: {
   post: Post
   isFollowing: boolean
+  handleFollow: () => void
+  followLoading: boolean
 }) => {
   const { data } = useSession()
   const { execute: approve } = useApproveModule()
@@ -262,7 +267,10 @@ const CollectButton = ({
                 !isFollowing &&
                 post?.by?.id !== data?.profile?.id
               ) {
-                return
+                if (followLoading) {
+                  return
+                }
+                handleFollow()
               }
               if (isLoading) return
               handleMouseDown()
@@ -279,7 +287,10 @@ const CollectButton = ({
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="relative overflow-hidden outline-none border-none centered-row cursor-pointer text-white bg-brand rounded-full pl-1 pr-4 py-1 space-x-2 text-xs shrink-0"
+          className={clsx(
+            'relative unselectable overflow-hidden outline-none border-none centered-row cursor-pointer text-white rounded-full pl-1 pr-4 py-1 space-x-2 text-xs shrink-0',
+            followLoading ? 'bg-p-hover' : 'bg-brand'
+          )}
         >
           <motion.div
             animate={controls}
@@ -347,7 +358,7 @@ const CollectButton = ({
         </motion.button>
       ) : (
         <motion.div
-          className=" px-3 text-brand py-1 cursor-pointer rounded-full bg-p-hover shrink-0"
+          className="unselectable px-3 text-brand py-1 cursor-pointer rounded-full bg-p-hover shrink-0"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}

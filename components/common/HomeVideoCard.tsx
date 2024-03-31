@@ -27,7 +27,7 @@ const HomeVideoCard = ({
     <Link
       prefetch
       className={clsx(
-        'no-underline text-p-text group w-full sm:px-2',
+        'no-underline text-p-text group w-full sm:px-2 unselectable',
         pathname === '/' ? 'lg:w-1/3 2xl:w-1/4' : 'lg:w-1/3'
       )}
       href={`/watch/${post?.id}`}

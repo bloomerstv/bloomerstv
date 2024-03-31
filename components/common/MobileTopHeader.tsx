@@ -5,7 +5,7 @@ import LoginButton from '../pages/all/Header/LoginButton'
 const MobileTopHeader = () => {
   return (
     <div className="flex flex-row items-center sticky top-0 z-10 justify-between p-2 sm:p-3 bg-s-bg">
-      <div className="centered-row">
+      <div className="centered-row unselectable">
         <div className="bg-brand rounded-full w-6 h-6 mr-2" />
         <div className="font-bold">{APP_NAME}</div>
       </div>

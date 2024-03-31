@@ -58,15 +58,6 @@ const LoginComponent = ({
     }
   }, [error])
 
-  useEffect(() => {
-    if (data?.type === SessionType.WithProfile && data?.profile?.signless) {
-      if (onClose) {
-        onClose()
-      }
-    }
-    // @ts-ignore
-  }, [data?.type, data?.profile?.signless])
-
   return (
     <div className="p-4 sm:p-0">
       {isConnected ? (
@@ -103,13 +94,15 @@ const LoginComponent = ({
                     <div className="centered-row">
                       <LoadingButton
                         variant="contained"
-                        onClick={() => {
+                        onClick={async () => {
                           setSelectedProfileId(profile.id)
-                          execute({
+                          await execute({
                             // @ts-ignore
                             address: address,
                             profileId: profile.id
                           })
+                          window.location.reload()
+                          onClose?.()
                         }}
                         loading={logging && selectedProfileId === profile.id}
                         loadingPosition="start"
@@ -138,7 +131,7 @@ const LoginComponent = ({
                 onClick={async () => {
                   await disconnectAsync()
                 }}
-                className="text-s-text hover:text-p-text cursor-pointer font-bold text-sm"
+                className="unselectable text-s-text hover:text-p-text cursor-pointer font-bold text-sm"
               >
                 Disconnect wallet
               </div>

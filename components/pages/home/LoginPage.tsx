@@ -32,6 +32,7 @@ const LoginPage = () => {
   })
 
   const { execute, loading: logging } = useLogin()
+
   if (
     loginAsGuest ||
     loading ||
@@ -81,13 +82,14 @@ const LoginPage = () => {
                   <div className="centered-row">
                     <LoadingButton
                       variant="contained"
-                      onClick={() => {
+                      onClick={async () => {
                         setSelectedProfileId(profile.id)
-                        execute({
+                        await execute({
                           // @ts-ignore
                           address: address,
                           profileId: profile.id
                         })
+                        window.location.reload()
                       }}
                       loading={logging && selectedProfileId === profile.id}
                       loadingPosition="start"

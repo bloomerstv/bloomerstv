@@ -456,7 +456,12 @@ const ProfileBar = ({
             )}
 
             {publication && (
-              <CollectButton post={publication} isFollowing={isFollowing} />
+              <CollectButton
+                handleFollow={handleFollow}
+                followLoading={followLoading}
+                post={publication}
+                isFollowing={isFollowing}
+              />
             )}
 
             <div className="-mx-2.5">
@@ -472,7 +477,12 @@ const ProfileBar = ({
         <div className="w-full">
           <div className="start-center-row gap-x-2 px-2 w-full no-scrollbar  overflow-x-auto">
             {publication && (
-              <CollectButton post={publication} isFollowing={isFollowing} />
+              <CollectButton
+                handleFollow={handleFollow}
+                followLoading={followLoading}
+                post={publication}
+                isFollowing={isFollowing}
+              />
             )}
             {/* like button */}
             {publication?.id && (
