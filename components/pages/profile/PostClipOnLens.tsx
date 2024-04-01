@@ -9,7 +9,9 @@ import {
   OpenActionConfig,
   OpenActionType,
   Profile,
-  useCreatePost
+  SessionType,
+  useCreatePost,
+  useSession
 } from '@lens-protocol/react-web'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import { APP_ID, APP_LINK, defaultSponsored } from '../../../utils/config'
@@ -19,6 +21,8 @@ import { useUploadDataToArMutation } from '../../../graphql/generated'
 import useCollectSettings from '../../common/Collect/useCollectSettings'
 import CollectSettingButton from '../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
+import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
+import { encodeAbiParameters, type Address } from 'viem'
 
 const PostClipOnLens = ({
   open,
@@ -41,6 +45,7 @@ const PostClipOnLens = ({
     referralFee,
     recipient
   } = useCollectSettings()
+  const { data } = useSession()
   const [category, setCategory] = React.useState<string>('Gaming')
 
   const [title, setTitle] = React.useState(
@@ -54,6 +59,11 @@ const PostClipOnLens = ({
     // @ts-ignore
     if (title.trim().length === 0) {
       toast.error('Please enter a title')
+      return
+    }
+
+    if (data?.type !== SessionType.WithProfile) {
+      toast.error('Please login to create a post')
       return
     }
 
@@ -120,6 +130,16 @@ const PostClipOnLens = ({
         actions[0]['recipient'] = recipient
       }
     }
+
+    actions?.push({
+      type: OpenActionType.UNKNOWN_OPEN_ACTION,
+      address: VerifiedOpenActionModules.Tip,
+      // @ts-ignore
+      data: encodeAbiParameters(
+        [{ name: 'tipReceiver', type: 'address' }],
+        [data?.profile?.handle?.ownedBy as Address]
+      )
+    })
 
     // invoke the `execute` function to create the post
     const result = await execute({

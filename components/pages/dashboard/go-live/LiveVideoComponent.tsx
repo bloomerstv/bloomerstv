@@ -49,6 +49,9 @@ import {
   getTagsForCategory,
   getTagsForSymbol
 } from '../../../../utils/categories'
+import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
+import { encodeAbiParameters } from 'viem'
+import type { Address } from 'viem'
 const LiveVideoComponent = ({
   myStream,
   startedStreaming,
@@ -185,7 +188,7 @@ const LiveVideoComponent = ({
       throw new Error('Error uploading metadata to Arweave')
     }
 
-    let actions: OpenActionConfig[] | undefined = undefined
+    let actions: OpenActionConfig[] | undefined = []
 
     if (type) {
       actions = [
@@ -209,6 +212,16 @@ const LiveVideoComponent = ({
         actions[0]['recipient'] = recipient
       }
     }
+
+    actions?.push({
+      type: OpenActionType.UNKNOWN_OPEN_ACTION,
+      address: VerifiedOpenActionModules.Tip,
+      // @ts-ignore
+      data: encodeAbiParameters(
+        [{ name: 'tipReceiver', type: 'address' }],
+        [session?.profile?.handle?.ownedBy as Address]
+      )
+    })
 
     const MAX_RETRIES = 3 // Maximum number of retries
     let retries = 0
