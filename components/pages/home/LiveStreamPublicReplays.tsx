@@ -41,7 +41,7 @@ const HomePageCards = () => {
       <div className="flex flex-row flex-wrap w-full gap-y-6 sm:gap-y-8">
         {publications && publications?.length > 0
           ? publications
-              ?.slice(0, showAll || isMobile ? publications?.length : 12)
+              ?.slice(0, showAll || isMobile ? publications?.length : 8)
               ?.map((post) => {
                 return (
                   <HomeVideoCard
@@ -121,7 +121,7 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
 
 const LiveStreamPublicReplays = ({ profileId }: { profileId?: string }) => {
   return (
-    <div className="sm:m-8 my-4">
+    <div className="sm:mx-8 sm:mt-8 sm:mb-0 my-4">
       <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
         Past Streams
       </div>
