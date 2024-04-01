@@ -51,76 +51,90 @@ const LiveChatInput = ({
   }
 
   return (
-    <div className="w-full flex flex-row items-end gap-x-2">
-      {inputMessage.trim().length > 0 && (
-        <img
-          src={getAvatar(profile)}
-          alt="avatar"
-          className="w-7 h-7 rounded-full mb-1"
-        />
+    <div className="">
+      {data && data?.length > 0 && (
+        <div className="start-col w-full mb-2">
+          {data?.slice(0, 4)?.map((profile: Profile) => {
+            return (
+              <Button
+                variant="text"
+                size="small"
+                style={{
+                  justifyContent: 'flex-start',
+                  borderRadius: '6px',
+                  paddingLeft: '12px',
+                  textTransform: 'none'
+                }}
+                key={profile?.id}
+                className="text-p-text"
+                onClick={() => {
+                  handleSelected(profile)
+                }}
+                startIcon={
+                  <img
+                    src={getAvatar(profile)}
+                    className="w-8 h-8 rounded-full"
+                  />
+                }
+                disableElevation
+                autoCapitalize="none"
+              >
+                <div className="flex flex-col items-start">
+                  {profile?.metadata?.displayName && (
+                    <div className="leading-0 text-p-text text-base font-semibold">
+                      {profile?.metadata?.displayName}
+                    </div>
+                  )}
+                  <div className="text-p-text text-sm leading-0 text-s-text">
+                    {formatHandle(profile)}
+                  </div>
+                </div>
+              </Button>
+            )
+          })}
+        </div>
       )}
-
-      <div className={'w-full'}>
-        {data && data?.length > 0 && (
-          <div className="start-col w-full mb-1">
-            {data?.slice(0, 4)?.map((profile: Profile) => {
-              return (
-                <Button
-                  variant="text"
-                  size="small"
-                  style={{
-                    justifyContent: 'flex-start',
-                    paddingLeft: '10px',
-                    borderRadius: '6px'
-                  }}
-                  key={profile?.id}
-                  className="text-p-text"
-                  onClick={() => {
-                    handleSelected(profile)
-                  }}
-                  startIcon={
-                    <img
-                      src={getAvatar(profile)}
-                      className="w-7 h-7 rounded-full"
-                    />
-                  }
-                >
-                  {formatHandle(profile)}
-                </Button>
-              )
-            })}
-          </div>
+      <div className="w-full flex flex-row items-end gap-x-2">
+        {inputMessage.trim().length > 0 && (
+          <img
+            src={getAvatar(profile)}
+            alt="avatar"
+            className="w-7 h-7 rounded-full mb-1"
+          />
         )}
-        <TextareaAutosize
-          className="text-sm text-p-text resize-none  border-p-border outline-none bg-s-bg w-full font-normal font-sans leading-normal px-3 py-1.5 -mb-1 rounded-xl "
-          aria-label="empty textarea"
-          placeholder="Chat... (use @ to mention)"
-          style={{
-            resize: 'none'
-          }}
-          maxRows={5}
-          onChange={handleInputChage}
-          value={inputMessage}
-          onKeyDown={(e) => {
-            if (
-              e.key === 'Enter' &&
-              !e.shiftKey &&
-              inputMessage.trim().length > 0
-            ) {
-              e.preventDefault()
-              sendMessage()
-            }
-          }}
-        />
+
+        <div className={'w-full'}>
+          <TextareaAutosize
+            className="text-sm text-p-text resize-none  border-p-border outline-none bg-s-bg w-full font-normal font-sans leading-normal px-3 py-1.5 -mb-1 rounded-xl "
+            aria-label="empty textarea"
+            placeholder="Chat... (use @ to mention)"
+            style={{
+              resize: 'none'
+            }}
+            maxRows={5}
+            onChange={handleInputChage}
+            value={inputMessage}
+            onKeyDown={(e) => {
+              if (
+                e.key === 'Enter' &&
+                !e.shiftKey &&
+                inputMessage.trim().length > 0
+              ) {
+                e.preventDefault()
+                sendMessage()
+              }
+            }}
+          />
+        </div>
+        <IconButton
+          onClick={sendMessage}
+          className=" rounded-full"
+          size="small"
+          disabled={inputMessage.trim().length === 0}
+        >
+          <SendIcon />
+        </IconButton>
       </div>
-      <IconButton
-        onClick={sendMessage}
-        className=" rounded-full"
-        size="small"
-        disabled={inputMessage.trim().length === 0}
-      >
-        <SendIcon />
-      </IconButton>
     </div>
   )
 }
