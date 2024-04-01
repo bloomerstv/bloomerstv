@@ -6,6 +6,7 @@ import Link from 'next/link'
 import PermIdentityIcon from '@mui/icons-material/PermIdentity'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
+import LiveDiv from '../../ui/LiveDiv'
 
 const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
   const pathname = usePathname()
@@ -17,12 +18,17 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
       key={streamer?.profileId}
       className="flex flex-row no-underline w-full items-center px-2 2xl:px-4 py-2 justify-between hover:bg-p-hover cursor-pointer"
     >
-      <div className="centered-row">
+      <div className={clsx(minimize ? 'centered-col' : 'centered-row')}>
         <img
           src={getAvatar(streamer?.profile)}
           alt="avatar"
           className={clsx(' rounded-full', minimize ? 'w-10 h-10' : 'w-8 h-8')}
         />
+        {minimize && streamer?.isActive && (
+          <div className="-mt-2">
+            <LiveDiv />
+          </div>
+        )}
         {!minimize && (
           <div className="text-s-text font-bold ml-2">
             {formatHandle(streamer?.profile)}
