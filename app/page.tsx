@@ -24,7 +24,7 @@ export default function Home() {
         <LiveStreamPublicReplays />
       </div>
       {!isMobile && (
-        <div className="mt-4 ">
+        <div className="">
           <ClipsFeed />
         </div>
       )}

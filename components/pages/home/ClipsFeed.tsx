@@ -35,7 +35,7 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
     return null
   }
   return (
-    <div className="sm:m-8 my-4">
+    <div className="sm:mx-8 sm:my-0 my-4">
       <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
         {handle ? `Clips from ${handle}'s Streams` : 'Stream Clips'}
       </div>

@@ -116,7 +116,7 @@ const StreamerSidebar = () => {
                     )
                   })}
 
-                  {offlineFollowingStreamers?.map((profile) => {
+                  {offlineFollowingStreamers?.slice(0, 5)?.map((profile) => {
                     return (
                       // @ts-ignore
                       <StreamerBar key={profile?.id} streamer={{ profile }} />
@@ -152,7 +152,7 @@ const StreamerSidebar = () => {
                   )
                 })}
 
-                {offlineRecommendedStreamers?.map((profile) => {
+                {offlineRecommendedStreamers?.slice(0, 5)?.map((profile) => {
                   return (
                     // @ts-ignore
                     <StreamerBar key={profile?.id} streamer={{ profile }} />

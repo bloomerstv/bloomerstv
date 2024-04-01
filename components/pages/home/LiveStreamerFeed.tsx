@@ -8,6 +8,8 @@ const LiveStreamerFeed = () => {
     (state) => state.streamersWithProfiles
   )
   const loading = useStreamersWithProfiles((state) => state.loading)
+
+  if (!loading && streamersWithProfiles.length === 0) return null
   return (
     <div className="sm:m-8 my-4">
       <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
