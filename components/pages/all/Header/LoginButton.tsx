@@ -47,23 +47,27 @@ const LoginButton = () => {
       >
         <LoginComponent open={open} onClose={handleClose} />
       </ModalWrapper>
-      {data?.type === SessionType.Anonymous && (
+      {(data?.type !== SessionType.WithProfile ||
+        (data?.type === SessionType.WithProfile &&
+          !data?.profile?.signless)) && (
         <div className="centered-row gap-x-2 sm:gap-x-4">
-          <Button
-            variant="outlined"
-            onClick={() => setOpenSignup(true)}
-            size="small"
-            startIcon={
-              <div className="sm:w-7 sm:h-7 h-6 w-6">
-                <PersonAddIcon fontSize="inherit" />
-              </div>
-            }
-            sx={{
-              borderRadius: '12px'
-            }}
-          >
-            Signup
-          </Button>
+          {data?.type !== SessionType.WithProfile && (
+            <Button
+              variant="outlined"
+              onClick={() => setOpenSignup(true)}
+              size="small"
+              startIcon={
+                <div className="sm:w-7 sm:h-7 h-6 w-6">
+                  <PersonAddIcon fontSize="inherit" />
+                </div>
+              }
+              sx={{
+                borderRadius: '12px'
+              }}
+            >
+              Signup
+            </Button>
+          )}
           {/* {isMobile ? (
             <IconButton onClick={handleOpen}>
               <img
@@ -72,22 +76,26 @@ const LoginButton = () => {
               />
             </IconButton>
           ) : ( */}
-          <Button
-            variant="contained"
-            onClick={handleOpen}
-            size="small"
-            startIcon={
-              <img
-                src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
-                className="sm:w-7 sm:h-7 w-6 h-6 rounded-full"
-              />
-            }
-            sx={{
-              borderRadius: '12px'
-            }}
-          >
-            Login
-          </Button>
+          {(data?.type !== SessionType.WithProfile ||
+            (data?.type === SessionType.WithProfile &&
+              !data?.profile?.signless)) && (
+            <Button
+              variant="contained"
+              onClick={handleOpen}
+              size="small"
+              startIcon={
+                <img
+                  src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
+                  className="sm:w-7 sm:h-7 w-6 h-6 rounded-full"
+                />
+              }
+              sx={{
+                borderRadius: '12px'
+              }}
+            >
+              {data?.type === SessionType.WithProfile ? 'Go Signless' : 'Login'}
+            </Button>
+          )}
           {/* )} */}
         </div>
       )}
