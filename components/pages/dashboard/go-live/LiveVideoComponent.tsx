@@ -376,13 +376,20 @@ const LiveVideoComponent = ({
       // submit the lens post id to create a lens stream session to api
       // so when/if we check for lens post id on the latest session, it will be there
 
-      const { data, errors } = await createMyLensStreamSession({
-        variables: {
-          publicationId: publicationId,
-          viewType: streamReplayViewType
-        },
-        fetchPolicy: 'no-cache'
-      })
+      const { data, errors } = await toast.promise(
+        createMyLensStreamSession({
+          variables: {
+            publicationId: publicationId,
+            viewType: streamReplayViewType
+          },
+          fetchPolicy: 'no-cache'
+        }),
+        {
+          loading: 'Sending notification to your followers...',
+          success: 'Sent!',
+          error: 'Error sending notification to your followers...'
+        }
+      )
 
       if (errors?.[0] && !data?.createMyLensStreamSession) {
         toast.error(errors[0].message)

@@ -15,8 +15,7 @@ import { SingleStreamer } from '../../../graphql/generated'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
 import AutorenewIcon from '@mui/icons-material/Autorenew'
-import LoadingButton from '@mui/lab/LoadingButton'
-import StarIcon from '@mui/icons-material/Star'
+
 import {
   Button,
   IconButton,
@@ -36,7 +35,6 @@ import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import LoginComponent from '../../common/LoginComponent'
 import IosShareIcon from '@mui/icons-material/IosShare'
 import LoginIcon from '@mui/icons-material/Login'
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import Markup from '../../common/Lexical/Markup'
 import MobileCommentButton from '../watch/MobileCommentButton'
 import clsx from 'clsx'
@@ -44,6 +42,7 @@ import LiveCount from './LiveCount'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 import CollectButton from './CollectButton'
+import FollowingButton from './FollowingButton'
 const ProfileBar = ({
   profile,
   streamer,
@@ -275,21 +274,6 @@ const ProfileBar = ({
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuList>
-          {isFollowing && (
-            <MenuItem
-              onClick={async () => {
-                await handleUnFollow()
-                handleMenuClose()
-              }}
-              disabled={unFollowing}
-            >
-              <ListItemIcon>
-                <PersonRemoveIcon fontSize="small" />
-              </ListItemIcon>
-              Unfollow
-            </MenuItem>
-          )}
-
           <MenuItem onClick={handleShare}>
             <ListItemIcon>
               <IosShareIcon fontSize="small" />
@@ -358,30 +342,15 @@ const ProfileBar = ({
                     <div className="text-s-text">followers</div>
                   </div>
                 </div>
-                {!isFollowing &&
-                  mySession?.type === SessionType.WithProfile &&
-                  mySession.profile?.id !== profile?.id && (
-                    <Tooltip title="Follow this streamer" arrow>
-                      <LoadingButton
-                        loading={followLoading}
-                        onClick={handleFollow}
-                        variant="contained"
-                        autoCapitalize="none"
-                        size="small"
-                        color="primary"
-                        startIcon={<StarIcon />}
-                        loadingPosition="start"
-                        disabled={followLoading || isFollowing}
-                        title="Follow this streamer"
-                        sx={{
-                          borderRadius: isMobile ? '20px' : '15px',
-                          boxShadow: 'none'
-                        }}
-                      >
-                        {isFollowing ? 'Following' : 'Follow'}
-                      </LoadingButton>
-                    </Tooltip>
-                  )}
+
+                <FollowingButton
+                  followLoading={followLoading}
+                  handleFollow={handleFollow}
+                  handleUnFollow={handleUnFollow}
+                  isFollowing={isFollowing}
+                  profile={profile}
+                  unFollowing={unFollowing}
+                />
               </div>
 
               {isMobile && (

@@ -14,9 +14,9 @@ import getAvatar from '../../utils/lib/getAvatar'
 import formatHandle from '../../utils/lib/formatHandle'
 import LoadingButton from '@mui/lab/LoadingButton'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
-import LoginIcon from '@mui/icons-material/Login'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import toast from 'react-hot-toast'
+import { useTheme } from '../wrappers/TailwindThemeProvider'
 const LoginComponent = ({
   open,
   onClose
@@ -40,6 +40,7 @@ const LoginComponent = ({
     loading,
     error
   } = useUpdateProfileManagers()
+  const { theme } = useTheme()
 
   useEffect(() => {
     if (
@@ -96,17 +97,24 @@ const LoginComponent = ({
                         variant="contained"
                         onClick={async () => {
                           setSelectedProfileId(profile.id)
-                          await execute({
+                          const data = await execute({
                             // @ts-ignore
                             address: address,
                             profileId: profile.id
                           })
-                          window.location.reload()
-                          onClose?.()
+
+                          if (data?.isSuccess() && data?.value?.signless) {
+                            onClose?.()
+                          }
                         }}
                         loading={logging && selectedProfileId === profile.id}
                         loadingPosition="start"
-                        startIcon={<LoginIcon />}
+                        startIcon={
+                          <img
+                            src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
+                            className="sm:w-7 sm:h-7 w-6 h-6 rounded-full"
+                          />
+                        }
                         sx={{
                           borderRadius: '2rem'
                         }}
@@ -144,7 +152,8 @@ const LoginComponent = ({
                     Enable signless transactions
                   </div>
                   <div className="text-s-text font-semibold text-sm mb-4">
-                    This will allow you to post onchain without signing
+                    This will allow you to post onchain without signing. No fees
+                    required.
                   </div>
 
                   <LoadingButton
@@ -154,13 +163,19 @@ const LoginComponent = ({
                     startIcon={<AutoAwesomeIcon />}
                     onClick={async () => {
                       try {
-                        await enableProfileManager({
+                        const { isSuccess } = await enableProfileManager({
                           approveSignless: true
                         })
+                        if (isSuccess()) {
+                          onClose?.()
+                        }
                       } catch (e) {
                         // @ts-ignore
                         toast.error(e.message)
                       }
+                    }}
+                    sx={{
+                      borderRadius: '2rem'
                     }}
                     disabled={loading || data?.profile?.signless}
                   >
