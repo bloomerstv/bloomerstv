@@ -15,14 +15,18 @@ const base64ToUint8Array = (base64) => {
 
 export const getRegistration =
   async (): Promise<ServiceWorkerRegistration | null> => {
-    let registration: ServiceWorkerRegistration | undefined
+    const registrations = await navigator.serviceWorker.getRegistrations()
+    let registration: ServiceWorkerRegistration | null = null
 
-    const existingRegistration =
-      await navigator.serviceWorker.getRegistration('/')
+    console.log(registrations)
+    for (let reg of registrations) {
+      if (reg.active && reg.active.scriptURL.endsWith('/service-worker.js')) {
+        registration = reg
+        break
+      }
+    }
 
-    if (existingRegistration) {
-      registration = existingRegistration
-    } else {
+    if (!registration) {
       registration = await navigator.serviceWorker.register(
         '/service-worker.js',
         {
