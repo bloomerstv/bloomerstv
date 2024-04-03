@@ -1,0 +1,3 @@
+mutation RemoveNotificationSubscriberFromStreamer($profileId: String!) {
+  removeNotificationSubscriberFromStreamer(profileId: $profileId)
+}

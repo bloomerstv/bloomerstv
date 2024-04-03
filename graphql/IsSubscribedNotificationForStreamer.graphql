@@ -1,0 +1,3 @@
+query IsSubcribedNotificationForStreamer($profileId: String!) {
+  isSubcribedNotificationForStreamer(profileId: $profileId)
+}

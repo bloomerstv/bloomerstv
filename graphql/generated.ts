@@ -29,6 +29,7 @@ export type Scalars = {
   Int: { input: number; output: number }
   Float: { input: number; output: number }
   BigNumber: { input: any; output: any }
+  JSON: { input: any; output: any }
 }
 
 export type Chat = {
@@ -56,12 +57,23 @@ export type IpfsResult = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  addNotificationSubscriberToStreamer?: Maybe<Scalars['Boolean']['output']>
+  addSubscription?: Maybe<Scalars['Boolean']['output']>
   createClip?: Maybe<ClipResult>
   createMyLensStreamSession?: Maybe<Scalars['Boolean']['output']>
+  removeNotificationSubscriberFromStreamer?: Maybe<Scalars['Boolean']['output']>
   setViewType?: Maybe<Scalars['Boolean']['output']>
   updateMyStream?: Maybe<Scalars['Boolean']['output']>
   uploadDataToAR?: Maybe<Scalars['String']['output']>
   uploadDataToIpfs?: Maybe<IpfsResult>
+}
+
+export type MutationAddNotificationSubscriberToStreamerArgs = {
+  profileId: Scalars['String']['input']
+}
+
+export type MutationAddSubscriptionArgs = {
+  subscription: Scalars['JSON']['input']
 }
 
 export type MutationCreateClipArgs = {
@@ -75,6 +87,10 @@ export type MutationCreateClipArgs = {
 export type MutationCreateMyLensStreamSessionArgs = {
   publicationId: Scalars['String']['input']
   viewType?: InputMaybe<ViewType>
+}
+
+export type MutationRemoveNotificationSubscriberFromStreamerArgs = {
+  profileId: Scalars['String']['input']
 }
 
 export type MutationSetViewTypeArgs = {
@@ -110,6 +126,7 @@ export type MyStream = Stream & {
 export type Query = {
   __typename?: 'Query'
   getMyRecordedStreamSessions?: Maybe<Array<Maybe<RecordedSession>>>
+  isSubcribedNotificationForStreamer?: Maybe<Scalars['Boolean']['output']>
   liveStreamers?: Maybe<Array<Maybe<Streamer>>>
   myStream?: Maybe<MyStream>
   ping?: Maybe<Scalars['String']['output']>
@@ -123,6 +140,10 @@ export type Query = {
 
 export type QueryGetMyRecordedStreamSessionsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryIsSubcribedNotificationForStreamerArgs = {
+  profileId: Scalars['String']['input']
 }
 
 export type QueryStreamChatsArgs = {
@@ -220,6 +241,24 @@ export enum ViewType {
   Unlisted = 'unlisted'
 }
 
+export type AddNotificationSubscriberToStreamerMutationVariables = Exact<{
+  profileId: Scalars['String']['input']
+}>
+
+export type AddNotificationSubscriberToStreamerMutation = {
+  __typename?: 'Mutation'
+  addNotificationSubscriberToStreamer?: boolean | null
+}
+
+export type AddSubscriptionMutationVariables = Exact<{
+  subscription: Scalars['JSON']['input']
+}>
+
+export type AddSubscriptionMutation = {
+  __typename?: 'Mutation'
+  addSubscription?: boolean | null
+}
+
 export type CreateClipMutationVariables = Exact<{
   playbackId: Scalars['String']['input']
   startTime: Scalars['BigNumber']['input']
@@ -267,6 +306,15 @@ export type GetMyRecordedStreamSessionsQuery = {
   } | null> | null
 }
 
+export type IsSubcribedNotificationForStreamerQueryVariables = Exact<{
+  profileId: Scalars['String']['input']
+}>
+
+export type IsSubcribedNotificationForStreamerQuery = {
+  __typename?: 'Query'
+  isSubcribedNotificationForStreamer?: boolean | null
+}
+
 export type LiveStreamersQueryVariables = Exact<{ [key: string]: never }>
 
 export type LiveStreamersQuery = {
@@ -299,6 +347,15 @@ export type MyStreamQuery = {
     isActive?: boolean | null
     latestStreamPublicationId?: string | null
   } | null
+}
+
+export type RemoveNotificationSubscriberFromStreamerMutationVariables = Exact<{
+  profileId: Scalars['String']['input']
+}>
+
+export type RemoveNotificationSubscriberFromStreamerMutation = {
+  __typename?: 'Mutation'
+  removeNotificationSubscriberFromStreamer?: boolean | null
 }
 
 export type StreamReplayRecordingQueryVariables = Exact<{
@@ -421,6 +478,104 @@ export type SetViewTypeMutation = {
   setViewType?: boolean | null
 }
 
+export const AddNotificationSubscriberToStreamerDocument = gql`
+  mutation AddNotificationSubscriberToStreamer($profileId: String!) {
+    addNotificationSubscriberToStreamer(profileId: $profileId)
+  }
+`
+export type AddNotificationSubscriberToStreamerMutationFn =
+  Apollo.MutationFunction<
+    AddNotificationSubscriberToStreamerMutation,
+    AddNotificationSubscriberToStreamerMutationVariables
+  >
+
+/**
+ * __useAddNotificationSubscriberToStreamerMutation__
+ *
+ * To run a mutation, you first call `useAddNotificationSubscriberToStreamerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddNotificationSubscriberToStreamerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addNotificationSubscriberToStreamerMutation, { data, loading, error }] = useAddNotificationSubscriberToStreamerMutation({
+ *   variables: {
+ *      profileId: // value for 'profileId'
+ *   },
+ * });
+ */
+export function useAddNotificationSubscriberToStreamerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddNotificationSubscriberToStreamerMutation,
+    AddNotificationSubscriberToStreamerMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    AddNotificationSubscriberToStreamerMutation,
+    AddNotificationSubscriberToStreamerMutationVariables
+  >(AddNotificationSubscriberToStreamerDocument, options)
+}
+export type AddNotificationSubscriberToStreamerMutationHookResult = ReturnType<
+  typeof useAddNotificationSubscriberToStreamerMutation
+>
+export type AddNotificationSubscriberToStreamerMutationResult =
+  Apollo.MutationResult<AddNotificationSubscriberToStreamerMutation>
+export type AddNotificationSubscriberToStreamerMutationOptions =
+  Apollo.BaseMutationOptions<
+    AddNotificationSubscriberToStreamerMutation,
+    AddNotificationSubscriberToStreamerMutationVariables
+  >
+export const AddSubscriptionDocument = gql`
+  mutation AddSubscription($subscription: JSON!) {
+    addSubscription(subscription: $subscription)
+  }
+`
+export type AddSubscriptionMutationFn = Apollo.MutationFunction<
+  AddSubscriptionMutation,
+  AddSubscriptionMutationVariables
+>
+
+/**
+ * __useAddSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useAddSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addSubscriptionMutation, { data, loading, error }] = useAddSubscriptionMutation({
+ *   variables: {
+ *      subscription: // value for 'subscription'
+ *   },
+ * });
+ */
+export function useAddSubscriptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddSubscriptionMutation,
+    AddSubscriptionMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    AddSubscriptionMutation,
+    AddSubscriptionMutationVariables
+  >(AddSubscriptionDocument, options)
+}
+export type AddSubscriptionMutationHookResult = ReturnType<
+  typeof useAddSubscriptionMutation
+>
+export type AddSubscriptionMutationResult =
+  Apollo.MutationResult<AddSubscriptionMutation>
+export type AddSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  AddSubscriptionMutation,
+  AddSubscriptionMutationVariables
+>
 export const CreateClipDocument = gql`
   mutation CreateClip(
     $playbackId: String!
@@ -624,6 +779,83 @@ export type GetMyRecordedStreamSessionsQueryResult = Apollo.QueryResult<
   GetMyRecordedStreamSessionsQuery,
   GetMyRecordedStreamSessionsQueryVariables
 >
+export const IsSubcribedNotificationForStreamerDocument = gql`
+  query IsSubcribedNotificationForStreamer($profileId: String!) {
+    isSubcribedNotificationForStreamer(profileId: $profileId)
+  }
+`
+
+/**
+ * __useIsSubcribedNotificationForStreamerQuery__
+ *
+ * To run a query within a React component, call `useIsSubcribedNotificationForStreamerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIsSubcribedNotificationForStreamerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIsSubcribedNotificationForStreamerQuery({
+ *   variables: {
+ *      profileId: // value for 'profileId'
+ *   },
+ * });
+ */
+export function useIsSubcribedNotificationForStreamerQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    IsSubcribedNotificationForStreamerQuery,
+    IsSubcribedNotificationForStreamerQueryVariables
+  > &
+    (
+      | {
+          variables: IsSubcribedNotificationForStreamerQueryVariables
+          skip?: boolean
+        }
+      | { skip: boolean }
+    )
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    IsSubcribedNotificationForStreamerQuery,
+    IsSubcribedNotificationForStreamerQueryVariables
+  >(IsSubcribedNotificationForStreamerDocument, options)
+}
+export function useIsSubcribedNotificationForStreamerLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    IsSubcribedNotificationForStreamerQuery,
+    IsSubcribedNotificationForStreamerQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    IsSubcribedNotificationForStreamerQuery,
+    IsSubcribedNotificationForStreamerQueryVariables
+  >(IsSubcribedNotificationForStreamerDocument, options)
+}
+export function useIsSubcribedNotificationForStreamerSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    IsSubcribedNotificationForStreamerQuery,
+    IsSubcribedNotificationForStreamerQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    IsSubcribedNotificationForStreamerQuery,
+    IsSubcribedNotificationForStreamerQueryVariables
+  >(IsSubcribedNotificationForStreamerDocument, options)
+}
+export type IsSubcribedNotificationForStreamerQueryHookResult = ReturnType<
+  typeof useIsSubcribedNotificationForStreamerQuery
+>
+export type IsSubcribedNotificationForStreamerLazyQueryHookResult = ReturnType<
+  typeof useIsSubcribedNotificationForStreamerLazyQuery
+>
+export type IsSubcribedNotificationForStreamerSuspenseQueryHookResult =
+  ReturnType<typeof useIsSubcribedNotificationForStreamerSuspenseQuery>
+export type IsSubcribedNotificationForStreamerQueryResult = Apollo.QueryResult<
+  IsSubcribedNotificationForStreamerQuery,
+  IsSubcribedNotificationForStreamerQueryVariables
+>
 export const LiveStreamersDocument = gql`
   query LiveStreamers {
     liveStreamers {
@@ -777,6 +1009,55 @@ export type MyStreamQueryResult = Apollo.QueryResult<
   MyStreamQuery,
   MyStreamQueryVariables
 >
+export const RemoveNotificationSubscriberFromStreamerDocument = gql`
+  mutation RemoveNotificationSubscriberFromStreamer($profileId: String!) {
+    removeNotificationSubscriberFromStreamer(profileId: $profileId)
+  }
+`
+export type RemoveNotificationSubscriberFromStreamerMutationFn =
+  Apollo.MutationFunction<
+    RemoveNotificationSubscriberFromStreamerMutation,
+    RemoveNotificationSubscriberFromStreamerMutationVariables
+  >
+
+/**
+ * __useRemoveNotificationSubscriberFromStreamerMutation__
+ *
+ * To run a mutation, you first call `useRemoveNotificationSubscriberFromStreamerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveNotificationSubscriberFromStreamerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeNotificationSubscriberFromStreamerMutation, { data, loading, error }] = useRemoveNotificationSubscriberFromStreamerMutation({
+ *   variables: {
+ *      profileId: // value for 'profileId'
+ *   },
+ * });
+ */
+export function useRemoveNotificationSubscriberFromStreamerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RemoveNotificationSubscriberFromStreamerMutation,
+    RemoveNotificationSubscriberFromStreamerMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    RemoveNotificationSubscriberFromStreamerMutation,
+    RemoveNotificationSubscriberFromStreamerMutationVariables
+  >(RemoveNotificationSubscriberFromStreamerDocument, options)
+}
+export type RemoveNotificationSubscriberFromStreamerMutationHookResult =
+  ReturnType<typeof useRemoveNotificationSubscriberFromStreamerMutation>
+export type RemoveNotificationSubscriberFromStreamerMutationResult =
+  Apollo.MutationResult<RemoveNotificationSubscriberFromStreamerMutation>
+export type RemoveNotificationSubscriberFromStreamerMutationOptions =
+  Apollo.BaseMutationOptions<
+    RemoveNotificationSubscriberFromStreamerMutation,
+    RemoveNotificationSubscriberFromStreamerMutationVariables
+  >
 export const StreamReplayRecordingDocument = gql`
   query StreamReplayRecording($publicationId: String, $profileId: String) {
     streamReplayRecording(
@@ -958,7 +1239,11 @@ export function useStreamChatsQuery(
   baseOptions: Apollo.QueryHookOptions<
     StreamChatsQuery,
     StreamChatsQueryVariables
-  >
+  > &
+    (
+      | { variables: StreamChatsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    )
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<StreamChatsQuery, StreamChatsQueryVariables>(
@@ -1110,7 +1395,8 @@ export const StreamerDocument = gql`
  * });
  */
 export function useStreamerQuery(
-  baseOptions: Apollo.QueryHookOptions<StreamerQuery, StreamerQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<StreamerQuery, StreamerQueryVariables> &
+    ({ variables: StreamerQueryVariables; skip?: boolean } | { skip: boolean })
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<StreamerQuery, StreamerQueryVariables>(
@@ -1176,7 +1462,11 @@ export const ThumbnailDocument = gql`
  * });
  */
 export function useThumbnailQuery(
-  baseOptions: Apollo.QueryHookOptions<ThumbnailQuery, ThumbnailQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<
+    ThumbnailQuery,
+    ThumbnailQueryVariables
+  > &
+    ({ variables: ThumbnailQueryVariables; skip?: boolean } | { skip: boolean })
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<ThumbnailQuery, ThumbnailQueryVariables>(

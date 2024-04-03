@@ -12,6 +12,7 @@ import { usePathname } from 'next/navigation'
 import DashboardSidebar from '../pages/dashboard/DashboardSidebar'
 import { useStreamReplayPublications } from '../../utils/hooks/useStreamReplayPublications'
 import useLiveStreamerProfiles from '../../utils/hooks/useLiveStreamerProfiles'
+import useNotifictionSubscriptions from '../../utils/hooks/useNotifictionSubscriptions'
 
 interface Props {
   // Define any props that the component will accept
@@ -66,6 +67,7 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
 const GlobalHooks = () => {
   useStreamReplayPublications({})
   useLiveStreamerProfiles()
+  useNotifictionSubscriptions()
 
   return <></>
 }

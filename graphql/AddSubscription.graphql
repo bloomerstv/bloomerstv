@@ -1,0 +1,3 @@
+mutation AddSubscription($subscription: JSON!) {
+  addSubscription(subscription: $subscription)
+}
