@@ -28,9 +28,9 @@ export const getRegistration =
 
     if (!registration) {
       registration = await navigator.serviceWorker.register(
-        '/service-worker.js',
+        '/notification/service-worker.js',
         {
-          scope: '/'
+          scope: '/notification/'
         }
       )
     }
