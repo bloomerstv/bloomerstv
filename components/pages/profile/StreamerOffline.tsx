@@ -29,6 +29,7 @@ import toast from 'react-hot-toast'
 import { Button } from '@mui/material'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import NotificationsIcon from '@mui/icons-material/Notifications'
+import useIsMobile from '../../../utils/hooks/useIsMobile'
 
 const StreamerOffline = ({
   profile,
@@ -44,6 +45,7 @@ const StreamerOffline = ({
     // @ts-ignore
     forId: streamReplayRecording?.publicationId
   })
+  const isMobile = useIsMobile()
   const { data: mySession } = useSession()
   const { websiteLink, twitterLink, instagramLink, githubLink, linkedInLink } =
     getWebsiteLinksFromProfile(profile)
@@ -92,79 +94,81 @@ const StreamerOffline = ({
                 : 'Never streamed before'}
             </div>
 
-            <div className="flex flex-col items-start gap-y-0.5">
-              {websiteLink && (
-                <ProfileLink
-                  link={websiteLink}
-                  icon={<InsertLinkIcon fontSize="small" />}
-                  className="pl-2 -ml-2"
-                />
-              )}
-              {twitterLink && (
-                <ProfileLink
-                  link={twitterLink}
-                  icon={<TwitterIcon fontSize="small" />}
-                  alias="Twitter"
-                  className="pl-2 -ml-2"
-                />
-              )}
-              {instagramLink && (
-                <ProfileLink
-                  link={instagramLink}
-                  icon={<InstagramIcon fontSize="small" />}
-                  alias="Instagram"
-                  className="pl-2 -ml-2"
-                />
-              )}
-              {githubLink && (
-                <ProfileLink
-                  link={githubLink}
-                  icon={<GitHubIcon fontSize="small" />}
-                  alias="GitHub"
-                  className="pl-2 -ml-2"
-                />
-              )}
-              {linkedInLink && (
-                <ProfileLink
-                  link={linkedInLink}
-                  icon={<LinkedInIcon fontSize="small" />}
-                  alias="LinkedIn"
-                  className="pl-2 -ml-2"
-                />
-              )}
-              {mySession?.type === SessionType.WithProfile && (
-                <>
-                  {isSubscribed?.isSubcribedNotificationForStreamer ? (
-                    <div className="flex flex-row gap-x-1 py-1.5 -ml-0.5 text-p-text text-s-text">
-                      <NotificationsIcon fontSize="medium" />
-                      <div className="text-left">
-                        You will be notified when {formatHandle(profile)} goes
-                        live.
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="-ml-1">
-                      <Button
-                        onClick={async () => {
-                          await addSubscriber()
-                        }}
-                        color="primary"
-                        variant="text"
-                        startIcon={<NotificationsNoneIcon />}
-                        sx={{
-                          textTransform: 'none',
-                          borderRadius: '20px'
-                        }}
-                      >
-                        <div className="text-base -ml-1">
-                          Turn on notifications
+            {!isMobile && (
+              <div className="flex flex-col items-start gap-y-0.5">
+                {websiteLink && (
+                  <ProfileLink
+                    link={websiteLink}
+                    icon={<InsertLinkIcon fontSize="small" />}
+                    className="pl-2 -ml-2"
+                  />
+                )}
+                {twitterLink && (
+                  <ProfileLink
+                    link={twitterLink}
+                    icon={<TwitterIcon fontSize="small" />}
+                    alias="Twitter"
+                    className="pl-2 -ml-2"
+                  />
+                )}
+                {instagramLink && (
+                  <ProfileLink
+                    link={instagramLink}
+                    icon={<InstagramIcon fontSize="small" />}
+                    alias="Instagram"
+                    className="pl-2 -ml-2"
+                  />
+                )}
+                {githubLink && (
+                  <ProfileLink
+                    link={githubLink}
+                    icon={<GitHubIcon fontSize="small" />}
+                    alias="GitHub"
+                    className="pl-2 -ml-2"
+                  />
+                )}
+                {linkedInLink && (
+                  <ProfileLink
+                    link={linkedInLink}
+                    icon={<LinkedInIcon fontSize="small" />}
+                    alias="LinkedIn"
+                    className="pl-2 -ml-2"
+                  />
+                )}
+                {mySession?.type === SessionType.WithProfile && (
+                  <>
+                    {isSubscribed?.isSubcribedNotificationForStreamer ? (
+                      <div className="flex flex-row gap-x-1 py-1.5 -ml-0.5 text-p-text text-s-text">
+                        <NotificationsIcon fontSize="medium" />
+                        <div className="text-left">
+                          You will be notified when {formatHandle(profile)} goes
+                          live.
                         </div>
-                      </Button>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+                      </div>
+                    ) : (
+                      <div className="-ml-1">
+                        <Button
+                          onClick={async () => {
+                            await addSubscriber()
+                          }}
+                          color="primary"
+                          variant="text"
+                          startIcon={<NotificationsNoneIcon />}
+                          sx={{
+                            textTransform: 'none',
+                            borderRadius: '20px'
+                          }}
+                        >
+                          <div className="text-base -ml-1">
+                            Turn on notifications
+                          </div>
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
           {streamReplayRecording?.recordingUrl && (
             <div className="sm:rounded-xl rounded-md overflow-hidden w-full">
