@@ -17,10 +17,12 @@ import HomeIcon from '@mui/icons-material/Home'
 import { IconButton } from '@mui/material'
 import XIcon from '@mui/icons-material/X'
 import GitHubIcon from '@mui/icons-material/GitHub'
+import { useTheme } from '../wrappers/TailwindThemeProvider'
 const StreamerSidebar = () => {
   const { data } = useSession()
   const pathname = usePathname()
   const { push } = useRouter()
+  const { theme } = useTheme()
   const streamersWithProfiles = useStreamersWithProfiles(
     (state) => state.streamersWithProfiles
   )
@@ -192,6 +194,24 @@ const StreamerSidebar = () => {
               }}
             >
               <GitHubIcon fontSize="medium" />
+            </IconButton>
+            <IconButton
+              LinkComponent={Link}
+              href={DISCORD_INVITE_URL}
+              target="_blank"
+              sx={{
+                borderRadius: '0px'
+              }}
+            >
+              <img
+                src={
+                  theme === 'light'
+                    ? '/icons/discord-icon.svg'
+                    : '/icons/discord-icon-dark.svg'
+                }
+                alt="discord"
+                className="w-6 h-6"
+              />
             </IconButton>
           </div>
         ) : (
