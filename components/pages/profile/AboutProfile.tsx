@@ -9,16 +9,31 @@ import TwitterIcon from '@mui/icons-material/Twitter'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import InstagramIcon from '@mui/icons-material/Instagram'
 import LinkedInIcon from '@mui/icons-material/LinkedIn'
-const ProfileLink = ({ link, icon }: { link: string; icon: any }) => (
+import clsx from 'clsx'
+
+export const ProfileLink = ({
+  link,
+  icon,
+  alias,
+  className
+}: {
+  link: string
+  icon: any
+  alias?: string
+  className?: string
+}) => (
   <a
     href={link.startsWith('http') ? link : `https://${link}`}
     target="_blank"
     rel="noopener noreferrer"
-    className="text-s-text cursor-pointer no-underline rounded-full hover:bg-p-hover active:bg-s-hover pl-1 pr-2"
+    className={clsx(
+      'text-s-text cursor-pointer no-underline rounded-full hover:bg-p-hover active:bg-s-hover pl-1 pr-2',
+      className
+    )}
   >
     <div className="centered-row gap-x-1">
       <div className="h-fit mt-1">{icon}</div>
-      <div className="">{shortFormOfLink(link)}</div>
+      <div className="">{alias ? alias : shortFormOfLink(link)}</div>
     </div>
   </a>
 )
