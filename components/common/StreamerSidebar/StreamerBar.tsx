@@ -7,11 +7,13 @@ import PermIdentityIcon from '@mui/icons-material/PermIdentity'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import LiveDiv from '../../ui/LiveDiv'
-import { timeAgoShort } from '../../../utils/helpers'
+import { humanReadableNumber, timeAgoShort } from '../../../utils/helpers'
+import useIsMobile from '../../../utils/hooks/useIsMobile'
 
 const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
   const pathname = usePathname()
-  const minimize = pathname !== '/'
+  const isMobile = useIsMobile()
+  const minimize = !isMobile && pathname !== '/'
   return (
     <Link
       prefetch
@@ -23,7 +25,10 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
         <img
           src={getAvatar(streamer?.profile)}
           alt="avatar"
-          className={clsx(' rounded-full', minimize ? 'w-10 h-10' : 'w-8 h-8')}
+          className={clsx(
+            ' rounded-full',
+            minimize ? 'w-10 h-10' : 'sm:w-8 sm:h-8 w-10 h-10'
+          )}
         />
         {minimize && streamer?.isActive && (
           <div className="-mt-2">
@@ -31,8 +36,15 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
           </div>
         )}
         {!minimize && (
-          <div className="text-s-text font-bold ml-2">
-            {formatHandle(streamer?.profile)}
+          <div className="ml-2">
+            <div className="text-s-text font-bold ">
+              {formatHandle(streamer?.profile)}
+            </div>
+            {isMobile && (
+              <div className="text-s-text sm:font-normal leading-3 font-semibold text-xs">
+                {`${humanReadableNumber(streamer?.profile?.stats?.followers)} followers`}
+              </div>
+            )}
           </div>
         )}
       </div>

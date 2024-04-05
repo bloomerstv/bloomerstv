@@ -43,6 +43,7 @@ import toast from 'react-hot-toast'
 import Link from 'next/link'
 import CollectButton from './CollectButton'
 import FollowingButton from './FollowingButton'
+import { humanReadableNumber } from '../../../utils/helpers'
 const ProfileBar = ({
   profile,
   streamer,
@@ -338,7 +339,9 @@ const ProfileBar = ({
                   </Link>
 
                   <div className="start-center-row space-x-1 sm:text-sm text-xs">
-                    <div className="">{profile?.stats?.followers}</div>
+                    <div className="">
+                      {humanReadableNumber(profile?.stats?.followers)}
+                    </div>
                     <div className="text-s-text">followers</div>
                   </div>
                 </div>

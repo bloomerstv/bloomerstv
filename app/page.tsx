@@ -5,6 +5,7 @@ import ClipsFeed from '../components/pages/home/ClipsFeed'
 import LiveStreamPublicReplays from '../components/pages/home/LiveStreamPublicReplays'
 import LiveStreamerFeed from '../components/pages/home/LiveStreamerFeed'
 import useIsMobile from '../utils/hooks/useIsMobile'
+import StreamerHorizontalDiv from '../components/common/StreamerSidebar/StreamerHorizontalDiv'
 
 export default function Home() {
   const isMobile = useIsMobile()
@@ -19,8 +20,10 @@ export default function Home() {
       {/* top header */}
       {isMobile && <MobileTopHeader />}
 
+      {isMobile && <StreamerHorizontalDiv />}
+
       <LiveStreamerFeed />
-      <div className="mt-4">
+      <div>
         <LiveStreamPublicReplays />
       </div>
       {!isMobile && (

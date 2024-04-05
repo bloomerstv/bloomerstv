@@ -2,22 +2,26 @@ import React from 'react'
 import { useStreamersWithProfiles } from '../../store/useStreamersWithProfiles'
 import StreamCard from './StreamCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
+import useIsMobile from '../../../utils/hooks/useIsMobile'
 
 const LiveStreamerFeed = () => {
   const streamersWithProfiles = useStreamersWithProfiles(
     (state) => state.streamersWithProfiles
   )
   const loading = useStreamersWithProfiles((state) => state.loading)
+  const isMobile = useIsMobile()
 
   if (!loading && streamersWithProfiles.length === 0) return null
   return (
-    <div className="sm:m-8 my-4">
-      <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
-        Live Channels
-      </div>
+    <div className="sm:m-8 mb-4">
+      {!isMobile && (
+        <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
+          Live Now
+        </div>
+      )}
 
       {streamersWithProfiles?.length > 0 ? (
-        <div className="flex flex-row flex-wrap w-full gap-y-6 sm:gap-y-8">
+        <div className="flex flex-row flex-wrap w-full gap-y-4 sm:gap-y-8">
           {streamersWithProfiles?.map((streamer) => {
             return <StreamCard key={streamer?.profileId} streamer={streamer} />
           })}

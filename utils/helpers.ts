@@ -5,6 +5,15 @@ export const shortFormOfLink = (link?: string) => {
   return link.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '')
 }
 
+export const humanReadableNumber = (num: number) => {
+  if (num < 1000) {
+    return num
+  }
+  if (num < 1000000) {
+    return `${(num / 1000).toFixed(1)}k`
+  }
+  return `${(num / 1000000).toFixed(1)}m`
+}
 export const simpleTime = (time: number) => {
   const date = new Date(time)
   const hours = date.getHours()
