@@ -7,7 +7,8 @@ import {
   ListItemIcon,
   Menu,
   MenuItem,
-  MenuList
+  MenuList,
+  SwipeableDrawer
 } from '@mui/material'
 import Logout from '@mui/icons-material/Logout'
 import formatHandle from '../../../../utils/lib/formatHandle'
@@ -20,6 +21,15 @@ import Settings from '@mui/icons-material/Settings'
 // import CircleIcon from '@mui/icons-material/Circle'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
+import Link from 'next/link'
+import {
+  DISCORD_INVITE_URL,
+  FEEDBACK_URL,
+  GITHUB_URL,
+  HEY_URL,
+  REPORT_URL,
+  X_URL
+} from '../../../../utils/config'
 
 const AvatarWithOptions = ({
   profile,
@@ -29,6 +39,7 @@ const AvatarWithOptions = ({
   handleOpen: () => void
 }) => {
   const isMobile = useIsMobile()
+  const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -56,6 +67,165 @@ const AvatarWithOptions = ({
 
   const { push } = useRouter()
   if (!profile) return null
+
+  if (isMobile) {
+    return (
+      <div>
+        <IconButton
+          onClick={() => {
+            setDrawerOpen(true)
+          }}
+          size="small"
+          sx={{ ml: 2 }}
+          aria-controls={open ? 'account-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+        >
+          <img
+            src={getAvatar(profile)}
+            alt="avatar"
+            className="w-8 h-8 rounded-full"
+          />
+        </IconButton>
+
+        <SwipeableDrawer
+          anchor="right"
+          open={drawerOpen}
+          onClose={() => {
+            setDrawerOpen(false)
+          }}
+          onOpen={() => {
+            setDrawerOpen(true)
+          }}
+          sx={{
+            '.MuiDrawer-paper': {
+              borderTopLeftRadius: '6px',
+              borderBottomLeftRadius: '6px',
+              background: theme === 'light' ? '#FFFFFF' : '#1E1E1E',
+              overflowX: 'hidden'
+            }
+          }}
+        >
+          <div className="w-[200px] pb-4 h-full flex flex-col justify-between">
+            <MenuList>
+              <MenuItem
+                onClick={() => {
+                  push(`/${formatHandle(profile)}`)
+                  handleClose()
+                }}
+              >
+                <img
+                  src={getAvatar(profile)}
+                  alt="avatar"
+                  className="w-8 h-8 rounded-full mr-3"
+                />
+                {formatHandle(profile)}
+              </MenuItem>
+              <MenuItem onClick={handleSwitchProfile}>
+                <ListItemIcon>
+                  <SwapHorizIcon fontSize="small" />
+                </ListItemIcon>
+                Switch Profile
+              </MenuItem>
+              {/* <Divider /> */}
+
+              {!isMobile && (
+                <>
+                  {/* <MenuItem
+                onClick={() => {
+                  push(`/dashboard/go-live`)
+                  handleClose()
+                }}
+              >
+                <ListItemIcon>
+                  <CircleIcon fontSize="small" />
+                </ListItemIcon>
+                Go live
+              </MenuItem> */}
+
+                  <MenuItem
+                    onClick={() => {
+                      push(`/dashboard/content`)
+                      handleClose()
+                    }}
+                  >
+                    <ListItemIcon>
+                      <Settings fontSize="small" />
+                    </ListItemIcon>
+                    Dashboard
+                  </MenuItem>
+                </>
+              )}
+
+              <MenuItem onClick={toggleTheme}>
+                <ListItemIcon>
+                  {theme === 'light' ? (
+                    <ToggleOffIcon fontSize="small" />
+                  ) : (
+                    <ToggleOnIcon fontSize="small" />
+                  )}
+                </ListItemIcon>
+                Dark Mode
+              </MenuItem>
+
+              <MenuItem onClick={handleLogout}>
+                <ListItemIcon>
+                  <Logout fontSize="small" />
+                </ListItemIcon>
+                Logout
+              </MenuItem>
+            </MenuList>
+            <div className="start-row flex-wrap gap-y-2 gap-x-3 px-4 text-sm font-semibold">
+              <Link
+                href={HEY_URL}
+                className="no-underline text-s-text hover:text-p-text"
+                target="_blank"
+              >
+                Hey
+              </Link>
+              <Link
+                href={X_URL}
+                className="no-underline text-s-text hover:text-p-text"
+                target="_blank"
+              >
+                X
+              </Link>
+              <Link
+                href={GITHUB_URL}
+                className="no-underline text-s-text hover:text-p-text"
+                target="_blank"
+              >
+                Github
+              </Link>
+              <Link
+                href={FEEDBACK_URL}
+                className="no-underline text-s-text hover:text-p-text"
+                target="_blank"
+              >
+                Feedback
+              </Link>
+              <Link
+                href={REPORT_URL}
+                className="no-underline text-s-text hover:text-p-text"
+                target="_blank"
+              >
+                Report
+              </Link>
+
+              <Link
+                href={DISCORD_INVITE_URL}
+                className="no-underline text-s-text hover:text-p-text"
+                target="_blank"
+              >
+                Discord
+              </Link>
+            </div>
+          </div>
+        </SwipeableDrawer>
+      </div>
+    )
+  }
+
   return (
     <div>
       <IconButton
