@@ -7,6 +7,7 @@ import PermIdentityIcon from '@mui/icons-material/PermIdentity'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import LiveDiv from '../../ui/LiveDiv'
+import { timeAgoShort } from '../../../utils/helpers'
 
 const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
   const pathname = usePathname()
@@ -47,7 +48,11 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
               </div>
             </div>
           ) : (
-            <div className="text-s-text text-xs">Offline</div>
+            <div className="text-s-text text-xs">
+              {streamer?.lastSeen
+                ? `${timeAgoShort(streamer?.lastSeen)} ago`
+                : 'Offline'}
+            </div>
           )}
         </>
       )}

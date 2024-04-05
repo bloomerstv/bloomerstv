@@ -1,0 +1,6 @@
+query OfflineStreamers {
+  offlineStreamers {
+    profileId
+    lastSeen
+  }
+}

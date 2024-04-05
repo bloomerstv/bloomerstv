@@ -129,6 +129,7 @@ export type Query = {
   isSubcribedNotificationForStreamer?: Maybe<Scalars['Boolean']['output']>
   liveStreamers?: Maybe<Array<Maybe<Streamer>>>
   myStream?: Maybe<MyStream>
+  offlineStreamers?: Maybe<Array<Maybe<Streamer>>>
   ping?: Maybe<Scalars['String']['output']>
   shouldCreateNewPost?: Maybe<Scalars['String']['output']>
   streamChats?: Maybe<Array<Maybe<Chat>>>
@@ -347,6 +348,17 @@ export type MyStreamQuery = {
     isActive?: boolean | null
     latestStreamPublicationId?: string | null
   } | null
+}
+
+export type OfflineStreamersQueryVariables = Exact<{ [key: string]: never }>
+
+export type OfflineStreamersQuery = {
+  __typename?: 'Query'
+  offlineStreamers?: Array<{
+    __typename?: 'Streamer'
+    profileId: string
+    lastSeen?: any | null
+  } | null> | null
 }
 
 export type RemoveNotificationSubscriberFromStreamerMutationVariables = Exact<{
@@ -1008,6 +1020,79 @@ export type MyStreamSuspenseQueryHookResult = ReturnType<
 export type MyStreamQueryResult = Apollo.QueryResult<
   MyStreamQuery,
   MyStreamQueryVariables
+>
+export const OfflineStreamersDocument = gql`
+  query OfflineStreamers {
+    offlineStreamers {
+      profileId
+      lastSeen
+    }
+  }
+`
+
+/**
+ * __useOfflineStreamersQuery__
+ *
+ * To run a query within a React component, call `useOfflineStreamersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOfflineStreamersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOfflineStreamersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOfflineStreamersQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    OfflineStreamersQuery,
+    OfflineStreamersQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<OfflineStreamersQuery, OfflineStreamersQueryVariables>(
+    OfflineStreamersDocument,
+    options
+  )
+}
+export function useOfflineStreamersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    OfflineStreamersQuery,
+    OfflineStreamersQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    OfflineStreamersQuery,
+    OfflineStreamersQueryVariables
+  >(OfflineStreamersDocument, options)
+}
+export function useOfflineStreamersSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    OfflineStreamersQuery,
+    OfflineStreamersQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    OfflineStreamersQuery,
+    OfflineStreamersQueryVariables
+  >(OfflineStreamersDocument, options)
+}
+export type OfflineStreamersQueryHookResult = ReturnType<
+  typeof useOfflineStreamersQuery
+>
+export type OfflineStreamersLazyQueryHookResult = ReturnType<
+  typeof useOfflineStreamersLazyQuery
+>
+export type OfflineStreamersSuspenseQueryHookResult = ReturnType<
+  typeof useOfflineStreamersSuspenseQuery
+>
+export type OfflineStreamersQueryResult = Apollo.QueryResult<
+  OfflineStreamersQuery,
+  OfflineStreamersQueryVariables
 >
 export const RemoveNotificationSubscriberFromStreamerDocument = gql`
   mutation RemoveNotificationSubscriberFromStreamer($profileId: String!) {
