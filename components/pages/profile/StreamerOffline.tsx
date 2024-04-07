@@ -79,12 +79,12 @@ const StreamerOffline = ({
             'py-4 px-6 sm:p-8 bg-s-bg flex sm:flex-row flex-col sm:space-x-8 rounded-xl'
           )}
         >
-          <div className="flex shrink-0 w-[300px] flex-row sm:items-start items-center sm:space-y-4 sm:space-x-0 space-x-2 sm:flex-col pb-1">
+          <div className="flex shrink-0 w-[300px]  flex-row sm:items-start items-center sm:space-y-4 sm:space-x-0 space-x-2 sm:flex-col pb-1">
             <img
               src={getAvatar(profile)}
               className="sm:w-16 sm:h-16 w-4 h-4 rounded-full hidden sm:block"
             />
-            <div className="text-xs sm:text-2xl font-bold text-p-text">
+            <div className="text-xs sm:text-2xl font-bold text-p-text text-left">
               {`${formatHandle(profile)} is offline.`}
             </div>
 
