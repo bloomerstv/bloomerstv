@@ -436,7 +436,7 @@ const Settings = React.forwardRef(
                   </Player.SelectPortal>
                 </Player.RateSelect>
               </Player.LiveIndicator>
-              {/* <div className="gap-2 flex-col flex">
+              <div className="gap-2 flex-col flex">
                 <label
                   className="text-xs text-white font-bold"
                   htmlFor="qualitySelect"
@@ -495,7 +495,7 @@ const Settings = React.forwardRef(
                     </Player.SelectContent>
                   </Player.SelectPortal>
                 </Player.VideoQualitySelect>
-              </div> */}
+              </div>
             </div>
             {/* <Popover.Close
               className="rounded-full h-5 w-5 inline-flex items-center justify-center absolute top-2.5 right-2.5 outline-none"
@@ -534,23 +534,23 @@ const RateSelectItem = React.forwardRef<
 })
 
 // eslint-disable-next-line react/display-name
-// const VideoQualitySelectItem = React.forwardRef<
-//   HTMLDivElement,
-//   Player.VideoQualitySelectItemProps
-// >(({ children, className, ...props }, forwardedRef) => {
-//   return (
-//     <Player.VideoQualitySelectItem
-//       className={cn(
-//         'text-xs leading-none rounded-sm flex items-center h-7 pr-[35px] pl-[25px] relative select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-white/20',
-//         className
-//       )}
-//       {...props}
-//       ref={forwardedRef}
-//     >
-//       <Player.SelectItemText>{children}</Player.SelectItemText>
-//       <Player.SelectItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-//         <CheckIcon className="w-4 h-4" />
-//       </Player.SelectItemIndicator>
-//     </Player.VideoQualitySelectItem>
-//   )
-// })
+const VideoQualitySelectItem = React.forwardRef<
+  HTMLDivElement,
+  Player.VideoQualitySelectItemProps
+>(({ children, className, ...props }, forwardedRef) => {
+  return (
+    <Player.VideoQualitySelectItem
+      className={cn(
+        'text-xs leading-none rounded-sm flex items-center h-7 pr-[35px] pl-[25px] relative select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-white/20',
+        className
+      )}
+      {...props}
+      ref={forwardedRef}
+    >
+      <Player.SelectItemText>{children}</Player.SelectItemText>
+      <Player.SelectItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
+        <CheckIcon className="w-4 h-4" />
+      </Player.SelectItemIndicator>
+    </Player.VideoQualitySelectItem>
+  )
+})
