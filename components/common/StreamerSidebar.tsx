@@ -12,6 +12,7 @@ import {
   X_URL
 } from '../../utils/config'
 import {
+  LimitType,
   Profile,
   SessionType,
   useProfiles,
@@ -35,13 +36,19 @@ const StreamerSidebar = () => {
   )
 
   const { data: offlineStreamers } = useOfflineStreamersQuery()
+  const sortedOfflineStreamers = offlineStreamers?.offlineStreamers
+    ? // eslint-disable-next-line no-unsafe-optional-chaining
+      [...offlineStreamers?.offlineStreamers]?.sort(
+        (a, b) => b?.lastSeen - a?.lastSeen
+      )
+    : []
   const { data: offlineProfiles } = useProfiles({
     where: {
       // @ts-ignore
-      profileIds: offlineStreamers?.offlineStreamers?.map(
-        (streamer) => streamer?.profileId
-      )
-    }
+      profileIds:
+        sortedOfflineStreamers?.map((streamer) => streamer?.profileId) ?? []
+    },
+    limit: LimitType.Fifty
   })
 
   const followingStreamers = streamersWithProfiles?.filter((streamer) => {

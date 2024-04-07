@@ -2,7 +2,12 @@
 import React from 'react'
 import { useStreamersWithProfiles } from '../../store/useStreamersWithProfiles'
 import { useOfflineStreamersQuery } from '../../../graphql/generated'
-import { SessionType, useProfiles, useSession } from '@lens-protocol/react-web'
+import {
+  LimitType,
+  SessionType,
+  useProfiles,
+  useSession
+} from '@lens-protocol/react-web'
 import SingleHorizontalStreamerDiv from './SingleHorizontalStreamerDiv'
 
 const StreamerHorizontalDiv = () => {
@@ -11,13 +16,19 @@ const StreamerHorizontalDiv = () => {
     (state) => state.streamersWithProfiles
   )
   const { data: offlineStreamers } = useOfflineStreamersQuery()
+  const sortedOfflineStreamers = offlineStreamers?.offlineStreamers
+    ? // eslint-disable-next-line no-unsafe-optional-chaining
+      [...offlineStreamers?.offlineStreamers]?.sort(
+        (a, b) => b?.lastSeen - a?.lastSeen
+      )
+    : []
   const { data: offlineProfiles } = useProfiles({
     where: {
       // @ts-ignore
-      profileIds: offlineStreamers?.offlineStreamers?.map(
-        (streamer) => streamer?.profileId
-      )
-    }
+      profileIds:
+        sortedOfflineStreamers?.map((streamer) => streamer?.profileId) ?? []
+    },
+    limit: LimitType.Fifty
   })
 
   return (
