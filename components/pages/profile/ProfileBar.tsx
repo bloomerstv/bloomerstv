@@ -358,10 +358,10 @@ const ProfileBar = ({
               {isMobile && (
                 <div className="centered-row">
                   {profile?.id && !post && (
-                    <LiveCount className="-mr-1" profileId={profile?.id} />
+                    <LiveCount className="-mr-2" profileId={profile?.id} />
                   )}
                   <div className="-mr-3">
-                    <IconButton size="small" onClick={handleMenuClick}>
+                    <IconButton onClick={handleMenuClick}>
                       <MoreVertIcon className="text-s-text" fontSize="small" />
                     </IconButton>
                   </div>
