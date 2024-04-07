@@ -43,12 +43,12 @@ const LiveCount = ({
   return (
     <div
       className={clsx(
-        'centered-row gap-x-1 text-xl sm:text-2xl text-brand',
+        'centered-row sm:gap-x-1 text-lg sm:text-2xl text-brand',
         className
       )}
     >
       <PermIdentityIcon fontSize="inherit" />
-      <div className="text-base sm:text-lg font-semibold">{count}</div>
+      <div className="text-sm sm:text-lg font-semibold">{count}</div>
     </div>
   )
 }

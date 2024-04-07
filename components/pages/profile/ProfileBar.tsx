@@ -303,18 +303,16 @@ const ProfileBar = ({
       )}
       <div className="m-2 sm:mt-5 sm:mx-8 flex flex-row justify-between items-start text-p-text">
         <div className="start-center-row gap-x-2 sm:gap-x-4 w-full">
-          <div className="">
-            <Link
-              href={`/${formatHandle(profile)}`}
-              prefetch
-              className="no-underline text-p-text"
-            >
-              <img
-                src={getAvatar(profile)}
-                className="sm:w-16 sm:h-16 w-8 h-8 rounded-full"
-              />
-            </Link>
-          </div>
+          <Link
+            href={`/${formatHandle(profile)}`}
+            prefetch
+            className="no-underline text-p-text centered-col"
+          >
+            <img
+              src={getAvatar(profile)}
+              className="sm:w-16 sm:h-16 w-8 h-8 rounded-full"
+            />
+          </Link>
           <div className="sm:pr-3 w-full">
             {/* @ts-ignore   */}
             {(streamer?.streamName || publication?.metadata?.title) &&
@@ -325,8 +323,9 @@ const ProfileBar = ({
                 </Markup>
               )}
 
-            <div className="flex flex-row items-center justify-between w-full space-x-6 ">
-              <div className="centered-row gap-x-4">
+            <div className="flex flex-row items-center justify-between w-full">
+              <div className="centered-row gap-x-2 sm:gap-x-4">
+                {/* followes */}
                 <div>
                   <Link
                     href={`/${formatHandle(profile)}`}
@@ -357,14 +356,15 @@ const ProfileBar = ({
               </div>
 
               {isMobile && (
-                <div className="centered-row gap-x-2">
+                <div className="centered-row">
                   {profile?.id && !post && (
-                    <LiveCount profileId={profile?.id} />
+                    <LiveCount className="-mr-1" profileId={profile?.id} />
                   )}
-
-                  <IconButton onClick={handleMenuClick}>
-                    <MoreVertIcon className="text-s-text" />
-                  </IconButton>
+                  <div className="-mr-3">
+                    <IconButton size="small" onClick={handleMenuClick}>
+                      <MoreVertIcon className="text-s-text" fontSize="small" />
+                    </IconButton>
+                  </div>
                 </div>
               )}
             </div>
