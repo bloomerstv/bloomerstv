@@ -31,6 +31,12 @@ const StreamerHorizontalDiv = () => {
     limit: LimitType.Fifty
   })
 
+  const getOfflineVerified = (profileId: string) => {
+    return sortedOfflineStreamers?.find(
+      (streamer) => streamer?.profileId === profileId
+    )?.premium
+  }
+
   return (
     <div className="w-full p-4 no-scrollbar overflow-y-auto flex flex-row items-center gap-x-3">
       {streamersWithProfiles?.map((streamer) => {
@@ -38,6 +44,7 @@ const StreamerHorizontalDiv = () => {
           <SingleHorizontalStreamerDiv
             key={streamer?.profileId}
             profile={streamer?.profile}
+            premium={streamer?.premium ?? false}
             live={true}
           />
         )
@@ -54,6 +61,7 @@ const StreamerHorizontalDiv = () => {
             key={profile?.id}
             profile={profile}
             live={false}
+            premium={getOfflineVerified(profile?.id) ?? false}
           />
         )
       })}

@@ -1,6 +1,6 @@
 import { Post, Profile } from '@lens-protocol/react-web'
 import React from 'react'
-import { SingleStreamer } from '../../../graphql/generated'
+import { SingleStreamer, useIsVerifiedQuery } from '../../../graphql/generated'
 import ProfileBar from './ProfileBar'
 
 const ProfileInfoWithStream = ({
@@ -12,9 +12,21 @@ const ProfileInfoWithStream = ({
   streamer?: SingleStreamer
   post?: Post
 }) => {
+  const { data } = useIsVerifiedQuery({
+    variables: {
+      profileIds: [profile?.id]
+    },
+    skip: !profile?.id || Boolean(streamer)
+  })
+
   return (
     <div className="w-full">
-      <ProfileBar profile={profile} streamer={streamer} post={post} />
+      <ProfileBar
+        premium={Boolean(data?.isVerified?.[0]?.isVerified)}
+        profile={profile}
+        streamer={streamer}
+        post={post}
+      />
     </div>
   )
 }

@@ -197,3 +197,27 @@ export const ALERT_BOX_PREVIEW_VIDEO =
   'https://vod-cdn.lp-playback.studio/raw/jxf4iblf6wlsyor6526t4tcmtmqa/catalyst-vod-com/hls/1d46hps10mofkmpj/720p0.mp4'
 export const HOW_TO_ADD_WIDGETS_VIDEO =
   'https://vod-cdn.lp-playback.studio/raw/jxf4iblf6wlsyor6526t4tcmtmqa/catalyst-vod-com/hls/6913ct06fo4vrc9p/1080p0.mp4'
+
+export const SuperFluidInfo = isMainnet
+  ? {
+      endPoint: 'https://polygon-mainnet.subgraph.x.superfluid.dev/',
+      receiver: '0xC8D0E78379d96D0A436b8597835670b13445A6Db',
+      currentFlowRate_gte: '3801369863013',
+      token: '0x07b24bbd834c1c546ece89ff95f71d9f13a2ebd1',
+      checkoutLink:
+        'https://checkout.superfluid.finance/QmchcMFDUJS4LhzXo9c9ap3BqA1LQo41XZtuMZHKx6j944',
+      getCancleLink: (address: string): string => {
+        return `https://app.superfluid.finance/stream/polygon/${address?.toLowerCase()}-0xc8d0e78379d96d0a436b8597835670b13445a6db-0x07b24bbd834c1c546ece89ff95f71d9f13a2ebd1?view=${address}`
+      }
+    }
+  : {
+      endPoint: 'https://polygon-mumbai.subgraph.x.superfluid.dev/',
+      receiver: '0xC8D0E78379d96D0A436b8597835670b13445A6Db',
+      currentFlowRate_gte: '3805175038',
+      token: '0x96b82b65acf7072efeb00502f45757f254c2a0d4',
+      checkoutLink:
+        'https://checkout.superfluid.finance/QmemtnbUtRSuXb2EfCjTDdaZZVfomn7uNbR9AB9hnvmaYs',
+      getCancleLink: (address: string): string => {
+        return `https://app.superfluid.finance/stream/polygon-mumbai/${address?.toLowerCase()}-0xc8d0e78379d96d0a436b8597835670b13445a6db-0x96b82b65acf7072efeb00502f45757f254c2a0d4?view=${address}`
+      }
+    }

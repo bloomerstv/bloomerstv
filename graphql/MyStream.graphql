@@ -8,5 +8,6 @@ query MyStream {
     streamKey
     isActive
     latestStreamPublicationId
+    premium
   }
 }

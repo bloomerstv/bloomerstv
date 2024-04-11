@@ -6,6 +6,7 @@ import Link from 'next/link'
 import LiveDiv from '../../ui/LiveDiv'
 import LoadingImage from '../../ui/LoadingImage'
 import PermIdentityIcon from '@mui/icons-material/PermIdentity'
+import VerifiedBadge from '../../ui/VerifiedBadge'
 
 const StreamCard = ({ streamer }: { streamer: StreamerWithProfile }) => {
   return (
@@ -42,8 +43,11 @@ const StreamCard = ({ streamer }: { streamer: StreamerWithProfile }) => {
         />
         <div className="start-col">
           <div className="font-semibold">{streamer?.streamName}</div>
-          <div className="text-sm font-semibold text-s-text">
-            {formatHandle(streamer?.profile)}{' '}
+          <div className="flex flex-row items-center gap-x-1">
+            <div className="text-sm font-semibold text-s-text">
+              {formatHandle(streamer?.profile)}{' '}
+            </div>
+            {streamer?.premium && <VerifiedBadge />}
           </div>
         </div>
       </div>

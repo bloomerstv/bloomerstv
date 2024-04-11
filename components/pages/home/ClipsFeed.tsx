@@ -10,6 +10,7 @@ import React from 'react'
 import { APP_ID } from '../../../utils/config'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
+import { useIsVerifiedQuery } from '../../../graphql/generated'
 
 const ClipsFeed = ({ handle }: { handle?: string }) => {
   const { data, loading } = usePublications({
@@ -31,6 +32,16 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
     }
   })
 
+  const { data: isVerified } = useIsVerifiedQuery({
+    variables: {
+      profileIds: data?.map((p) => p.by?.id)
+    }
+  })
+
+  const verifiedMap = new Map(
+    isVerified?.isVerified?.map((v) => [v?.profileId, v?.isVerified ?? false])
+  )
+
   if (!loading && data?.length === 0) {
     return null
   }
@@ -43,7 +54,13 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
       {data?.length > 0 ? (
         <div className="flex flex-row flex-wrap w-full gap-y-6 sm:gap-y-8">
           {data?.map((post) => {
-            return <HomeVideoCard key={post?.id} post={post as Post} />
+            return (
+              <HomeVideoCard
+                premium={verifiedMap.get(post?.by?.id)}
+                key={post?.id}
+                post={post as Post}
+              />
+            )
           })}
         </div>
       ) : (

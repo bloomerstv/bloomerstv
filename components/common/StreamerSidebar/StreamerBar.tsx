@@ -9,7 +9,7 @@ import clsx from 'clsx'
 import LiveDiv from '../../ui/LiveDiv'
 import { humanReadableNumber, timeAgoShort } from '../../../utils/helpers'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
-
+import VerifiedBadge from '../../ui/VerifiedBadge'
 const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
@@ -37,8 +37,12 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
         )}
         {!minimize && (
           <div className="ml-2">
-            <div className="text-s-text font-bold ">
-              {formatHandle(streamer?.profile)}
+            <div className="centered-row gap-x-1">
+              <div className="text-s-text font-bold ">
+                {formatHandle(streamer?.profile)}
+              </div>
+
+              {streamer?.premium && <VerifiedBadge />}
             </div>
             {isMobile && (
               <div className="text-s-text sm:font-normal leading-3 font-semibold text-xs">

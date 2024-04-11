@@ -70,6 +70,8 @@ const PostClipOnLens = ({
     const id = uuid()
     const locale = getUserLocale()
 
+    // generate thumbnail from video
+
     const metadata = shortVideo({
       title: title,
       content: title,

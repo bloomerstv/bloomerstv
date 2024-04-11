@@ -14,12 +14,15 @@ import getAvatar from '../../../utils/lib/getAvatar'
 import LoadingButton from '@mui/lab/LoadingButton'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import Link from 'next/link'
+import VerifiedBadge from '../../ui/VerifiedBadge'
 const SingleHorizontalStreamerDiv = ({
   profile,
+  premium,
   live = false
 }: {
   profile: Profile
   live?: boolean
+  premium?: boolean
 }) => {
   const { data } = useSession()
 
@@ -94,7 +97,17 @@ const SingleHorizontalStreamerDiv = ({
             </div>
           )}
       </div>
-      <div className="text-s-text text-xs">{formatHandle(profile)}</div>
+      <div className="flex flex-row items-center gap-x-0.5">
+        <div className="text-s-text text-xs">{formatHandle(profile)}</div>
+        {premium && (
+          <VerifiedBadge
+            sx={{
+              width: '12px',
+              height: '12px'
+            }}
+          />
+        )}
+      </div>
     </div>
   )
 }

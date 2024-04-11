@@ -13,8 +13,8 @@ import { useMyPreferences } from '../../../store/useMyPreferences'
 import LiveVideoComponent from './LiveVideoComponent'
 import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST } from '../../../../utils/categories'
-import { stringToLength } from '../../../../utils/stringToLength'
-
+// import { stringToLength } from '../../../../utils/stringToLength'
+import Link from 'next/link'
 const LiveStreamEditor = () => {
   const [startedStreaming, setStartedStreaming] = React.useState(false)
   const [streamFromBrowser, setStreamFromBrowser] = React.useState(false)
@@ -81,7 +81,7 @@ const LiveStreamEditor = () => {
                 />
               </div>
 
-              <div className="">
+              {/* <div className="">
                 <div className="text-s-text font-bold text-md">Description</div>
                 <div className="text-p-text text-sm 2xl:text-base font-semibold ">
                   <div className="whitespace-pre-wrap break-words ">
@@ -89,7 +89,7 @@ const LiveStreamEditor = () => {
                       'No description provided'}
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div className="space-y-1">
                 <div className="text-s-text font-bold text-md">
                   Collect Preview
@@ -101,43 +101,45 @@ const LiveStreamEditor = () => {
 
               <div className="flex flex-row gap-x-6">
                 <div className="flex flex-row gap-x-8">
-                  <div className="space-y-1">
-                    <div className="text-s-text font-bold text-md">
-                      Replay Visibility
-                    </div>
-                    <Select
-                      value={streamReplayViewType}
-                      onChange={(e) => {
-                        if (!e.target.value) return
-                        setStreamReplayViewType(e.target.value as ViewType)
-                      }}
-                      variant="standard"
-                      size="small"
-                    >
-                      <MenuItem
-                        value={ViewType.Public}
-                        title="Your stream replay will be visible on Home, Profile, and Post page"
-                        className="text-p-text"
+                  {myStream?.premium && (
+                    <div className="space-y-1">
+                      <div className="text-s-text font-bold text-md">
+                        Replay Visibility
+                      </div>
+                      <Select
+                        value={streamReplayViewType}
+                        onChange={(e) => {
+                          if (!e.target.value) return
+                          setStreamReplayViewType(e.target.value as ViewType)
+                        }}
+                        variant="standard"
+                        size="small"
                       >
-                        Public
-                      </MenuItem>
-                      <MenuItem
-                        title="Your stream replay will be visible only on Post page"
-                        value={ViewType.Unlisted}
-                        className="text-p-text"
-                      >
-                        Unlisted
-                      </MenuItem>
+                        <MenuItem
+                          value={ViewType.Public}
+                          title="Your stream replay will be visible on Home, Profile, and Post page"
+                          className="text-p-text"
+                        >
+                          Public
+                        </MenuItem>
+                        <MenuItem
+                          title="Your stream replay will be visible only on Post page"
+                          value={ViewType.Unlisted}
+                          className="text-p-text"
+                        >
+                          Unlisted
+                        </MenuItem>
 
-                      <MenuItem
-                        title="Your stream replay will not be visible for anyone but you can find it in dashboard"
-                        value={ViewType.Private}
-                        className="text-p-text"
-                      >
-                        Private
-                      </MenuItem>
-                    </Select>
-                  </div>
+                        <MenuItem
+                          title="Your stream replay will not be visible for anyone but you can find it in dashboard"
+                          value={ViewType.Private}
+                          className="text-p-text"
+                        >
+                          Private
+                        </MenuItem>
+                      </Select>
+                    </div>
+                  )}
                   <div className="space-y-1">
                     <div className="text-s-text font-bold text-md">
                       Category
@@ -160,6 +162,19 @@ const LiveStreamEditor = () => {
                   </div>
                 </div>
               </div>
+
+              {!myStream?.premium && (
+                <div className="text-xs text-s-text">
+                  Stream replay has been moved to Super Plan. Checkout{' '}
+                  <Link
+                    href={'/dashboard/subscription'}
+                    className="text-brand no-underline"
+                  >
+                    subscription page
+                  </Link>{' '}
+                  to upgrade.
+                </div>
+              )}
             </div>
           </div>
         </div>

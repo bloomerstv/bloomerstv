@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Post } from '@lens-protocol/react-web'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
@@ -13,22 +13,15 @@ const HomePageCards = () => {
   const streamReplayPublication = usePublicationsStore(
     (state) => state.streamReplayPublication
   )
-
   const isMobile = useIsMobile()
 
-  const getStreamReplay = useCallback(
-    (publicationId: string) => {
-      const streamReplay =
-        streamReplayPublication?.streamReplayPublications?.find(
-          (p) => p?.publicationId === publicationId
-        )
-      return {
-        thumbnail: streamReplay?.thumbnail,
-        duration: streamReplay?.sourceSegmentsDuration
-      }
-    },
-    [streamReplayPublication]
+  const streamReplayMap = new Map(
+    streamReplayPublication?.streamReplayPublications?.map((p) => [
+      p?.publicationId,
+      p
+    ])
   )
+
   const renderLoadingCards = () => {
     // Create an array of 8 elements and map over it
     return Array(8)
@@ -46,9 +39,11 @@ const HomePageCards = () => {
                 return (
                   <HomeVideoCard
                     // @ts-ignore
-                    cover={getStreamReplay(post?.id)?.thumbnail}
+                    cover={streamReplayMap.get(post?.id)?.thumbnail}
                     // @ts-ignore
-                    duration={getStreamReplay(post?.id)?.duration}
+                    duration={
+                      streamReplayMap.get(post?.id)?.sourceSegmentsDuration
+                    }
                     key={post?.id}
                     post={post as Post}
                   />
@@ -80,18 +75,11 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
       profileId: profileId
     })
 
-  const getStreamReplay = useCallback(
-    (publicationId: string) => {
-      const streamReplay =
-        streamReplayPublication?.streamReplayPublications?.find(
-          (p) => p?.publicationId === publicationId
-        )
-      return {
-        thumbnail: streamReplay?.thumbnail,
-        duration: streamReplay?.sourceSegmentsDuration
-      }
-    },
-    [streamReplayPublication?.streamReplayPublications]
+  const streamReplayMap = new Map(
+    streamReplayPublication?.streamReplayPublications?.map((p) => [
+      p?.publicationId,
+      p
+    ])
   )
 
   return (
@@ -103,9 +91,9 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
             return (
               <HomeVideoCard
                 // @ts-ignore
-                cover={getStreamReplay(post?.id)?.thumbnail}
+                cover={streamReplayMap.get(post?.id)?.thumbnail}
                 // @ts-ignore
-                duration={getStreamReplay(post?.id)?.duration}
+                duration={streamReplayMap.get(post?.id)?.sourceSegmentsDuration}
                 key={post?.id}
                 post={post as Post}
               />

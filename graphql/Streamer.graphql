@@ -9,5 +9,6 @@ query Streamer($profileId: String!) {
     streamDescription
     latestStreamPublicationId
     startedStreaming
+    premium
   }
 }

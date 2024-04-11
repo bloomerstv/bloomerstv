@@ -2,5 +2,6 @@ query OfflineStreamers {
   offlineStreamers {
     profileId
     lastSeen
+    premium
   }
 }

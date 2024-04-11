@@ -1,0 +1,6 @@
+query IsVerified($profileIds: [String]) {
+  isVerified(profileIds: $profileIds) {
+    isVerified
+    profileId
+  }
+}

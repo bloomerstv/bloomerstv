@@ -94,6 +94,17 @@ const StreamerSidebar = () => {
     [offlineStreamers]
   )
 
+  const getOfflineVerifiedProfile = useCallback(
+    (profileId: string) => {
+      return offlineStreamers?.offlineStreamers?.find(
+        (streamer) => streamer?.profileId === profileId
+      )?.premium
+    },
+    [offlineProfiles]
+  )
+
+  console.log('offlineStreamers', offlineStreamers)
+
   const offlineFollowingStreamers = getOfflineFollowingStreamers()
   const offlineRecommendedStreamers = getOfflineRecommendedStreamers()
 
@@ -135,7 +146,9 @@ const StreamerSidebar = () => {
                         streamer={{
                           profile,
                           profileId: profile?.id,
-                          lastSeen: getOfflineProfileLastSeen(profile?.id)
+                          lastSeen: getOfflineProfileLastSeen(profile?.id),
+                          premium:
+                            getOfflineVerifiedProfile(profile?.id) ?? false
                         }}
                       />
                     )
@@ -180,7 +193,9 @@ const StreamerSidebar = () => {
                         streamer={{
                           profile,
                           profileId: profile?.id,
-                          lastSeen: getOfflineProfileLastSeen(profile?.id)
+                          lastSeen: getOfflineProfileLastSeen(profile?.id),
+                          premium:
+                            getOfflineVerifiedProfile(profile?.id) ?? false
                         }}
                       />
                     )

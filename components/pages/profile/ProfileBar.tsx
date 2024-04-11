@@ -44,14 +44,17 @@ import Link from 'next/link'
 import CollectButton from './CollectButton'
 import FollowingButton from './FollowingButton'
 import { humanReadableNumber } from '../../../utils/helpers'
+import VerifiedBadge from '../../ui/VerifiedBadge'
 const ProfileBar = ({
   profile,
   streamer,
-  post
+  post,
+  premium = false
 }: {
   profile: Profile
   streamer?: SingleStreamer
   post?: Post
+  premium?: boolean
 }) => {
   const [isFollowing, setIsFollowing] = React.useState<boolean>(
     profile?.operations?.isFollowedByMe?.value
@@ -332,8 +335,11 @@ const ProfileBar = ({
                     prefetch
                     className="no-underline text-p-text"
                   >
-                    <div className="font-semibold sm:text-sm">
-                      {formatHandle(profile)}
+                    <div className="start-center-row gap-x-1">
+                      <div className="font-semibold sm:text-sm">
+                        {formatHandle(profile)}
+                      </div>
+                      {(premium || streamer?.premium) && <VerifiedBadge />}
                     </div>
                   </Link>
 

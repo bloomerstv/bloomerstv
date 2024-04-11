@@ -55,6 +55,12 @@ export type IpfsResult = {
   size?: Maybe<Scalars['Int']['output']>
 }
 
+export type IsVerifiedResult = {
+  __typename?: 'IsVerifiedResult'
+  isVerified?: Maybe<Scalars['Boolean']['output']>
+  profileId?: Maybe<Scalars['String']['output']>
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   addNotificationSubscriberToStreamer?: Maybe<Scalars['Boolean']['output']>
@@ -117,6 +123,7 @@ export type MyStream = Stream & {
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   latestStreamPublicationId?: Maybe<Scalars['String']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
+  premium?: Maybe<Scalars['Boolean']['output']>
   profileId: Scalars['String']['output']
   streamDescription?: Maybe<Scalars['String']['output']>
   streamKey?: Maybe<Scalars['String']['output']>
@@ -127,10 +134,11 @@ export type Query = {
   __typename?: 'Query'
   getMyRecordedStreamSessions?: Maybe<Array<Maybe<RecordedSession>>>
   isSubcribedNotificationForStreamer?: Maybe<Scalars['Boolean']['output']>
+  isVerified?: Maybe<Array<Maybe<IsVerifiedResult>>>
   liveStreamers?: Maybe<Array<Maybe<Streamer>>>
   myStream?: Maybe<MyStream>
   offlineStreamers?: Maybe<Array<Maybe<Streamer>>>
-  ping?: Maybe<Scalars['String']['output']>
+  ping?: Maybe<Scalars['JSON']['output']>
   shouldCreateNewPost?: Maybe<Scalars['String']['output']>
   streamChats?: Maybe<Array<Maybe<Chat>>>
   streamReplayPublications?: Maybe<Array<Maybe<StreamReplayPublications>>>
@@ -145,6 +153,10 @@ export type QueryGetMyRecordedStreamSessionsArgs = {
 
 export type QueryIsSubcribedNotificationForStreamerArgs = {
   profileId: Scalars['String']['input']
+}
+
+export type QueryIsVerifiedArgs = {
+  profileIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>
 }
 
 export type QueryStreamChatsArgs = {
@@ -188,6 +200,7 @@ export type SingleStreamer = Stream & {
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   latestStreamPublicationId?: Maybe<Scalars['String']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
+  premium?: Maybe<Scalars['Boolean']['output']>
   profileId: Scalars['String']['output']
   startedStreaming?: Maybe<Scalars['BigNumber']['output']>
   streamDescription?: Maybe<Scalars['String']['output']>
@@ -225,6 +238,7 @@ export type Streamer = Stream & {
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   liveCount?: Maybe<Scalars['Int']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
+  premium?: Maybe<Scalars['Boolean']['output']>
   profileId: Scalars['String']['output']
   streamDescription?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
@@ -316,6 +330,22 @@ export type IsSubcribedNotificationForStreamerQuery = {
   isSubcribedNotificationForStreamer?: boolean | null
 }
 
+export type IsVerifiedQueryVariables = Exact<{
+  profileIds?: InputMaybe<
+    | Array<InputMaybe<Scalars['String']['input']>>
+    | InputMaybe<Scalars['String']['input']>
+  >
+}>
+
+export type IsVerifiedQuery = {
+  __typename?: 'Query'
+  isVerified?: Array<{
+    __typename?: 'IsVerifiedResult'
+    isVerified?: boolean | null
+    profileId?: string | null
+  } | null> | null
+}
+
 export type LiveStreamersQueryVariables = Exact<{ [key: string]: never }>
 
 export type LiveStreamersQuery = {
@@ -330,6 +360,7 @@ export type LiveStreamersQuery = {
     playbackId?: string | null
     thumbnail?: string | null
     liveCount?: number | null
+    premium?: boolean | null
   } | null> | null
 }
 
@@ -347,6 +378,7 @@ export type MyStreamQuery = {
     streamKey?: string | null
     isActive?: boolean | null
     latestStreamPublicationId?: string | null
+    premium?: boolean | null
   } | null
 }
 
@@ -358,6 +390,7 @@ export type OfflineStreamersQuery = {
     __typename?: 'Streamer'
     profileId: string
     lastSeen?: any | null
+    premium?: boolean | null
   } | null> | null
 }
 
@@ -440,6 +473,7 @@ export type StreamerQuery = {
     streamDescription?: string | null
     latestStreamPublicationId?: string | null
     startedStreaming?: any | null
+    premium?: boolean | null
   } | null
 }
 
@@ -868,6 +902,78 @@ export type IsSubcribedNotificationForStreamerQueryResult = Apollo.QueryResult<
   IsSubcribedNotificationForStreamerQuery,
   IsSubcribedNotificationForStreamerQueryVariables
 >
+export const IsVerifiedDocument = gql`
+  query IsVerified($profileIds: [String]) {
+    isVerified(profileIds: $profileIds) {
+      isVerified
+      profileId
+    }
+  }
+`
+
+/**
+ * __useIsVerifiedQuery__
+ *
+ * To run a query within a React component, call `useIsVerifiedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIsVerifiedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIsVerifiedQuery({
+ *   variables: {
+ *      profileIds: // value for 'profileIds'
+ *   },
+ * });
+ */
+export function useIsVerifiedQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    IsVerifiedQuery,
+    IsVerifiedQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<IsVerifiedQuery, IsVerifiedQueryVariables>(
+    IsVerifiedDocument,
+    options
+  )
+}
+export function useIsVerifiedLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    IsVerifiedQuery,
+    IsVerifiedQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<IsVerifiedQuery, IsVerifiedQueryVariables>(
+    IsVerifiedDocument,
+    options
+  )
+}
+export function useIsVerifiedSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    IsVerifiedQuery,
+    IsVerifiedQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<IsVerifiedQuery, IsVerifiedQueryVariables>(
+    IsVerifiedDocument,
+    options
+  )
+}
+export type IsVerifiedQueryHookResult = ReturnType<typeof useIsVerifiedQuery>
+export type IsVerifiedLazyQueryHookResult = ReturnType<
+  typeof useIsVerifiedLazyQuery
+>
+export type IsVerifiedSuspenseQueryHookResult = ReturnType<
+  typeof useIsVerifiedSuspenseQuery
+>
+export type IsVerifiedQueryResult = Apollo.QueryResult<
+  IsVerifiedQuery,
+  IsVerifiedQueryVariables
+>
 export const LiveStreamersDocument = gql`
   query LiveStreamers {
     liveStreamers {
@@ -879,6 +985,7 @@ export const LiveStreamersDocument = gql`
       playbackId
       thumbnail
       liveCount
+      premium
     }
   }
 `
@@ -958,6 +1065,7 @@ export const MyStreamDocument = gql`
       streamKey
       isActive
       latestStreamPublicationId
+      premium
     }
   }
 `
@@ -1026,6 +1134,7 @@ export const OfflineStreamersDocument = gql`
     offlineStreamers {
       profileId
       lastSeen
+      premium
     }
   }
 `
@@ -1459,6 +1568,7 @@ export const StreamerDocument = gql`
       streamDescription
       latestStreamPublicationId
       startedStreaming
+      premium
     }
   }
 `

@@ -10,15 +10,18 @@ import Markup from './Lexical/Markup'
 import { THUMBNAIL_FALLBACK } from '../../utils/config'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
+import VerifiedBadge from '../ui/VerifiedBadge'
 
 const HomeVideoCard = ({
   post,
   cover,
-  duration
+  duration,
+  premium
 }: {
   post: Post
   cover?: string
   duration?: number
+  premium?: boolean
 }) => {
   const pathname = usePathname()
   const asset = getPublicationData(post?.metadata)?.asset
@@ -78,13 +81,16 @@ const HomeVideoCard = ({
             <Markup>{post?.metadata?.title}</Markup>
           </div>
           <div className="start-row flex-wrap text-sm lg:text-xs 2xl:text-sm font-normal text-s-text gap-x-1">
-            <Link
-              prefetch
-              className="no-underline group text-s-text font-semibold"
-              href={`/${formatHandle(post?.by)}`}
-            >
-              <div className="">{formatHandle(post?.by)} </div>
-            </Link>
+            <div className="flex flex-row items-center gap-x-1">
+              <Link
+                prefetch
+                className="no-underline group text-s-text font-semibold"
+                href={`/${formatHandle(post?.by)}`}
+              >
+                <div className="">{formatHandle(post?.by)} </div>
+              </Link>
+              {premium && <VerifiedBadge />}
+            </div>
             {/* dot */}
             <div className="">&middot;</div>
             <div>{post?.stats?.upvotes} likes</div>
