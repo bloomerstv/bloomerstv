@@ -37,7 +37,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
         )}
         {!minimize && (
           <div className="ml-2">
-            <div className="centered-row gap-x-1">
+            <div className="start-center-row gap-x-1">
               <div className="text-s-text font-bold ">
                 {formatHandle(streamer?.profile)}
               </div>
