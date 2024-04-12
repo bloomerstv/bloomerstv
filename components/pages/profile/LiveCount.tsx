@@ -37,7 +37,7 @@ const LiveCount = ({
       newSocket?.disconnect()
       newSocket?.removeAllListeners()
     }
-  })
+  }, [])
 
   return (
     <div
