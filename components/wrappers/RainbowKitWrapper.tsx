@@ -7,7 +7,7 @@ import {
   darkTheme,
   getDefaultConfig
 } from '@rainbow-me/rainbowkit'
-import { polygon, polygonMumbai } from 'wagmi/chains'
+import { polygon, polygonAmoy } from 'wagmi/chains'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { APP_NAME, isMainnet } from '@/utils/config'
 import { WagmiProvider, http } from 'wagmi'
@@ -26,10 +26,10 @@ import { bindings } from '@lens-protocol/wagmi'
 //   zerionWallet
 // } from '@rainbow-me/rainbowkit/wallets'
 
-const defaultChains = isMainnet ? [polygon] : [polygonMumbai]
+const defaultChains = isMainnet ? [polygon] : [polygonAmoy]
 const defaultTransports = {
   [polygon.id]: http(),
-  [polygonMumbai.id]: http()
+  [polygonAmoy.id]: http()
 }
 
 const config = getDefaultConfig({

@@ -26,7 +26,6 @@ import LoginIcon from '@mui/icons-material/Login'
 import Markup from '../../../common/Lexical/Markup'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
 import CloseIcon from '@mui/icons-material/Close'
-import { useEffectOnce } from 'usehooks-ts'
 import { useMyPreferences } from '../../../store/useMyPreferences'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeOffIcon from '@mui/icons-material/VolumeOff'
@@ -154,7 +153,7 @@ const LiveChat = ({
     scrollToBottom()
   }, [uniqueMessages, messagesEndRef.current])
 
-  useEffectOnce(() => {
+  useEffect(() => {
     // const listenToSocket = async () => {
     // const authorToken = await getAccessToken()
     const newSocket = io(LIVE_CHAT_WEB_SOCKET_URL, {

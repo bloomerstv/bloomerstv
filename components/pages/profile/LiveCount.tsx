@@ -1,6 +1,5 @@
-import React, { memo } from 'react'
+import React, { memo, useEffect } from 'react'
 import PermIdentityIcon from '@mui/icons-material/PermIdentity'
-import { useEffectOnce } from 'usehooks-ts'
 import io from 'socket.io-client'
 import { LIVE_CHAT_WEB_SOCKET_URL } from '../../../utils/config'
 import clsx from 'clsx'
@@ -13,7 +12,7 @@ const LiveCount = ({
 }) => {
   const [count, setCount] = React.useState(0)
 
-  useEffectOnce(() => {
+  useEffect(() => {
     const newSocket = io(LIVE_CHAT_WEB_SOCKET_URL)
 
     newSocket.on('connect', () => {
