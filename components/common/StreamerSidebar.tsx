@@ -103,8 +103,6 @@ const StreamerSidebar = () => {
     [offlineProfiles]
   )
 
-  console.log('offlineStreamers', offlineStreamers)
-
   const offlineFollowingStreamers = getOfflineFollowingStreamers()
   const offlineRecommendedStreamers = getOfflineRecommendedStreamers()
 
