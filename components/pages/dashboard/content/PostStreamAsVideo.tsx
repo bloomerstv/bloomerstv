@@ -37,6 +37,8 @@ import {
   CATEGORIES_LIST,
   getTagsForCategory
 } from '../../../../utils/categories'
+import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
+import { encodeAbiParameters, type Address } from 'viem'
 
 const PostStreamAsVideo = ({
   publication,
@@ -226,6 +228,16 @@ const PostStreamAsVideo = ({
         actions[0]['recipient'] = recipient
       }
     }
+
+    actions?.push({
+      type: OpenActionType.UNKNOWN_OPEN_ACTION,
+      address: VerifiedOpenActionModules.Tip,
+      // @ts-ignore
+      data: encodeAbiParameters(
+        [{ name: 'tipReceiver', type: 'address' }],
+        [profile?.profile?.handle?.ownedBy as Address]
+      )
+    })
 
     // invoke the `execute` function to create the post
     const result = await execute({

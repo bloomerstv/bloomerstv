@@ -21,8 +21,8 @@ import { useUploadDataToArMutation } from '../../../graphql/generated'
 import useCollectSettings from '../../common/Collect/useCollectSettings'
 import CollectSettingButton from '../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
-// import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
-// import { encodeAbiParameters, type Address } from 'viem'
+import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
+import { encodeAbiParameters, type Address } from 'viem'
 
 const PostClipOnLens = ({
   open,
@@ -133,15 +133,15 @@ const PostClipOnLens = ({
       }
     }
 
-    // actions?.push({
-    //   type: OpenActionType.UNKNOWN_OPEN_ACTION,
-    //   address: VerifiedOpenActionModules.Tip,
-    //   // @ts-ignore
-    //   data: encodeAbiParameters(
-    //     [{ name: 'tipReceiver', type: 'address' }],
-    //     [data?.profile?.handle?.ownedBy as Address]
-    //   )
-    // })
+    actions?.push({
+      type: OpenActionType.UNKNOWN_OPEN_ACTION,
+      address: VerifiedOpenActionModules.Tip,
+      // @ts-ignore
+      data: encodeAbiParameters(
+        [{ name: 'tipReceiver', type: 'address' }],
+        [data?.profile?.handle?.ownedBy as Address]
+      )
+    })
 
     // invoke the `execute` function to create the post
     const result = await execute({

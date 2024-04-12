@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@lens-protocol/metadata": "^1.1.6",
-    "@lens-protocol/react-web": "^2.0.0-alpha.35",
+    "@lens-protocol/react-web": "^0.0.0-canary-20240409063414",
     "@lens-protocol/wagmi": "^4.0.0-alpha.4",
     "@lexical/react": "^0.12.4",
     "@livepeer/react": "^4.1.9",
