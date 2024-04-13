@@ -27,14 +27,12 @@ export const ProfileLink = ({
     target="_blank"
     rel="noopener noreferrer"
     className={clsx(
-      'text-s-text cursor-pointer no-underline rounded-full hover:bg-p-hover active:bg-s-hover pl-1 pr-2',
+      'text-s-text start-center-row gap-x-1 cursor-pointer no-underline rounded-full hover:bg-p-hover active:bg-s-hover pl-1 pr-2',
       className
     )}
   >
-    <div className="centered-row gap-x-1">
-      <div className="h-fit mt-1">{icon}</div>
-      <div className="">{alias ? alias : shortFormOfLink(link)}</div>
-    </div>
+    <div className="h-fit mt-1">{icon}</div>
+    <div className="text-left">{alias ? alias : shortFormOfLink(link)}</div>
   </a>
 )
 
