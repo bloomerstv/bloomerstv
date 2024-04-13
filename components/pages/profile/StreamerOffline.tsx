@@ -135,38 +135,39 @@ const StreamerOffline = ({
                     className="pl-2 -ml-2"
                   />
                 )}
-                {mySession?.type === SessionType.WithProfile && (
-                  <>
-                    {isSubscribed?.isSubcribedNotificationForStreamer ? (
-                      <div className="flex flex-row gap-x-1 py-1.5 -ml-0.5 text-p-text text-s-text">
-                        <NotificationsIcon fontSize="medium" />
-                        <div className="text-left">
-                          You will be notified when {formatHandle(profile)} goes
-                          live.
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="-ml-1">
-                        <Button
-                          onClick={async () => {
-                            await addSubscriber()
-                          }}
-                          color="primary"
-                          variant="text"
-                          startIcon={<NotificationsNoneIcon />}
-                          sx={{
-                            textTransform: 'none',
-                            borderRadius: '20px'
-                          }}
-                        >
-                          <div className="text-base -ml-1">
-                            Turn on notifications
+                {mySession?.type === SessionType.WithProfile &&
+                  mySession?.profile?.id !== profile?.id && (
+                    <>
+                      {isSubscribed?.isSubcribedNotificationForStreamer ? (
+                        <div className="flex flex-row gap-x-1 py-1.5 -ml-0.5 text-p-text text-s-text">
+                          <NotificationsIcon fontSize="medium" />
+                          <div className="text-left">
+                            You will be notified when {formatHandle(profile)}{' '}
+                            goes live.
                           </div>
-                        </Button>
-                      </div>
-                    )}
-                  </>
-                )}
+                        </div>
+                      ) : (
+                        <div className="-ml-1">
+                          <Button
+                            onClick={async () => {
+                              await addSubscriber()
+                            }}
+                            color="primary"
+                            variant="text"
+                            startIcon={<NotificationsNoneIcon />}
+                            sx={{
+                              textTransform: 'none',
+                              borderRadius: '20px'
+                            }}
+                          >
+                            <div className="text-base -ml-1">
+                              Turn on notifications
+                            </div>
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
               </div>
             )}
           </div>
