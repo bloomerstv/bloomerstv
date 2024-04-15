@@ -5,8 +5,8 @@ import formatHandle from '../../utils/lib/formatHandle'
 import { Profile, PublicationStats } from '@lens-protocol/react-web'
 import { timeAgo } from '../../utils/helpers'
 import { stringToLength } from '../../utils/stringToLength'
-import { THUMBNAIL_FALLBACK } from '../../utils/config'
 import Markup from './Lexical/Markup'
+import LoadingImage from '../ui/LoadingImage'
 
 const RecommendedCardLayout = ({
   postLink,
@@ -31,15 +31,9 @@ const RecommendedCardLayout = ({
     >
       <div className="w-full flex flex-row gap-x-3 font-semibold">
         <div className="relative h-[99px] w-[176px] rounded-md">
-          <img
+          <LoadingImage
             src={coverUrl}
             className="h-[99px] w-[176px] object-cover rounded-md"
-            onError={(e) => {
-              // @ts-ignore
-              e.target.onerror = null // Prevents infinite looping in case the fallback image also fails to load
-              // @ts-ignore
-              e.target.src = THUMBNAIL_FALLBACK // Replace with your default background image
-            }}
           />
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             <PlayArrowIcon className="text-white transform transition-transform group-hover:scale-110 duration-500" />

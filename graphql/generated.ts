@@ -198,6 +198,7 @@ export type SingleStreamer = Stream & {
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   isActive?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
+  latestSessionId?: Maybe<Scalars['String']['output']>
   latestStreamPublicationId?: Maybe<Scalars['String']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
@@ -472,6 +473,7 @@ export type StreamerQuery = {
     streamName?: string | null
     streamDescription?: string | null
     latestStreamPublicationId?: string | null
+    latestSessionId?: string | null
     startedStreaming?: any | null
     premium?: boolean | null
   } | null
@@ -1567,6 +1569,7 @@ export const StreamerDocument = gql`
       streamName
       streamDescription
       latestStreamPublicationId
+      latestSessionId
       startedStreaming
       premium
     }

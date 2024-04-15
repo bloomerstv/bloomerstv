@@ -56,13 +56,13 @@ export const LIVE_PEER_RTMP_URL = 'rtmp://rtmp.livepeer.com/live'
 export const localStorageCredKey = isMainnet
   ? 'lens.production.credentials'
   : 'lens.development.credentials'
-export const lensTestnetUrl = 'https://api-v2-mumbai-live.lens.dev'
+export const lensTestnetUrl = 'https://api-v2-amoy.lens.dev'
 export const lensMainnetUrl = 'https://api-v2.lens.dev'
 export const wsLensGraphEndpoint = isMainnet
   ? 'wss://api-v2.lens.dev'
-  : 'wss://api-v2-mumbai-live.lens.dev'
+  : 'wss://api-v2-amoy.lens.dev'
 export const lensUrl = isMainnet ? lensMainnetUrl : lensTestnetUrl
-export const handlePrefix = isMainnet ? 'lens/' : 'test/'
+export const handlePrefix = 'lens/'
 export const defaultSponsored = process.env.NEXT_PUBLIC_DEFAULT_SPONSORED
   ? process.env.NEXT_PUBLIC_DEFAULT_SPONSORED === 'true'
   : true

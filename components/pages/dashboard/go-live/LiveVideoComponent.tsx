@@ -29,7 +29,8 @@ import {
   APP_ID,
   APP_LINK,
   REDIRECTOR_URL,
-  defaultSponsored
+  defaultSponsored,
+  isMainnet
 } from '../../../../utils/config'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
@@ -213,15 +214,17 @@ const LiveVideoComponent = ({
       }
     }
 
-    actions?.push({
-      type: OpenActionType.UNKNOWN_OPEN_ACTION,
-      address: VerifiedOpenActionModules.Tip,
-      // @ts-ignore
-      data: encodeAbiParameters(
-        [{ name: 'tipReceiver', type: 'address' }],
-        [session?.profile?.handle?.ownedBy as Address]
-      )
-    })
+    if (isMainnet) {
+      actions?.push({
+        type: OpenActionType.UNKNOWN_OPEN_ACTION,
+        address: VerifiedOpenActionModules.Tip,
+        // @ts-ignore
+        data: encodeAbiParameters(
+          [{ name: 'tipReceiver', type: 'address' }],
+          [session?.profile?.handle?.ownedBy as Address]
+        )
+      })
+    }
 
     const MAX_RETRIES = 3 // Maximum number of retries
     let retries = 0
@@ -352,8 +355,6 @@ const LiveVideoComponent = ({
         success: null,
         error: null
       })
-
-      console.log('latestSessionId', latestSessionId)
 
       if (!latestSessionId) {
         return

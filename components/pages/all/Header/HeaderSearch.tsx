@@ -33,7 +33,7 @@ const HeaderSearch = () => {
   return (
     <ClickAwayListener onClickAway={closeSearch}>
       <div className={clsx('relative', showSearch && 'shadow-xl')}>
-        <div className="centered-row border rounded-lg border-p-border px-3 py-1.5">
+        <div className="centered-row border rounded-lg border-p-border px-3 py-1">
           <SearchIcon className="text-s-text" />
           <input
             type="text"

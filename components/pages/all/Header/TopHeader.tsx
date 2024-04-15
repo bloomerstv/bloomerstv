@@ -17,7 +17,7 @@ const TopHeader = () => {
   return (
     <div
       className={clsx(
-        'flex flex-row items-center justify-between p-2 px-4 shadow-sm bg-s-bg h-[60px]',
+        'flex flex-row items-center justify-between py-0.5 px-4 shadow-sm bg-s-bg h-[50px]',
         theme === 'dark' && 'border-b border-p-border'
       )}
     >

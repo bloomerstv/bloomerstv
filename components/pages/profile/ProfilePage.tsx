@@ -135,7 +135,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
             // @ts-ignore
             profile={data}
             // @ts-ignore
-            streamer={streamer?.streamer}
+            streamer={streamer?.streamer?.latestStreamPublicationId}
           />
         }
         clipLength={
@@ -167,6 +167,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
           setOpen={setOpen}
           url={clipUrl}
           profile={data}
+          sessionId={streamer?.streamer?.latestSessionId}
         />
       )}
       <div className="w-full flex-grow overflow-auto no-scrollbar h-full">

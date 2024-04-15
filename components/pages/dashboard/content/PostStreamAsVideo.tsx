@@ -23,7 +23,12 @@ import {
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
 import { MediaVideoMimeType, video } from '@lens-protocol/metadata'
-import { APP_ID, APP_LINK, defaultSponsored } from '../../../../utils/config'
+import {
+  APP_ID,
+  APP_LINK,
+  defaultSponsored,
+  isMainnet
+} from '../../../../utils/config'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
 import formatHandle from '../../../../utils/lib/formatHandle'
@@ -184,6 +189,7 @@ const PostStreamAsVideo = ({
       },
       tags: [
         `clip-${formatHandle(profile?.profile)}`,
+        `sessionId-${session?.sessionId}`,
         ...getTagsForCategory(category)
       ],
       appId: APP_ID,
@@ -229,15 +235,17 @@ const PostStreamAsVideo = ({
       }
     }
 
-    actions?.push({
-      type: OpenActionType.UNKNOWN_OPEN_ACTION,
-      address: VerifiedOpenActionModules.Tip,
-      // @ts-ignore
-      data: encodeAbiParameters(
-        [{ name: 'tipReceiver', type: 'address' }],
-        [profile?.profile?.handle?.ownedBy as Address]
-      )
-    })
+    if (isMainnet) {
+      actions?.push({
+        type: OpenActionType.UNKNOWN_OPEN_ACTION,
+        address: VerifiedOpenActionModules.Tip,
+        // @ts-ignore
+        data: encodeAbiParameters(
+          [{ name: 'tipReceiver', type: 'address' }],
+          [profile?.profile?.handle?.ownedBy as Address]
+        )
+      })
+    }
 
     // invoke the `execute` function to create the post
     const result = await execute({

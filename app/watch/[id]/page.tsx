@@ -56,7 +56,7 @@ const page = ({
   return (
     <div
       className={clsx(
-        'h-full overflow-y-auto w-full flex flex-row sm:pt-8 sm:px-8 gap-x-8',
+        'h-full overflow-y-auto w-full flex flex-row sm:p-4 gap-x-4',
         isMobile && 'no-scrollbar'
       )}
     >

@@ -14,7 +14,12 @@ import {
   useSession
 } from '@lens-protocol/react-web'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
-import { APP_ID, APP_LINK, defaultSponsored } from '../../../utils/config'
+import {
+  APP_ID,
+  APP_LINK,
+  defaultSponsored,
+  isMainnet
+} from '../../../utils/config'
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
 import { useUploadDataToArMutation } from '../../../graphql/generated'
@@ -28,12 +33,14 @@ const PostClipOnLens = ({
   open,
   setOpen,
   url,
-  profile
+  profile,
+  sessionId
 }: {
   open: boolean
   setOpen: (open: boolean) => void
   url: string
   profile?: Profile
+  sessionId?: string | null
 }) => {
   const {
     type,
@@ -72,6 +79,14 @@ const PostClipOnLens = ({
 
     // generate thumbnail from video
 
+    const tags = [
+      `clip-${formatHandle(profile)}`,
+      ...getTagsForCategory(category)
+    ]
+    if (sessionId) {
+      tags.push(`sessionId-${sessionId}`)
+    }
+
     const metadata = shortVideo({
       title: title,
       content: title,
@@ -89,7 +104,7 @@ const PostClipOnLens = ({
         type: MediaVideoMimeType.MP4,
         altTag: title
       },
-      tags: [`clip-${formatHandle(profile)}`, ...getTagsForCategory(category)],
+      tags: tags,
       appId: APP_ID,
       id,
       locale
@@ -133,15 +148,17 @@ const PostClipOnLens = ({
       }
     }
 
-    actions?.push({
-      type: OpenActionType.UNKNOWN_OPEN_ACTION,
-      address: VerifiedOpenActionModules.Tip,
-      // @ts-ignore
-      data: encodeAbiParameters(
-        [{ name: 'tipReceiver', type: 'address' }],
-        [data?.profile?.handle?.ownedBy as Address]
-      )
-    })
+    if (isMainnet) {
+      actions?.push({
+        type: OpenActionType.UNKNOWN_OPEN_ACTION,
+        address: VerifiedOpenActionModules.Tip,
+        // @ts-ignore
+        data: encodeAbiParameters(
+          [{ name: 'tipReceiver', type: 'address' }],
+          [data?.profile?.handle?.ownedBy as Address]
+        )
+      })
+    }
 
     // invoke the `execute` function to create the post
     const result = await execute({

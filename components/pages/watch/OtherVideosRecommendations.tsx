@@ -74,7 +74,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
 
   if (!data) return null
   return (
-    <div className={clsx('flex flex-col w-full h-full gap-y-6', className)}>
+    <div className={clsx('flex flex-col w-full h-full gap-y-4', className)}>
       {combinedData?.map((post) => {
         if (post?.type === 'streamClips') {
           return <RecommendedVideoCard key={post?.id} post={post as Post} />
