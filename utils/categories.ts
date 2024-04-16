@@ -1,5 +1,9 @@
 export const CATEGORIES = [
   {
+    name: 'None',
+    tags: []
+  },
+  {
     name: 'Gaming',
     tags: ['gaming', 'orbcommunitiesgaming']
   },
