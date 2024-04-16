@@ -135,7 +135,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
             // @ts-ignore
             profile={data}
             // @ts-ignore
-            streamer={streamer?.streamer?.latestStreamPublicationId}
+            streamer={streamer?.streamer}
           />
         }
         clipLength={
