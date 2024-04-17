@@ -1,8 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { ViewType } from '../../graphql/generated'
-
+export enum PlayerStreamingMode {
+  Quality = 'Quality',
+  LowLatency = 'Low Latency'
+}
 interface MyPreferencesStore {
+  playerStreamingMode: PlayerStreamingMode
+  setPlayerStreamingMode: (playerStreamingMode: PlayerStreamingMode) => void
   liveChatPopUpSound: boolean
   setLiveChatPopUpSound: (liveChatPopUpSound: boolean) => void
   streamReplayViewType: ViewType
@@ -14,6 +19,9 @@ interface MyPreferencesStore {
 export const useMyPreferences = create<MyPreferencesStore>(
   persist(
     (set) => ({
+      playerStreamingMode: PlayerStreamingMode.LowLatency,
+      setPlayerStreamingMode: (playerStreamingMode) =>
+        set(() => ({ playerStreamingMode })),
       liveChatPopUpSound: true,
       setLiveChatPopUpSound: (liveChatPopUpSound) =>
         set(() => ({ liveChatPopUpSound })),
@@ -30,7 +38,8 @@ export const useMyPreferences = create<MyPreferencesStore>(
         return {
           liveChatPopUpSound: state.liveChatPopUpSound,
           streamReplayViewType: state.streamReplayViewType,
-          category: state.category
+          category: state.category,
+          playerStreamingMode: state.playerStreamingMode
         }
       }
     }

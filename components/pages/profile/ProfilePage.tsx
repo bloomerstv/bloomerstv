@@ -14,7 +14,7 @@ import {
 } from '../../../graphql/generated'
 import ProfileInfoWithStream from './ProfileInfoWithStream'
 import StreamerOffline from './StreamerOffline'
-// import { getLiveStreamUrlWebRTC } from '../../../utils/lib/getLiveStreamUrl'
+import { getLiveStreamUrlWebRTC } from '../../../utils/lib/getLiveStreamUrl'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import StartLoadingPage from '../loading/StartLoadingPage'
 // import CommentSection from '../watch/CommentSection'
@@ -28,10 +28,17 @@ import { timeAgo } from '../../../utils/helpers'
 import Markup from '../../common/Lexical/Markup'
 import Player from '../../common/Player'
 import { getLiveStreamUrl } from '../../../utils/lib/getLiveStreamUrl'
+import {
+  PlayerStreamingMode,
+  useMyPreferences
+} from '../../store/useMyPreferences'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
   const [open, setOpen] = React.useState(false)
+  const playerStreamingMode = useMyPreferences(
+    (state) => state.playerStreamingMode
+  )
 
   const isMobile = useIsMobile()
   const {
@@ -118,8 +125,10 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       return null
     }
 
-    const liveStreamUrl = getLiveStreamUrl(streamer?.streamer?.playbackId)
-    // const liveStreamUrl = getLiveStreamUrlWebRTC(streamer?.streamer?.playbackId)
+    const liveStreamUrl =
+      playerStreamingMode === PlayerStreamingMode.Quality
+        ? getLiveStreamUrl(streamer?.streamer?.playbackId)
+        : getLiveStreamUrlWebRTC(streamer?.streamer?.playbackId)
 
     return (
       <Player
@@ -150,7 +159,8 @@ const ProfilePage = ({ handle }: { handle: string }) => {
   }, [
     streamer?.streamer?.playbackId,
     sessionData?.type,
-    replayRecording?.streamReplayRecording?.recordingUrl
+    replayRecording?.streamReplayRecording?.recordingUrl,
+    playerStreamingMode
   ])
 
   if (profileLoading || (streamerLoading && !streamer?.streamer)) {

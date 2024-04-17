@@ -14,10 +14,14 @@ import * as Player from '@livepeer/react/player'
 import * as Popover from '@radix-ui/react-popover'
 import { CheckIcon, ChevronDownIcon } from 'lucide-react'
 import React, { memo, useCallback } from 'react'
-
+import * as Select from '@radix-ui/react-select'
 import { ClipLength } from '@livepeer/react'
 import cn from '../../utils/ui/cn'
 import VideoClipper from '../pages/dashboard/content/VideoClipper'
+import {
+  PlayerStreamingMode,
+  useMyPreferences
+} from '../store/useMyPreferences'
 
 const PlayerWithControls = ({
   src,
@@ -84,6 +88,8 @@ const PlayerWithControls = ({
     }
   }, [])
 
+  console.log('src', src)
+
   if (!src) {
     return (
       <PlayerLoading
@@ -99,6 +105,7 @@ const PlayerWithControls = ({
       src={src}
       clipLength={clipLength}
       autoPlay={autoPlay}
+      key={src}
     >
       <Player.Container
         className={cn(
@@ -367,20 +374,25 @@ const Settings = React.forwardRef(
     { className }: { className?: string },
     ref: React.Ref<HTMLButtonElement> | undefined
   ) => {
+    const { playerStreamingMode, setPlayerStreamingMode } = useMyPreferences(
+      (state) => ({
+        playerStreamingMode: state.playerStreamingMode,
+        setPlayerStreamingMode: state.setPlayerStreamingMode
+      })
+    )
+
     return (
       <Popover.Root>
-        <Player.LiveIndicator matcher={false}>
-          <Popover.Trigger ref={ref} asChild>
-            <button
-              type="button"
-              className={className}
-              aria-label="Playback settings"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <SettingsIcon className="text-white w-5 h-5" />
-            </button>
-          </Popover.Trigger>
-        </Player.LiveIndicator>
+        <Popover.Trigger ref={ref} asChild>
+          <button
+            type="button"
+            className={className}
+            aria-label="Playback settings"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SettingsIcon className="text-white w-5 h-5" />
+          </button>
+        </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content
             className="w-60 rounded-xl bg-black/40 backdrop-blur-sm p-4 shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
@@ -390,6 +402,56 @@ const Settings = React.forwardRef(
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex flex-col gap-2">
+              <Player.LiveIndicator
+                matcher={true}
+                className="gap-2 flex-col flex"
+              >
+                <label className="text-xs text-white font-bold">
+                  Watch Mode
+                </label>
+                <Select.Root
+                  value={playerStreamingMode}
+                  onValueChange={setPlayerStreamingMode}
+                >
+                  <Select.Trigger className="inline-flex items-center bg-white/30 text-white backdrop-blur-md justify-between rounded-lg px-2 text-xs leading-none h-7 gap-1 outline-none border-none">
+                    <Select.Value aria-label={playerStreamingMode}>
+                      {playerStreamingMode}
+                    </Select.Value>
+                    <Select.Icon>
+                      <ChevronDownIcon className="h-4 w-4" />
+                    </Select.Icon>
+                  </Select.Trigger>
+
+                  <Select.Portal>
+                    <Select.Content className="overflow-hidden bg-black/70 backdrop-blur-sm text-white rounded-xl">
+                      <Select.Viewport className="p-1 rounded-lg">
+                        <Select.Item
+                          className="text-xs leading-none rounded-sm flex items-center h-7 pr-[35px] pl-[25px] relative select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-white/20"
+                          value={PlayerStreamingMode.Quality}
+                        >
+                          <Select.ItemText>
+                            {PlayerStreamingMode.Quality}
+                          </Select.ItemText>
+                          <Player.SelectItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
+                            <CheckIcon className="w-4 h-4" />
+                          </Player.SelectItemIndicator>
+                        </Select.Item>
+                        <Select.Item
+                          className="text-xs leading-none rounded-sm flex items-center h-7 pr-[35px] pl-[25px] relative select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-white/20"
+                          value={PlayerStreamingMode.LowLatency}
+                        >
+                          <Select.ItemText>
+                            {PlayerStreamingMode.LowLatency}
+                          </Select.ItemText>
+                          <Player.SelectItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
+                            <CheckIcon className="w-4 h-4" />
+                          </Player.SelectItemIndicator>
+                        </Select.Item>
+                      </Select.Viewport>
+                    </Select.Content>
+                  </Select.Portal>
+                </Select.Root>
+              </Player.LiveIndicator>
               <Player.LiveIndicator
                 matcher={false}
                 className="gap-2 flex-col flex"
@@ -441,66 +503,68 @@ const Settings = React.forwardRef(
                   </Player.SelectPortal>
                 </Player.RateSelect>
               </Player.LiveIndicator>
-              <div className="gap-2 flex-col flex">
-                <label
-                  className="text-xs text-white font-bold"
-                  htmlFor="qualitySelect"
-                >
-                  Quality
-                </label>
-                <Player.VideoQualitySelect
-                  name="qualitySelect"
-                  defaultValue="1.0"
-                >
-                  <Player.SelectTrigger
-                    className="inline-flex items-center justify-between rounded-lg px-2 text-xs leading-none h-7 gap-1 outline-none border-none text-white bg-white/30 backdrop-blur-md"
-                    aria-label="Playback quality"
+              <Player.LiveIndicator matcher={false}>
+                <div className="gap-2 flex-col flex">
+                  <label
+                    className="text-xs text-white font-bold"
+                    htmlFor="qualitySelect"
                   >
-                    <Player.SelectValue placeholder="Select a quality..." />
-                    <Player.SelectIcon>
-                      <ChevronDownIcon className="h-4 w-4" />
-                    </Player.SelectIcon>
-                  </Player.SelectTrigger>
-                  <Player.SelectPortal>
-                    <Player.SelectContent className="overflow-hidden bg-black/70 backdrop-blur-sm  text-white rounded-xl">
-                      <Player.SelectViewport className="p-1 rounded-lg">
-                        <Player.SelectGroup>
-                          <VideoQualitySelectItem
-                            className="rounded-lg"
-                            value="auto"
-                          >
-                            Auto (HD+)
-                          </VideoQualitySelectItem>
-                          <VideoQualitySelectItem
-                            className="rounded-lg"
-                            value="1080p"
-                          >
-                            1080p (HD)
-                          </VideoQualitySelectItem>
-                          <VideoQualitySelectItem
-                            className="rounded-lg"
-                            value="720p"
-                          >
-                            720p
-                          </VideoQualitySelectItem>
-                          <VideoQualitySelectItem
-                            className="rounded-lg"
-                            value="480p"
-                          >
-                            480p
-                          </VideoQualitySelectItem>
-                          <VideoQualitySelectItem
-                            className="rounded-lg"
-                            value="360p"
-                          >
-                            360p
-                          </VideoQualitySelectItem>
-                        </Player.SelectGroup>
-                      </Player.SelectViewport>
-                    </Player.SelectContent>
-                  </Player.SelectPortal>
-                </Player.VideoQualitySelect>
-              </div>
+                    Quality
+                  </label>
+                  <Player.VideoQualitySelect
+                    name="qualitySelect"
+                    defaultValue="1.0"
+                  >
+                    <Player.SelectTrigger
+                      className="inline-flex items-center justify-between rounded-lg px-2 text-xs leading-none h-7 gap-1 outline-none border-none text-white bg-white/30 backdrop-blur-md"
+                      aria-label="Playback quality"
+                    >
+                      <Player.SelectValue placeholder="Select a quality..." />
+                      <Player.SelectIcon>
+                        <ChevronDownIcon className="h-4 w-4" />
+                      </Player.SelectIcon>
+                    </Player.SelectTrigger>
+                    <Player.SelectPortal>
+                      <Player.SelectContent className="overflow-hidden bg-black/70 backdrop-blur-sm  text-white rounded-xl">
+                        <Player.SelectViewport className="p-1 rounded-lg">
+                          <Player.SelectGroup>
+                            <VideoQualitySelectItem
+                              className="rounded-lg"
+                              value="auto"
+                            >
+                              Auto (HD+)
+                            </VideoQualitySelectItem>
+                            <VideoQualitySelectItem
+                              className="rounded-lg"
+                              value="1080p"
+                            >
+                              1080p (HD)
+                            </VideoQualitySelectItem>
+                            <VideoQualitySelectItem
+                              className="rounded-lg"
+                              value="720p"
+                            >
+                              720p
+                            </VideoQualitySelectItem>
+                            <VideoQualitySelectItem
+                              className="rounded-lg"
+                              value="480p"
+                            >
+                              480p
+                            </VideoQualitySelectItem>
+                            <VideoQualitySelectItem
+                              className="rounded-lg"
+                              value="360p"
+                            >
+                              360p
+                            </VideoQualitySelectItem>
+                          </Player.SelectGroup>
+                        </Player.SelectViewport>
+                      </Player.SelectContent>
+                    </Player.SelectPortal>
+                  </Player.VideoQualitySelect>
+                </div>
+              </Player.LiveIndicator>
             </div>
             {/* <Popover.Close
               className="rounded-full h-5 w-5 inline-flex items-center justify-center absolute top-2.5 right-2.5 outline-none"

@@ -1,6 +1,9 @@
 'use client'
 import React, { memo, useEffect } from 'react'
-import { getLiveStreamUrl } from '../../../../utils/lib/getLiveStreamUrl'
+import {
+  getLiveStreamUrl,
+  getLiveStreamUrlWebRTC
+} from '../../../../utils/lib/getLiveStreamUrl'
 import ConnectStream from './ConnectStream'
 import toast from 'react-hot-toast'
 import { useApolloClient } from '@apollo/client'
@@ -40,7 +43,10 @@ import {
   MetadataAttributeType,
   liveStream
 } from '@lens-protocol/metadata'
-import { useMyPreferences } from '../../../store/useMyPreferences'
+import {
+  PlayerStreamingMode,
+  useMyPreferences
+} from '../../../store/useMyPreferences'
 import { IconButton } from '@mui/material'
 import { BroadcastLive } from './Broadcast'
 import Player from '../../../common/Player'
@@ -80,12 +86,14 @@ const LiveVideoComponent = ({
   const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation({
     fetchPolicy: 'no-cache'
   })
-  const { category, streamReplayViewType } = useMyPreferences((state) => {
-    return {
-      streamReplayViewType: state.streamReplayViewType,
-      category: state.category
-    }
-  })
+  const { category, streamReplayViewType, playerStreamingMode } =
+    useMyPreferences((state) => {
+      return {
+        streamReplayViewType: state.streamReplayViewType,
+        category: state.category,
+        playerStreamingMode: state.playerStreamingMode
+      }
+    })
   const addLiveChatAt = useMyStreamInfo((state) => state.addLiveChatAt)
   const [uploadDataToAR] = useUploadDataToArMutation({
     fetchPolicy: 'no-cache'
@@ -409,7 +417,13 @@ const LiveVideoComponent = ({
   }, [])
 
   const videoComponent = React.useMemo(() => {
-    const liveStreamUrl = getLiveStreamUrl(myStream?.playbackId)
+    console.log('playerStreamingMode', playerStreamingMode)
+    const liveStreamUrl =
+      playerStreamingMode === PlayerStreamingMode.Quality
+        ? getLiveStreamUrl(myStream?.playbackId)
+        : getLiveStreamUrlWebRTC(myStream?.playbackId)
+
+    console.log('liveStreamUrl', liveStreamUrl)
 
     return (
       <Player
@@ -422,7 +436,7 @@ const LiveVideoComponent = ({
         clipLength={30}
       />
     )
-  }, [])
+  }, [playerStreamingMode])
 
   const broadcastComponent = React.useMemo(() => {
     return (
