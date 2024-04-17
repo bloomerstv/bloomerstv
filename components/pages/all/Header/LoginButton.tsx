@@ -7,7 +7,6 @@ import { Button } from '@mui/material'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import LoginIcon from '@mui/icons-material/Login'
 import LoginComponent from '../../../common/LoginComponent'
-import { useTheme } from '../../../wrappers/TailwindThemeProvider'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import SignupComponent from '../../../common/SignupComponent'
 
@@ -19,7 +18,6 @@ const LoginButton = () => {
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
-  const { theme } = useTheme()
 
   return (
     <>
@@ -85,7 +83,7 @@ const LoginButton = () => {
               size="small"
               startIcon={
                 <img
-                  src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
+                  src={`/Lens-Icon-T-White.svg`}
                   className="sm:w-7 sm:h-7 w-6 h-6 rounded-full"
                 />
               }

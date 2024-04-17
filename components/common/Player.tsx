@@ -13,7 +13,7 @@ import {
 import * as Player from '@livepeer/react/player'
 import * as Popover from '@radix-ui/react-popover'
 import { CheckIcon, ChevronDownIcon } from 'lucide-react'
-import React, { memo, useCallback, useTransition } from 'react'
+import React, { memo, useCallback } from 'react'
 
 import { ClipLength } from '@livepeer/react'
 import cn from '../../utils/ui/cn'
@@ -331,12 +331,17 @@ function Clip({
     endTime: number
   ) => Promise<void>
 }) {
-  const [isPending, startTransition] = useTransition()
+  const [isPending, setIsPending] = React.useState(false)
 
-  const createClipComposed = useCallback((opts: any) => {
-    startTransition(async () => {
+  const createClipComposed = useCallback(async (opts: any) => {
+    try {
+      setIsPending(true)
       await createClip(opts.playbackId, opts.startTime, opts.endTime)
-    })
+    } catch (e) {
+      console.log('Error creating clip')
+    } finally {
+      setIsPending(false)
+    }
   }, [])
 
   return (

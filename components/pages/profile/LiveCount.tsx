@@ -13,7 +13,6 @@ const LiveCount = ({
   const [count, setCount] = React.useState(0)
 
   useEffect(() => {
-    console.log('called useffect')
     const newSocket = io(LIVE_CHAT_WEB_SOCKET_URL)
 
     newSocket.on('connect', () => {

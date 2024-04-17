@@ -16,7 +16,6 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import toast from 'react-hot-toast'
-import { useTheme } from '../wrappers/TailwindThemeProvider'
 const LoginComponent = ({
   open,
   onClose
@@ -40,7 +39,6 @@ const LoginComponent = ({
     loading,
     error
   } = useUpdateProfileManagers()
-  const { theme } = useTheme()
 
   useEffect(() => {
     if (
@@ -111,7 +109,7 @@ const LoginComponent = ({
                         loadingPosition="start"
                         startIcon={
                           <img
-                            src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
+                            src={`/Lens-Icon-T-White.svg`}
                             className="sm:w-7 sm:h-7 w-6 h-6 rounded-full"
                           />
                         }
