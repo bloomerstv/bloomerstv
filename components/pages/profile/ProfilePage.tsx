@@ -14,7 +14,7 @@ import {
 } from '../../../graphql/generated'
 import ProfileInfoWithStream from './ProfileInfoWithStream'
 import StreamerOffline from './StreamerOffline'
-import { getLiveStreamUrl } from '../../../utils/lib/getLiveStreamUrl'
+// import { getLiveStreamUrlWebRTC } from '../../../utils/lib/getLiveStreamUrl'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import StartLoadingPage from '../loading/StartLoadingPage'
 // import CommentSection from '../watch/CommentSection'
@@ -27,6 +27,7 @@ import LiveStreamPublicReplays from '../home/LiveStreamPublicReplays'
 import { timeAgo } from '../../../utils/helpers'
 import Markup from '../../common/Lexical/Markup'
 import Player from '../../common/Player'
+import { getLiveStreamUrl } from '../../../utils/lib/getLiveStreamUrl'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
@@ -118,6 +119,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     }
 
     const liveStreamUrl = getLiveStreamUrl(streamer?.streamer?.playbackId)
+    // const liveStreamUrl = getLiveStreamUrlWebRTC(streamer?.streamer?.playbackId)
 
     return (
       <Player
