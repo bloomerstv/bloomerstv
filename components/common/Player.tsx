@@ -88,8 +88,6 @@ const PlayerWithControls = ({
     }
   }, [])
 
-  console.log('src', src)
-
   if (!src) {
     return (
       <PlayerLoading

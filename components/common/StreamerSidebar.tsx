@@ -118,6 +118,11 @@ const StreamerSidebar = () => {
     >
       <div className="flex flex-col w-full h-full justify-between">
         <div className="flex flex-col w-full h-full overflow-y-auto no-scrollbar">
+          {minimize && !isMobile && (
+            <div className="px-2">
+              <div className="w-10 h-0.5" />
+            </div>
+          )}
           {data?.type === SessionType.WithProfile && (
             <>
               {!minimize && (
@@ -207,15 +212,8 @@ const StreamerSidebar = () => {
         {!isMobile && (
           <>
             {minimize ? (
-              <div className="flex flex-col w-full">
-                <IconButton
-                  LinkComponent={Link}
-                  href={X_URL}
-                  target="_blank"
-                  sx={{
-                    borderRadius: '0px'
-                  }}
-                >
+              <div className="flex flex-col w-full ">
+                <IconButton LinkComponent={Link} href={X_URL} target="_blank">
                   <XIcon fontSize="medium" />
                 </IconButton>
                 <IconButton

@@ -10,6 +10,7 @@ import LiveDiv from '../../ui/LiveDiv'
 import { humanReadableNumber, timeAgoShort } from '../../../utils/helpers'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import VerifiedBadge from '../../ui/VerifiedBadge'
+import LoadingImage from '../../ui/LoadingImage'
 const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
@@ -19,10 +20,13 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
       prefetch
       href={`/${formatHandle(streamer?.profile)}`}
       key={streamer?.profileId}
-      className="flex flex-row no-underline w-full items-center px-2 2xl:px-4 py-2 justify-between hover:bg-p-hover cursor-pointer"
+      className={clsx(
+        'flex flex-row no-underline px-2 w-full items-center  py-2 justify-between hover:bg-p-hover cursor-pointer',
+        minimize ? '2xl:px-2.5' : '2xl:px-4'
+      )}
     >
       <div className={clsx(minimize ? 'centered-col' : 'centered-row')}>
-        <img
+        <LoadingImage
           src={getAvatar(streamer?.profile)}
           alt="avatar"
           className={clsx(
