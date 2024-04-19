@@ -221,6 +221,7 @@ export type Stream = {
 
 export type StreamReplayPublications = {
   __typename?: 'StreamReplayPublications'
+  premium?: Maybe<Scalars['Boolean']['output']>
   publicationId?: Maybe<Scalars['String']['output']>
   sourceSegmentsDuration?: Maybe<Scalars['Float']['output']>
   thumbnail?: Maybe<Scalars['String']['output']>
@@ -454,6 +455,7 @@ export type StreamReplayPublicationsQuery = {
     publicationId?: string | null
     thumbnail?: string | null
     sourceSegmentsDuration?: number | null
+    premium?: boolean | null
   } | null> | null
 }
 
@@ -1488,6 +1490,7 @@ export const StreamReplayPublicationsDocument = gql`
       publicationId
       thumbnail
       sourceSegmentsDuration
+      premium
     }
   }
 `

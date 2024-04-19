@@ -44,6 +44,7 @@ const HomePageCards = () => {
                     duration={
                       streamReplayMap.get(post?.id)?.sourceSegmentsDuration
                     }
+                    premium={!!streamReplayMap.get(post?.id)?.premium}
                     key={post?.id}
                     post={post as Post}
                   />
@@ -94,6 +95,7 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
                 cover={streamReplayMap.get(post?.id)?.thumbnail}
                 // @ts-ignore
                 duration={streamReplayMap.get(post?.id)?.sourceSegmentsDuration}
+                premium={!!streamReplayMap.get(post?.id)?.premium}
                 key={post?.id}
                 post={post as Post}
               />

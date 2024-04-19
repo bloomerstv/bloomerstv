@@ -26,7 +26,7 @@ const DashboardSidebar = () => {
             src={getAvatar(data?.profile)}
             alt="avatar"
           />
-          <div className="text-sm font-bold text-s-text start-center-row">
+          <div className="text-sm font-bold text-s-text start-center-row gap-x-1">
             <div>{formatHandle(data?.profile)}</div>
             {myStream?.myStream?.premium && <VerifiedBadge />}
           </div>

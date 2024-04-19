@@ -7,17 +7,17 @@ const page = () => {
   const { data } = useSession()
   const freePlansPoints = [
     'Unlimited Streams',
-    'Create Clips during stream',
+    'Creating Clips',
+    'Stream VODs for 7 days',
     'No Viewer Limit'
   ]
 
   const superPlansPoints = [
     'Everything in Free Plan',
-    'Stream VODs for 7 days',
+    'Stream VODs for 28 days',
     'Transcoding for VODs',
     'Super Bloomers Badge',
     'Priority Support',
-    'Create clips after stream',
     'Much more to come... 👀'
   ]
 
@@ -62,10 +62,7 @@ const page = () => {
             <div className="text-sm font-normal">per month</div>
           </div>
           {/* description */}
-          <div>
-            This plan helps to maintain & support the platform by removing
-            costly stream VODs from free.
-          </div>
+          <div>This plan helps to maintain & support the platform.</div>
 
           {/* points */}
           <div className="space-y-1">
