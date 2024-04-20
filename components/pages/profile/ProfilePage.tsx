@@ -32,6 +32,7 @@ import {
   PlayerStreamingMode,
   useMyPreferences
 } from '../../store/useMyPreferences'
+import { Src } from '@livepeer/react'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
@@ -125,10 +126,8 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       return null
     }
 
-    const liveStreamUrl =
-      playerStreamingMode === PlayerStreamingMode.Quality
-        ? getLiveStreamUrl(streamer?.streamer?.playbackId)
-        : getLiveStreamUrlWebRTC(streamer?.streamer?.playbackId)
+    const hlsUrl = getLiveStreamUrl(streamer?.streamer?.playbackId)
+    const webrtcUrl = getLiveStreamUrlWebRTC(streamer?.streamer?.playbackId)
 
     return (
       <Player
@@ -153,7 +152,25 @@ const ProfilePage = ({ handle }: { handle: string }) => {
           sessionData?.type === SessionType.WithProfile ? 30 : undefined
         }
         createClip={handleClipClicked}
-        src={liveStreamUrl}
+        src={
+          playerStreamingMode === PlayerStreamingMode.Quality
+            ? ([
+                {
+                  src: hlsUrl,
+                  type: 'hls'
+                }
+              ] as Src[])
+            : ([
+                {
+                  src: hlsUrl,
+                  type: 'hls'
+                },
+                {
+                  src: webrtcUrl,
+                  type: 'webrtc'
+                }
+              ] as Src[])
+        }
       />
     )
   }, [

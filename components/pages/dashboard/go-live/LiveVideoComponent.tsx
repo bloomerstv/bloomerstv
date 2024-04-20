@@ -58,6 +58,7 @@ import {
 } from '../../../../utils/categories'
 import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 import { encodeAbiParameters, type Address } from 'viem'
+import { Src } from '@livepeer/react'
 
 const LiveVideoComponent = ({
   myStream,
@@ -417,18 +418,31 @@ const LiveVideoComponent = ({
   }, [])
 
   const videoComponent = React.useMemo(() => {
-    console.log('playerStreamingMode', playerStreamingMode)
-    const liveStreamUrl =
-      playerStreamingMode === PlayerStreamingMode.Quality
-        ? getLiveStreamUrl(myStream?.playbackId)
-        : getLiveStreamUrlWebRTC(myStream?.playbackId)
-
-    console.log('liveStreamUrl', liveStreamUrl)
+    const hlsUrl = getLiveStreamUrl(myStream?.playbackId)
+    const webrtcUrl = getLiveStreamUrlWebRTC(myStream?.playbackId)
 
     return (
       <Player
         className="w-full"
-        src={liveStreamUrl}
+        src={
+          playerStreamingMode === PlayerStreamingMode.Quality
+            ? ([
+                {
+                  src: hlsUrl,
+                  type: 'hls'
+                }
+              ] as Src[])
+            : ([
+                {
+                  src: hlsUrl,
+                  type: 'hls'
+                },
+                {
+                  src: webrtcUrl,
+                  type: 'webrtc'
+                }
+              ] as Src[])
+        }
         streamOfflineErrorComponent={ConnectStreamMemo}
         onStreamStatusChange={(isLive) => {
           setStartedStreaming(isLive)

@@ -15,7 +15,7 @@ import * as Popover from '@radix-ui/react-popover'
 import { CheckIcon, ChevronDownIcon } from 'lucide-react'
 import React, { memo, useCallback } from 'react'
 import * as Select from '@radix-ui/react-select'
-import { ClipLength } from '@livepeer/react'
+import { ClipLength, Src } from '@livepeer/react'
 import cn from '../../utils/ui/cn'
 import VideoClipper from '../pages/dashboard/content/VideoClipper'
 import {
@@ -41,7 +41,7 @@ const PlayerWithControls = ({
   videoClipperSrc
 }: {
   title?: string
-  src: string | null
+  src: Src[] | string | null
   poster?: string | null | undefined
   muted?: boolean
   className?: string
@@ -103,7 +103,7 @@ const PlayerWithControls = ({
       src={src}
       clipLength={clipLength}
       autoPlay={autoPlay}
-      key={src}
+      key={src.toString()}
     >
       <Player.Container
         className={cn(
