@@ -35,7 +35,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
           )}
         />
         {minimize && streamer?.isActive && (
-          <div className="-mt-2">
+          <div className="-mt-4">
             <LiveDiv />
           </div>
         )}

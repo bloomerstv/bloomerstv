@@ -119,7 +119,7 @@ const StreamerSidebar = () => {
       <div className="flex flex-col w-full h-full justify-between">
         <div className="flex flex-col w-full h-full overflow-y-auto no-scrollbar">
           {minimize && !isMobile && (
-            <div className="px-2">
+            <div className="px-2 2xl:px-2.5">
               <div className="w-10 h-0.5" />
             </div>
           )}
