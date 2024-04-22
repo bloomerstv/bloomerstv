@@ -8,7 +8,7 @@ interface LoadingImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 
 const LoadingImage: React.FC<LoadingImageProps> = ({
   loaderClassName = '',
-  defaultImage = '/defaultBanner.png',
+  defaultImage = THUMBNAIL_FALLBACK,
   ...props
 }) => {
   const [loading, setLoading] = useState(true)
@@ -43,7 +43,7 @@ const LoadingImage: React.FC<LoadingImageProps> = ({
             // @ts-ignore
             e.target.onerror = null // Prevents infinite looping in case the fallback image also fails to load
             // @ts-ignore
-            e.target.src = THUMBNAIL_FALLBACK // Replace with your default background image
+            e.target.src = defaultImage // Replace with your default background image
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
