@@ -1,7 +1,6 @@
+import MasterWrappers from '../components/wrappers/MasterWrappers'
 import './globals.css'
 import type { Metadata } from 'next'
-import WrappersWithOnlyPwa from '../components/wrappers/WrappersWithOnlyPwa'
-
 declare global {
   interface Navigator {
     standalone?: boolean
@@ -82,7 +81,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body>
-        <WrappersWithOnlyPwa>{children}</WrappersWithOnlyPwa>
+        <MasterWrappers>{children}</MasterWrappers>
       </body>
     </html>
   )

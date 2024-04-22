@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import { NODE_GRAPHQL_URL } from '../../utils/config'
 import {
