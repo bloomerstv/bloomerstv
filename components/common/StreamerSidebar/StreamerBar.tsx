@@ -21,7 +21,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
       href={`/${formatHandle(streamer?.profile)}`}
       key={streamer?.profileId}
       className={clsx(
-        'flex flex-row no-underline px-2 w-full items-center  py-2 justify-between hover:bg-p-hover cursor-pointer',
+        'flex flex-row no-underline px-2 w-full items-center  py-1 justify-between hover:bg-p-hover cursor-pointer',
         minimize ? '2xl:px-2.5' : '2xl:px-4'
       )}
     >

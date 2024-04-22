@@ -1,7 +1,6 @@
 'use client'
 import clsx from 'clsx'
 import React from 'react'
-
 import { Inter } from 'next/font/google'
 import TopHeader from '@/components/pages/all/Header/TopHeader'
 import useIsMobile from '../../utils/hooks/useIsMobile'

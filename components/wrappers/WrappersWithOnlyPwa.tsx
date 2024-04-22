@@ -34,13 +34,13 @@ const WrappersWithOnlyPwa = ({ children }: { children: React.ReactNode }) => {
           ) : (
             <>
               <RainbowKitWrapper>
-                <ApolloWrapper>
-                  <ShowLoadingWrapper>
+                <ShowLoadingWrapper>
+                  <ApolloWrapper>
                     <ToastWrapper>
                       <UILayout>{children}</UILayout>
                     </ToastWrapper>
-                  </ShowLoadingWrapper>
-                </ApolloWrapper>
+                  </ApolloWrapper>
+                </ShowLoadingWrapper>
               </RainbowKitWrapper>
             </>
           )}

@@ -70,9 +70,6 @@ const StreamerOffline = ({
     }
   })
 
-  console.log('streamer', streamer)
-  console.log('streamer?.lastSeen', streamer?.lastSeen)
-
   return (
     <div className="w-full h-full relative">
       <div className="absolute w-full h-full sm:px-8 flex flex-row items-center justify-between z-20">
