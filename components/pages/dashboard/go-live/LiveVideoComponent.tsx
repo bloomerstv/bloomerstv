@@ -63,12 +63,14 @@ import { Src } from '@livepeer/react'
 const LiveVideoComponent = ({
   myStream,
   startedStreaming,
+  refreshMyStream,
   setStartedStreaming,
   streamFromBrowser,
   setStreamFromBrowser
 }: {
   myStream: MyStream
   startedStreaming: boolean
+  refreshMyStream: () => void
   setStartedStreaming: (value: boolean) => void
   streamFromBrowser: boolean
   setStreamFromBrowser: (value: boolean) => void
@@ -365,6 +367,8 @@ const LiveVideoComponent = ({
         error: null
       })
 
+      refreshMyStream()
+
       if (!latestSessionId) {
         return
       }
@@ -462,37 +466,6 @@ const LiveVideoComponent = ({
             setStartedStreaming(isLive)
           }}
         />
-
-        {/* <Broadcast
-          streamKey={myStream?.streamKey}
-          onPlaybackStatusUpdate={(state) => {
-            setStartedStreaming(state.live)
-          }}
-          controls={{
-            autohide: 0
-          }}
-          displayMediaOptions={{
-            audio: true,
-            video: true
-          }}
-          mediaStreamConstraints={{
-            preferCurrentTab: true,
-            audio: true,
-            video: true
-          }}
-          theme={{
-            colors: {
-              progressLeft: '#1668b8',
-              progressRight: '#f7f7f8',
-              progressMiddle: '#ffffff',
-              volumeLeft: '#ffffff',
-              volumeRight: '#f7f7f8',
-              volumeMiddle: '#ffffff',
-              loading: '#1668b8',
-              liveIndicator: '#1668b8'
-            }
-          }}
-        /> */}
         {/* stop streaming button */}
         <div className="absolute top-2 right-2 z-50 text-xs text-white">
           <IconButton

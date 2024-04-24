@@ -15,6 +15,10 @@
     @apply flex flex-row items-center justify-start;
   }
 
+  .start-between-row {
+    @apply flex flex-row items-start justify-between;
+  }
+
   .start-row {
     @apply flex flex-row items-start justify-start;
   }

@@ -9,5 +9,7 @@ query MyStream {
     isActive
     latestStreamPublicationId
     premium
+    isHealthy
+    issues
   }
 }

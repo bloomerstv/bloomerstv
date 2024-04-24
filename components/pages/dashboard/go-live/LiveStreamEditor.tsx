@@ -13,14 +13,18 @@ import { useMyPreferences } from '../../../store/useMyPreferences'
 import LiveVideoComponent from './LiveVideoComponent'
 import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST } from '../../../../utils/categories'
-// import { stringToLength } from '../../../../utils/stringToLength'
+import { stringToLength } from '../../../../utils/stringToLength'
+import StreamHealth from './StreamHealth'
 // import Link from 'next/link'
 const LiveStreamEditor = () => {
   const [startedStreaming, setStartedStreaming] = React.useState(false)
   const [streamFromBrowser, setStreamFromBrowser] = React.useState(false)
 
   const { data: session } = useSession()
-  const { data, error, refetch, loading } = useMyStreamQuery()
+  const { data, error, refetch, loading } = useMyStreamQuery({
+    pollInterval: 60000,
+    fetchPolicy: 'no-cache'
+  })
 
   const {
     category,
@@ -35,6 +39,10 @@ const LiveStreamEditor = () => {
       setCategory: state.setCategory
     }
   })
+
+  useEffect(() => {
+    refetch()
+  }, [startedStreaming])
 
   useEffect(() => {
     if (!error) return
@@ -61,6 +69,7 @@ const LiveStreamEditor = () => {
         <div className="flex flex-row">
           <LiveVideoComponent
             myStream={myStream}
+            refreshMyStream={refetch}
             setStartedStreaming={setStartedStreaming}
             startedStreaming={startedStreaming}
             streamFromBrowser={streamFromBrowser}
@@ -81,7 +90,7 @@ const LiveStreamEditor = () => {
                 />
               </div>
 
-              {/* <div className="">
+              <div className="">
                 <div className="text-s-text font-bold text-md">Description</div>
                 <div className="text-p-text text-sm 2xl:text-base font-semibold ">
                   <div className="whitespace-pre-wrap break-words ">
@@ -89,7 +98,7 @@ const LiveStreamEditor = () => {
                       'No description provided'}
                   </div>
                 </div>
-              </div> */}
+              </div>
               <div className="space-y-1">
                 <div className="text-s-text font-bold text-md">
                   Collect Preview
@@ -176,7 +185,7 @@ const LiveStreamEditor = () => {
             </div>
           </div>
         </div>
-        <div className="px-4 py-3 start-center-row space-x-4">
+        <div className="px-4 py-3 start-center-row space-x-2">
           {/* dot that goes red when live and green when not */}
           <div
             className={clsx(
@@ -197,8 +206,8 @@ const LiveStreamEditor = () => {
         </div>
       </div>
 
-      <div className="mt-4 2xl:mt-6 p-8 bg-s-bg shadow-sm rounded-xl">
-        <div className="space-y-8 w-[400px]">
+      <div className="mt-4 2xl:mt-6 p-6 bg-s-bg gap-x-20 start-row shadow-sm rounded-xl">
+        <div className="space-y-6 w-[400px]">
           <div className="font-bold text-lg text-s-text">Stream Key</div>
           <div className="start-center-row space-x-2">
             {/* mui input with copy button  */}
@@ -247,6 +256,11 @@ const LiveStreamEditor = () => {
             </Button>
           </div>
         </div>
+
+        <StreamHealth
+          isActive={startedStreaming && !!myStream.isActive}
+          myStream={myStream}
+        />
       </div>
     </div>
   )
