@@ -1,8 +1,12 @@
 import React from 'react'
 import { APP_NAME } from '../../../../utils/config'
 import LoginButton from './LoginButton'
+import { SessionType, useSession } from '@lens-protocol/react-web'
+import CreatePostButton from './CreatePostButton'
 
 const MobileTopHeader = () => {
+  const { data } = useSession()
+
   return (
     <>
       <div className="flex flex-row items-center sticky top-0 z-10 justify-between p-2 sm:p-3 bg-s-bg">
@@ -14,7 +18,12 @@ const MobileTopHeader = () => {
           />
           <div className="font-bold">{APP_NAME}</div>
         </div>
-        <LoginButton />
+
+        <div className="centered-row gap-x-1">
+          {data?.type === SessionType.WithProfile && <CreatePostButton />}
+
+          <LoginButton />
+        </div>
       </div>
     </>
   )

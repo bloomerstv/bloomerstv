@@ -9,6 +9,7 @@ import { SessionType, useSession } from '@lens-protocol/react-web'
 import { IconButton, Tooltip } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import VideoCallIcon from '@mui/icons-material/VideoCall'
+import CreatePostButton from './CreatePostButton'
 
 const TopHeader = () => {
   const { theme } = useTheme()
@@ -32,7 +33,9 @@ const TopHeader = () => {
         </div>
       </Link>
       <HeaderSearch />
-      <div className="centered-row">
+      <div className="centered-row gap-x-1">
+        {data?.type === SessionType.WithProfile && <CreatePostButton />}
+
         {data?.type === SessionType.WithProfile && (
           <Tooltip title="Go Live">
             <IconButton
@@ -44,7 +47,9 @@ const TopHeader = () => {
             </IconButton>
           </Tooltip>
         )}
-        <LoginButton />
+        <div className="ml-3">
+          <LoginButton />
+        </div>
       </div>
     </div>
   )
