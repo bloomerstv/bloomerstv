@@ -1,6 +1,6 @@
 import React from 'react'
-import { APP_NAME } from '../../utils/config'
-import LoginButton from '../pages/all/Header/LoginButton'
+import { APP_NAME } from '../../../../utils/config'
+import LoginButton from './LoginButton'
 
 const MobileTopHeader = () => {
   return (

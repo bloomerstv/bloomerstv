@@ -1,11 +1,11 @@
 'use client'
 import clsx from 'clsx'
-import MobileTopHeader from '../components/common/MobileTopHeader'
-import ClipsFeed from '../components/pages/home/ClipsFeed'
 import LiveStreamPublicReplays from '../components/pages/home/LiveStreamPublicReplays'
 import LiveStreamerFeed from '../components/pages/home/LiveStreamerFeed'
 import useIsMobile from '../utils/hooks/useIsMobile'
 import StreamerHorizontalDiv from '../components/common/StreamerSidebar/StreamerHorizontalDiv'
+import MobileTopHeader from '../components/pages/all/Header/MobileTopHeader'
+import ClipsFeed from '../components/pages/home/ClipsFeed'
 
 export default function Home() {
   const isMobile = useIsMobile()
