@@ -70,7 +70,9 @@ const ModalWrapper = ({
         <div className="centered-row w-full p-3">
           <div className="w-16 h-1.5 bg-s-text rounded-full"></div>
         </div>
-        <div className="rounded-t-lg">{children}</div>
+        <div className={clsx('max-h-[550px] overflow-auto w-full', classname)}>
+          {children}
+        </div>
 
         {/* show a bottom component here */}
         {BotttomComponent && (

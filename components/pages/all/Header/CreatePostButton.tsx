@@ -30,6 +30,7 @@ import uploadToIPFS from '../../../../utils/uploadToIPFS'
 import { image, textOnly } from '@lens-protocol/metadata'
 import { useUploadDataToArMutation } from '../../../../graphql/generated'
 import toast from 'react-hot-toast'
+import useIsMobile from '../../../../utils/hooks/useIsMobile'
 
 const CreatePostButton = () => {
   const { data } = useSession()
@@ -43,6 +44,7 @@ const CreatePostButton = () => {
   const [uploadDataToAR] = useUploadDataToArMutation()
   const { execute } = useCreatePost()
   const [loading, setLoading] = React.useState(false)
+  const isMobile = useIsMobile()
 
   const handleAddImageClick = () => {
     // Programmatically click the file input when the button is clicked
@@ -149,12 +151,17 @@ const CreatePostButton = () => {
         BotttomComponent={
           <div className="flex flex-row gap-x-3 justify-end">
             {/* cancle button & save button */}
-            <Button variant="text" onClick={() => setOpen(false)}>
+            <Button
+              variant="text"
+              onClick={() => setOpen(false)}
+              size={isMobile ? 'small' : 'medium'}
+            >
               Cancel
             </Button>
             <LoadingButton
               disabled={content.trim().length === 0 || loading}
               variant="contained"
+              size={isMobile ? 'small' : 'medium'}
               onClick={async () => {
                 try {
                   setLoading(true)
