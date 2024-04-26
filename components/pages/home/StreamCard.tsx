@@ -22,7 +22,7 @@ const StreamCard = ({ streamer }: { streamer: StreamerWithProfile }) => {
         <LoadingImage
           // @ts-ignore
           src={streamer?.thumbnail}
-          className="w-full aspect-video bg-p-hover sm:rounded-xl transition-transform duration-500 ease-in-out transform hover:scale-110"
+          className="w-full object-cover aspect-video bg-p-hover sm:rounded-xl transition-transform duration-500 ease-in-out transform hover:scale-110"
           alt="thumbnail"
         />
         <div className="absolute top-4 left-4 start-center-row gap-x-2">

@@ -38,7 +38,7 @@ const HomeVideoCard = ({
       <div className="w-full aspect-video relative mb-2 overflow-hidden sm:rounded-xl">
         <LoadingImage
           src={cover ?? asset?.cover}
-          className="w-full h-full aspect-video transition-transform duration-500 ease-in-out transform group-hover:scale-110 "
+          className="w-full h-full aspect-video transition-transform duration-500 ease-in-out transform group-hover:scale-110 object-cover"
           alt="thumbnail"
         />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
