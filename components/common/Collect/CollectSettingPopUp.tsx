@@ -232,7 +232,7 @@ const CollectSettingPopUp = () => {
   }, [amountValue, amountCurrency])
 
   return (
-    <div className="w-full space-y-8 font-bold sm:px-0 px-2">
+    <div className="w-full space-y-8 font-bold sm:px-0 px-2 py-2 sm:py-0">
       <div className="start-row w-full space-x-3">
         <LayersIcon className="text-brand" />
         <div className="between-row w-full">
@@ -431,6 +431,7 @@ const CollectSettingPopUp = () => {
                     height: 0
                   }
                 }}
+                initial="closed"
                 className="w-full"
                 animate={isPaid ? 'open' : 'closed'}
               >

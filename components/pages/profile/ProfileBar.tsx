@@ -45,6 +45,7 @@ import CollectButton from './CollectButton'
 import FollowingButton from './FollowingButton'
 import { humanReadableNumber } from '../../../utils/helpers'
 import VerifiedBadge from '../../ui/VerifiedBadge'
+import QuoteButton from './QuoteButton'
 const ProfileBar = ({
   profile,
   streamer,
@@ -434,6 +435,22 @@ const ProfileBar = ({
             )}
 
             {publication && (
+              <QuoteButton
+                quoteOn={publication.id}
+                quotingOnProfileHandle={formatHandle(publication?.by)}
+                // @ts-ignore
+                quotingTitle={
+                  streamer?.streamName
+                    ? streamer?.streamName
+                    : // @ts-ignore
+                      publication?.metadata?.title ?? // @ts-ignore
+                      publication?.metadata?.content
+                }
+                numberOfQuotes={publication?.stats?.quotes}
+              />
+            )}
+
+            {publication && (
               <CollectButton
                 handleFollow={handleFollow}
                 followLoading={followLoading}
@@ -507,6 +524,22 @@ const ProfileBar = ({
               >
                 {mirrors}
               </Button>
+            )}
+
+            {publication && (
+              <QuoteButton
+                quoteOn={publication.id}
+                quotingOnProfileHandle={formatHandle(publication?.by)}
+                // @ts-ignore
+                quotingTitle={
+                  streamer?.streamName
+                    ? streamer?.streamName
+                    : // @ts-ignore
+                      publication?.metadata?.title ?? // @ts-ignore
+                      publication?.metadata?.content
+                }
+                numberOfQuotes={publication?.stats?.quotes}
+              />
             )}
 
             {/* live chat button */}
