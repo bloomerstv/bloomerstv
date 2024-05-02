@@ -22,8 +22,10 @@ export default function Home() {
       {isMobile && <MobileTopHeader />}
 
       {isMobile && <StreamerHorizontalDiv />}
+      <div className="mb-4 sm:mb-0">
+        <LiveStreamerFeed />
+      </div>
 
-      <LiveStreamerFeed />
       <LiveStreamPublicReplays />
       <TextAndImagePosts />
       {!isMobile && <ClipsFeed />}

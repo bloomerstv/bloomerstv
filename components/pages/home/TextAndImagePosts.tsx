@@ -65,7 +65,7 @@ const TextAndImagePosts = () => {
       </div>
       <div
         ref={scrollContainerRef}
-        className="start-row gap-x-3 w-[calc(100vw-300px)] overflow-x-auto no-scrollbar pb-3"
+        className="start-row gap-x-3 w-full sm:w-[calc(100vw-300px)] overflow-x-auto no-scrollbar pb-3"
         style={{ scrollBehavior: 'smooth' }} // Added inline style for smooth scrolling
       >
         {data?.map((post) => {
