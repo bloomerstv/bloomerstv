@@ -26,8 +26,8 @@ import { MediaVideoMimeType, video } from '@lens-protocol/metadata'
 import {
   APP_ID,
   APP_LINK,
-  defaultSponsored,
-  isMainnet
+  defaultSponsored
+  // isMainnet
 } from '../../../../utils/config'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
@@ -42,8 +42,8 @@ import {
   CATEGORIES_LIST,
   getTagsForCategory
 } from '../../../../utils/categories'
-import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
-import { encodeAbiParameters, type Address } from 'viem'
+// import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
+// import { encodeAbiParameters, type Address } from 'viem'
 
 const PostStreamAsVideo = ({
   publication,
@@ -235,17 +235,17 @@ const PostStreamAsVideo = ({
       }
     }
 
-    if (isMainnet) {
-      actions?.push({
-        type: OpenActionType.UNKNOWN_OPEN_ACTION,
-        address: VerifiedOpenActionModules.Tip,
-        // @ts-ignore
-        data: encodeAbiParameters(
-          [{ name: 'tipReceiver', type: 'address' }],
-          [profile?.profile?.handle?.ownedBy as Address]
-        )
-      })
-    }
+    // if (isMainnet) {
+    //   actions?.push({
+    //     type: OpenActionType.UNKNOWN_OPEN_ACTION,
+    //     address: VerifiedOpenActionModules.Tip,
+    //     // @ts-ignore
+    //     data: encodeAbiParameters(
+    //       [{ name: 'tipReceiver', type: 'address' }],
+    //       [profile?.profile?.handle?.ownedBy as Address]
+    //     )
+    //   })
+    // }
 
     // invoke the `execute` function to create the post
     const result = await execute({

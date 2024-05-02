@@ -32,8 +32,8 @@ import {
   APP_ID,
   APP_LINK,
   REDIRECTOR_URL,
-  defaultSponsored,
-  isMainnet
+  defaultSponsored
+  // isMainnet
 } from '../../../../utils/config'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
@@ -56,8 +56,8 @@ import {
   getTagsForCategory,
   getTagsForSymbol
 } from '../../../../utils/categories'
-import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
-import { encodeAbiParameters, type Address } from 'viem'
+// import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
+// import { encodeAbiParameters, type Address } from 'viem'
 import { Src } from '@livepeer/react'
 
 const LiveVideoComponent = ({
@@ -225,17 +225,17 @@ const LiveVideoComponent = ({
       }
     }
 
-    if (isMainnet) {
-      actions?.push({
-        type: OpenActionType.UNKNOWN_OPEN_ACTION,
-        address: VerifiedOpenActionModules.Tip,
-        // @ts-ignore
-        data: encodeAbiParameters(
-          [{ name: 'tipReceiver', type: 'address' }],
-          [session?.profile?.handle?.ownedBy as Address]
-        )
-      })
-    }
+    // if (isMainnet) {
+    //   actions?.push({
+    //     type: OpenActionType.UNKNOWN_OPEN_ACTION,
+    //     address: VerifiedOpenActionModules.Tip,
+    //     // @ts-ignore
+    //     data: encodeAbiParameters(
+    //       [{ name: 'tipReceiver', type: 'address' }],
+    //       [session?.profile?.handle?.ownedBy as Address]
+    //     )
+    //   })
+    // }
 
     const MAX_RETRIES = 3 // Maximum number of retries
     let retries = 0

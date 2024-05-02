@@ -1,3 +1,5 @@
+import { getFileFromDataURL } from './getImageFileFromDataURL'
+
 const canvasImageFromVideo = (
   file: File,
   currentTime: number
@@ -79,4 +81,13 @@ export const generateVideoThumbnail = (url: string): Promise<string> => {
       resolve('')
     }
   })
+}
+
+// generate a thumbnail image file from a video url
+export const getThumbnailFromVideoUrl = async (
+  url: string
+): Promise<File | null> => {
+  const thumbnail = await generateVideoThumbnail(url)
+  const file = await getFileFromDataURL(thumbnail, 'thumbnail.png')
+  return file
 }

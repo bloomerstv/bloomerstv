@@ -13,12 +13,11 @@ import {
   useCreatePost,
   useSession
 } from '@lens-protocol/react-web'
-import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import {
   APP_ID,
   APP_LINK,
-  defaultSponsored,
-  isMainnet
+  defaultSponsored
+  // isMainnet
 } from '../../../utils/config'
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
@@ -26,8 +25,10 @@ import { useUploadDataToArMutation } from '../../../graphql/generated'
 import useCollectSettings from '../../common/Collect/useCollectSettings'
 import CollectSettingButton from '../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
-import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
-import { encodeAbiParameters, type Address } from 'viem'
+import uploadToIPFS from '../../../utils/uploadToIPFS'
+import { getThumbnailFromVideoUrl } from '../../../utils/generateThumbnail'
+// import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
+// import { encodeAbiParameters, type Address } from 'viem'
 
 const PostClipOnLens = ({
   open,
@@ -87,6 +88,17 @@ const PostClipOnLens = ({
       tags.push(`sessionId-${sessionId}`)
     }
 
+    const coverThumbnailFile = await getThumbnailFromVideoUrl(url)
+
+    let ipfsImageUrl = ''
+
+    if (coverThumbnailFile) {
+      const d = await uploadToIPFS(coverThumbnailFile)
+      ipfsImageUrl = d?.url || ''
+    }
+
+    console.log('ipfsImageUrl', ipfsImageUrl)
+
     const metadata = shortVideo({
       title: title,
       content: title,
@@ -95,11 +107,11 @@ const PostClipOnLens = ({
         description: title,
         external_url: APP_LINK,
         animation_url: url,
-        image: getThumbnailFromRecordingUrl(url)
+        image: ipfsImageUrl
       },
       video: {
         item: url,
-        cover: getThumbnailFromRecordingUrl(url),
+        cover: ipfsImageUrl,
         duration: 30,
         type: MediaVideoMimeType.MP4,
         altTag: title
@@ -148,17 +160,17 @@ const PostClipOnLens = ({
       }
     }
 
-    if (isMainnet) {
-      actions?.push({
-        type: OpenActionType.UNKNOWN_OPEN_ACTION,
-        address: VerifiedOpenActionModules.Tip,
-        // @ts-ignore
-        data: encodeAbiParameters(
-          [{ name: 'tipReceiver', type: 'address' }],
-          [data?.profile?.handle?.ownedBy as Address]
-        )
-      })
-    }
+    // if (isMainnet) {
+    //   actions?.push({
+    //     type: OpenActionType.UNKNOWN_OPEN_ACTION,
+    //     address: VerifiedOpenActionModules.Tip,
+    //     // @ts-ignore
+    //     data: encodeAbiParameters(
+    //       [{ name: 'tipReceiver', type: 'address' }],
+    //       [data?.profile?.handle?.ownedBy as Address]
+    //     )
+    //   })
+    // }
 
     // invoke the `execute` function to create the post
     const result = await execute({
