@@ -13,6 +13,7 @@ const HomePageCards = () => {
   const streamReplayPublication = usePublicationsStore(
     (state) => state.streamReplayPublication
   )
+
   const isMobile = useIsMobile()
 
   const streamReplayMap = new Map(
@@ -31,10 +32,10 @@ const HomePageCards = () => {
   return (
     <>
       {/* @ts-ignore */}
-      <div className="flex flex-row flex-wrap w-full gap-y-4 sm:gap-y-8">
+      <div className="flex flex-row flex-wrap w-full gap-y-6">
         {publications && publications?.length > 0
           ? publications
-              ?.slice(0, showAll || isMobile ? publications?.length : 8)
+              ?.slice(0, showAll ? publications?.length : isMobile ? 4 : 8)
               ?.map((post) => {
                 return (
                   <HomeVideoCard
@@ -52,8 +53,8 @@ const HomePageCards = () => {
               })
           : renderLoadingCards()}
 
-        {!showAll && !isMobile && (
-          <div className="w-full centered-row">
+        {!showAll && (
+          <div className="w-full centered-row -mt-4">
             <Button
               endIcon={<KeyboardArrowDownIcon />}
               variant="text"
@@ -87,7 +88,7 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
     <>
       {/* @ts-ignore */}
       {publications?.length > 0 ? (
-        <div className="flex flex-row flex-wrap w-full gap-y-6 sm:gap-y-8">
+        <div className="flex flex-row flex-wrap w-full gap-y-6">
           {publications?.map((post) => {
             return (
               <HomeVideoCard
@@ -112,7 +113,7 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
 const LiveStreamPublicReplays = ({ profileId }: { profileId?: string }) => {
   const isMobile = useIsMobile()
   return (
-    <div className="sm:mx-8 sm:mt-8 sm:mb-0">
+    <div className="w-full">
       {!isMobile && (
         <div className="text-p-text leading-5 font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
           Past Streams

@@ -8,6 +8,7 @@ import ApolloWrapper from './ApolloWrapper'
 import ShowLoadingWrapper from './ShowLoadingWrapper'
 import ToastWrapper from './ToastWrapper'
 import WaitForMount from './WaitForMount'
+import { ModalProvider } from '../common/ModalContext'
 
 const MasterWrappers = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -17,9 +18,11 @@ const MasterWrappers = ({ children }: { children: React.ReactNode }) => {
           <WaitForMount>
             <ApolloWrapper>
               <ShowLoadingWrapper>
-                <ToastWrapper>
-                  <UILayout>{children}</UILayout>
-                </ToastWrapper>
+                <ModalProvider>
+                  <ToastWrapper>
+                    <UILayout>{children}</UILayout>
+                  </ToastWrapper>
+                </ModalProvider>
               </ShowLoadingWrapper>
             </ApolloWrapper>
           </WaitForMount>

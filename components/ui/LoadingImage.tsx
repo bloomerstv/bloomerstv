@@ -47,7 +47,7 @@ const LoadingImage: React.FC<LoadingImageProps> = ({
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
         />
       )}
     </div>

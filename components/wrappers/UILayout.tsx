@@ -12,6 +12,7 @@ import DashboardSidebar from '../pages/dashboard/DashboardSidebar'
 import { useStreamReplayPublications } from '../../utils/hooks/useStreamReplayPublications'
 import useLiveStreamerProfiles from '../../utils/hooks/useLiveStreamerProfiles'
 import useNotifictionSubscriptions from '../../utils/hooks/useNotifictionSubscriptions'
+import { ModalRoot } from '../common/ModalRoot'
 
 interface Props {
   // Define any props that the component will accept
@@ -74,6 +75,7 @@ const GlobalHooks = () => {
 const UILayout: React.FC<Props> = (props) => {
   return (
     <>
+      <ModalRoot />
       <GlobalHooks />
       <UILayoutPage>{props.children}</UILayoutPage>
     </>

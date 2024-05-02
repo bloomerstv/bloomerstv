@@ -18,7 +18,7 @@ const DashboardSidebar = () => {
     skip: data?.type !== SessionType.WithProfile
   })
   return (
-    <div className="w-1/6 min-w-[250px] h-full bg-s-bg overflow-auto">
+    <div className="min-w-[250px] max-w-[300px] h-full bg-s-bg overflow-auto">
       {data?.type === SessionType.WithProfile && (
         <div className="flex flex-col items-center justify-center my-4">
           <img

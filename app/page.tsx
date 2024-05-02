@@ -6,6 +6,7 @@ import useIsMobile from '../utils/hooks/useIsMobile'
 import StreamerHorizontalDiv from '../components/common/StreamerSidebar/StreamerHorizontalDiv'
 import MobileTopHeader from '../components/pages/all/Header/MobileTopHeader'
 import ClipsFeed from '../components/pages/home/ClipsFeed'
+import TextAndImagePosts from '../components/pages/home/TextAndImagePosts'
 
 export default function Home() {
   const isMobile = useIsMobile()
@@ -13,8 +14,8 @@ export default function Home() {
   return (
     <div
       className={clsx(
-        'w-full h-full overflow-x-hidden overflow-y-auto',
-        isMobile && 'no-scrollbar'
+        ' h-full w-full overflow-y-auto relative',
+        isMobile ? 'no-scrollbar' : 'p-4 space-y-6'
       )}
     >
       {/* top header */}
@@ -23,14 +24,9 @@ export default function Home() {
       {isMobile && <StreamerHorizontalDiv />}
 
       <LiveStreamerFeed />
-      <div>
-        <LiveStreamPublicReplays />
-      </div>
-      {!isMobile && (
-        <div className="">
-          <ClipsFeed />
-        </div>
-      )}
+      <LiveStreamPublicReplays />
+      <TextAndImagePosts />
+      {!isMobile && <ClipsFeed />}
     </div>
   )
 }

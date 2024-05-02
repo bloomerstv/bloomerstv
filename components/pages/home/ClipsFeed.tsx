@@ -15,7 +15,7 @@ import { useIsVerifiedQuery } from '../../../graphql/generated'
 const ClipsFeed = ({ handle }: { handle?: string }) => {
   const { data, loading } = usePublications({
     where: {
-      publicationTypes: [PublicationType.Post],
+      publicationTypes: [PublicationType.Post, PublicationType.Quote],
       metadata: {
         mainContentFocus: [
           PublicationMetadataMainFocusType.ShortVideo,
@@ -46,13 +46,13 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
     return null
   }
   return (
-    <div className="sm:mx-8 sm:my-0 my-4">
+    <div className="w-full">
       <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
         {handle ? `Clips from ${handle}'s Streams` : 'Stream Clips & Edits'}
       </div>
       {/* @ts-ignore */}
       {data?.length > 0 ? (
-        <div className="flex flex-row flex-wrap w-full gap-y-6 sm:gap-y-8">
+        <div className="flex flex-row flex-wrap w-full gap-y-6">
           {data?.map((post) => {
             return (
               <HomeVideoCard

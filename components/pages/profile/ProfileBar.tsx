@@ -1,12 +1,9 @@
 import {
   Post,
   Profile,
-  PublicationReactionType,
   SessionType,
-  useCreateMirror,
   useFollow,
   usePublication,
-  useReactionToggle,
   useSession,
   useUnfollow
 } from '@lens-protocol/react-web'
@@ -14,30 +11,21 @@ import React, { useEffect, useState } from 'react'
 import { SingleStreamer } from '../../../graphql/generated'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
-import AutorenewIcon from '@mui/icons-material/Autorenew'
 
 import {
-  Button,
   IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
-  MenuList,
-  Tooltip
+  MenuList
 } from '@mui/material'
 import { APP_LINK, APP_NAME, defaultSponsored } from '../../../utils/config'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import MobileChatButton from './MobileChatButton'
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
-import FavoriteIcon from '@mui/icons-material/Favorite'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import ModalWrapper from '../../ui/Modal/ModalWrapper'
-import LoginComponent from '../../common/LoginComponent'
 import IosShareIcon from '@mui/icons-material/IosShare'
-import LoginIcon from '@mui/icons-material/Login'
 import Markup from '../../common/Lexical/Markup'
 import MobileCommentButton from '../watch/MobileCommentButton'
-import clsx from 'clsx'
 import LiveCount from './LiveCount'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
@@ -46,6 +34,10 @@ import FollowingButton from './FollowingButton'
 import { humanReadableNumber } from '../../../utils/helpers'
 import VerifiedBadge from '../../ui/VerifiedBadge'
 import QuoteButton from './QuoteButton'
+import { useModal } from '../../common/ModalContext'
+import LikeButton from './LikeButton'
+import MirrorButton from './MirrorButton'
+
 const ProfileBar = ({
   profile,
   streamer,
@@ -71,18 +63,8 @@ const ProfileBar = ({
   })
 
   const [publication, setPublication] = useState<Post | null | undefined>(post)
-
-  const [liked, setLiked] = React.useState(false)
-  const [isMirrored, setIsMirrored] = React.useState(false)
-  const [upvotes, setUpvotes] = React.useState(0)
-  const [mirrors, setMirrors] = React.useState(0)
-
-  const { execute: toggleReaction } = useReactionToggle()
-  const { execute: createMirror, loading: mirroring } = useCreateMirror()
-
   const isMobile = useIsMobile()
-
-  const [open, setOpen] = useState(false)
+  const { openModal } = useModal()
 
   const [anchorEl, setAnchorEl] = React.useState(null)
   const isMenuOpen = Boolean(anchorEl)
@@ -96,30 +78,14 @@ const ProfileBar = ({
   useEffect(() => {
     if (data?.__typename === 'Post' && !post) {
       setPublication(data)
-      setLiked(data?.operations?.hasUpvoted)
-      setIsMirrored(data?.operations?.hasMirrored)
     }
   }, [data?.id])
 
   useEffect(() => {
     if (post) {
       setPublication(post)
-      setLiked(post?.operations?.hasUpvoted)
-      setIsMirrored(post?.operations?.hasMirrored)
     }
   }, [post])
-
-  useEffect(() => {
-    if (publication?.stats?.upvotes) {
-      setUpvotes(publication?.stats?.upvotes)
-    }
-  }, [publication?.stats?.upvotes])
-
-  useEffect(() => {
-    if (publication?.stats?.mirrors) {
-      setMirrors(publication?.stats?.mirrors)
-    }
-  }, [publication?.stats?.mirrors])
 
   const handleFollow = async () => {
     try {
@@ -164,55 +130,11 @@ const ProfileBar = ({
 
   const mustLogin = (infoMsg: string = 'Must Login'): Boolean => {
     if (mySession?.type !== SessionType.WithProfile) {
-      setOpen(true)
+      openModal('login')
       toast.error(infoMsg)
       return false
     }
     return true
-  }
-
-  const handleLike = async () => {
-    try {
-      if (!mustLogin('Must Login to like')) return
-      const result = await toggleReaction({
-        // @ts-ignore
-        publication: publication,
-        reaction: PublicationReactionType.Upvote
-      })
-
-      if (result.isFailure()) {
-        toast.error(result.error)
-      }
-
-      setLiked(!liked)
-      setUpvotes(liked ? upvotes - 1 : upvotes + 1)
-    } catch (error) {
-      console.log(error)
-      // @ts-ignore
-      toast.error(error?.message ?? error)
-    }
-  }
-
-  const handleMirror = async () => {
-    try {
-      if (!mustLogin('Must Login to mirror')) return
-      const result = await createMirror({
-        // @ts-ignore
-        mirrorOn: publication?.id,
-        sponsored: defaultSponsored
-      })
-
-      if (result.isFailure()) {
-        toast.error(result?.error?.message)
-      }
-
-      setIsMirrored(true)
-      setMirrors(mirrors + 1)
-    } catch (error) {
-      console.log(error)
-      // @ts-ignore
-      toast.error(error?.message ?? error)
-    }
   }
 
   const handleShare = () => {
@@ -287,15 +209,6 @@ const ProfileBar = ({
           </MenuItem>
         </MenuList>
       </Menu>
-      <ModalWrapper
-        open={open}
-        title="login"
-        Icon={<LoginIcon fontSize="small" />}
-        onClose={() => setOpen(false)}
-        onOpen={() => setOpen(true)}
-      >
-        <LoginComponent onClose={() => setOpen(false)} />
-      </ModalWrapper>
       {/* @ts-ignore   */}
       {(streamer?.streamName || publication?.metadata?.title) && (
         <div className="m-2 sm:mx-8 sm:mt-6 sm:hidden">
@@ -383,56 +296,11 @@ const ProfileBar = ({
             {profile?.id && !post && <LiveCount profileId={profile?.id} />}
 
             {/* like button  */}
-            {publication?.id && (
-              <Tooltip title="Like" arrow>
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="contained"
-                  onClick={handleLike}
-                  startIcon={
-                    liked ? (
-                      <FavoriteIcon className="text-brand" />
-                    ) : (
-                      <FavoriteBorderIcon />
-                    )
-                  }
-                  sx={{
-                    boxShadow: 'none',
-                    borderRadius: '20px'
-                  }}
-                >
-                  {upvotes}
-                </Button>
-              </Tooltip>
-            )}
+            {publication?.id && <LikeButton publication={publication} />}
 
             {/* mirror button */}
 
-            {publication?.id && (
-              <Tooltip title="Mirror" arrow>
-                <Button
-                  size="small"
-                  color="secondary"
-                  variant="contained"
-                  onClick={handleMirror}
-                  startIcon={
-                    <AutorenewIcon
-                      className={clsx(
-                        isMirrored && 'text-brand',
-                        mirroring && 'animate-spin'
-                      )}
-                    />
-                  }
-                  sx={{
-                    boxShadow: 'none',
-                    borderRadius: '20px'
-                  }}
-                >
-                  {mirrors}
-                </Button>
-              </Tooltip>
-            )}
+            {publication?.id && <MirrorButton publication={publication} />}
 
             {publication && (
               <QuoteButton
@@ -480,51 +348,10 @@ const ProfileBar = ({
               />
             )}
             {/* like button */}
-            {publication?.id && (
-              <Button
-                size="small"
-                color="secondary"
-                variant="contained"
-                onClick={handleLike}
-                startIcon={
-                  liked ? (
-                    <FavoriteIcon className="text-brand" />
-                  ) : (
-                    <FavoriteBorderIcon />
-                  )
-                }
-                sx={{
-                  borderRadius: '20px',
-                  boxShadow: 'none'
-                }}
-              >
-                {upvotes}
-              </Button>
-            )}
+            {publication?.id && <LikeButton publication={publication} />}
             {/* mirror button */}
 
-            {publication?.id && (
-              <Button
-                size="small"
-                color="secondary"
-                variant="contained"
-                onClick={handleMirror}
-                startIcon={
-                  <AutorenewIcon
-                    className={clsx(
-                      isMirrored && 'text-brand',
-                      mirroring && 'animate-spin'
-                    )}
-                  />
-                }
-                sx={{
-                  borderRadius: '20px',
-                  boxShadow: 'none'
-                }}
-              >
-                {mirrors}
-              </Button>
-            )}
+            {publication?.id && <MirrorButton publication={publication} />}
 
             {publication && (
               <QuoteButton
