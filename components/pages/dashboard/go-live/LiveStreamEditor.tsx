@@ -1,11 +1,9 @@
 'use client'
 import React, { memo, useEffect } from 'react'
 import { ViewType, useMyStreamQuery } from '../../../../graphql/generated'
-
 import MyStreamEditButton from './MyStreamEditButton'
 import { SessionType, useSession } from '@lens-protocol/react-web'
-import { Button, MenuItem, Select, TextField } from '@mui/material'
-import { LIVE_PEER_RTMP_URL } from '../../../../utils/config'
+import { MenuItem, Select } from '@mui/material'
 import clsx from 'clsx'
 import StartLoadingPage from '../../loading/StartLoadingPage'
 import toast from 'react-hot-toast'
@@ -15,6 +13,7 @@ import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST } from '../../../../utils/categories'
 import { stringToLength } from '../../../../utils/stringToLength'
 import StreamHealth from './StreamHealth'
+import StreamKey from './StreamKey'
 // import Link from 'next/link'
 const LiveStreamEditor = () => {
   const [startedStreaming, setStartedStreaming] = React.useState(false)
@@ -206,56 +205,8 @@ const LiveStreamEditor = () => {
         </div>
       </div>
 
-      <div className="mt-4 2xl:mt-6 p-6 bg-s-bg gap-x-20 start-row shadow-sm rounded-xl">
-        <div className="space-y-6 w-[400px]">
-          <div className="font-bold text-lg text-s-text">Stream Key</div>
-          <div className="start-center-row space-x-2">
-            {/* mui input with copy button  */}
-            <TextField
-              type="password"
-              label="Stream Key"
-              value={myStream?.streamKey}
-              // don't allow editing
-              InputProps={{
-                readOnly: true
-              }}
-              size="small"
-              fullWidth
-            />
-            <Button
-              variant="outlined"
-              onClick={() => {
-                navigator.clipboard.writeText(myStream?.streamKey || '')
-                toast.success('Copied to clipboard')
-              }}
-            >
-              Copy
-            </Button>
-          </div>
-
-          {/* stream url */}
-          <div className="start-center-row space-x-2">
-            <TextField
-              label="Stream URL"
-              value={LIVE_PEER_RTMP_URL}
-              // don't allow editing
-              InputProps={{
-                readOnly: true
-              }}
-              size="small"
-              fullWidth
-            />
-            <Button
-              variant="outlined"
-              onClick={() => {
-                navigator.clipboard.writeText(LIVE_PEER_RTMP_URL)
-                toast.success('Copied to clipboard')
-              }}
-            >
-              Copy
-            </Button>
-          </div>
-        </div>
+      <div className="mt-4 2xl:mt-6 p-6 bg-s-bg lg:gap-x-12 2xl:gap-x-20 start-row shadow-sm rounded-xl">
+        <StreamKey myStream={myStream} />
 
         <StreamHealth
           isActive={startedStreaming && !!myStream.isActive}

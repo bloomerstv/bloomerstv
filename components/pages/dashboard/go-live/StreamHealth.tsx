@@ -38,7 +38,7 @@ const StreamHealth = ({
       >
         <OBSSetupGuide />
       </ModalWrapper>
-      <div className="w-[500px] space-y-2">
+      <div className="lg:w-[360px] 2xl:w-[500px] space-y-2">
         <div className="font-bold text-lg text-s-text mb-4">Stream Health</div>
         <div className="start-center-row gap-x-2  w-full text-s-text font-semibold text-sm">
           <div className="">Stream Status : </div>
