@@ -20,6 +20,7 @@ const getPublicationData = (
     type: 'Image' | 'Video' | 'Audio'
   }[]
 } | null => {
+  if (!metadata) return null
   switch (metadata.__typename) {
     case 'ArticleMetadataV3':
       return {

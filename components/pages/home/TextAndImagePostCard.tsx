@@ -10,8 +10,8 @@ import getPublicationData from '../../../utils/lib/getPublicationData'
 import { stringToLength } from '../../../utils/stringToLength'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import Link from 'next/link'
-// import LikeButton from '../profile/LikeButton'
-// import MirrorButton from '../profile/MirrorButton'
+import LikeButton from '../profile/LikeButton'
+import MirrorButton from '../profile/MirrorButton'
 
 const TextAndImagePostCard = ({
   publication,
@@ -87,10 +87,10 @@ const TextAndImagePostCard = ({
 
           {/* buttons */}
           {/* todo uncomment after react sdk fix for stats */}
-          {/* <div className="start-center-row gap-x-2 mt-2">
+          <div className="start-center-row gap-x-2 mt-2">
             <LikeButton publication={publication} />
             <MirrorButton publication={publication} />
-          </div> */}
+          </div>
         </div>
 
         {asset?.type === 'Image' && (
