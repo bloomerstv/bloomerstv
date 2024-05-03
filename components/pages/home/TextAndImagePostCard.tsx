@@ -60,9 +60,9 @@ const TextAndImagePostCard = ({
             </div>
           </div>
           {/* content */}
-          <div className="h-[60px] overflow-hidden">
+          <div className="h-[75px] overflow-hidden">
             <Markup className="text-sm">
-              {stringToLength(publication?.metadata?.content, 70)}
+              {stringToLength(publication?.metadata?.content, 100)}
             </Markup>
           </div>
           {/* quoted content with link */}
@@ -96,7 +96,7 @@ const TextAndImagePostCard = ({
         {asset?.type === 'Image' && (
           <LoadingImage
             src={asset?.uri}
-            className="rounded-xl h-[138px] -mb-1.5 ml-2"
+            className="rounded-xl h-[150px] -mb-1.5 ml-2"
             alt="post"
           />
         )}
