@@ -55,10 +55,10 @@ const TextAndImagePosts = () => {
       <div className="start-center-row gap-x-8  py-2 mb-2 sm:mb-4">
         <div className="text-p-text font-bold text-2xl">Community Posts</div>
         <div className="start-center-row">
-          <IconButton size="small" onClick={() => scroll(-200)}>
+          <IconButton size="small" onClick={() => scroll(-270)}>
             <KeyboardArrowLeftIcon />
           </IconButton>
-          <IconButton size="small" onClick={() => scroll(200)}>
+          <IconButton size="small" onClick={() => scroll(270)}>
             <KeyboardArrowRightIcon />
           </IconButton>
         </div>

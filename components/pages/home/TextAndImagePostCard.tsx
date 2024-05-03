@@ -42,26 +42,31 @@ const TextAndImagePostCard = ({
       >
         <div className="w-[250px]">
           <div className="between-row w-full shrink-0">
-            <div className="start-row gap-x-2 shrink-0 w-full">
-              <LoadingImage
-                src={getAvatar(publication?.by)}
-                className="w-10 h-10 rounded-full"
-                alt="avatar"
-              />
-              <div className="start-col shrink-0 w-full">
-                <div className="font-bold start-center-row text-s-text gap-x-1">
-                  <>{formatHandle(publication?.by)}</>
-                  {premium && <VerifiedBadge />}
-                </div>
-                <div className="text-xs text-s-text shrink-0">
-                  {timeAgo(publication?.createdAt)}
+            <Link
+              href={`/${formatHandle(publication?.by)}`}
+              className="text-p-text no-underline"
+            >
+              <div className="start-row gap-x-2 shrink-0 w-full">
+                <LoadingImage
+                  src={getAvatar(publication?.by)}
+                  className="w-10 h-10 rounded-full"
+                  alt="avatar"
+                />
+                <div className="start-col shrink-0 w-full">
+                  <div className="font-bold start-center-row text-s-text gap-x-1">
+                    <>{formatHandle(publication?.by)}</>
+                    {premium && <VerifiedBadge />}
+                  </div>
+                  <div className="text-xs text-s-text shrink-0">
+                    {timeAgo(publication?.createdAt)}
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
           {/* content */}
-          <div className="h-[75px] overflow-hidden">
-            <Markup className="text-sm">
+          <div className="h-[75px] overflow-hidden pl-1 shrink-0">
+            <Markup className="text-sm shrink-0">
               {stringToLength(publication?.metadata?.content, 100)}
             </Markup>
           </div>
@@ -72,11 +77,11 @@ const TextAndImagePostCard = ({
               'LiveStreamMetadataV3') ? (
             <Link
               href={`/watch/${publication?.quoteOn?.id}`}
-              className="text-p-text no-underline"
+              className="text-p-text no-underline shrink-0 w-fit"
             >
-              <div className="bg-p-hover hover:shadow-md px-1 text-xs  rounded-lg h-8 start-center-row">
+              <div className="bg-p-hover shrink-0 hover:shadow-md px-1 w-full text-xs  rounded-lg h-8 start-center-row">
                 <PlayArrowIcon fontSize="small" />
-                <div className="font-semibold">
+                <div className="font-semibold shrink-0">
                   {stringToLength(publication?.quoteOn?.metadata?.title, 40)}
                 </div>
               </div>
@@ -86,7 +91,6 @@ const TextAndImagePostCard = ({
           )}
 
           {/* buttons */}
-          {/* todo uncomment after react sdk fix for stats */}
           <div className="start-center-row gap-x-2 mt-2">
             <LikeButton publication={publication} />
             <MirrorButton publication={publication} />
@@ -96,7 +100,7 @@ const TextAndImagePostCard = ({
         {asset?.type === 'Image' && (
           <LoadingImage
             src={asset?.uri}
-            className="rounded-xl h-[150px] -mb-1.5 ml-2"
+            className="rounded-xl h-[190px] -mb-1.5 ml-2"
             alt="post"
           />
         )}
