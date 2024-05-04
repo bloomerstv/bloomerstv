@@ -9,7 +9,7 @@ export const CATEGORIES = [
   },
   {
     name: 'Music',
-    tags: ['music', 'orbcommunitiesVinylsAndMusic']
+    tags: ['music', 'orbcommunitiesMusic']
   },
   {
     name: 'Coding & Tech',
@@ -30,16 +30,16 @@ export const CATEGORIES = [
     tags: ['podcast']
   },
   {
+    name: 'Crypto & Blockchain',
+    tags: ['crypto', 'orbcommunitiesDeFi', 'blockchain']
+  },
+  {
     name: 'Arts',
     tags: ['arts', 'orbcommunitiesrefraction']
   },
   {
     name: 'Travel & Events',
     tags: ['travel', 'orbcommunitiestravel']
-  },
-  {
-    name: 'Crypto & Blockchain',
-    tags: ['crypto', 'orbcommunitiesDeFi', 'blockchain']
   },
   {
     name: 'Metaverse',
