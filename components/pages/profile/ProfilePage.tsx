@@ -244,8 +244,11 @@ const ProfilePage = ({ handle }: { handle: string }) => {
 
         <AboutProfile profile={data} />
 
-        <ClipsFeed handle={formatHandle(data)} />
-        <div className="mt-4">
+        <div className="sm:mx-8">
+          <ClipsFeed handle={formatHandle(data)} />
+        </div>
+
+        <div className="mt-4 sm:mx-8">
           <LiveStreamPublicReplays profileId={data?.id} />
         </div>
       </div>

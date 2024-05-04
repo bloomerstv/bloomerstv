@@ -147,22 +147,22 @@ export const MAINNET_CURRENCIES = [
     address: '0xaA05F05d77b10d0b12BfA2407b3180f1a1298965',
     chainType: 'polygon'
   },
-  {
-    kind: 1,
-    name: 'ELECTRIC',
-    decimals: 18,
-    symbol: 'ELECTRIC',
-    address: '0x22D4DFE6dA0D661F48BD7c8a9224fF1c866Fe0E2',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'VINYL',
-    decimals: 18,
-    symbol: 'VINYL',
-    address: '0xbFC67397aE5f278Cd9C51520Af521feBEFA42BcE',
-    chainType: 'polygon'
-  },
+  // {
+  //   kind: 1,
+  //   name: 'ELECTRIC',
+  //   decimals: 18,
+  //   symbol: 'ELECTRIC',
+  //   address: '0x22D4DFE6dA0D661F48BD7c8a9224fF1c866Fe0E2',
+  //   chainType: 'polygon'
+  // },
+  // {
+  //   kind: 1,
+  //   name: 'VINYL',
+  //   decimals: 18,
+  //   symbol: 'VINYL',
+  //   address: '0xbFC67397aE5f278Cd9C51520Af521feBEFA42BcE',
+  //   chainType: 'polygon'
+  // },
   {
     kind: 1,
     name: '(PoS) Tether USD',
