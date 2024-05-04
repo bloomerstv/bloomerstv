@@ -213,7 +213,14 @@ const StreamerSidebar = () => {
           <>
             {minimize ? (
               <div className="flex flex-col w-full ">
-                <IconButton LinkComponent={Link} href={X_URL} target="_blank">
+                <IconButton
+                  sx={{
+                    borderRadius: '0px'
+                  }}
+                  LinkComponent={Link}
+                  href={X_URL}
+                  target="_blank"
+                >
                   <XIcon fontSize="medium" />
                 </IconButton>
                 <IconButton

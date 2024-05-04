@@ -124,6 +124,7 @@ export type MyStream = Stream & {
   issues?: Maybe<Array<Maybe<Scalars['String']['output']>>>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   latestStreamPublicationId?: Maybe<Scalars['String']['output']>
+  nextStreamTime?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
   profileId: Scalars['String']['output']
@@ -202,6 +203,7 @@ export type SingleStreamer = Stream & {
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   latestSessionId?: Maybe<Scalars['String']['output']>
   latestStreamPublicationId?: Maybe<Scalars['String']['output']>
+  nextStreamTime?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
   profileId: Scalars['String']['output']
@@ -241,6 +243,7 @@ export type Streamer = Stream & {
   isActive?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   liveCount?: Maybe<Scalars['Int']['output']>
+  nextStreamTime?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
   profileId: Scalars['String']['output']
@@ -250,6 +253,7 @@ export type Streamer = Stream & {
 }
 
 export type UpdateStreamRequest = {
+  nextStreamTime?: InputMaybe<Scalars['BigNumber']['input']>
   streamDescription?: InputMaybe<Scalars['String']['input']>
   streamName?: InputMaybe<Scalars['String']['input']>
 }
@@ -385,6 +389,7 @@ export type MyStreamQuery = {
     premium?: boolean | null
     isHealthy?: boolean | null
     issues?: Array<string | null> | null
+    nextStreamTime?: any | null
   } | null
 }
 
@@ -481,6 +486,7 @@ export type StreamerQuery = {
     latestStreamPublicationId?: string | null
     latestSessionId?: string | null
     startedStreaming?: any | null
+    nextStreamTime?: any | null
     premium?: boolean | null
   } | null
 }
@@ -1076,6 +1082,7 @@ export const MyStreamDocument = gql`
       premium
       isHealthy
       issues
+      nextStreamTime
     }
   }
 `
@@ -1580,6 +1587,7 @@ export const StreamerDocument = gql`
       latestStreamPublicationId
       latestSessionId
       startedStreaming
+      nextStreamTime
       premium
     }
   }

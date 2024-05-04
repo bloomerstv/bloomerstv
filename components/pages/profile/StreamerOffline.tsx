@@ -30,6 +30,7 @@ import { Button } from '@mui/material'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
+import Countdown from 'react-countdown'
 
 const StreamerOffline = ({
   profile,
@@ -84,15 +85,46 @@ const StreamerOffline = ({
               src={getAvatar(profile)}
               className="sm:w-16 sm:h-16 w-4 h-4 rounded-full hidden sm:block"
             />
+
             <div className="text-xs sm:text-2xl font-bold text-p-text text-left">
               {`${formatHandle(profile)} is offline.`}
             </div>
 
-            <div className="text-s-text text-xs sm:text-base font-bold">
-              {streamer?.lastSeen
-                ? `Streamed ${timeAgo(streamer?.lastSeen)}`
-                : 'Never streamed before'}
-            </div>
+            {(!isMobile ||
+              !streamer?.nextStreamTime ||
+              new Date(streamer?.nextStreamTime) < new Date()) && (
+              <div className="text-s-text text-xs sm:text-base font-bold">
+                {streamer?.lastSeen
+                  ? `Streamed ${timeAgo(streamer?.lastSeen)}`
+                  : 'Never streamed before'}
+              </div>
+            )}
+
+            {streamer?.nextStreamTime &&
+              new Date(streamer?.nextStreamTime) > new Date() && (
+                <div className="text-s-text text-xs sm:text-base font-bold start-col">
+                  <Countdown
+                    renderer={({
+                      days,
+                      hours,
+                      minutes,
+                      seconds,
+                      completed
+                    }) => {
+                      if (completed) {
+                        return (
+                          <div>{`Waiting for ${formatHandle(profile)}`} </div>
+                        )
+                      } else {
+                        return (
+                          <div>{`Next stream in ${days ? `${days}d ` : ''} ${hours ? `${hours}h` : ''} ${minutes ? `${minutes}m` : ''} ${seconds ? `${seconds}s` : ''}`}</div>
+                        )
+                      }
+                    }}
+                    date={streamer?.nextStreamTime}
+                  />
+                </div>
+              )}
 
             {!isMobile && (
               <div className="flex flex-col items-start gap-y-0.5">

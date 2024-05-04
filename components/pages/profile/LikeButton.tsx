@@ -19,13 +19,7 @@ const LikeButton = ({ publication }: { publication: AnyPublication }) => {
   const [upvotes, setUpvotes] = React.useState(
     publication?.__typename !== 'Mirror' ? publication?.stats?.upvotes : 0
   )
-  const { execute: toggleReaction, error } = useReactionToggle()
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error)
-    }
-  }, [error])
+  const { execute: toggleReaction } = useReactionToggle()
 
   const handleLike = async () => {
     try {

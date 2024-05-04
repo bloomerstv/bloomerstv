@@ -7,9 +7,9 @@ import {
 } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { useTheme } from './TailwindThemeProvider'
-
+import { LocalizationProvider } from '@mui/x-date-pickers'
 // import { orange } from '@mui/material/colors'
-
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 declare module '@mui/material/styles' {
   interface Theme {
     status: {
@@ -87,7 +87,9 @@ export default function MuiThemeWrapper({
     <StyledEngineProvider injectFirst={false}>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
         <CssBaseline />
-        {children}
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          {children}
+        </LocalizationProvider>
       </ThemeProvider>
     </StyledEngineProvider>
   )

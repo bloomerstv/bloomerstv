@@ -1,6 +1,10 @@
 'use client'
-import React, { memo, useEffect } from 'react'
-import { ViewType, useMyStreamQuery } from '../../../../graphql/generated'
+import React, { memo, useEffect, useState } from 'react'
+import {
+  ViewType,
+  useMyStreamQuery,
+  useUpdateMyStreamMutation
+} from '../../../../graphql/generated'
 import MyStreamEditButton from './MyStreamEditButton'
 import { SessionType, useSession } from '@lens-protocol/react-web'
 import { MenuItem, Select } from '@mui/material'
@@ -11,19 +15,32 @@ import { useMyPreferences } from '../../../store/useMyPreferences'
 import LiveVideoComponent from './LiveVideoComponent'
 import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST } from '../../../../utils/categories'
-import { stringToLength } from '../../../../utils/stringToLength'
+// import { stringToLength } from '../../../../utils/stringToLength'
 import StreamHealth from './StreamHealth'
 import StreamKey from './StreamKey'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import dayjs, { Dayjs } from 'dayjs'
+
 // import Link from 'next/link'
 const LiveStreamEditor = () => {
   const [startedStreaming, setStartedStreaming] = React.useState(false)
   const [streamFromBrowser, setStreamFromBrowser] = React.useState(false)
+
+  const [updateMyStream] = useUpdateMyStreamMutation()
 
   const { data: session } = useSession()
   const { data, error, refetch, loading } = useMyStreamQuery({
     pollInterval: 60000,
     fetchPolicy: 'no-cache'
   })
+
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null)
+
+  useEffect(() => {
+    if (data?.myStream?.nextStreamTime) {
+      setSelectedDate(dayjs(data?.myStream?.nextStreamTime))
+    }
+  }, [data?.myStream])
 
   const {
     category,
@@ -89,7 +106,7 @@ const LiveStreamEditor = () => {
                 />
               </div>
 
-              <div className="">
+              {/* <div className="">
                 <div className="text-s-text font-bold text-md">Description</div>
                 <div className="text-p-text text-sm 2xl:text-base font-semibold ">
                   <div className="whitespace-pre-wrap break-words ">
@@ -97,7 +114,7 @@ const LiveStreamEditor = () => {
                       'No description provided'}
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div className="space-y-1">
                 <div className="text-s-text font-bold text-md">
                   Collect Preview
@@ -166,6 +183,60 @@ const LiveStreamEditor = () => {
                       ))}
                     </Select>
                   </div>
+                </div>
+              </div>
+
+              {/* Next Stream time */}
+              <div className="pt-4">
+                {/* <div className="text-s-text font-bold text-md start-center-row gap-x-1">
+                  <>Next Stream </>
+                  <Tooltip title="Stream countdown will be shown on homepage & profile page">
+                    <HelpIcon fontSize="inherit" />
+                  </Tooltip>
+                </div> */}
+
+                <div className="">
+                  <DateTimePicker
+                    label="Next Stream Date & Time"
+                    // @ts-ignore
+                    value={selectedDate ?? null}
+                    onChange={async (newValue) => {
+                      // @ts-ignore
+                      if (newValue < new Date() && myStream?.nextStreamTime) {
+                        // @ts-ignore
+                        toast.error(
+                          'Next stream time removed. Select a future time to update.'
+                        )
+                      }
+
+                      // @ts-ignore
+                      setSelectedDate(newValue)
+                      // @ts-ignore
+                      const epochTime = new Date(newValue).getTime()
+
+                      try {
+                        const { data } = await updateMyStream({
+                          variables: {
+                            request: {
+                              nextStreamTime: epochTime
+                            }
+                          }
+                        })
+
+                        if (data?.updateMyStream) {
+                          // @ts-ignore
+                          toast.success('Next stream time updated')
+                        }
+                      } catch (error) {
+                        setSelectedDate(null)
+                        // @ts-ignore
+                        toast.error(error.message)
+                      }
+                    }}
+                    sx={{
+                      paddingY: 0
+                    }}
+                  />
                 </div>
               </div>
 

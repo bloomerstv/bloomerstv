@@ -20,17 +20,22 @@ const DashboardSidebar = () => {
   return (
     <div className="min-w-[250px] max-w-[300px] h-full bg-s-bg overflow-auto">
       {data?.type === SessionType.WithProfile && (
-        <div className="flex flex-col items-center justify-center my-4">
-          <img
-            className="w-20 h-20 rounded-full my-2"
-            src={getAvatar(data?.profile)}
-            alt="avatar"
-          />
-          <div className="text-sm font-bold text-s-text start-center-row gap-x-1">
-            <div>{formatHandle(data?.profile)}</div>
-            {myStream?.myStream?.premium && <VerifiedBadge />}
+        <Link
+          href={`/${formatHandle(data?.profile)}`}
+          className="text-p-text no-underline"
+        >
+          <div className="flex flex-col items-center justify-center my-4">
+            <img
+              className="w-20 h-20 rounded-full my-2"
+              src={getAvatar(data?.profile)}
+              alt="avatar"
+            />
+            <div className="text-sm font-bold text-s-text start-center-row gap-x-1">
+              <div>{formatHandle(data?.profile)}</div>
+              {myStream?.myStream?.premium && <VerifiedBadge />}
+            </div>
           </div>
-        </div>
+        </Link>
       )}
       <div className="space-y-2">
         <ListItemButton
