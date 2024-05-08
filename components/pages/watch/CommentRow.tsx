@@ -9,21 +9,22 @@ import React, { useEffect, useState } from 'react'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
 import Markup from '../../common/Lexical/Markup'
-import CommentSection, { NewComment } from './CommentSection'
+import CommentSection from './CommentSection'
 import { Button } from '@mui/material'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import CommentIcon from '@mui/icons-material/Comment'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
+import clsx from 'clsx'
 
 const CommentRow = ({
   comment,
-  level
+  level,
+  className
 }: {
   comment: Comment
-  addNewCommment?: (comment: NewComment) => void
-  allowReply?: boolean
   level: number
+  className?: string
 }) => {
   const { data } = useSession()
   const [showComments, setShowComments] = useState(false)
@@ -61,7 +62,9 @@ const CommentRow = ({
   }
 
   return (
-    <div className="flex flex-row pl-2.5 py-3 gap-x-3 w-full">
+    <div
+      className={clsx('flex flex-row pl-2.5 py-3 gap-x-3 w-full', className)}
+    >
       <img src={getAvatar(comment?.by)} className="w-8 h-8 rounded-full" />
       <div className="flex flex-col w-full">
         <div className="start-col">
@@ -114,6 +117,7 @@ const CommentRow = ({
 
         {showComments && (
           <CommentSection
+            // @ts-ignore
             publicationId={comment?.id}
             className="ml-[-10px]"
             level={level + 1}

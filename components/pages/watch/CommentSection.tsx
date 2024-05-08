@@ -1,4 +1,5 @@
 import {
+  AnyPublication,
   Comment,
   CommentRankingFilterType,
   Profile,
@@ -17,11 +18,11 @@ export interface NewComment {
 }
 
 const CommentSection = ({
-  publicationId,
+  publication,
   className,
   level = 0
 }: {
-  publicationId: string
+  publication: AnyPublication
   className?: string
   level?: number
 }) => {
@@ -30,7 +31,7 @@ const CommentSection = ({
     where: {
       commentOn: {
         // @ts-ignore
-        id: publicationId,
+        id: publication?.id,
         ranking: {
           filter: CommentRankingFilterType.Relevant
         }
@@ -39,18 +40,23 @@ const CommentSection = ({
   })
 
   return (
-    <div className={clsx('h-full w-full', className, level === 0 && 'pr-2.5')}>
+    <div className={clsx('h-full w-full', className)}>
       <CreateCommentRow
-        commentOn={publicationId}
+        commentOn={publication?.id}
         onCommentCreated={(comment) => {
           setNewComments([comment, ...newCommments])
         }}
-        className={clsx(level === 0 && 'pr-2.5')}
+        className={clsx(level === 0 && 'pl-0')}
       />
 
       {newCommments?.map((comment, index) => {
         return (
-          <CommentRow comment={comment as Comment} key={index} level={level} />
+          <CommentRow
+            className={clsx(level === 0 && 'pl-0')}
+            comment={comment as Comment}
+            key={index}
+            level={level}
+          />
         )
       })}
       {data?.map((comment) => {
@@ -58,10 +64,8 @@ const CommentSection = ({
           <CommentRow
             comment={comment as Comment}
             key={comment?.id}
-            addNewCommment={(comment) => {
-              setNewComments([comment, ...newCommments])
-            }}
             level={level}
+            className={clsx(level === 0 && 'pl-0')}
           />
         )
       })}

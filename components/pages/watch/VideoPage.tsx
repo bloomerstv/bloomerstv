@@ -120,8 +120,8 @@ const VideoPage = ({ post }: { post: Post }) => {
 
       {!isMobile && (
         <div className="border-t border-p-border mt-8 mb-4">
-          <div className="text-xl font-semibold my-4">Comments</div>
-          <CommentSection publicationId={post?.id} />
+          <div className="text-xl font-semibold my-4">{`${post?.stats?.comments} Comment${post?.stats?.comments > 1 ? 's' : ''}`}</div>
+          <CommentSection publication={post} />
         </div>
       )}
       {isMobile && <OtherVideosRecommendations className="py-4" />}

@@ -3,7 +3,8 @@ import React, { useState } from 'react'
 import CommentIcon from '@mui/icons-material/Comment'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import CommentSection from './CommentSection'
-const MobileCommentButton = ({ postId }: { postId: string }) => {
+import { AnyPublication } from '@lens-protocol/react-web'
+const MobileCommentButton = ({ post }: { post: AnyPublication }) => {
   const [open, setOpen] = useState(false)
   const [heightOfChat, setHeightOfChat] = useState<string>('500')
 
@@ -21,6 +22,8 @@ const MobileCommentButton = ({ postId }: { postId: string }) => {
   React.useEffect(() => {
     setHeightOfChat(getHeightOfChat())
   }, [])
+
+  if (post.__typename === 'Mirror') return null
 
   return (
     <>
@@ -49,9 +52,9 @@ const MobileCommentButton = ({ postId }: { postId: string }) => {
           className="w-screen overflow-y-auto"
         >
           <div className="text-lg font-semibold px-3 py-1 border-b border-p-border">
-            Comments
+            {`${post?.stats?.comments} Comment${post?.stats?.comments > 1 ? 's' : ''}`}
           </div>
-          <CommentSection publicationId={postId} />
+          <CommentSection publication={post} />
         </div>
       </ModalWrapper>
     </>

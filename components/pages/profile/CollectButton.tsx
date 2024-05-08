@@ -4,6 +4,7 @@ import {
   OpenActionKind,
   OpenActionModuleType,
   Post,
+  Quote,
   SessionType,
   useApproveModule,
   useOpenAction,
@@ -26,7 +27,7 @@ const CollectButton = ({
   handleFollow,
   followLoading
 }: {
-  post: Post
+  post: Post | Quote
   isFollowing: boolean
   handleFollow: () => void
   followLoading: boolean
@@ -73,7 +74,7 @@ const CollectButton = ({
     }
   }
 
-  const approveAllowance = async (publication: Post) => {
+  const approveAllowance = async (publication: Post | Quote) => {
     const result = await approve({ on: publication })
     if (result.isFailure()) {
       console.log(result.error.message)
@@ -81,7 +82,7 @@ const CollectButton = ({
     }
     return result
   }
-  const approveCollectModuleFor = async (publication: Post) => {
+  const approveCollectModuleFor = async (publication: Post | Quote) => {
     const result = await toast.promise(approveAllowance(publication), {
       loading: 'Approve Allowance...',
       success: 'Allowance Approved!',
@@ -100,7 +101,7 @@ const CollectButton = ({
     handleMouseUp()
   }, [error])
 
-  const handleCollect = async (post: Post) => {
+  const handleCollect = async (post: Post | Quote) => {
     try {
       const result = await execute({
         publication: post,
