@@ -15,9 +15,6 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const minimize = !isMobile && pathname !== '/'
-  if (!streamer.isActive) {
-    console.log('Streamer', streamer)
-  }
   const nextStreamInFuture =
     !!streamer?.nextStreamTime &&
     new Date(streamer?.nextStreamTime) > new Date()
