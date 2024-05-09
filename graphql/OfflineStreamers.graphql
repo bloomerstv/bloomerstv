@@ -3,5 +3,6 @@ query OfflineStreamers {
     profileId
     lastSeen
     premium
+    nextStreamTime
   }
 }

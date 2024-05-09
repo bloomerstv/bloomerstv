@@ -117,7 +117,10 @@ const StreamerOffline = ({
                         )
                       } else {
                         return (
-                          <div>{`Next stream in ${days ? `${days}d ` : ''} ${hours ? `${hours}h` : ''} ${minutes ? `${minutes}m` : ''} ${seconds ? `${seconds}s` : ''}`}</div>
+                          <div>
+                            Next stream in{' '}
+                            <span className="text-brand">{`${days ? `${days}d ` : ''} ${hours ? `${hours}h` : ''} ${minutes ? `${minutes}m` : ''} ${seconds ? `${seconds}s` : ''}`}</span>
+                          </div>
                         )
                       }
                     }}

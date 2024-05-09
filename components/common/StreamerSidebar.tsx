@@ -42,6 +42,20 @@ const StreamerSidebar = () => {
         (a, b) => b?.lastSeen - a?.lastSeen
       )
     : []
+
+  const offlineStreamersMap = React.useMemo(() => {
+    if (!offlineStreamers?.offlineStreamers) return new Map()
+    const map = new Map()
+    offlineStreamers?.offlineStreamers?.forEach((streamer) => {
+      if (!streamer) return
+      map.set(streamer.profileId, {
+        lastSeen: streamer?.lastSeen,
+        premium: streamer?.premium,
+        nextStreamTime: streamer?.nextStreamTime
+      })
+    })
+    return map
+  }, [offlineStreamers?.offlineStreamers])
   const { data: offlineProfiles } = useProfiles({
     where: {
       // @ts-ignore
@@ -84,24 +98,6 @@ const StreamerSidebar = () => {
 
     return offlineRecommendedStreamers || []
   }, [offlineProfiles])
-
-  const getOfflineProfileLastSeen = useCallback(
-    (profileId: string) => {
-      return offlineStreamers?.offlineStreamers?.find(
-        (streamer) => streamer?.profileId === profileId
-      )?.lastSeen
-    },
-    [offlineStreamers]
-  )
-
-  const getOfflineVerifiedProfile = useCallback(
-    (profileId: string) => {
-      return offlineStreamers?.offlineStreamers?.find(
-        (streamer) => streamer?.profileId === profileId
-      )?.premium
-    },
-    [offlineProfiles]
-  )
 
   const offlineFollowingStreamers = getOfflineFollowingStreamers()
   const offlineRecommendedStreamers = getOfflineRecommendedStreamers()
@@ -149,9 +145,13 @@ const StreamerSidebar = () => {
                         streamer={{
                           profile,
                           profileId: profile?.id,
-                          lastSeen: getOfflineProfileLastSeen(profile?.id),
+                          lastSeen: offlineStreamersMap.get(profile?.id)
+                            ?.lastSeen,
+                          nextStreamTime: offlineStreamersMap.get(profile?.id)
+                            ?.nextStreamTime,
                           premium:
-                            getOfflineVerifiedProfile(profile?.id) ?? false
+                            offlineStreamersMap.get(profile?.id)?.premium ??
+                            false
                         }}
                       />
                     )
@@ -196,9 +196,13 @@ const StreamerSidebar = () => {
                         streamer={{
                           profile,
                           profileId: profile?.id,
-                          lastSeen: getOfflineProfileLastSeen(profile?.id),
+                          lastSeen: offlineStreamersMap.get(profile?.id)
+                            ?.lastSeen,
                           premium:
-                            getOfflineVerifiedProfile(profile?.id) ?? false
+                            offlineStreamersMap.get(profile?.id)?.premium ??
+                            false,
+                          nextStreamTime: offlineStreamersMap.get(profile?.id)
+                            ?.nextStreamTime
                         }}
                       />
                     )

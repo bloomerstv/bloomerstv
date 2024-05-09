@@ -10,27 +10,31 @@ import LiveDiv from '../../ui/LiveDiv'
 import { humanReadableNumber, timeAgoShort } from '../../../utils/helpers'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import VerifiedBadge from '../../ui/VerifiedBadge'
-import LoadingImage from '../../ui/LoadingImage'
+import Countdown from 'react-countdown'
 const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const minimize = !isMobile && pathname !== '/'
+
+  const nextStreamInFuture =
+    !!streamer?.nextStreamTime &&
+    new Date(streamer?.nextStreamTime) > new Date()
   return (
     <Link
       prefetch
       href={`/${formatHandle(streamer?.profile)}`}
       key={streamer?.profileId}
       className={clsx(
-        'flex flex-row no-underline px-2 w-full items-center  py-1 justify-between hover:bg-p-hover cursor-pointer',
+        'flex flex-row no-underline p-2 w-full items-center justify-between hover:bg-p-hover cursor-pointer',
         minimize ? '2xl:px-2.5' : '2xl:px-4'
       )}
     >
       <div className={clsx(minimize ? 'centered-col' : 'centered-row')}>
-        <LoadingImage
+        <img
           src={getAvatar(streamer?.profile)}
           alt="avatar"
           className={clsx(
-            ' rounded-full',
+            'rounded-full',
             minimize ? 'w-10 h-10' : 'sm:w-8 sm:h-8 w-10 h-10'
           )}
         />
@@ -40,14 +44,31 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
           </div>
         )}
         {!minimize && (
-          <div className="ml-2">
-            <div className="start-center-row gap-x-1">
+          <div className="ml-2 ">
+            <div className="start-center-row gap-x-1 leading-4">
               <div className="text-s-text font-bold ">
                 {formatHandle(streamer?.profile)}
               </div>
 
               {streamer?.premium && <VerifiedBadge />}
             </div>
+
+            {nextStreamInFuture && (
+              <div className="text-s-text text-xs leading-4">
+                <Countdown
+                  renderer={({ days, hours, minutes, seconds, completed }) => {
+                    if (completed) {
+                      return null
+                    } else {
+                      return (
+                        <div>{`Live in ${days ? `${days}d ` : ''} ${hours ? `${hours}h` : ''} ${minutes ? `${minutes}m` : ''} ${seconds ? `${seconds}s` : ''}`}</div>
+                      )
+                    }
+                  }}
+                  date={streamer?.nextStreamTime}
+                />
+              </div>
+            )}
             {isMobile && (
               <div className="text-s-text sm:font-normal leading-3 font-semibold text-xs">
                 {`${humanReadableNumber(streamer?.profile?.stats?.followers)} followers`}

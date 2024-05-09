@@ -402,6 +402,7 @@ export type OfflineStreamersQuery = {
     profileId: string
     lastSeen?: any | null
     premium?: boolean | null
+    nextStreamTime?: any | null
   } | null> | null
 }
 
@@ -1152,6 +1153,7 @@ export const OfflineStreamersDocument = gql`
       profileId
       lastSeen
       premium
+      nextStreamTime
     }
   }
 `
