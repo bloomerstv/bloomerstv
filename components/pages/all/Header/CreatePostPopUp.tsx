@@ -11,6 +11,7 @@ import {
   IconButton,
   MenuItem,
   Select,
+  TextField,
   TextareaAutosize
 } from '@mui/material'
 import React from 'react'
@@ -48,6 +49,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload'
 import { getVideoDuration } from '../../../../utils/getVideoDuration'
 import { getFileFromDataURL } from '../../../../utils/getImageFileFromDataURL'
 import { stringToLength } from '../../../../utils/stringToLength'
+import EditIcon from '@mui/icons-material/Edit'
 
 interface previewFileType {
   url: string
@@ -74,6 +76,8 @@ const CreatePostPopUp = ({
     React.useState<previewFileType | null>(null)
   const [previewVideoFile, setPreviewVideoFile] =
     React.useState<previewFileType | null>(null)
+  const [videoTitle, setVideoTitle] = React.useState<string>('')
+  const [videoProgress, setVideoProgress] = React.useState<number>(0)
 
   const [previewCustomThumbnail, setPreviewCustomThumbnail] =
     React.useState<previewFileType | null>(null)
@@ -175,8 +179,8 @@ const CreatePostPopUp = ({
     const tags = getTagsForCategory(category) || []
 
     const commonMetadata = {
-      title: content.slice(0, 100),
-      content: content,
+      title: videoTitle ? videoTitle : content.slice(0, 100),
+      content: videoTitle ? `${videoTitle}\n${content}` : content,
       tags: tags,
       appId: APP_ID,
       id: id,
@@ -204,8 +208,12 @@ const CreatePostPopUp = ({
 
     const ipfsImage = imageFile ? await uploadToIPFS(imageFile) : null
 
-    const ipfsVideo = isVideo ? await uploadToIPFS(previewVideoFile.file) : null
-
+    const ipfsVideo = isVideo
+      ? await uploadToIPFS(previewVideoFile.file, (progress) => {
+          console.log('progress: ', progress)
+          setVideoProgress(progress)
+        })
+      : null
     const duration = isVideo
       ? await getVideoDuration(previewVideoFile.url).then((num) =>
           Math.round(num)
@@ -216,8 +224,8 @@ const CreatePostPopUp = ({
       ? video({
           ...commonMetadata,
           marketplace: {
-            name: content.slice(0, 100),
-            description: content,
+            name: videoTitle,
+            description: videoTitle + '\n' + content,
             external_url: APP_LINK,
             animation_url: previewVideoFile.url,
             image: ipfsImage?.url!
@@ -339,7 +347,12 @@ const CreatePostPopUp = ({
               Cancel
             </Button>
             <LoadingButton
-              disabled={content.trim().length === 0 || loading}
+              disabled={
+                (!previewVideoFile && content.trim().length === 0) ||
+                (previewVideoFile && videoTitle.trim().length === 0) ||
+                loading
+              }
+              startIcon={<EditIcon />}
               variant="contained"
               size={isMobile ? 'small' : 'medium'}
               onClick={async () => {
@@ -347,12 +360,14 @@ const CreatePostPopUp = ({
                   setLoading(true)
                   await handleCreatePost()
                 } catch (error) {
+                  toast.error('Error creating post')
                   console.error('Error creating post', error)
                 } finally {
                   setLoading(false)
                 }
               }}
               loading={loading}
+              loadingPosition="start"
             >
               Post
             </LoadingButton>
@@ -368,6 +383,20 @@ const CreatePostPopUp = ({
             />
             <div className="font-bold">{formatHandle(data?.profile)}</div>
           </div>
+          {previewVideoFile && (
+            <TextField
+              label="Video Title"
+              variant="outlined"
+              onChange={(e) => setVideoTitle(e.target.value)}
+              value={videoTitle}
+              inputProps={{
+                maxLength: 100
+              }}
+              disabled={loading}
+              size="small"
+              helperText={`${100 - videoTitle.length} / 100 characters remaining`}
+            />
+          )}
           <TextareaAutosize
             className={clsx(
               'text-base bg-s-bg  resize-none border-none outline-none w-full font-semibold font-sans leading-normal',
@@ -401,6 +430,7 @@ const CreatePostPopUp = ({
                   className="w-full rounded-xl"
                 />
               )}
+
               {previewVideoFile && (
                 <>
                   <video
@@ -408,7 +438,12 @@ const CreatePostPopUp = ({
                     controls
                     className="w-full rounded-xl"
                   />
-                  <div className="flex flex-row flex-wrap gap-2 py-2">
+                  <div
+                    className={clsx(
+                      'flex flex-row flex-wrap gap-2 py-2',
+                      loading && 'hidden'
+                    )}
+                  >
                     {/* upload custom thumbnail */}
                     <div
                       className="h-[90px] centered-col text-center w-[160px] bg-p-hover rounded-xl cursor-pointer"
@@ -476,7 +511,12 @@ const CreatePostPopUp = ({
                 </>
               )}
 
-              <div className="absolute top-2 right-2 bg-black/60 rounded-full">
+              <div
+                className={clsx(
+                  'absolute top-2 right-2 bg-black/60',
+                  loading ? 'rounded-sm' : 'rounded-full'
+                )}
+              >
                 {!loading && (
                   <IconButton
                     color="secondary"
@@ -491,6 +531,12 @@ const CreatePostPopUp = ({
                   >
                     <CloseIcon className="text-white rounded-full" />
                   </IconButton>
+                )}
+                {loading && previewVideoFile && (
+                  // show loading with percentage
+                  <div className="text-white rounded-full p-2 px-3 font-semibold">
+                    {videoProgress}%
+                  </div>
                 )}
               </div>
             </div>
@@ -558,7 +604,7 @@ const CreatePostPopUp = ({
               <div className="text-s-text font-semibold text-sm">
                 Collect Preview
               </div>
-              <CollectSettingButton />
+              <CollectSettingButton disabled={loading} />
             </div>
 
             <div className="start-col gap-y-1 w-fit">
@@ -574,6 +620,7 @@ const CreatePostPopUp = ({
                 sx={{
                   borderRadius: '100px'
                 }}
+                disabled={loading}
               >
                 {CATEGORIES_LIST.map((category) => (
                   <MenuItem value={category} key={category}>

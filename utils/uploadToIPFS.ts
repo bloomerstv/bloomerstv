@@ -1,5 +1,5 @@
 import { S3 } from '@aws-sdk/client-s3'
-// import { Upload } from '@aws-sdk/lib-storage'
+import { Upload } from '@aws-sdk/lib-storage'
 import axios from 'axios'
 import { v4 as uuid } from 'uuid'
 import { EVER_REGION, STS_TOKEN_URL } from './config'
@@ -23,6 +23,22 @@ const getS3Client = async () => {
     maxAttempts: 5
   })
 
+  client.middlewareStack.addRelativeTo(
+    (next: (args: any) => Promise<any>) => async (args: any) => {
+      const { response } = await next(args)
+      if (response.body == null) {
+        response.body = new Uint8Array()
+      }
+      return { response }
+    },
+    {
+      name: 'nullFetchResponseBodyMiddleware',
+      override: true,
+      relation: 'after',
+      toMiddleware: 'deserializerMiddleware'
+    }
+  )
+
   return client
 }
 
@@ -32,7 +48,8 @@ const getS3Client = async () => {
  * @returns attachment array
  */
 const uploadToIPFS = async (
-  file: File
+  file: File,
+  onProgress?: (progress: number) => void
 ): Promise<{
   url: string
   type?: string
@@ -41,9 +58,22 @@ const uploadToIPFS = async (
     const client = await getS3Client()
     const params = {
       Bucket: 'diversehq',
-      Key: uuid()
+      Key: uuid(),
+      Body: file,
+      ContentType: file.type
     }
-    await client.putObject({ ...params, Body: file, ContentType: file.type })
+
+    // use this for uploading without progress
+    // await client.putObject({ ...params, Body: file, ContentType: file.type })
+
+    const task = new Upload({ client, params })
+    task.on('httpUploadProgress', (e) => {
+      const loaded = e.loaded || 0
+      const total = e.total || 0
+      const progress = (loaded / total) * 100
+      onProgress?.(Math.round(progress))
+    })
+    await task.done()
     const result = await client.headObject(params)
     const metadata = result.Metadata
 

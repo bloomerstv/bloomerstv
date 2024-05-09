@@ -9,7 +9,13 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange'
 import LayersIcon from '@mui/icons-material/Layers'
 
-const CollectSettingButton = ({ className }: { className?: string }) => {
+const CollectSettingButton = ({
+  className,
+  disabled = false
+}: {
+  className?: string
+  disabled?: boolean
+}) => {
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -30,11 +36,12 @@ const CollectSettingButton = ({ className }: { className?: string }) => {
         <CollectSettingPopUp />
       </ModalWrapper>
 
-      <div
+      <button
         className={clsx(
-          'start-center-row cursor-pointer text-white bg-brand rounded-full pl-2 py-1 pr-1 space-x-2 text-xs shrink-0 w-fit shrink-0',
+          'start-center-row border-0 cursor-pointer text-white bg-brand rounded-full pl-2 py-1 pr-1 space-x-2 text-xs shrink-0 w-fit shrink-0',
           className
         )}
+        disabled={disabled}
         onClick={handleOpen}
       >
         {/* preview */}
@@ -88,7 +95,7 @@ const CollectSettingButton = ({ className }: { className?: string }) => {
             <SettingsIcon fontSize="inherit" className="text-[#848491]" />
           </IconButton>
         </div>
-      </div>
+      </button>
     </>
   )
 }
