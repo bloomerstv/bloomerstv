@@ -36,12 +36,37 @@ const StreamerSidebar = () => {
   )
 
   const { data: offlineStreamers } = useOfflineStreamersQuery()
-  const sortedOfflineStreamers = offlineStreamers?.offlineStreamers
-    ? // eslint-disable-next-line no-unsafe-optional-chaining
-      [...offlineStreamers?.offlineStreamers]?.sort(
-        (a, b) => b?.lastSeen - a?.lastSeen
-      )
-    : []
+  // Assuming offlineStreamers is already fetched and available
+  const sortedOfflineStreamers = React.useMemo(() => {
+    if (!offlineStreamers?.offlineStreamers) return []
+    const now = new Date()
+
+    // Separate streamers based on nextStreamTime criteria
+    const withNextStream =
+      offlineStreamers?.offlineStreamers.filter(
+        (streamer) =>
+          streamer?.nextStreamTime && new Date(streamer.nextStreamTime) > now
+      ) || []
+    const others =
+      offlineStreamers?.offlineStreamers.filter(
+        (streamer) =>
+          !streamer?.nextStreamTime || new Date(streamer.nextStreamTime) <= now
+      ) || []
+
+    // Sort each group
+    const sortedWithNextStream = withNextStream.sort(
+      (a, b) =>
+        new Date(b?.nextStreamTime).getTime() -
+        new Date(a?.nextStreamTime).getTime()
+    )
+    const sortedOthers = others.sort(
+      (a, b) =>
+        new Date(b?.lastSeen).getTime() - new Date(a?.lastSeen).getTime()
+    )
+
+    // Concatenate the sorted groups
+    return [...sortedWithNextStream, ...sortedOthers]
+  }, [offlineStreamers?.offlineStreamers])
 
   const offlineStreamersMap = React.useMemo(() => {
     if (!sortedOfflineStreamers) return new Map()

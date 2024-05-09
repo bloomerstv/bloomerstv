@@ -52,7 +52,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
               {streamer?.premium && <VerifiedBadge />}
             </div>
 
-            {nextStreamInFuture && (
+            {nextStreamInFuture && !streamer?.isActive && (
               <div className="text-s-text text-xs leading-4">
                 <Countdown
                   renderer={({ days, hours, minutes, seconds, completed }) => {
