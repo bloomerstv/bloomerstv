@@ -44,10 +44,13 @@ const StreamerSidebar = () => {
     : []
 
   const offlineStreamersMap = React.useMemo(() => {
-    if (!offlineStreamers?.offlineStreamers) return new Map()
+    if (!sortedOfflineStreamers) return new Map()
     const map = new Map()
-    offlineStreamers?.offlineStreamers?.forEach((streamer) => {
+    sortedOfflineStreamers?.forEach((streamer) => {
       if (!streamer) return
+
+      if (map.get(streamer.profileId)) return
+
       map.set(streamer.profileId, {
         lastSeen: streamer?.lastSeen,
         premium: streamer?.premium,
@@ -55,7 +58,7 @@ const StreamerSidebar = () => {
       })
     })
     return map
-  }, [offlineStreamers?.offlineStreamers])
+  }, [sortedOfflineStreamers])
   const { data: offlineProfiles } = useProfiles({
     where: {
       // @ts-ignore
