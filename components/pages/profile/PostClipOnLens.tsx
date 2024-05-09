@@ -25,8 +25,9 @@ import { useUploadDataToArMutation } from '../../../graphql/generated'
 import useCollectSettings from '../../common/Collect/useCollectSettings'
 import CollectSettingButton from '../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
-import uploadToIPFS from '../../../utils/uploadToIPFS'
-import { getThumbnailFromVideoUrl } from '../../../utils/generateThumbnail'
+// import uploadToIPFS from '../../../utils/uploadToIPFS'
+// import { getThumbnailFromVideoUrl } from '../../../utils/generateThumbnail'
+import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 // import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
 
@@ -88,16 +89,16 @@ const PostClipOnLens = ({
       tags.push(`sessionId-${sessionId}`)
     }
 
-    const coverThumbnailFile = await getThumbnailFromVideoUrl(url)
+    // const coverThumbnailFile = await getThumbnailFromVideoUrl(url)
 
-    let ipfsImageUrl = ''
+    // let ipfsImageUrl = ''
 
-    if (coverThumbnailFile) {
-      const d = await uploadToIPFS(coverThumbnailFile)
-      ipfsImageUrl = d?.url || ''
-    }
+    // if (coverThumbnailFile) {
+    //   const d = await uploadToIPFS(coverThumbnailFile)
+    //   ipfsImageUrl = d?.url || ''
+    // }
 
-    console.log('ipfsImageUrl', ipfsImageUrl)
+    const thumbnailCover = getThumbnailFromRecordingUrl(url)
 
     const metadata = shortVideo({
       title: title,
@@ -107,11 +108,11 @@ const PostClipOnLens = ({
         description: title,
         external_url: APP_LINK,
         animation_url: url,
-        image: ipfsImageUrl
+        image: thumbnailCover
       },
       video: {
         item: url,
-        cover: ipfsImageUrl,
+        cover: thumbnailCover,
         duration: 30,
         type: MediaVideoMimeType.MP4,
         altTag: title
