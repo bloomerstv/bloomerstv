@@ -14,7 +14,6 @@ const ProfileInfoWithStream = ({
   post?: Post
   premium?: boolean | null
 }) => {
-  console.log('profile', profile)
   const { data } = useIsVerifiedQuery({
     variables: {
       profileIds: [profile?.id]

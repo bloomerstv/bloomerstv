@@ -33,8 +33,6 @@ const VideoPage = ({
       (!post?.id && !sessionId)
   })
 
-  console.log('data', data)
-
   const { data: profile } = useProfile({
     // @ts-ignore
     forProfileId: data?.streamReplayRecording?.profileId
@@ -48,10 +46,6 @@ const VideoPage = ({
   const memoizedVideo = React.useMemo(() => {
     if (!data?.streamReplayRecording?.recordingUrl) return null
 
-    console.log(
-      'data?.streamReplayRecording?.recordingUrl',
-      data?.streamReplayRecording?.recordingUrl
-    )
     return (
       <Player
         // @ts-ignore
