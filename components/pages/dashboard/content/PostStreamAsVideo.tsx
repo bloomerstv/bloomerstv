@@ -32,7 +32,7 @@ import {
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
 import formatHandle from '../../../../utils/lib/formatHandle'
-import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
+// import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import VideoWithEditors from './VideoWithEditors'
 import toast from 'react-hot-toast'
 import { useStreamAsVideo } from '../../../store/useStreamAsVideo'
@@ -42,6 +42,8 @@ import {
   CATEGORIES_LIST,
   getTagsForCategory
 } from '../../../../utils/categories'
+import { getThumbnailFromVideoUrl } from '../../../../utils/generateThumbnail'
+import uploadToIPFS from '../../../../utils/uploadToIPFS'
 // import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
 
@@ -160,6 +162,20 @@ const PostStreamAsVideo = ({
 
     const id = uuid()
     const locale = getUserLocale()
+    const tags = [
+      `clip-${formatHandle(profile?.profile)}`,
+      `sessionId-${session?.sessionId}`,
+      ...getTagsForCategory(category)
+    ]
+
+    const coverThumbnailFile = await getThumbnailFromVideoUrl(url!)
+
+    let ipfsImageUrl = ''
+
+    if (coverThumbnailFile) {
+      const d = await uploadToIPFS(coverThumbnailFile)
+      ipfsImageUrl = d?.url || ''
+    }
 
     const metadata = video({
       // @ts-ignore
@@ -174,24 +190,20 @@ const PostStreamAsVideo = ({
         // @ts-ignore
         animation_url: url,
         // @ts-ignore
-        image: getThumbnailFromRecordingUrl(url)
+        image: ipfsImageUrl
       },
       video: {
         // @ts-ignore
         item: url,
         // @ts-ignore
-        cover: getThumbnailFromRecordingUrl(url),
+        cover: ipfsImageUrl,
         // @ts-ignore
         duration: Math.round(duration),
         type: MediaVideoMimeType.MP4,
         // @ts-ignore
         altTag: title
       },
-      tags: [
-        `clip-${formatHandle(profile?.profile)}`,
-        `sessionId-${session?.sessionId}`,
-        ...getTagsForCategory(category)
-      ],
+      tags: tags,
       appId: APP_ID,
       id: id,
       locale: locale

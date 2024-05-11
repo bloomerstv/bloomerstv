@@ -26,7 +26,8 @@ export const simpleTime = (time: number) => {
   return `${hours12}:${minutes12}:${seconds12} ${ampm}`
 }
 
-export const timeAgo = (time: number | string) => {
+export const timeAgo = (time?: number | string) => {
+  if (!time) return 'just now'
   const now = new Date().getTime()
 
   if (typeof time === 'string') {

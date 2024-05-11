@@ -1,4 +1,4 @@
-import { Post } from '@lens-protocol/react-web'
+import { Post, Profile } from '@lens-protocol/react-web'
 import Link from 'next/link'
 import React from 'react'
 import getAvatar from '../../utils/lib/getAvatar'
@@ -16,15 +16,23 @@ const HomeVideoCard = ({
   post,
   cover,
   duration,
-  premium
+  premium,
+  session
 }: {
-  post: Post
+  post?: Post
   cover?: string
   duration?: number
   premium?: boolean
+  session?: {
+    sessionId: string
+    createdAt: string
+    profile: Profile
+  }
 }) => {
   const pathname = usePathname()
-  const asset = getPublicationData(post?.metadata)?.asset
+  const asset = post ? getPublicationData(post?.metadata)?.asset : null
+
+  if (!post && !session) return null
 
   return (
     <Link
@@ -33,7 +41,9 @@ const HomeVideoCard = ({
         'no-underline text-p-text group w-full sm:px-2 unselectable',
         pathname === '/' ? 'lg:w-1/3 2xl:w-1/4' : 'lg:w-1/3'
       )}
-      href={`/watch/${post?.id}`}
+      href={
+        post ? `/watch/${post?.id}` : `/watch/session/${session?.sessionId}`
+      }
     >
       <div className="w-full aspect-video relative mb-2 overflow-hidden sm:rounded-xl">
         <LoadingImage
@@ -60,10 +70,10 @@ const HomeVideoCard = ({
         <Link
           prefetch
           className="no-underline text-p-text group font-semibold text-s-text"
-          href={`/${formatHandle(post?.by)}`}
+          href={formatHandle(post?.by ?? session?.profile)}
         >
           <img
-            src={getAvatar(post?.by)}
+            src={getAvatar(post?.by ?? session?.profile)}
             className="w-10 h-10 rounded-full"
             alt="avatar"
           />
@@ -72,24 +82,32 @@ const HomeVideoCard = ({
           {/* @ts-ignore */}
           <div className="text-sm font-semibold">
             {/* @ts-ignore */}
-            <Markup>{post?.metadata?.title}</Markup>
+            <Markup>{post?.metadata?.title ?? 'Untitled stream'}</Markup>
           </div>
           <div className="start-row flex-wrap text-sm lg:text-xs 2xl:text-sm font-normal text-s-text gap-x-1">
             <div className="flex flex-row items-center gap-x-1">
               <Link
                 prefetch
                 className="no-underline group text-s-text font-semibold"
-                href={`/${formatHandle(post?.by)}`}
+                href={formatHandle(post?.by ?? session?.profile)}
               >
-                <div className="">{formatHandle(post?.by)} </div>
+                <div className="">
+                  {formatHandle(post?.by ?? session?.profile)}
+                </div>
               </Link>
               {premium && <VerifiedBadge />}
             </div>
             {/* dot */}
+            <div className={clsx(!post?.stats?.upvotes && 'hidden')}>
+              &middot;
+            </div>
+            <div className={clsx(!post?.stats?.upvotes && 'hidden')}>
+              {post?.stats?.upvotes} likes
+            </div>
             <div className="">&middot;</div>
-            <div>{post?.stats?.upvotes} likes</div>
-            <div className="">&middot;</div>
-            <div className="">{timeAgo(post?.createdAt)}</div>
+            <div className="">
+              {timeAgo(post?.createdAt ?? session?.createdAt)}
+            </div>
           </div>
         </div>
       </div>

@@ -6,23 +6,27 @@ import ProfileBar from './ProfileBar'
 const ProfileInfoWithStream = ({
   profile,
   streamer,
-  post
+  post,
+  premium
 }: {
   profile: Profile
   streamer?: SingleStreamer
   post?: Post
+  premium?: boolean | null
 }) => {
+  console.log('profile', profile)
   const { data } = useIsVerifiedQuery({
     variables: {
       profileIds: [profile?.id]
     },
-    skip: !profile?.id || Boolean(streamer)
+    skip: !profile?.id || Boolean(streamer) || premium !== null
   })
 
+  if (!profile) return null
   return (
     <div className="w-full">
       <ProfileBar
-        premium={Boolean(data?.isVerified?.[0]?.isVerified)}
+        premium={premium ?? Boolean(data?.isVerified?.[0]?.isVerified)}
         profile={profile}
         streamer={streamer}
         post={post}

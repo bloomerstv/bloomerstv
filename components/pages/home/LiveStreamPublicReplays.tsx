@@ -7,21 +7,22 @@ import { usePublicationsStore } from '../../store/usePublications'
 import { Button } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
+import { useStreamersWithProfiles } from '../../store/useStreamersWithProfiles'
 const HomePageCards = () => {
   const [showAll, setShowAll] = React.useState(false)
   const publications = usePublicationsStore((state) => state.publications)
   const streamReplayPublication = usePublicationsStore(
     (state) => state.streamReplayPublication
   )
+  const profiles = useStreamersWithProfiles(
+    (state) => state.profilesFromPublicReplays
+  )
+
+  const profilesMap = new Map(profiles?.map((p) => [p?.id, p]))
 
   const isMobile = useIsMobile()
 
-  const streamReplayMap = new Map(
-    streamReplayPublication?.streamReplayPublications?.map((p) => [
-      p?.publicationId,
-      p
-    ])
-  )
+  const publicationsMap = new Map(publications?.map((p) => [p?.id, p]))
 
   const renderLoadingCards = () => {
     // Create an array of 8 elements and map over it
@@ -33,21 +34,45 @@ const HomePageCards = () => {
     <>
       {/* @ts-ignore */}
       <div className="flex flex-row flex-wrap w-full gap-y-6">
-        {publications && publications?.length > 0
-          ? publications
-              ?.slice(0, showAll ? publications?.length : isMobile ? 4 : 8)
-              ?.map((post) => {
+        {streamReplayPublication?.streamReplayPublications &&
+        streamReplayPublication?.streamReplayPublications?.length > 0
+          ? streamReplayPublication?.streamReplayPublications
+              ?.slice(
+                0,
+                showAll
+                  ? streamReplayPublication?.streamReplayPublications?.length
+                  : isMobile
+                    ? 4
+                    : 8
+              )
+              ?.map((streamReplay) => {
+                // @ts-ignore
+                const post = streamReplay?.publicationId
+                  ? // @ts-ignore
+                    publicationsMap.get(streamReplay?.publicationId)
+                  : null
                 return (
                   <HomeVideoCard
                     // @ts-ignore
-                    cover={streamReplayMap.get(post?.id)?.thumbnail}
+                    cover={streamReplay?.thumbnail}
                     // @ts-ignore
-                    duration={
-                      streamReplayMap.get(post?.id)?.sourceSegmentsDuration
-                    }
-                    premium={!!streamReplayMap.get(post?.id)?.premium}
-                    key={post?.id}
+                    duration={streamReplay?.sourceSegmentsDuration}
+                    premium={!!streamReplay?.premium}
+                    key={post?.id ?? streamReplay?.sessionId}
                     post={post as Post}
+                    // @ts-ignore
+                    session={
+                      post
+                        ? undefined
+                        : {
+                            createdAt: streamReplay?.createdAt!,
+                            sessionId: streamReplay?.sessionId!,
+                            profile: profilesMap.get(
+                              // @ts-ignore
+                              streamReplay?.profileId
+                            )
+                          }
+                    }
                   />
                 )
               })

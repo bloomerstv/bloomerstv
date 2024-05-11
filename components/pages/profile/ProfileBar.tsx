@@ -210,14 +210,14 @@ const ProfileBar = ({
         </MenuList>
       </Menu>
       {/* @ts-ignore   */}
-      {(streamer?.streamName || publication?.metadata?.title) && (
-        <div className="m-2 sm:mx-8 sm:mt-6 sm:hidden">
-          <Markup className="font-bold text-lg sm:text-xl break-words whitespace-pre-wrap">
-            {/* @ts-ignore   */}
-            {streamer?.streamName || publication?.metadata?.title}
-          </Markup>
-        </div>
-      )}
+      <div className="m-2 sm:mx-8 sm:mt-6 sm:hidden">
+        <Markup className="font-bold text-lg sm:text-xl break-words whitespace-pre-wrap">
+          {streamer?.streamName ||
+            // @ts-ignore
+            publication?.metadata?.title ||
+            'Untitled Stream'}
+        </Markup>
+      </div>
       <div className="m-2 sm:mt-5 sm:mx-8 flex flex-row justify-between items-start text-p-text">
         <div className="start-center-row gap-x-2 sm:gap-x-4 w-full">
           <Link
@@ -232,13 +232,14 @@ const ProfileBar = ({
           </Link>
           <div className="sm:pr-3 w-full">
             {/* @ts-ignore   */}
-            {(streamer?.streamName || publication?.metadata?.title) &&
-              !isMobile && (
-                <Markup className="font-bold text-lg break-words whitespace-pre-wrap">
-                  {/* @ts-ignore   */}
-                  {streamer?.streamName || publication?.metadata?.title}
-                </Markup>
-              )}
+            {!isMobile && (
+              <Markup className="font-bold text-lg break-words whitespace-pre-wrap">
+                {streamer?.streamName ||
+                  // @ts-ignore
+                  publication?.metadata?.title ||
+                  'Untitled Stream'}
+              </Markup>
+            )}
 
             <div className="flex flex-row items-center justify-between w-full">
               <div className="centered-row gap-x-2 sm:gap-x-4">
@@ -293,7 +294,9 @@ const ProfileBar = ({
 
         {!isMobile && (
           <div className="start-center-row gap-x-3 shrink-0">
-            {profile?.id && !post && <LiveCount profileId={profile?.id} />}
+            {profile?.id && !post && streamer && (
+              <LiveCount profileId={profile?.id} />
+            )}
 
             {/* like button  */}
             {publication?.id && <LikeButton publication={publication} />}
@@ -370,7 +373,7 @@ const ProfileBar = ({
             )}
 
             {/* live chat button */}
-            {profile?.id && !post && (
+            {profile?.id && !post && streamer && (
               <div className="shrink-0">
                 <MobileChatButton profileId={profile?.id} />
               </div>

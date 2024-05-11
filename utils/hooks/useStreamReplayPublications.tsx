@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import {
   AnyPublication,
+  useProfiles,
   usePublications,
   useSession
 } from '@lens-protocol/react-web'
@@ -36,12 +37,29 @@ export const useStreamReplayPublications = ({
       }
     })
 
+  const { data: profilesWithoutPublications } = useProfiles({
+    where: {
+      // @ts-ignore
+      profileIds: Array.from(
+        new Set(
+          data?.streamReplayPublications
+            ?.map((p) => {
+              if (!p?.publicationId && p?.profileId) {
+                return p?.profileId
+              }
+            })
+            .filter((p) => p)
+        )
+      )
+    }
+  })
+
   const { data: publications, loading } = usePublications({
     where: {
       // @ts-ignore
-      publicationIds: data?.streamReplayPublications?.map(
-        (p) => p?.publicationId
-      )
+      publicationIds: data?.streamReplayPublications
+        ?.map((p) => p?.publicationId)
+        .filter((p) => p)
     }
   })
 
@@ -50,14 +68,22 @@ export const useStreamReplayPublications = ({
       // get unique profileIds from publications
       const uniqueProfiles = Array.from(
         new Set(publications.map((p) => p?.by))
-        // @ts-ignore
-      ).filter((profile) => profile?.id !== session?.profile?.id)
+      ).filter((profile) => {
+        return (
+          // @ts-ignore
+          profile?.id !== session?.profile?.id &&
+          !profilesWithoutPublications?.map((p) => p?.id).includes(profile?.id)
+        )
+      })
 
-      setProfilesFromPublicReplays(uniqueProfiles)
+      setProfilesFromPublicReplays([
+        ...uniqueProfiles,
+        ...(profilesWithoutPublications ?? [])
+      ])
       setStreamReplayPublication(data)
       setPublications(publications)
     }
-  }, [publications, profileId, session])
+  }, [publications, profileId, session, profilesWithoutPublications])
 
   return {
     streamReplayPublication: data,

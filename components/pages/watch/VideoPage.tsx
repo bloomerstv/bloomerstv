@@ -1,4 +1,4 @@
-import { Post } from '@lens-protocol/react-web'
+import { Post, useProfile } from '@lens-protocol/react-web'
 import React, { memo, useEffect } from 'react'
 import getPublicationData from '../../../utils/lib/getPublicationData'
 import ProfileInfoWithStream from '../profile/ProfileInfoWithStream'
@@ -12,16 +12,32 @@ import toast from 'react-hot-toast'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import { useStreamReplayRecordingQuery } from '../../../graphql/generated'
 import Player from '../../common/Player'
-const VideoPage = ({ post }: { post: Post }) => {
+const VideoPage = ({
+  post,
+  sessionId
+}: {
+  post?: Post
+  sessionId?: string
+}) => {
   const isMobile = useIsMobile()
 
-  const asset = getPublicationData(post?.metadata)?.asset
+  const asset = post ? getPublicationData(post?.metadata)?.asset : null
 
   const { data, error } = useStreamReplayRecordingQuery({
     variables: {
-      publicationId: post?.id
+      publicationId: post?.id,
+      sessionId: sessionId
     },
-    skip: post?.metadata?.__typename !== 'LiveStreamMetadataV3'
+    skip:
+      (post && post?.metadata?.__typename !== 'LiveStreamMetadataV3') ||
+      (!post?.id && !sessionId)
+  })
+
+  console.log('data', data)
+
+  const { data: profile } = useProfile({
+    // @ts-ignore
+    forProfileId: data?.streamReplayRecording?.profileId
   })
 
   useEffect(() => {
@@ -31,6 +47,11 @@ const VideoPage = ({ post }: { post: Post }) => {
 
   const memoizedVideo = React.useMemo(() => {
     if (!data?.streamReplayRecording?.recordingUrl) return null
+
+    console.log(
+      'data?.streamReplayRecording?.recordingUrl',
+      data?.streamReplayRecording?.recordingUrl
+    )
     return (
       <Player
         // @ts-ignore
@@ -58,6 +79,7 @@ const VideoPage = ({ post }: { post: Post }) => {
   }, [asset?.uri])
 
   if (
+    post &&
     post?.metadata?.__typename !== 'VideoMetadataV3' &&
     post?.metadata?.__typename !== 'LiveStreamMetadataV3'
   ) {
@@ -73,7 +95,8 @@ const VideoPage = ({ post }: { post: Post }) => {
       {/* @ts-ignore */}
 
       <div className="sm:rounded-xl  overflow-hidden ">
-        {post?.metadata?.__typename === 'LiveStreamMetadataV3' ? (
+        {post?.metadata?.__typename === 'LiveStreamMetadataV3' ||
+        data?.streamReplayRecording?.recordingUrl ? (
           <>
             {/* //todo here check if there is a recording is allowd to  from api, fetch it and show it here instead of liveUrl  */}
 
@@ -93,32 +116,47 @@ const VideoPage = ({ post }: { post: Post }) => {
           <>{asset?.uri && memoizedAsset}</>
         )}
       </div>
-      <ProfileInfoWithStream profile={post?.by} post={post} />
+      <ProfileInfoWithStream
+        // @ts-ignore
+        profile={post?.by ?? profile}
+        post={post}
+        premium={!post && data?.streamReplayRecording?.premium}
+      />
 
       <div className="sm:mx-8 sm:mt-6 sm:mb-0 text-p-text font-semibold sm:text-base text-sm sm:p-6 m-2 p-3 gap-y-1 start-col  rounded-xl shadow-sm bg-p-hover lg:bg-s-bg">
         {/* // add total views count here */}
         <div className="">
           {`${
-            post?.metadata?.__typename === 'LiveStreamMetadataV3'
+            post?.metadata?.__typename === 'LiveStreamMetadataV3' ||
+            (!post && sessionId)
               ? 'Streamed'
               : 'Posted'
-          } ${timeAgo(post?.createdAt)}`}{' '}
+          } ${timeAgo(post?.createdAt || data?.streamReplayRecording?.createdAt)}`}{' '}
         </div>
         <Markup className="">
-          {String(
-            getSenitizedContent(post?.metadata?.content, post?.metadata?.title)
-              .length > 0
-              ? getSenitizedContent(
+          {post
+            ? String(
+                getSenitizedContent(
+                  // @ts-ignore
                   post?.metadata?.content,
+                  // @ts-ignore
                   post?.metadata?.title
-                )
-              : post?.metadata?.title
-          )}
+                ).length > 0
+                  ? getSenitizedContent(
+                      // @ts-ignore
+                      post?.metadata?.content,
+                      // @ts-ignore
+                      post?.metadata?.title
+                    )
+                  : // @ts-ignore
+                    post?.metadata?.title
+              )
+            : 'Untitled streams are those stream that are not associated with any lens post. They are not visible on other lens platform. These streams are only accessible through direct link. \n\n Why is you stream untitled?\nYou may have not been on go-live page when your stream was live, this means no lens post was created for your stream. Go-live page will automatically create a lens post for your stream, when you visit the page while your stream is still live, we can not create a post on your behalf otherwise.\nSoon you will be able to create a post for your untitled streams later from content page, in case you missed creating it somehow while it was still live.'}
         </Markup>
         {/* links */}
       </div>
 
-      {!isMobile && (
+      {!isMobile && post && (
         <div className="border-t border-p-border mt-8 mb-4">
           <div className="text-xl font-semibold my-4">{`${post?.stats?.comments} Comment${post?.stats?.comments > 1 ? 's' : ''}`}</div>
           <CommentSection publication={post} />

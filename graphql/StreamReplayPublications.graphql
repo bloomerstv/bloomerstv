@@ -4,5 +4,8 @@ query StreamReplayPublications($skip: Int, $profileId: String) {
     thumbnail
     sourceSegmentsDuration
     premium
+    sessionId
+    createdAt
+    profileId
   }
 }

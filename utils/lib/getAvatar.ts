@@ -19,7 +19,7 @@ const getAvatar = (profile: any, namedTransform = AVATAR): string => {
     // Lens Profile Avatar fallbacks
     profile?.metadata?.picture?.optimized?.uri ??
     profile?.metadata?.picture?.raw?.uri ??
-    getStampFyiURL(profile?.ownedBy.address ?? ZERO_ADDRESS)
+    getStampFyiURL(profile?.ownedBy?.address ?? ZERO_ADDRESS)
 
   return imageKit(sanitizeDStorageUrl(avatarUrl), namedTransform)
 }

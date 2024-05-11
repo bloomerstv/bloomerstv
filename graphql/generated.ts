@@ -174,6 +174,7 @@ export type QueryStreamReplayPublicationsArgs = {
 export type QueryStreamReplayRecordingArgs = {
   profileId?: InputMaybe<Scalars['String']['input']>
   publicationId?: InputMaybe<Scalars['String']['input']>
+  sessionId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type QueryStreamerArgs = {
@@ -225,16 +226,23 @@ export type Stream = {
 
 export type StreamReplayPublications = {
   __typename?: 'StreamReplayPublications'
+  createdAt?: Maybe<Scalars['BigNumber']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
+  profileId?: Maybe<Scalars['String']['output']>
   publicationId?: Maybe<Scalars['String']['output']>
+  sessionId?: Maybe<Scalars['String']['output']>
   sourceSegmentsDuration?: Maybe<Scalars['Float']['output']>
   thumbnail?: Maybe<Scalars['String']['output']>
 }
 
 export type StreamReplayRecording = {
   __typename?: 'StreamReplayRecording'
+  createdAt?: Maybe<Scalars['BigNumber']['output']>
+  premium?: Maybe<Scalars['Boolean']['output']>
+  profileId?: Maybe<Scalars['String']['output']>
   publicationId?: Maybe<Scalars['String']['output']>
   recordingUrl?: Maybe<Scalars['String']['output']>
+  sessionId?: Maybe<Scalars['String']['output']>
 }
 
 export type Streamer = Stream & {
@@ -418,6 +426,7 @@ export type RemoveNotificationSubscriberFromStreamerMutation = {
 export type StreamReplayRecordingQueryVariables = Exact<{
   publicationId?: InputMaybe<Scalars['String']['input']>
   profileId?: InputMaybe<Scalars['String']['input']>
+  sessionId?: InputMaybe<Scalars['String']['input']>
 }>
 
 export type StreamReplayRecordingQuery = {
@@ -426,6 +435,10 @@ export type StreamReplayRecordingQuery = {
     __typename?: 'StreamReplayRecording'
     publicationId?: string | null
     recordingUrl?: string | null
+    premium?: boolean | null
+    createdAt?: any | null
+    sessionId?: string | null
+    profileId?: string | null
   } | null
 }
 
@@ -466,6 +479,9 @@ export type StreamReplayPublicationsQuery = {
     thumbnail?: string | null
     sourceSegmentsDuration?: number | null
     premium?: boolean | null
+    sessionId?: string | null
+    createdAt?: any | null
+    profileId?: string | null
   } | null> | null
 }
 
@@ -1272,13 +1288,22 @@ export type RemoveNotificationSubscriberFromStreamerMutationOptions =
     RemoveNotificationSubscriberFromStreamerMutationVariables
   >
 export const StreamReplayRecordingDocument = gql`
-  query StreamReplayRecording($publicationId: String, $profileId: String) {
+  query StreamReplayRecording(
+    $publicationId: String
+    $profileId: String
+    $sessionId: String
+  ) {
     streamReplayRecording(
       publicationId: $publicationId
       profileId: $profileId
+      sessionId: $sessionId
     ) {
       publicationId
       recordingUrl
+      premium
+      createdAt
+      sessionId
+      profileId
     }
   }
 `
@@ -1297,6 +1322,7 @@ export const StreamReplayRecordingDocument = gql`
  *   variables: {
  *      publicationId: // value for 'publicationId'
  *      profileId: // value for 'profileId'
+ *      sessionId: // value for 'sessionId'
  *   },
  * });
  */
@@ -1506,6 +1532,9 @@ export const StreamReplayPublicationsDocument = gql`
       thumbnail
       sourceSegmentsDuration
       premium
+      sessionId
+      createdAt
+      profileId
     }
   }
 `

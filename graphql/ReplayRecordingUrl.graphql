@@ -1,6 +1,10 @@
-query StreamReplayRecording($publicationId: String, $profileId: String) {
-  streamReplayRecording(publicationId: $publicationId, profileId: $profileId) {
+query StreamReplayRecording($publicationId: String, $profileId: String, $sessionId: String) {
+  streamReplayRecording(publicationId: $publicationId, profileId: $profileId, sessionId: $sessionId) {
     publicationId
     recordingUrl
+    premium
+    createdAt
+    sessionId
+    profileId
   }
 }
