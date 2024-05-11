@@ -11,7 +11,9 @@ const LiveStreamerFeed = () => {
   const loading = useStreamersWithProfiles((state) => state.loading)
   const isMobile = useIsMobile()
 
-  if (!loading && streamersWithProfiles.length === 0) return null
+  if (!loading && streamersWithProfiles.length === 0)
+    return <div className="-mb-4" />
+
   return (
     <div className="w-full">
       {!isMobile && (
