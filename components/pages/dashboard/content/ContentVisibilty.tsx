@@ -4,7 +4,7 @@ import {
   ViewType,
   useSetViewTypeMutation
 } from '../../../../graphql/generated'
-import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { Box, FormControl, MenuItem, Select } from '@mui/material'
 import toast from 'react-hot-toast'
 
 const ContentVisibiltyButton = ({ session }: { session: RecordedSession }) => {
@@ -35,16 +35,15 @@ const ContentVisibiltyButton = ({ session }: { session: RecordedSession }) => {
   return (
     <Box>
       <FormControl fullWidth>
-        <InputLabel id="simple-select-label" className="bg-p-bg">
-          Content Visibility
-        </InputLabel>
         <Select
           labelId="simple-select-label"
           id="simple-select"
           value={visibility}
+          variant="standard"
           onChange={handleVisibilityChange}
           size="small"
-          className="w-[150px]"
+          fullWidth={false}
+          className="w-[90px]"
         >
           <MenuItem
             value={ViewType.Public}

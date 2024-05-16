@@ -5,9 +5,16 @@ import {
   RecordedSession,
   useGetMyRecordedStreamSessionsQuery
 } from '../../../graphql/generated'
-import SessionRow from '../../../components/pages/dashboard/content/SesssionRow'
-import { Button } from '@mui/material'
+import SessionRow from '../../../components/pages/dashboard/content/SessionRow'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Paper from '@mui/material/Paper'
 import toast from 'react-hot-toast'
+import { Button } from '@mui/material'
 
 const ContentPage = () => {
   const [sessions, setSessions] = useState<RecordedSession[]>([]) // Change the type to an array of RecordedSession
@@ -55,9 +62,29 @@ const ContentPage = () => {
             </div>
           </div>
         )}
-        {sessions?.map((session) => {
-          return <SessionRow key={session?.publicationId} session={session} />
-        })}
+        {sessions?.length > 0 && (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {/* Replace 'Header' with your actual column headers */}
+                  <TableCell>Video</TableCell>
+                  <TableCell>Visiblity</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Likes</TableCell>
+                  <TableCell>Comments</TableCell>
+                  <TableCell>Mirror</TableCell>
+                  {/* Add more TableCell components as needed */}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sessions.map((session, index) => (
+                  <SessionRow key={index} session={session} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </div>
       {/* get more button */}
       {sessions?.length !== 0 && (

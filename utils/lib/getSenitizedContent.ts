@@ -12,5 +12,9 @@ export const getSenitizedContent = (content: string, title: string) => {
   // remove \n from begining or ends
   newContent = newContent.trim()
 
+  // Remove "Live Chat at https://bloomers.tv/{handle}"
+  const liveChatRegex = /Live Chat at https:\/\/bloomers\.tv\/\S*/g
+  newContent = newContent.replace(liveChatRegex, '')
+
   return newContent
 }

@@ -94,6 +94,15 @@ export const localDateAndTime = (dataTime: string) => {
   return `${day} ${month} ${year} ${time}`
 }
 
+export const localDate = (dateTime: string) => {
+  const date = new Date(dateTime)
+  const year = date.getFullYear()
+  const month = date.toLocaleString('default', { month: 'short' }) // Get short month name
+  const day = date.getDate()
+
+  return `${month} ${day}, ${year}`
+}
+
 export const secondsToTime = (seconds?: number) => {
   if (!seconds) {
     return '00:00'
