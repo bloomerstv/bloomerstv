@@ -114,7 +114,7 @@ const VideoPage = ({
         // @ts-ignore
         profile={post?.by ?? profile}
         post={post}
-        premium={!post && data?.streamReplayRecording?.premium}
+        premium={data?.streamReplayRecording?.premium}
       />
 
       <div className="sm:mx-8 sm:mt-6 sm:mb-0 text-p-text font-semibold sm:text-base text-sm sm:p-6 m-2 p-3 gap-y-1 start-col  rounded-xl shadow-sm bg-p-hover lg:bg-s-bg">

@@ -28,7 +28,6 @@ const TextAndImagePostCard = ({
   publication: AnyPublication
   premium?: boolean
   className?: string
-  showCollectButton?: boolean
   isPostPage?: boolean
 }) => {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -72,8 +71,9 @@ const TextAndImagePostCard = ({
           'flex rounded-xl  shrink-0 w-full h-full ',
           isPostPage
             ? 'flex-col gap-y-2 align-items-start'
-            : 'flex-row align-items-stretch p-2 border-p-border border sm:border-0 shadow-sm bg-s-bg '
+            : 'flex-row align-items-stretch cursor-pointer p-2 border-p-border border sm:border-0 shadow-sm bg-s-bg '
         )}
+        onClick={handleComment}
       >
         <div className={clsx(isPostPage ? 'w-full' : 'w-[210px]')}>
           <div className="between-row w-full shrink-0">
@@ -148,8 +148,24 @@ const TextAndImagePostCard = ({
             <div className={clsx(isPostPage ? 'h-1 ' : 'h-12')}></div>
           )}
 
+          {isPostPage && asset?.type === 'Image' && (
+            <LoadingImage
+              src={asset?.uri}
+              className={clsx(
+                'rounded-xl ',
+                isPostPage ? 'w-full' : 'h-[205px] -mb-1.5 ml-2'
+              )}
+              alt="post"
+            />
+          )}
+
           {/* buttons */}
-          <div className="start-center-row gap-x-2 mt-2">
+          <div
+            className="start-center-row gap-x-2 mt-2"
+            onClick={(e) => {
+              e.stopPropagation()
+            }}
+          >
             <LikeButton publication={publication} />
             <MirrorButton publication={publication} />
             <Tooltip title="Comments" arrow>
@@ -170,7 +186,7 @@ const TextAndImagePostCard = ({
           </div>
         </div>
 
-        {asset?.type === 'Image' && (
+        {!isPostPage && asset?.type === 'Image' && (
           <LoadingImage
             src={asset?.uri}
             className={clsx(
