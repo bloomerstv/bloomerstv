@@ -6,7 +6,6 @@ import {
   TextareaAutosize
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import CreateIcon from '@mui/icons-material/Create'
 import {
   OpenActionConfig,
   OpenActionType,
@@ -18,19 +17,25 @@ import {
 import {
   RecordedSession,
   useCreateClipMutation,
+  useCreateMyLensStreamSessionMutation,
   useUploadDataToArMutation
 } from '../../../../graphql/generated'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
-import { MediaVideoMimeType, video } from '@lens-protocol/metadata'
+import {
+  MediaVideoMimeType,
+  MetadataAttributeType,
+  liveStream,
+  video
+} from '@lens-protocol/metadata'
 import {
   APP_ID,
   APP_LINK,
+  REDIRECTOR_URL,
   defaultSponsored
   // isMainnet
 } from '../../../../utils/config'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
-import EditIcon from '@mui/icons-material/Edit'
 import formatHandle from '../../../../utils/lib/formatHandle'
 // import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import VideoWithEditors from './VideoWithEditors'
@@ -40,19 +45,36 @@ import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
 import useCollectSettings from '../../../common/Collect/useCollectSettings'
 import {
   CATEGORIES_LIST,
-  getTagsForCategory
+  getTagsForCategory,
+  getTagsForSymbol
 } from '../../../../utils/categories'
 import { getThumbnailFromVideoUrl } from '../../../../utils/generateThumbnail'
 import uploadToIPFS from '../../../../utils/uploadToIPFS'
 // import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
+import ContentCutIcon from '@mui/icons-material/ContentCut'
+import Player from '../../../common/Player'
+import clsx from 'clsx'
+import { useMyPreferences } from '../../../store/useMyPreferences'
 
 const PostStreamAsVideo = ({
   publication,
-  session
+  session,
+  modalTitle = 'Create Clip',
+  Icon = <ContentCutIcon />,
+  open = false,
+  defaultMode = 'Clip',
+  setNewPublicationId,
+  setOpen
 }: {
-  publication: Post
+  publication?: Post
   session: RecordedSession
+  modalTitle?: string | null
+  Icon?: React.ReactNode
+  open: boolean
+  setOpen: (open: boolean) => void
+  defaultMode?: 'Clip' | 'Video'
+  setNewPublicationId: (id: string) => void
 }) => {
   const {
     type,
@@ -64,25 +86,31 @@ const PostStreamAsVideo = ({
     referralFee,
     recipient
   } = useCollectSettings()
-
-  const [category, setCategory] = useState<string>('Gaming')
+  const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation({
+    fetchPolicy: 'no-cache'
+  })
+  const { category, setCategory } = useMyPreferences((state) => {
+    return {
+      category: state.category,
+      setCategory: state.setCategory
+    }
+  })
   // @ts-ignore
   const [content, setContent] = React.useState('')
 
   const [title, setTitle] = React.useState(
     // @ts-ignore
-    publication?.metadata?.title
+    publication?.metadata?.title ?? 'Untitled Video'
   )
 
   useEffect(() => {
     // @ts-ignore
     setTitle(
       // @ts-ignore
-      publication?.metadata?.title
+      publication?.metadata?.title ?? 'Untitled Video'
     )
     // @ts-ignore
   }, [publication?.metadata?.title])
-  const [open, setOpen] = useState(false)
 
   const { data: profile } = useSession()
 
@@ -103,13 +131,13 @@ const PostStreamAsVideo = ({
     }
   }, [error])
 
-  const createLensPost = async () => {
+  const createClipLensPost = async () => {
     if (profile?.type !== SessionType.WithProfile) {
       toast.error('You need to login a profile to post')
       return
     }
     // @ts-ignore
-    if (title.trim().length === 0) {
+    if (!title || title.trim().length === 0) {
       toast.error('Please enter a title')
       return
     }
@@ -165,7 +193,10 @@ const PostStreamAsVideo = ({
     const tags = [
       `clip-${formatHandle(profile?.profile)}`,
       `sessionId-${session?.sessionId}`,
-      ...getTagsForCategory(category)
+      ...getTagsForCategory(category),
+      ...getTagsForSymbol(
+        type && amount?.asset?.symbol ? amount.asset.symbol : ''
+      )
     ]
 
     const coverThumbnailFile = await getThumbnailFromVideoUrl(url!)
@@ -273,14 +304,184 @@ const PostStreamAsVideo = ({
     }
   }
 
-  const handleCreatePost = async () => {
-    setOpen(false)
+  const createVideoLensPost = async () => {
+    try {
+      if (profile?.type !== SessionType.WithProfile) {
+        toast.error('You need to login a profile to post')
+        return
+      }
 
-    await toast.promise(createLensPost(), {
-      loading: 'Creating Post...',
-      success: 'Post Created',
-      error: 'Error creating post'
-    })
+      if (!title || title.trim().length === 0) {
+        toast.error('Please enter a title')
+        return
+      }
+      const sessionId = session?.sessionId
+      const m3u8Url = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=.m3u8`
+      const mp4Url = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=.mp4`
+      const thumbnail = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=.png`
+      const duration = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=seconds`
+
+      const streamerHandle = formatHandle(profile?.profile)
+      const profileLink = `${APP_LINK}/${streamerHandle}`
+      const id = uuid()
+      const locale = getUserLocale()
+
+      const metadataContent = `**${title}**\n\n${content}`
+
+      const tags = [
+        ...getTagsForCategory(category),
+        ...getTagsForSymbol(
+          type && amount?.asset?.symbol ? amount.asset.symbol : ''
+        )
+      ]
+
+      const metadata = liveStream({
+        title: title,
+        content: metadataContent,
+        marketplace: {
+          name: title,
+          description: metadataContent,
+          external_url: profileLink,
+          animation_url: mp4Url,
+          image: thumbnail
+        },
+        attachments: [
+          {
+            type: MediaVideoMimeType.MP4,
+            item: mp4Url,
+            cover: thumbnail
+          }
+        ],
+        attributes: [
+          {
+            key: 'livestream-duration',
+            value: duration,
+            type: MetadataAttributeType.STRING
+          }
+        ],
+        id: id,
+        locale: locale,
+        appId: APP_ID,
+        liveUrl: m3u8Url,
+        playbackUrl: m3u8Url,
+        tags: tags,
+        startsAt: new Date(session?.createdAt).toISOString()
+      })
+
+      const { data, errors } = await uploadDataToAR({
+        variables: {
+          data: JSON.stringify(metadata)
+        }
+      })
+
+      if (errors?.[0]) {
+        toast.error(errors[0].message)
+        throw new Error('Error uploading metadata to Arweave')
+      }
+
+      const transactionId = data?.uploadDataToAR
+
+      if (!transactionId) {
+        throw new Error('Error uploading metadata to Arweave')
+      }
+
+      let actions: OpenActionConfig[] | undefined = []
+
+      if (type) {
+        actions = [
+          {
+            type,
+            // @ts-ignore
+            amount,
+            collectLimit,
+            endsAt,
+            followerOnly,
+            referralFee: amount ? referralFee : undefined
+          }
+        ]
+
+        if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
+          // @ts-ignore
+          actions[0]['recipients'] = recipients
+        }
+        if (type === OpenActionType.SIMPLE_COLLECT) {
+          // @ts-ignore
+          actions[0]['recipient'] = recipient
+        }
+      }
+
+      const result = await execute({
+        metadata: `ar://${transactionId}`,
+        sponsored: defaultSponsored,
+        actions: actions
+      })
+
+      if (!result.isSuccess()) {
+        toast.error(result.error.message)
+        throw new Error('Error creating post')
+      }
+
+      const completion = await result.value.waitForCompletion()
+
+      if (completion.isFailure()) {
+        toast.error(completion.error.message)
+        throw new Error('Error creating post during tx processing')
+      }
+
+      const post = completion.value
+      const publicationId = post?.id
+
+      if (!publicationId) {
+        throw new Error('Error creating post')
+      }
+
+      setNewPublicationId(publicationId)
+
+      const { data: lensStreamSessionResult, errors: lensStreamSessionErrors } =
+        await createMyLensStreamSession({
+          variables: {
+            publicationId: publicationId,
+            sessionId: sessionId
+          },
+          fetchPolicy: 'no-cache'
+        })
+
+      if (errors?.[0] && !lensStreamSessionResult?.createMyLensStreamSession) {
+        toast.error(
+          lensStreamSessionErrors?.[0]?.message || 'Error attaching post'
+        )
+
+        throw new Error('Error attaching post to stream')
+      }
+    } catch (e) {
+      // @ts-ignore
+      toast.error(e?.message || e)
+      throw new Error('Error creating post')
+    }
+  }
+
+  const handleCreatePost = async () => {
+    if (defaultMode === 'Clip') {
+      setOpen(false)
+
+      await toast.promise(createClipLensPost(), {
+        loading: 'Creating Post...',
+        success: 'Post Created',
+        error: 'Error creating post'
+      })
+    } else {
+      if (publication?.id) {
+        toast.error('Lens Post already created for this video')
+      } else {
+        setOpen(false)
+
+        await toast.promise(createVideoLensPost(), {
+          loading: 'Creating Post...',
+          success: 'Post Created',
+          error: 'Error creating post'
+        })
+      }
+    }
   }
 
   return (
@@ -289,9 +490,12 @@ const PostStreamAsVideo = ({
         open={open}
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
-        title="Post as Video"
-        Icon={<EditIcon />}
-        classname="w-[60vw] h-[80vh] max-h-[80vh]"
+        title={modalTitle!}
+        Icon={Icon}
+        classname={clsx(
+          'max-h-[80vh]',
+          defaultMode === 'Clip' ? 'w-[80vw]' : 'w-[40vw]'
+        )}
         BotttomComponent={
           <div className="flex flex-row justify-end">
             {/* cancle button & save button */}
@@ -301,7 +505,7 @@ const PostStreamAsVideo = ({
             <Button
               variant="text"
               onClick={handleCreatePost}
-              disabled={title.trim().length === 0}
+              disabled={!title || title.trim().length === 0}
             >
               Post
             </Button>
@@ -383,27 +587,19 @@ const PostStreamAsVideo = ({
           </div>
 
           <div className="rounded-md overflow-hidden">
-            {open && (
-              <VideoWithEditors
-                recordingUrl={session?.recordingUrl!}
-                src={session?.mp4Url?.toString()!}
+            {open && defaultMode === 'Clip' && (
+              <VideoWithEditors recordingUrl={session?.recordingUrl!} />
+            )}
+            {open && defaultMode === 'Video' && session?.recordingUrl && (
+              <Player
+                src={session?.recordingUrl}
+                showPipButton={false}
+                autoHide={0}
               />
             )}
           </div>
         </div>
       </ModalWrapper>
-
-      <Button
-        size="small"
-        variant="contained"
-        color="secondary"
-        startIcon={<CreateIcon />}
-        onClick={() => {
-          setOpen(true)
-        }}
-      >
-        Post as Video
-      </Button>
     </>
   )
 }

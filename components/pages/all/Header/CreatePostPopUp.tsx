@@ -50,6 +50,7 @@ import { getVideoDuration } from '../../../../utils/getVideoDuration'
 import { getFileFromDataURL } from '../../../../utils/getImageFileFromDataURL'
 import { stringToLength } from '../../../../utils/stringToLength'
 import EditIcon from '@mui/icons-material/Edit'
+import { useMyPreferences } from '../../../store/useMyPreferences'
 
 interface previewFileType {
   url: string
@@ -88,7 +89,12 @@ const CreatePostPopUp = ({
   const [selectedThumbnailIndex, setSelectedThumbnailIndex] =
     React.useState<number>(0)
 
-  const [category, setCategory] = React.useState<string>('None')
+  const { category, setCategory } = useMyPreferences((state) => {
+    return {
+      category: state.category,
+      setCategory: state.setCategory
+    }
+  })
   const [uploadDataToAR] = useUploadDataToArMutation()
   const { execute: createPost } = useCreatePost()
   const { execute: createQuote } = useCreateQuote()

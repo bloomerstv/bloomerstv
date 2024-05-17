@@ -28,7 +28,7 @@ export const useMyPreferences = create<MyPreferencesStore>(
       streamReplayViewType: ViewType.Public,
       setStreamReplayViewType: (viewType) =>
         set(() => ({ streamReplayViewType: viewType })),
-      category: 'Gaming',
+      category: 'None',
       setCategory: (category) => set(() => ({ category }))
     }),
     {

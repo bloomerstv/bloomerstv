@@ -1,6 +1,11 @@
 mutation CreateMyLensStreamSession(
   $publicationId: String!
   $viewType: ViewType
+  $sessionId: String
 ) {
-  createMyLensStreamSession(publicationId: $publicationId, viewType: $viewType)
+  createMyLensStreamSession(
+    publicationId: $publicationId
+    viewType: $viewType
+    sessionId: $sessionId
+  )
 }

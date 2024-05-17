@@ -92,6 +92,7 @@ export type MutationCreateClipArgs = {
 
 export type MutationCreateMyLensStreamSessionArgs = {
   publicationId: Scalars['String']['input']
+  sessionId?: InputMaybe<Scalars['String']['input']>
   viewType?: InputMaybe<ViewType>
 }
 
@@ -311,6 +312,7 @@ export type CreateClipMutation = {
 export type CreateMyLensStreamSessionMutationVariables = Exact<{
   publicationId: Scalars['String']['input']
   viewType?: InputMaybe<ViewType>
+  sessionId?: InputMaybe<Scalars['String']['input']>
 }>
 
 export type CreateMyLensStreamSessionMutation = {
@@ -724,10 +726,12 @@ export const CreateMyLensStreamSessionDocument = gql`
   mutation CreateMyLensStreamSession(
     $publicationId: String!
     $viewType: ViewType
+    $sessionId: String
   ) {
     createMyLensStreamSession(
       publicationId: $publicationId
       viewType: $viewType
+      sessionId: $sessionId
     )
   }
 `
@@ -751,6 +755,7 @@ export type CreateMyLensStreamSessionMutationFn = Apollo.MutationFunction<
  *   variables: {
  *      publicationId: // value for 'publicationId'
  *      viewType: // value for 'viewType'
+ *      sessionId: // value for 'sessionId'
  *   },
  * });
  */

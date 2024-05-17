@@ -27,6 +27,7 @@ import CollectSettingButton from '../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
 import uploadToIPFS from '../../../utils/uploadToIPFS'
 import { getThumbnailFromVideoUrl } from '../../../utils/generateThumbnail'
+import { useMyPreferences } from '../../store/useMyPreferences'
 // import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 // import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
@@ -55,8 +56,12 @@ const PostClipOnLens = ({
     recipient
   } = useCollectSettings()
   const { data } = useSession()
-  const [category, setCategory] = React.useState<string>('Gaming')
-
+  const { category, setCategory } = useMyPreferences((state) => {
+    return {
+      category: state.category,
+      setCategory: state.setCategory
+    }
+  })
   const [title, setTitle] = React.useState(
     `Clip from @${profile?.handle?.fullHandle} 's stream`
   )

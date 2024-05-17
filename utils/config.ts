@@ -72,6 +72,9 @@ export const FEEDBACK_URL =
   'https://github.com/bloomerstv/bloomerstv/issues/new'
 export const REPORT_URL = 'https://github.com/bloomerstv/bloomerstv/issues/new'
 export const HEY_URL = 'https://hey.xyz/u/bloomerstv'
+export const HEY_APP_LINK = isMainnet
+  ? 'https://hey.xyz'
+  : 'https://testnet.hey.xyz'
 export const DISCORD_INVITE_URL = 'https://discord.gg/rXUBVm7JxA'
 export const X_URL = 'https://twitter.com/bloomerstv'
 export const THUMBNAIL_FALLBACK =

@@ -1,9 +1,10 @@
 import React from 'react'
 import { RecordedSession } from '../../../../graphql/generated'
-import { usePublication } from '@lens-protocol/react-web'
+import { useHidePublication, usePublication } from '@lens-protocol/react-web'
 import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import {
-  localDate
+  localDate,
+  secondsToTime
   // localDateAndTime,
   // secondsToTime
 } from '../../../../utils/helpers'
@@ -19,18 +20,64 @@ import ContentVisibiltyButton from './ContentVisibilty'
 import { getSenitizedContent } from '../../../../utils/lib/getSenitizedContent'
 import { stringToLength } from '../../../../utils/stringToLength'
 import Link from 'next/link'
-import { APP_LINK } from '../../../../utils/config'
+import { APP_LINK, HEY_APP_LINK } from '../../../../utils/config'
+import { Button, IconButton, Tooltip } from '@mui/material'
+import DownloadIcon from '@mui/icons-material/Download'
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
+import PostStreamAsVideo from './PostStreamAsVideo'
+import CreateIcon from '@mui/icons-material/Create'
+import ContentCutIcon from '@mui/icons-material/ContentCut'
+import DeleteIcon from '@mui/icons-material/Delete'
+import toast from 'react-hot-toast'
+import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 // import Player from '../../../common/Player'
 
 const SessionRow = ({ session }: { session: RecordedSession }) => {
+  const [newPublicationId, setNewPublicationId] = React.useState<string | null>(
+    null
+  )
+
+  const [openDeleteConfirmation, setOpenDeleteConfirmation] =
+    React.useState<boolean>(false)
   const { data } = usePublication({
     // @ts-ignore
-    forId: session?.publicationId
+    forId: session?.publicationId || newPublicationId
   })
+
+  const [postAsVideoProps, setPostAsVideoProps] = React.useState<{
+    open: boolean
+    modalTitle: string | null
+    Icon: React.ReactNode | null
+    defaultMode: 'Clip' | 'Video'
+  }>({
+    open: false,
+    modalTitle: null,
+    Icon: null,
+    defaultMode: 'Clip'
+  })
+
+  const { execute } = useHidePublication()
+
+  const handleDeletePost = async () => {
+    if (!data?.id) return
+    const res = await execute({
+      publication: data
+    })
+
+    if (res.isSuccess()) {
+      toast.success('Post deleted')
+    } else {
+      toast.error('Error deleting post : ', res.error)
+    }
+  }
+
+  const totalMirrors =
+    // @ts-ignore
+    Number(data?.stats?.mirrors ?? 0) + Number(data?.stats?.quotes ?? 0)
 
   // const [watching, setWatching] = React.useState(false)
 
-  if (!data || data?.__typename !== 'Post') return null
+  if (data && data?.__typename !== 'Post') return null
 
   if (!session?.recordingUrl) {
     return null
@@ -43,18 +90,75 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
   }
 
   return (
-    <TableRow className="hover:bg-p-hover">
+    <TableRow className="hover:bg-p-hover group">
+      {/* delete confirmation */}
+
+      {data?.id && !data?.isHidden && (
+        <ModalWrapper
+          onClose={() => setOpenDeleteConfirmation(false)}
+          open={openDeleteConfirmation}
+          onOpen={() => setOpenDeleteConfirmation(true)}
+          BotttomComponent={
+            <div className="flex flex-row justify-end gap-x-4">
+              <Button
+                onClick={() => setOpenDeleteConfirmation(false)}
+                className="text-p-text text-lg"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDeletePost}
+                className="text-red-500 text-lg"
+                variant="contained"
+              >
+                Delete
+              </Button>
+            </div>
+          }
+          Icon={<DeleteIcon />}
+          title="Delete Post"
+        >
+          <div className="text-lg">
+            Are you sure you want to delete this post?
+          </div>
+        </ModalWrapper>
+      )}
+
+      <PostStreamAsVideo
+        session={session}
+        publication={data}
+        Icon={<CreateIcon />}
+        modalTitle={postAsVideoProps.modalTitle ?? undefined}
+        open={postAsVideoProps.open}
+        defaultMode={postAsVideoProps.defaultMode}
+        setNewPublicationId={setNewPublicationId}
+        setOpen={(open) => setPostAsVideoProps((prev) => ({ ...prev, open }))}
+      />
       {/* video */}
       <TableCell>
         <div className="flex flex-row items-start gap-x-4 w-[450px]">
-          <img
-            src={getThumbnailFromRecordingUrl(session?.recordingUrl)}
-            className="w-[120px] rounded-sm"
-          />
-          <div className="pt-1">
+          <div className="relative">
+            <img
+              src={getThumbnailFromRecordingUrl(session?.recordingUrl)}
+              className="w-[120px] rounded-sm"
+            />
+            {session?.sourceSegmentsDuration && (
+              <div className="absolute bottom-3 right-2 bg-black bg-opacity-80 px-1.5 rounded">
+                <div className="text-xs text-white">
+                  {/* @ts-ignore */}
+                  {secondsToTime(session?.sourceSegmentsDuration)}
+                </div>
+              </div>
+            )}
+          </div>
+          <div>
             <Link
-              href={`${APP_LINK}/watch/${data?.id}`}
-              className="font-bold no-underline hover:underline text-p-text"
+              href={
+                data?.id
+                  ? `${APP_LINK}/watch/${data?.id}`
+                  : `${APP_LINK}/watch/session/${session?.sessionId}`
+              }
+              className="font-bold no-underline hover:underline text-p-text text-base"
             >
               {/* @ts-ignore */}
               {data?.metadata?.title
@@ -62,8 +166,8 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                   stringToLength(data?.metadata?.title, 40)
                 : 'Untitled Stream'}
             </Link>
-            <div className="text-s-text text-xs">
-              {data
+            <div className="text-s-text text-xs font-semibold block group-hover:hidden">
+              {data?.id
                 ? stringToLength(
                     getSenitizedContent(
                       // @ts-ignore
@@ -75,128 +179,143 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                   )
                 : 'Untitled Stream'}
             </div>
+            {/* show only on hover of the row */}
+            <div className="hidden -ml-3 group-hover:block start-center-row shrink-0">
+              {data?.id && (
+                <Tooltip title="Open in hey.xyz">
+                  <IconButton
+                    size="large"
+                    onClick={() => {
+                      // @ts-ignore
+                      window.open(`${HEY_APP_LINK}/posts/${data?.id}`, '_blank')
+                    }}
+                  >
+                    <img
+                      src={'/icons/heyIcon.png'}
+                      className="w-6 h-6"
+                      alt="hey"
+                    />
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              <Tooltip title="Watch in bloomers.tv">
+                <IconButton
+                  size="large"
+                  onClick={() => {
+                    // @ts-ignore
+                    window.open(
+                      data?.id
+                        ? `${APP_LINK}/watch/${data?.id}`
+                        : `${APP_LINK}/watch/session/${session?.sessionId}`,
+                      '_blank'
+                    )
+                  }}
+                >
+                  <RemoveRedEyeIcon />
+                </IconButton>
+              </Tooltip>
+
+              {session?.mp4Url && (
+                <Tooltip title="Download the video">
+                  <IconButton
+                    size="large"
+                    onClick={() => {
+                      // @ts-ignore
+                      window.open(session?.mp4Url, '_blank')
+                    }}
+                  >
+                    <DownloadIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              {!data?.id && (
+                <Tooltip title={'Create a post for this stream'}>
+                  <IconButton
+                    size="large"
+                    onClick={() => {
+                      // @ts-ignore
+                      setPostAsVideoProps((prev) => ({
+                        ...prev,
+                        open: true,
+                        defaultMode: 'Video',
+                        modalTitle: 'Create Post for this Stream',
+                        Icon: <CreateIcon />
+                      }))
+                    }}
+                  >
+                    <CreateIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              <Tooltip title="Create a Clip">
+                <IconButton
+                  size="large"
+                  onClick={() => {
+                    // @ts-ignore
+                    setPostAsVideoProps((prev) => ({
+                      ...prev,
+                      open: true,
+                      defaultMode: 'Clip',
+                      modalTitle: 'Create Clip',
+                      Icon: <ContentCutIcon />
+                    }))
+                  }}
+                >
+                  <ContentCutIcon />
+                </IconButton>
+              </Tooltip>
+
+              {data?.id && !data?.isHidden && (
+                <Tooltip title="Delete the post">
+                  <IconButton
+                    size="large"
+                    onClick={() => {
+                      setOpenDeleteConfirmation(true)
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </div>
           </div>
         </div>
       </TableCell>
       {/* Visiblity */}
       <TableCell>
-        <ContentVisibiltyButton session={session} />
+        {session.viewType ? (
+          <ContentVisibiltyButton session={session} />
+        ) : (
+          <span className="text-2xl">-</span>
+        )}
       </TableCell>
 
       {/* date */}
-      <TableCell>{localDate(data?.createdAt)}</TableCell>
+      <TableCell>{localDate(session?.createdAt)}</TableCell>
 
       {/* likes */}
-      <TableCell>{data?.stats?.upvotes}</TableCell>
+      <TableCell>
+        {data?.stats?.upvotes ?? <span className="text-2xl">-</span>}
+      </TableCell>
 
       {/* comments */}
-      <TableCell>{data?.stats?.comments}</TableCell>
+      <TableCell>
+        {data?.stats?.comments ?? <span className="text-2xl">-</span>}
+      </TableCell>
 
       {/* mirrors */}
-      <TableCell>{data?.stats?.mirrors + data?.stats?.quotes}</TableCell>
+      <TableCell>
+        {typeof data?.stats?.mirrors === 'number' ? (
+          totalMirrors
+        ) : (
+          <span className="text-2xl">-</span>
+        )}
+      </TableCell>
     </TableRow>
   )
-
-  // @ts-ignore
-  // return (
-  //   <div className=" border-b border-p-border py-4">
-  //     <div className="flex flex-row items-start justify-between w-full">
-  //       <div className="flex flex-row space-x-4">
-  //         <div
-  //           className="relative cursor-pointer h-fit w-fit"
-  //           onClick={() => setWatching((prev) => !prev)}
-  //         >
-  //           <img
-  //             src={getThumbnailFromRecordingUrl(session?.mp4Url)}
-  //             className="w-[240px] "
-  //           />
-
-  //           {watching ? (
-  //             <div className="absolute inset-0 flex items-center justify-center">
-  //               <PauseIcon className="text-white" />
-  //             </div>
-  //           ) : (
-  //             <div className="absolute inset-0 flex items-center justify-center">
-  //               <PlayArrowIcon className="text-white" />
-  //             </div>
-  //           )}
-
-  //           {session?.sourceSegmentsDuration && (
-  //             <div className="absolute bottom-4 right-4 bg-black bg-opacity-80 px-1.5 rounded">
-  //               <div className="text-xs text-white">
-  //                 {secondsToTime(session?.sourceSegmentsDuration)}
-  //               </div>
-  //             </div>
-  //           )}
-  //         </div>
-  //         {/* @ts-ignore */}
-  //         <div className="start-col gap-y-1.5">
-  //           <a
-  //             href={`/watch/${session?.publicationId}`}
-  //             target="_blank"
-  //             rel="noreferrer"
-  //             className="text-p-text no-underline start-row gap-x-1.5"
-  //           >
-  //             <div className="text-sm font-semibold">
-  //               {/* @ts-ignore */}
-  //               <Markup>{data?.metadata?.title}</Markup>
-  //             </div>
-
-  //             <OpenInNewIcon
-  //               fontSize="inherit"
-  //               className="text-s-text text-xs"
-  //             />
-  //           </a>
-  //           <div className="text-s-text text-sm">
-  //             Streamed on {localDateAndTime(data?.createdAt)}
-  //           </div>
-
-  //           {/* stats */}
-  //           <div className="start-row gap-x-2 mb-3">
-  //             <div className="bg-s-bg rounded-full px-2 py-1 text-s-text text-xs font-semibold">
-  //               {data?.stats?.upvotes} Likes
-  //             </div>
-  //             <div className="bg-s-bg rounded-full px-2 py-1 text-s-text text-xs font-semibold">
-  //               {data?.stats?.comments} Comments
-  //             </div>
-  //             <div className="bg-s-bg rounded-full px-2 py-1 text-s-text text-xs font-semibold">
-  //               {data?.stats?.mirrors} Mirrors
-  //             </div>
-  //             {Boolean(data?.stats?.collects) && (
-  //               <div className="bg-s-bg rounded-full px-2 py-1 text-s-text text-xs font-semibold">
-  //                 {data?.stats?.collects} Comments
-  //               </div>
-  //             )}
-  //           </div>
-  //           <ContentVisibiltyButton session={session} />
-  //         </div>
-  //       </div>
-
-  //       <div className="start-row gap-x-4 shrink-0">
-  //         {data && <PostStreamAsVideo publication={data} session={session} />}
-  //         {/* download button */}
-  //         <Button
-  //           size="small"
-  //           variant="contained"
-  //           color="secondary"
-  //           startIcon={<DownloadIcon />}
-  //           onClick={() => {
-  //             // @ts-ignore
-  //             window.open(session?.mp4Url, '_blank')
-  //           }}
-  //         >
-  //           Download
-  //         </Button>
-  //       </div>
-  //     </div>
-
-  //     {watching && session?.recordingUrl && (
-  //       <div className="mt-4">
-  //         <Player src={session?.recordingUrl} className="rounded-2xl" />
-  //       </div>
-  //     )}
-  //   </div>
-  // )
 }
 
 export default SessionRow
