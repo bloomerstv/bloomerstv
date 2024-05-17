@@ -48,9 +48,11 @@ const ContentPage = () => {
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="m-8 text-3xl font-bold">Channel Content</div>
+      <div className="mx-6 my-4 text-3xl leading-0 font-bold">
+        Channel Content
+      </div>
 
-      <div className="m-8">
+      <div className="mx-6 mb-4">
         {!sessions?.length && !loading && (
           <div className="flex flex-col space-y-4 items-center justify-center">
             <div className="text-2xl font-bold">
@@ -63,8 +65,13 @@ const ContentPage = () => {
           </div>
         )}
         {sessions?.length > 0 && (
-          <TableContainer component={Paper}>
-            <Table>
+          <TableContainer
+            component={Paper}
+            sx={{
+              maxHeight: window.innerHeight - 200
+            }}
+          >
+            <Table stickyHeader>
               <TableHead>
                 <TableRow>
                   {/* Replace 'Header' with your actual column headers */}
@@ -88,7 +95,7 @@ const ContentPage = () => {
       </div>
       {/* get more button */}
       {sessions?.length !== 0 && (
-        <div className="flex justify-center pb-8">
+        <div className="flex justify-center">
           <Button
             onClick={handleFetchMore}
             variant="contained"
