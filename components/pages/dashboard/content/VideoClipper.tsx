@@ -10,6 +10,23 @@ import {
   useStore
 } from '@livepeer/react/player'
 
+// max time distance between start and end time in seconds
+const MAX_TIME_DISTANCE = 60
+
+const formatTime = (value) => {
+  const hours = Math.floor(value / 3600)
+  const minutes = Math.floor((value % 3600) / 60)
+  const seconds = Math.floor(value % 60)
+
+  return hours > 0
+    ? `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    : `${minutes.toString().padStart(2, '0')}:${seconds
+        .toString()
+        .padStart(2, '0')}`
+}
+
 const VideoClipper = ({
   url,
   __scopeMedia
@@ -40,28 +57,30 @@ const VideoClipper = ({
 
   useEffect(() => {
     if (!containerRef?.current?.offsetWidth) return
-    setEndPosition(containerRef.current.offsetWidth - 8)
+
+    // set the endposition to be the min of startposition + 60 time distanece or the total width
+    // setEndPosition(containerRef.current.offsetWidth - 8)
     setTotalWidth(containerRef.current.offsetWidth)
   }, [containerRef?.current?.offsetWidth])
+
+  useEffect(() => {
+    if (!duration || !totalWidth) return
+    // set the endposition to be the min of startposition + 60 time distanece or the total width
+    const totalDuration = duration
+    if (totalDuration <= 60) {
+      setEndPosition(totalWidth - 8)
+      return
+    }
+
+    const newEndPosition = (MAX_TIME_DISTANCE / totalDuration) * totalWidth
+    setEndPosition(newEndPosition)
+  }, [duration, totalWidth])
+
   // const [value, setValue] = useState([0, duration])
 
   // const handleChange = (event, newValue) => {
   //   setValue(newValue)
   // }
-
-  const formatTime = useCallback((value) => {
-    const hours = Math.floor(value / 3600)
-    const minutes = Math.floor((value % 3600) / 60)
-    const seconds = Math.floor(value % 60)
-
-    return hours > 0
-      ? `${hours.toString().padStart(2, '0')}:${minutes
-          .toString()
-          .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-      : `${minutes.toString().padStart(2, '0')}:${seconds
-          .toString()
-          .padStart(2, '0')}`
-  }, [])
 
   const timeToLocation = useCallback(
     (time) => {
@@ -85,7 +104,12 @@ const VideoClipper = ({
     return formatTime(time) || '00:00'
   }, [endPosition, totalWidth, duration])
 
-  const thumbnails = getListOfThumbnailsFromRecordingUrl(url, duration, 25)
+  const getThumbnails = useCallback(() => {
+    return getListOfThumbnailsFromRecordingUrl(url, duration, 25)
+  }, [url, duration])
+
+  const thumbnails = getThumbnails()
+
   if (loading) return null
 
   return (
@@ -198,8 +222,17 @@ const VideoClipper = ({
           position={{ x: startPosition, y: 0 }}
           onDrag={(e, data) => {
             if (!containerRef?.current?.offsetWidth) return
+            const newTimeDistance =
+              ((endPosition - data.x) / totalWidth) * duration
+
             if (data.x < endPosition + 8) {
               setStartPosition(data.x)
+
+              if (newTimeDistance > MAX_TIME_DISTANCE) {
+                const newEndPosition =
+                  data.x + (MAX_TIME_DISTANCE / duration) * totalWidth
+                setEndPosition(newEndPosition)
+              }
             }
           }}
         >
@@ -222,8 +255,16 @@ const VideoClipper = ({
           position={{ x: endPosition, y: 0 }}
           onDrag={(e, data) => {
             if (!containerRef?.current?.offsetWidth) return
+            const newTimeDistance =
+              ((data.x - startPosition) / totalWidth) * duration
             if (data.x + 8 > startPosition) {
               setEndPosition(data.x)
+
+              if (newTimeDistance > MAX_TIME_DISTANCE) {
+                const newStartPosition =
+                  data.x - (MAX_TIME_DISTANCE / duration) * totalWidth
+                setStartPosition(newStartPosition)
+              }
             }
           }}
         >
