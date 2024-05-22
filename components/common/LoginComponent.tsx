@@ -103,6 +103,9 @@ const LoginComponent = ({
 
                           if (data?.isSuccess() && data?.value?.signless) {
                             onClose?.()
+                            window.location.reload()
+                          } else {
+                            toast.error('Error logging in')
                           }
                         }}
                         loading={logging && selectedProfileId === profile.id}

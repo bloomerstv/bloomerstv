@@ -102,11 +102,17 @@ const LoginPage = () => {
                           variant="contained"
                           onClick={async () => {
                             setSelectedProfileId(profile.id)
-                            await execute({
+                            const data = await execute({
                               // @ts-ignore
                               address: address,
                               profileId: profile.id
                             })
+
+                            if (data?.isSuccess() && data?.value?.signless) {
+                              window?.location.reload()
+                            } else {
+                              toast.error('Failed to login')
+                            }
                           }}
                           loading={logging && selectedProfileId === profile.id}
                           loadingPosition="start"
