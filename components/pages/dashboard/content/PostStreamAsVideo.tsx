@@ -212,10 +212,10 @@ const PostStreamAsVideo = ({
       // @ts-ignore
       title: title,
       // @ts-ignore
-      content: `**${title}**\n\n${content}`,
+      content: `${title}\n\n${content}`,
       marketplace: {
         name: title,
-        description: `**${title}**\n\n${content}`,
+        description: `${title}\n\n${content}`,
         // @ts-ignore
         external_url: `${APP_LINK}/${formatHandle(profile?.profile)}`,
         // @ts-ignore
@@ -326,7 +326,7 @@ const PostStreamAsVideo = ({
       const id = uuid()
       const locale = getUserLocale()
 
-      const metadataContent = `**${title}**\n\n${content}`
+      const metadataContent = `${title}\n\n${content}`
 
       const tags = [
         ...getTagsForCategory(category),

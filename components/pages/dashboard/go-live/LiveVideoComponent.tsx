@@ -139,7 +139,7 @@ const LiveVideoComponent = ({
     const id = uuid()
     const locale = getUserLocale()
 
-    const content = `**${streamName}**${
+    const content = `${streamName}${
       myStream?.streamDescription ? `\n\n${myStream?.streamDescription}` : ''
     }${addLiveChatAt ? `\n\nLive Chat at ${profileLink}` : ''}`
 
