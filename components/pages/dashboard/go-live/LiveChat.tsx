@@ -49,6 +49,9 @@ interface MessageType {
   id: string
 }
 
+const audio = new Audio('/sounds/liveChatPopSound.mp3')
+audio.volume = 0.5
+
 const LiveChat = ({
   profileId,
   title = 'Live Chat',
@@ -64,8 +67,6 @@ const LiveChat = ({
   preMessages?: MessageType[]
   showLiveCount?: boolean
 }) => {
-  const audio = new Audio('/sounds/liveChatPopSound.mp3')
-  audio.volume = 0.5
   const [messages, setMessages] = useState<MessageType[]>(preMessages)
   const [inputMessage, setInputMessage] = useState('')
   const [socket, setSocket] = useState<any>(null)
@@ -85,7 +86,7 @@ const LiveChat = ({
   })
 
   useEffect(() => {
-    if (chats && !preMessages.length) {
+    if (chats && !preMessages.length && messages.length === 0) {
       const chatsFromDB = chats.streamChats?.map((chat: Chat | null) => {
         if (chat) {
           return {
