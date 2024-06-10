@@ -51,6 +51,9 @@ const HomePageCards = () => {
                   ? // @ts-ignore
                     publicationsMap.get(streamReplay?.publicationId)
                   : null
+
+                if (streamReplay?.publicationId && !post) return null
+
                 return (
                   <HomeVideoCard
                     // @ts-ignore
