@@ -1,10 +1,9 @@
 import { Button, IconButton } from '@mui/material'
-import React, { memo, useEffect, useRef, useState } from 'react'
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 
 // import { WebSocket } from 'ws'
 // import { createClient } from 'graphql-ws'
 // import { wsLensGraphEndpoint } from '../../../../utils/config'
-import formatHandle from '../../../../utils/lib/formatHandle'
 import { timeAgo } from '../../../../utils/helpers'
 // import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
 import {
@@ -19,7 +18,6 @@ import {
   useCreateComment,
   useSession
 } from '@lens-protocol/react-web'
-import getAvatar from '../../../../utils/lib/getAvatar'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import LoginComponent from '../../../common/LoginComponent'
 import LoginIcon from '@mui/icons-material/Login'
@@ -41,13 +39,32 @@ import { textOnly } from '@lens-protocol/metadata'
 import { v4 as uuid } from 'uuid'
 import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
 import LiveChatInput from './LiveChatInput'
-interface MessageType {
+import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
+
+// Base type for common fields
+interface MessageBase {
   content: string
-  avatarUrl: string
-  handle: string
-  time: string
+  time?: string
+  type: 'System' | 'Profile'
   id: string
 }
+
+// Type for messages of type "System"
+interface SystemMessage extends MessageBase {
+  type: 'System'
+}
+
+// Type for messages of type "Profile"
+interface ProfileMessage extends MessageBase {
+  type: 'Profile'
+  profileId: string
+  avatarUrl: string
+  handle: string
+  id: string
+}
+
+// Union type for a message that can be either a SystemMessage or a ProfileMessage
+type Message = SystemMessage | ProfileMessage
 
 const LiveChat = ({
   profileId,
@@ -61,7 +78,7 @@ const LiveChat = ({
   title?: string
   onClose?: () => void
   showPopOutChat?: boolean
-  preMessages?: MessageType[]
+  preMessages?: ProfileMessage[]
   showLiveCount?: boolean
 }) => {
   const audioRef = useRef(new Audio('/sounds/liveChatPopSound.mp3'))
@@ -69,7 +86,7 @@ const LiveChat = ({
     audioRef.current.volume = 0.5
   }, [])
 
-  const [messages, setMessages] = useState<MessageType[]>(preMessages)
+  const [messages, setMessages] = useState<Message[]>(preMessages)
   const [inputMessage, setInputMessage] = useState('')
   const [socket, setSocket] = useState<any>(null)
   // const [isSocketWithAuthToken, setIsSocketWithAuthToken] = useState(false)
@@ -116,7 +133,7 @@ const LiveChat = ({
   )
 
   const liveChatPopUpSoundRef = useRef(liveChatPopUpSound)
-  const [uniqueMessages, setUniqueMessages] = useState<MessageType[]>([])
+  const [uniqueMessages, setUniqueMessages] = useState<Message[]>([])
 
   const messagesEndRef = React.useRef(null)
 
@@ -135,11 +152,17 @@ const LiveChat = ({
     }
   }, [data?.type])
 
-  useEffect(() => {
+  const joinChatWithProfile = useCallback(async () => {
     if (data?.type === SessionType.WithProfile && socket) {
+      // this accessToken is used to verify the profile on the api side
+      const accessToken = await getAccessToken()
       // emit joined chat room
-      socket.emit('joined-chat', profileId, formatHandle(data?.profile))
+      socket.emit('joined-chat', accessToken)
     }
+  }, [socket, data?.type])
+
+  useEffect(() => {
+    joinChatWithProfile()
   }, [socket, data?.type])
 
   useEffect(() => {
@@ -178,31 +201,14 @@ const LiveChat = ({
     })
 
     newSocket.on('message', (receivedData) => {
-      const {
-        profileId: chatProfileId,
-        content,
-        avatarUrl,
-        handle,
-        id
-      } = receivedData
+      const receivedMessage: Message = receivedData
 
-      if (chatProfileId === profileId) {
-        // run pop up sound
-        if (liveChatPopUpSoundRef.current) {
-          audioRef?.current.play()
-        }
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            content,
-            avatarUrl,
-            handle,
-            time: timeAgo(new Date().getTime()),
-            id
-          }
-        ])
+      // run pop up sound
+      if (liveChatPopUpSoundRef.current) {
+        audioRef?.current.play()
       }
+
+      setMessages((prev: Message[]) => [...prev, receivedMessage as Message])
     })
     // }
 
@@ -224,12 +230,11 @@ const LiveChat = ({
     }
 
     if (socket && inputMessage.trim() !== '') {
-      // @ts-ignore
-      socket.emit('message', {
-        profileId,
-        content: inputMessage,
-        avatarUrl: getAvatar(data?.profile),
-        handle: formatHandle(data?.profile)
+      // the send-message will be listened to server only if the joined-chat event is emitted with accesstoken
+      // the joined-chat event is listed on the server side to verify the profile and information like handle & avatarUrl are already stored for this socket there,
+      // so just need to send the message content from here
+      socket.emit('send-message', {
+        content: inputMessage
       })
 
       setInputMessage('')
@@ -350,7 +355,7 @@ const LiveChat = ({
       >
         {uniqueMessages.map((msg, index) => {
           // this mean its a message from the system
-          if (msg.handle === 'System' && !msg?.avatarUrl) {
+          if (msg.type === 'System') {
             return (
               <div
                 key={index}
