@@ -30,7 +30,7 @@ export class MDLinkMatcher extends Matcher {
   }
 
   match(value: string) {
-    return this.doMatch(value, /\[(.*?)\]\((.*?)\)/u, (matches) => ({
+    return this.doMatch(value, /\[(.*?)\]\((.*?)\)/, (matches) => ({
       href: matches[2],
       title: matches[1]
     }))
