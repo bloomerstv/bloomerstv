@@ -20,7 +20,7 @@ const LoginButton = () => {
   const handleClose = () => setOpen(false)
 
   return (
-    <>
+    <div className="centered-row space-x-3">
       <ModalWrapper
         open={openSignup}
         title="Sign up"
@@ -99,7 +99,7 @@ const LoginButton = () => {
       )}
       {/* @ts-ignore */}
       <AvatarWithOptions profile={data?.profile} handleOpen={handleOpen} />
-    </>
+    </div>
   )
 }
 

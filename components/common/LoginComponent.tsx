@@ -104,7 +104,7 @@ const LoginComponent = ({
                           if (data?.isSuccess() && data?.value?.signless) {
                             onClose?.()
                             window.location.reload()
-                          } else {
+                          } else if (!data?.isSuccess()) {
                             toast.error('Error logging in')
                           }
                         }}
