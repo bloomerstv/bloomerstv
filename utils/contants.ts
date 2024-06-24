@@ -5,3 +5,4 @@ export const LENS_MEDIA_SNAPSHOT_URL =
   'https://ik.imagekit.io/lens/media-snapshot'
 export const EVER_ENDPOINT = 'https://endpoint.4everland.co'
 export const IPFS_ENDPOINT = 'https://4everland.io/ipfs/'
+export const MAX_UINT256 = 2n ** 256n - 1n

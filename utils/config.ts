@@ -82,6 +82,11 @@ export const THUMBNAIL_FALLBACK =
 
 export const PROJECT_ADDRESS = '0xC8D0E78379d96D0A436b8597835670b13445A6Db'
 
+export const POLYGON_CHAIN_ID = 137
+export const AMOY_CHAIN_ID = 80002
+
+export const LENS_CHAIN_ID = POLYGON_CHAIN_ID
+
 export const TESTNET_CURRENCIES = [
   {
     kind: 1,
@@ -120,22 +125,6 @@ export const MAINNET_CURRENCIES = [
   },
   {
     kind: 1,
-    name: 'Wrapped Matic',
-    decimals: 18,
-    symbol: 'WMATIC',
-    address: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'USD Coin (PoS)',
-    decimals: 6,
-    symbol: 'USDC',
-    address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
     name: 'pointless',
     decimals: 18,
     symbol: 'pointless',
@@ -150,6 +139,23 @@ export const MAINNET_CURRENCIES = [
     address: '0xaA05F05d77b10d0b12BfA2407b3180f1a1298965',
     chainType: 'polygon'
   },
+  {
+    kind: 1,
+    name: 'Wrapped Matic',
+    decimals: 18,
+    symbol: 'WMATIC',
+    address: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+    chainType: 'polygon'
+  },
+  {
+    kind: 1,
+    name: 'USD Coin (PoS)',
+    decimals: 6,
+    symbol: 'USDC',
+    address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+    chainType: 'polygon'
+  },
+
   // {
   //   kind: 1,
   //   name: 'ELECTRIC',

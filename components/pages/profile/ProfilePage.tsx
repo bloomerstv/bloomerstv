@@ -253,7 +253,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         </div>
       </div>
       {data?.id && !isMobile && (
-        <div className="w-[280px] 2xl:w-[350px] flex-none h-full">
+        <div className="w-[310px] 2xl:w-[350px] flex-none h-full">
           <LiveChat
             // @ts-ignore
             // publicationId={streamer?.streamer?.latestStreamPublicationId}

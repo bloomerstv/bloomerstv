@@ -34,12 +34,16 @@ export type Scalars = {
 
 export type Chat = {
   __typename?: 'Chat'
+  authorProfileId?: Maybe<Scalars['String']['output']>
   avatarUrl?: Maybe<Scalars['String']['output']>
   content?: Maybe<Scalars['String']['output']>
   createdAt?: Maybe<Scalars['BigNumber']['output']>
+  currencySymbol?: Maybe<Scalars['String']['output']>
+  formattedAmount?: Maybe<Scalars['String']['output']>
   handle?: Maybe<Scalars['String']['output']>
   id?: Maybe<Scalars['String']['output']>
   profileId?: Maybe<Scalars['String']['output']>
+  txHash?: Maybe<Scalars['String']['output']>
 }
 
 export type ClipResult = {
@@ -134,6 +138,13 @@ export type MyStream = Stream & {
   streamName?: Maybe<Scalars['String']['output']>
 }
 
+export type Price = {
+  __typename?: 'Price'
+  DayPercentChange?: Maybe<Scalars['String']['output']>
+  usdPrice?: Maybe<Scalars['Float']['output']>
+  usdPriceFormatted?: Maybe<Scalars['String']['output']>
+}
+
 export type Query = {
   __typename?: 'Query'
   getMyRecordedStreamSessions?: Maybe<Array<Maybe<RecordedSession>>>
@@ -149,6 +160,7 @@ export type Query = {
   streamReplayRecording?: Maybe<StreamReplayRecording>
   streamer?: Maybe<SingleStreamer>
   thumbnail?: Maybe<Scalars['String']['output']>
+  tokenPrice?: Maybe<Price>
 }
 
 export type QueryGetMyRecordedStreamSessionsArgs = {
@@ -184,6 +196,10 @@ export type QueryStreamerArgs = {
 
 export type QueryThumbnailArgs = {
   handle: Scalars['String']['input']
+}
+
+export type QueryTokenPriceArgs = {
+  address: Scalars['String']['input']
 }
 
 export type RecordedSession = {
@@ -465,6 +481,10 @@ export type StreamChatsQuery = {
     profileId?: string | null
     id?: string | null
     createdAt?: any | null
+    txHash?: string | null
+    formattedAmount?: string | null
+    currencySymbol?: string | null
+    authorProfileId?: string | null
   } | null> | null
 }
 
@@ -515,6 +535,20 @@ export type ThumbnailQueryVariables = Exact<{
 }>
 
 export type ThumbnailQuery = { __typename?: 'Query'; thumbnail?: string | null }
+
+export type TokenPriceQueryVariables = Exact<{
+  address: Scalars['String']['input']
+}>
+
+export type TokenPriceQuery = {
+  __typename?: 'Query'
+  tokenPrice?: {
+    __typename?: 'Price'
+    usdPrice?: number | null
+    usdPriceFormatted?: string | null
+    DayPercentChange?: string | null
+  } | null
+}
 
 export type UpdateMyStreamMutationVariables = Exact<{
   request: UpdateStreamRequest
@@ -1459,6 +1493,10 @@ export const StreamChatsDocument = gql`
       profileId
       id
       createdAt
+      txHash
+      formattedAmount
+      currencySymbol
+      authorProfileId
     }
   }
 `
@@ -1759,6 +1797,83 @@ export type ThumbnailSuspenseQueryHookResult = ReturnType<
 export type ThumbnailQueryResult = Apollo.QueryResult<
   ThumbnailQuery,
   ThumbnailQueryVariables
+>
+export const TokenPriceDocument = gql`
+  query TokenPrice($address: String!) {
+    tokenPrice(address: $address) {
+      usdPrice
+      usdPriceFormatted
+      DayPercentChange
+    }
+  }
+`
+
+/**
+ * __useTokenPriceQuery__
+ *
+ * To run a query within a React component, call `useTokenPriceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTokenPriceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTokenPriceQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useTokenPriceQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    TokenPriceQuery,
+    TokenPriceQueryVariables
+  > &
+    (
+      | { variables: TokenPriceQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    )
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<TokenPriceQuery, TokenPriceQueryVariables>(
+    TokenPriceDocument,
+    options
+  )
+}
+export function useTokenPriceLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    TokenPriceQuery,
+    TokenPriceQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<TokenPriceQuery, TokenPriceQueryVariables>(
+    TokenPriceDocument,
+    options
+  )
+}
+export function useTokenPriceSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    TokenPriceQuery,
+    TokenPriceQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<TokenPriceQuery, TokenPriceQueryVariables>(
+    TokenPriceDocument,
+    options
+  )
+}
+export type TokenPriceQueryHookResult = ReturnType<typeof useTokenPriceQuery>
+export type TokenPriceLazyQueryHookResult = ReturnType<
+  typeof useTokenPriceLazyQuery
+>
+export type TokenPriceSuspenseQueryHookResult = ReturnType<
+  typeof useTokenPriceSuspenseQuery
+>
+export type TokenPriceQueryResult = Apollo.QueryResult<
+  TokenPriceQuery,
+  TokenPriceQueryVariables
 >
 export const UpdateMyStreamDocument = gql`
   mutation UpdateMyStream($request: UpdateStreamRequest!) {

@@ -1,0 +1,7 @@
+query TokenPrice($address: String!) {
+  tokenPrice(address: $address) {
+    usdPrice
+    usdPriceFormatted
+    DayPercentChange
+  }
+}

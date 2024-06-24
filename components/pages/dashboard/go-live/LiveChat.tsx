@@ -4,7 +4,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 // import { WebSocket } from 'ws'
 // import { createClient } from 'graphql-ws'
 // import { wsLensGraphEndpoint } from '../../../../utils/config'
-import { timeAgo } from '../../../../utils/helpers'
+import { sleep, timeAgo } from '../../../../utils/helpers'
 // import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
 import {
   APP_ID,
@@ -40,6 +40,7 @@ import { v4 as uuid } from 'uuid'
 import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
 import LiveChatInput from './LiveChatInput'
 import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
+import toast from 'react-hot-toast'
 
 // Base type for common fields
 interface MessageBase {
@@ -55,11 +56,14 @@ interface SystemMessage extends MessageBase {
 }
 
 // Type for messages of type "Profile"
+
 interface ProfileMessage extends MessageBase {
   type: 'Profile'
   profileId: string
-  avatarUrl: string
+  avatarUrl?: string
   handle: string
+  amount?: number
+  currencySymbol?: string
   id: string
 }
 
@@ -96,6 +100,7 @@ const LiveChat = ({
   const isMobile = useIsMobile()
   const [uploadDataToAR] = useUploadDataToArMutation()
   const { execute } = useCreateComment()
+  const [verifiedToSend, setVerifiedToSend] = useState(false)
 
   const { data: chats } = useStreamChatsQuery({
     variables: {
@@ -106,20 +111,25 @@ const LiveChat = ({
 
   useEffect(() => {
     if (chats && !preMessages.length && messages.length === 0) {
-      const chatsFromDB = chats.streamChats?.map((chat: Chat | null) => {
-        if (chat) {
-          return {
-            content: chat.content ?? '',
-            avatarUrl: chat.avatarUrl ?? '',
-            handle: chat.handle ?? '',
-            time: timeAgo(chat.createdAt),
-            id: chat.id ?? ''
+      // @ts-ignore
+      const chatsFromDB: ProfileMessage[] = chats.streamChats?.map(
+        (chat: Chat | null) => {
+          if (chat) {
+            return {
+              content: chat.content ?? '',
+              avatarUrl: chat.avatarUrl ?? '',
+              handle: chat.handle ?? '',
+              time: timeAgo(chat.createdAt),
+              type: 'Profile',
+              amount: chat.formattedAmount ?? 0,
+              currencySymbol: chat.currencySymbol ?? '',
+              id: chat.id ?? ''
+            }
           }
+          return null
         }
-        return null
-      })
+      )
       setMessages((prev) => {
-        // @ts-ignore
         return [...chatsFromDB, ...prev]
       })
     }
@@ -156,6 +166,14 @@ const LiveChat = ({
     if (data?.type === SessionType.WithProfile && socket) {
       // this accessToken is used to verify the profile on the api side
       const accessToken = await getAccessToken()
+
+      socket.on('verified-to-send', () => {
+        setVerifiedToSend(true)
+      })
+
+      socket.on('error', (error: any) => {
+        toast.error(String(error))
+      })
       // emit joined chat room
       socket.emit('joined-chat', accessToken)
     }
@@ -224,20 +242,25 @@ const LiveChat = ({
     // @ts-ignore
   }, [])
 
-  const sendMessage = async () => {
+  const sendMessage = async (txHash?: string) => {
     if (data?.type !== SessionType.WithProfile) {
       return
     }
 
     if (socket && inputMessage.trim() !== '') {
+      setInputMessage('')
+
+      if (txHash) {
+        await sleep(2000)
+      }
+
       // the send-message will be listened to server only if the joined-chat event is emitted with accesstoken
       // the joined-chat event is listed on the server side to verify the profile and information like handle & avatarUrl are already stored for this socket there,
       // so just need to send the message content from here
       socket.emit('send-message', {
-        content: inputMessage
+        content: inputMessage,
+        txHash: txHash ?? null
       })
-
-      setInputMessage('')
 
       createComment(inputMessage)
     }
@@ -367,6 +390,35 @@ const LiveChat = ({
               </div>
             )
           }
+
+          // treat this as a super chat
+          if (msg.amount) {
+            return (
+              <div
+                key={index}
+                className="bg-brand shadow-md mx-1.5 text-white rounded-xl p-2 flex flex-row items-start gap-x-2.5"
+              >
+                <img
+                  src={msg.avatarUrl}
+                  alt="avatar"
+                  className="w-7 h-7 rounded-full"
+                />
+
+                <div className="text-sm ">
+                  <div className="start-center-row gap-x-1.5 mb-1.5">
+                    <div className="font-semibold">{msg.handle}</div>
+
+                    <div className="font-semibold">
+                      {`${msg.amount} ${msg.currencySymbol}`}
+                    </div>
+                  </div>
+                  <Markup className="break-words whitespace-pre-wrap">
+                    {msg.content}
+                  </Markup>
+                </div>
+              </div>
+            )
+          }
           return (
             <div key={index} className="flex flex-row px-3 my-1.5">
               <img
@@ -394,14 +446,30 @@ const LiveChat = ({
       </div>
 
       {/* input section */}
-      <div className="w-full py-2 px-3 border-t border-p-border">
+      <div className="w-full py-1.5 px-1.5 border-t border-p-border">
         {data?.type === SessionType.WithProfile && socket ? (
-          <LiveChatInput
-            profile={data?.profile}
-            inputMessage={inputMessage}
-            sendMessage={sendMessage}
-            setInputMessage={setInputMessage}
-          />
+          <>
+            {verifiedToSend ? (
+              <LiveChatInput
+                profile={data?.profile}
+                inputMessage={inputMessage}
+                sendMessage={sendMessage}
+                setInputMessage={setInputMessage}
+              />
+            ) : (
+              <Button
+                variant="contained"
+                className="w-full "
+                sx={{
+                  borderRadius: '2rem'
+                }}
+                disabled
+                color="secondary"
+              >
+                Connecting...
+              </Button>
+            )}
+          </>
         ) : (
           <Button
             variant="contained"

@@ -79,6 +79,10 @@
     -ms-user-select: none;
   }
 
+  .textarea-placeholder::placeholder {
+    color: #c5c5c5; /* Your desired placeholder text color */
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }

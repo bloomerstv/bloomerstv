@@ -9,10 +9,10 @@ const GoLivePage = () => {
 
   return (
     <div className="flex flex-row h-full">
-      <div className="w-full flex-grow overflow-auto h-full">
+      <div className="w-full overflow-auto h-full">
         <LiveStreamEditor />
       </div>
-      <div className="w-[280px] 2xl:w-[350px] flex-none h-full">
+      <div className="w-[280px] 2xl:w-[350px] flex-none h-full shrink-0">
         {/* {createdPublicationId ? ( */}
         {/* @ts-ignore */}
         {data?.profile?.id && (
