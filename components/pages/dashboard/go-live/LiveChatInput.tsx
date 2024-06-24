@@ -19,7 +19,7 @@ import {
   useSession
 } from '@lens-protocol/react-web'
 import formatHandle from '../../../../utils/lib/formatHandle'
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
+// import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import CloseIcon from '@mui/icons-material/Close'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import { CURRENCIES, LENS_CHAIN_ID } from '../../../../utils/config'
@@ -520,7 +520,7 @@ const LiveChatInput = ({
             </div>
           </div>
 
-          <div className="pb-0.5 -ml-1">
+          {/* <div className="pb-0.5 -ml-1">
             <IconButton
               onClick={() => setSuperChat(true)}
               className="rounded-full"
@@ -528,7 +528,7 @@ const LiveChatInput = ({
             >
               <AttachMoneyIcon />
             </IconButton>
-          </div>
+          </div> */}
         </div>
       )}
     </div>
