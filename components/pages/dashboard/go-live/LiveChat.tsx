@@ -396,7 +396,7 @@ const LiveChat = ({
             return (
               <div
                 key={index}
-                className="bg-brand shadow-md mx-1.5 text-white rounded-xl p-2 flex flex-row items-start gap-x-2.5"
+                className="bg-brand shadow-md m-1.5 text-white rounded-xl p-2 flex flex-row items-start gap-x-2.5"
               >
                 <img
                   src={msg.avatarUrl}
@@ -452,6 +452,7 @@ const LiveChat = ({
             {verifiedToSend ? (
               <LiveChatInput
                 profile={data?.profile}
+                liveChatProfileId={profileId}
                 inputMessage={inputMessage}
                 sendMessage={sendMessage}
                 setInputMessage={setInputMessage}

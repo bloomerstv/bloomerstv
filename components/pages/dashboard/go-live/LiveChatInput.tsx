@@ -14,12 +14,11 @@ import getAvatar from '../../../../utils/lib/getAvatar'
 import {
   LimitType,
   Profile,
-  SessionType,
-  useSearchProfiles,
-  useSession
+  useProfile,
+  useSearchProfiles
 } from '@lens-protocol/react-web'
 import formatHandle from '../../../../utils/lib/formatHandle'
-// import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import CloseIcon from '@mui/icons-material/Close'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import { CURRENCIES, LENS_CHAIN_ID } from '../../../../utils/config'
@@ -50,14 +49,19 @@ const LiveChatInput = ({
   profile,
   inputMessage,
   sendMessage,
-  setInputMessage
+  setInputMessage,
+  liveChatProfileId
 }: {
   profile: Profile
   inputMessage: string
   sendMessage: (txHash?: string) => Promise<void>
   setInputMessage: (value: string) => void
+  liveChatProfileId: string
 }) => {
-  const { data: session } = useSession()
+  const { data: liveChatProfile } = useProfile({
+    // @ts-ignore
+    forProfileId: liveChatProfileId
+  })
   const [superChat, setSuperChat] = React.useState(false)
   const [handle, setHandle] = React.useState('')
   const { data } = useSearchProfiles({
@@ -170,7 +174,7 @@ const LiveChatInput = ({
 
   const handleTip = async () => {
     try {
-      if (session?.type !== SessionType.WithProfile) return
+      if (!liveChatProfile?.id) return
       await handleWrongNetwork()
 
       setIsTipping(true)
@@ -185,10 +189,10 @@ const LiveChatInput = ({
         functionName: 'tip',
         args: [
           selectedCurrency?.address,
-          profile?.ownedBy?.address,
+          liveChatProfile?.ownedBy?.address,
           finalValue,
-          session?.profile?.id,
           profile?.id,
+          liveChatProfileId,
           lastStreamPublicationId?.split('-')[1]
         ]
       })
@@ -456,6 +460,9 @@ const LiveChatInput = ({
               color="primary"
               onClick={handleTip}
               loading={isTipping || isWaitingForTransaction}
+              disabled={
+                isTipping || isWaitingForTransaction || !liveChatProfile?.id
+              }
               loadingPosition="start"
               fullWidth
               size="small"
@@ -520,7 +527,7 @@ const LiveChatInput = ({
             </div>
           </div>
 
-          {/* <div className="pb-0.5 -ml-1">
+          <div className="pb-0.5 -ml-1">
             <IconButton
               onClick={() => setSuperChat(true)}
               className="rounded-full"
@@ -528,7 +535,7 @@ const LiveChatInput = ({
             >
               <AttachMoneyIcon />
             </IconButton>
-          </div> */}
+          </div>
         </div>
       )}
     </div>
