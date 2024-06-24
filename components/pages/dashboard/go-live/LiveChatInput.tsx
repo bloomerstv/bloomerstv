@@ -461,7 +461,10 @@ const LiveChatInput = ({
               onClick={handleTip}
               loading={isTipping || isWaitingForTransaction}
               disabled={
-                isTipping || isWaitingForTransaction || !liveChatProfile?.id
+                isTipping ||
+                isWaitingForTransaction ||
+                !liveChatProfile?.id ||
+                inputMessage?.trim().length === 0
               }
               loadingPosition="start"
               fullWidth
@@ -529,7 +532,12 @@ const LiveChatInput = ({
 
           <div className="pb-0.5 -ml-1">
             <IconButton
-              onClick={() => setSuperChat(true)}
+              onClick={() => {
+                if (inputMessage.trim().length === 0) {
+                  setInputMessage('Super GM 🌟')
+                }
+                setSuperChat(true)
+              }}
               className="rounded-full"
               size="small"
             >
