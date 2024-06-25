@@ -58,6 +58,20 @@ const LiveChatInput = ({
   setInputMessage: (value: string) => void
   liveChatProfileId: string
 }) => {
+  const [open, setOpen] = React.useState(false)
+
+  const handleTooltipToggle = () => {
+    setOpen(!open)
+  }
+
+  const handleMouseEnter = () => {
+    setOpen(true)
+  }
+
+  const handleMouseLeave = () => {
+    setOpen(false)
+  }
+
   const { data: liveChatProfile } = useProfile({
     // @ts-ignore
     forProfileId: liveChatProfileId
@@ -290,6 +304,13 @@ const LiveChatInput = ({
             <Tooltip
               title="5% is allocated to BloomersTV to maintain the project"
               placement="top"
+              open={open}
+              disableFocusListener
+              disableHoverListener
+              disableTouchListener
+              onClick={handleTooltipToggle}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               <HelpOutlineIcon className="text-s-text" />
             </Tooltip>
