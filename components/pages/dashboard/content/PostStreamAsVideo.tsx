@@ -37,7 +37,7 @@ import {
 } from '../../../../utils/config'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import formatHandle from '../../../../utils/lib/formatHandle'
-// import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
+import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import VideoWithEditors from './VideoWithEditors'
 import toast from 'react-hot-toast'
 import { useStreamAsVideo } from '../../../store/useStreamAsVideo'
@@ -48,8 +48,8 @@ import {
   getTagsForCategory,
   getTagsForSymbol
 } from '../../../../utils/categories'
-import { getThumbnailFromVideoUrl } from '../../../../utils/generateThumbnail'
-import uploadToIPFS from '../../../../utils/uploadToIPFS'
+// import { getThumbnailFromVideoUrl } from '../../../../utils/generateThumbnail'
+// import uploadToIPFS from '../../../../utils/uploadToIPFS'
 // import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
 import ContentCutIcon from '@mui/icons-material/ContentCut'
@@ -199,14 +199,16 @@ const PostStreamAsVideo = ({
       )
     ]
 
-    const coverThumbnailFile = await getThumbnailFromVideoUrl(url!)
+    // const coverThumbnailFile = await getThumbnailFromVideoUrl(url!)
 
-    let ipfsImageUrl = ''
+    // let coverImageUrl = ''
 
-    if (coverThumbnailFile) {
-      const d = await uploadToIPFS(coverThumbnailFile)
-      ipfsImageUrl = d?.url || ''
-    }
+    // if (coverThumbnailFile) {
+    //   const d = await uploadToIPFS(coverThumbnailFile)
+    //   coverImageUrl = d?.url || ''
+    // }
+
+    const coverImageUrl = getThumbnailFromRecordingUrl(url!)
 
     const metadata = video({
       // @ts-ignore
@@ -221,13 +223,13 @@ const PostStreamAsVideo = ({
         // @ts-ignore
         animation_url: url,
         // @ts-ignore
-        image: ipfsImageUrl
+        image: coverImageUrl
       },
       video: {
         // @ts-ignore
         item: url,
         // @ts-ignore
-        cover: ipfsImageUrl,
+        cover: coverImageUrl,
         // @ts-ignore
         duration: Math.round(duration),
         type: MediaVideoMimeType.MP4,
@@ -240,13 +242,13 @@ const PostStreamAsVideo = ({
       locale: locale
     })
 
-    const { data: resultIpfs } = await uploadDataToAR({
+    const { data: resultAR } = await uploadDataToAR({
       variables: {
         data: JSON.stringify(metadata)
       }
     })
 
-    const transactionID = resultIpfs?.uploadDataToAR
+    const transactionID = resultAR?.uploadDataToAR
 
     if (!transactionID) {
       throw new Error('Error uploading metadata to IPFS')

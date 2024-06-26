@@ -25,10 +25,10 @@ import { useUploadDataToArMutation } from '../../../graphql/generated'
 import useCollectSettings from '../../common/Collect/useCollectSettings'
 import CollectSettingButton from '../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
-import uploadToIPFS from '../../../utils/uploadToIPFS'
-import { getThumbnailFromVideoUrl } from '../../../utils/generateThumbnail'
+// import uploadToIPFS from '../../../utils/uploadToIPFS'
+// import { getThumbnailFromVideoUrl } from '../../../utils/generateThumbnail'
 import { useMyPreferences } from '../../store/useMyPreferences'
-// import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
+import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 // import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
 
@@ -94,16 +94,16 @@ const PostClipOnLens = ({
       tags.push(`sessionId-${sessionId}`)
     }
 
-    const coverThumbnailFile = await getThumbnailFromVideoUrl(url)
+    // const coverThumbnailFile = await getThumbnailFromVideoUrl(url)
 
-    let ipfsImageUrl = ''
+    // let coverImageUrl = ''
 
-    if (coverThumbnailFile) {
-      const d = await uploadToIPFS(coverThumbnailFile)
-      ipfsImageUrl = d?.url || ''
-    }
+    // if (coverThumbnailFile) {
+    //   const d = await uploadToIPFS(coverThumbnailFile)
+    //   coverImageUrl = d?.url || ''
+    // }
 
-    // const thumbnailCover = getThumbnailFromRecordingUrl(url)
+    const coverImageUrl = getThumbnailFromRecordingUrl(url!)
 
     const metadata = shortVideo({
       title: title,
@@ -113,11 +113,11 @@ const PostClipOnLens = ({
         description: title,
         external_url: APP_LINK,
         animation_url: url,
-        image: ipfsImageUrl
+        image: coverImageUrl
       },
       video: {
         item: url,
-        cover: ipfsImageUrl,
+        cover: coverImageUrl,
         duration: 30,
         type: MediaVideoMimeType.MP4,
         altTag: title
