@@ -484,6 +484,7 @@ const LiveChatInput = ({
               disabled={
                 isTipping ||
                 isWaitingForTransaction ||
+                amountValue === 0 ||
                 !liveChatProfile?.id ||
                 inputMessage?.trim().length === 0
               }
