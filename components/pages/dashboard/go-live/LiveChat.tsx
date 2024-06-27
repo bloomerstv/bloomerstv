@@ -4,7 +4,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 // import { WebSocket } from 'ws'
 // import { createClient } from 'graphql-ws'
 // import { wsLensGraphEndpoint } from '../../../../utils/config'
-import { sleep, timeAgo } from '../../../../utils/helpers'
+import { sleep } from '../../../../utils/helpers'
 // import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
 import {
   APP_ID,
@@ -16,6 +16,7 @@ import {
   PublicationId,
   SessionType,
   useCreateComment,
+  // useProfile,
   useSession
 } from '@lens-protocol/react-web'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
@@ -29,7 +30,6 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeOffIcon from '@mui/icons-material/VolumeOff'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 import {
-  Chat,
   useStreamChatsQuery,
   useUploadDataToArMutation
 } from '../../../../graphql/generated'
@@ -60,6 +60,7 @@ interface SystemMessage extends MessageBase {
 interface ProfileMessage extends MessageBase {
   type: 'Profile'
   profileId: string
+  authorProfileId?: string
   avatarUrl?: string
   handle: string
   amount?: number
@@ -85,6 +86,7 @@ const LiveChat = ({
   preMessages?: ProfileMessage[]
   showLiveCount?: boolean
 }) => {
+  const [streamerHasBlockedMe, setStreamerHasBlockedMe] = React.useState(false)
   const audioRef = useRef(new Audio('/sounds/liveChatPopSound.mp3'))
   useEffect(() => {
     audioRef.current.volume = 0.5
@@ -102,6 +104,11 @@ const LiveChat = ({
   const { execute } = useCreateComment()
   const [verifiedToSend, setVerifiedToSend] = useState(false)
 
+  // const { data: streamer } = useProfile({
+  //   // @ts-ignore
+  //   forProfileId: profileId
+  // })
+
   const { data: chats } = useStreamChatsQuery({
     variables: {
       profileId: profileId
@@ -112,28 +119,14 @@ const LiveChat = ({
   useEffect(() => {
     if (chats && !preMessages.length && messages.length === 0) {
       // @ts-ignore
-      const chatsFromDB: ProfileMessage[] = chats.streamChats?.map(
-        (chat: Chat | null) => {
-          if (chat) {
-            return {
-              content: chat.content ?? '',
-              avatarUrl: chat.avatarUrl ?? '',
-              handle: chat.handle ?? '',
-              time: timeAgo(chat.createdAt),
-              type: 'Profile',
-              amount: chat.formattedAmount ?? 0,
-              currencySymbol: chat.currencySymbol ?? '',
-              id: chat.id ?? ''
-            }
-          }
-          return null
-        }
-      )
+      const chatsFromDB: ProfileMessage[] = chats.streamChats
       setMessages((prev) => {
         return [...chatsFromDB, ...prev]
       })
     }
   }, [chats])
+
+  console.log('messages', messages)
 
   const liveChatPopUpSound = useMyPreferences(
     (state) => state.liveChatPopUpSound
@@ -173,6 +166,9 @@ const LiveChat = ({
 
       socket.on('error', (error: any) => {
         toast.error(String(error))
+        if (error === 'You are blocked by the streamer') {
+          setStreamerHasBlockedMe(true)
+        }
       })
       // emit joined chat room
       socket.emit('joined-chat', accessToken)
@@ -208,14 +204,17 @@ const LiveChat = ({
     })
 
     newSocket.on('connect', () => {
-      setTimeout(() => {
-        newSocket.emit('join', profileId)
-        // if (!isSocketWithAuthToken && authorToken) {
-        //   setIsSocketWithAuthToken(true)
-        // }
-        // @ts-ignore
-        setSocket(newSocket)
-      }, 1000) // Wait for 1 second before joining the room
+      newSocket.emit('join', profileId)
+      setSocket(newSocket)
+
+      // setTimeout(() => {
+      //   newSocket.emit('join', profileId)
+      //   // if (!isSocketWithAuthToken && authorToken) {
+      //   //   setIsSocketWithAuthToken(true)
+      //   // }
+      //   // @ts-ignore
+      //   setSocket(newSocket)
+      // }, 1000) // Wait for 1 second before joining the room
     })
 
     newSocket.on('message', (receivedData) => {
@@ -237,6 +236,7 @@ const LiveChat = ({
         newSocket?.disconnect()
         newSocket?.close()
         newSocket?.removeAllListeners()
+        setSocket(null)
       }
     }
     // @ts-ignore
@@ -267,41 +267,46 @@ const LiveChat = ({
   }
 
   const createComment = async (inputMessage: string) => {
-    // create a comment under live stream publication
+    try {
+      // create a comment under live stream publication
 
-    const lastStreamPublicationId = await getLastStreamPublicationId(profileId)
+      const lastStreamPublicationId =
+        await getLastStreamPublicationId(profileId)
 
-    if (!lastStreamPublicationId) return
-    const id = uuid()
-    const locale = getUserLocale()
+      if (!lastStreamPublicationId) return
+      const id = uuid()
+      const locale = getUserLocale()
 
-    const metadata = textOnly({
-      content: inputMessage,
-      marketplace: {
-        name: inputMessage
-      },
-      appId: APP_ID,
-      id: id,
-      locale: locale
-    })
+      const metadata = textOnly({
+        content: inputMessage,
+        marketplace: {
+          name: inputMessage
+        },
+        appId: APP_ID,
+        id: id,
+        locale: locale
+      })
 
-    const { data: txData } = await uploadDataToAR({
-      variables: {
-        data: JSON.stringify(metadata)
+      const { data: txData } = await uploadDataToAR({
+        variables: {
+          data: JSON.stringify(metadata)
+        }
+      })
+
+      const txId = txData?.uploadDataToAR
+
+      if (!txId) {
+        throw new Error('Error uploading metadata to IPFS')
       }
-    })
-
-    const txId = txData?.uploadDataToAR
-
-    if (!txId) {
-      throw new Error('Error uploading metadata to IPFS')
+      // invoke the `execute` function to create the post
+      await execute({
+        metadata: `ar://${txId}`,
+        sponsored: defaultSponsored,
+        commentOn: lastStreamPublicationId as PublicationId
+      })
+    } catch (error) {
+      console.error('Error creating comment', error)
     }
-    // invoke the `execute` function to create the post
-    await execute({
-      metadata: `ar://${txId}`,
-      sponsored: defaultSponsored,
-      commentOn: lastStreamPublicationId as PublicationId
-    })
   }
 
   const popOutChat = () => {
@@ -406,7 +411,10 @@ const LiveChat = ({
 
                 <div className="text-sm ">
                   <div className="start-center-row gap-x-1.5 mb-1.5">
-                    <div className="font-semibold">{msg.handle}</div>
+                    <div className="font-semibold">
+                      {msg.handle}{' '}
+                      {msg.profileId === msg.authorProfileId && '🎙️'}
+                    </div>
 
                     <div className="font-semibold">
                       {`${msg.amount} ${msg.currencySymbol}`}
@@ -431,7 +439,12 @@ const LiveChat = ({
                 className="pl-2.5 font-bold text-sm pt-1"
                 style={{ minWidth: 0, flexShrink: 1 }}
               >
-                <span className="text-s-text mr-1">{msg.handle}</span>
+                <span className="text-s-text mr-1">
+                  {msg.handle}{' '}
+                  {msg.authorProfileId &&
+                    msg.profileId === msg.authorProfileId &&
+                    '🎙️'}
+                </span>
                 <span>
                   <Markup className="break-words whitespace-pre-wrap">
                     {msg.content}
@@ -447,31 +460,7 @@ const LiveChat = ({
 
       {/* input section */}
       <div className="w-full py-1.5 px-1.5 border-t border-p-border">
-        {data?.type === SessionType.WithProfile && socket ? (
-          <>
-            {verifiedToSend ? (
-              <LiveChatInput
-                profile={data?.profile}
-                liveChatProfileId={profileId}
-                inputMessage={inputMessage}
-                sendMessage={sendMessage}
-                setInputMessage={setInputMessage}
-              />
-            ) : (
-              <Button
-                variant="contained"
-                className="w-full "
-                sx={{
-                  borderRadius: '2rem'
-                }}
-                disabled
-                color="secondary"
-              >
-                Connecting...
-              </Button>
-            )}
-          </>
-        ) : (
+        {data?.type !== SessionType.WithProfile || !socket ? (
           <Button
             variant="contained"
             onClick={() => setOpen(true)}
@@ -483,6 +472,38 @@ const LiveChat = ({
           >
             Login to chat
           </Button>
+        ) : streamerHasBlockedMe ? (
+          <Button
+            variant="contained"
+            className="w-full "
+            sx={{
+              borderRadius: '2rem'
+            }}
+            disabled
+            color="secondary"
+          >
+            Blocked by streamer
+          </Button>
+        ) : !verifiedToSend ? (
+          <Button
+            variant="contained"
+            className="w-full "
+            sx={{
+              borderRadius: '2rem'
+            }}
+            disabled
+            color="secondary"
+          >
+            Connecting...
+          </Button>
+        ) : (
+          <LiveChatInput
+            profile={data?.profile}
+            liveChatProfileId={profileId}
+            inputMessage={inputMessage}
+            sendMessage={sendMessage}
+            setInputMessage={setInputMessage}
+          />
         )}
       </div>
     </div>

@@ -145,7 +145,7 @@ const VideoPage = ({
                   : // @ts-ignore
                     post?.metadata?.title
               )
-            : 'Untitled streams are those stream that are not associated with any lens post. They are not visible on other lens platform. These streams are only accessible through direct link. \n\n Why is you stream untitled?\nYou may have not been on go-live page when your stream was live, this means no lens post was created for your stream. Go-live page will automatically create a lens post for your stream, when you visit the page while your stream is still live, we can not create a post on your behalf otherwise.\nSoon you will be able to create a post for your untitled streams later from content page, in case you missed creating it somehow while it was still live.'}
+            : 'Untitled streams are those stream that are not associated with any lens post. They are not visible on other lens platform. These streams are only accessible through direct link. \n\n Why is you stream untitled?\nYou may have not been on go-live page when your stream was live, this means no lens post was created for your stream. Go-live page will automatically create a lens post for your stream, when you visit the page while your stream is still live, we can not create a post on your behalf otherwise.\nYou can create a lens post for your untitled streams from content page, then this stream replay wont remain untitled stream.'}
         </Markup>
         {/* links */}
       </div>
