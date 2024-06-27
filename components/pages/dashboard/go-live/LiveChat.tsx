@@ -41,6 +41,7 @@ import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
 import LiveChatInput from './LiveChatInput'
 import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
 import toast from 'react-hot-toast'
+import clsx from 'clsx'
 
 // Base type for common fields
 interface MessageBase {
@@ -64,6 +65,7 @@ interface ProfileMessage extends MessageBase {
   avatarUrl?: string
   handle: string
   amount?: number
+  formattedAmount?: string
   currencySymbol?: string
   id: string
 }
@@ -397,7 +399,7 @@ const LiveChat = ({
           }
 
           // treat this as a super chat
-          if (msg.amount) {
+          if (msg.amount || msg.formattedAmount) {
             return (
               <div
                 key={index}
@@ -411,13 +413,16 @@ const LiveChat = ({
 
                 <div className="text-sm ">
                   <div className="start-center-row gap-x-1.5 mb-1.5">
-                    <div className="font-semibold">
-                      {msg.handle}{' '}
-                      {msg.profileId === msg.authorProfileId && '🎙️'}
+                    <div
+                      className={clsx(
+                        'font-semibold bg-white text-brand rounded-md px-1.5 py-0.5'
+                      )}
+                    >
+                      {msg.handle}
                     </div>
 
                     <div className="font-semibold">
-                      {`${msg.amount} ${msg.currencySymbol}`}
+                      {`${msg.amount || parseFloat(msg.formattedAmount!)} ${msg.currencySymbol}`}
                     </div>
                   </div>
                   <Markup className="break-words whitespace-pre-wrap">
@@ -439,11 +444,15 @@ const LiveChat = ({
                 className="pl-2.5 font-bold text-sm pt-1"
                 style={{ minWidth: 0, flexShrink: 1 }}
               >
-                <span className="text-s-text mr-1">
-                  {msg.handle}{' '}
-                  {msg.authorProfileId &&
-                    msg.profileId === msg.authorProfileId &&
-                    '🎙️'}
+                <span
+                  className={clsx(
+                    'text-s-text mr-1',
+                    msg?.authorProfileId &&
+                      msg.profileId === msg?.authorProfileId &&
+                      'bg-brand text-white rounded-md px-1.5 py-0.5'
+                  )}
+                >
+                  {msg.handle}
                 </span>
                 <span>
                   <Markup className="break-words whitespace-pre-wrap">
