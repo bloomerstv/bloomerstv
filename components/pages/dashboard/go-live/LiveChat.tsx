@@ -16,7 +16,6 @@ import {
   PublicationId,
   SessionType,
   useCreateComment,
-  // useProfile,
   useSession
 } from '@lens-protocol/react-web'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
@@ -105,11 +104,6 @@ const LiveChat = ({
   const [uploadDataToAR] = useUploadDataToArMutation()
   const { execute } = useCreateComment()
   const [verifiedToSend, setVerifiedToSend] = useState(false)
-
-  // const { data: streamer } = useProfile({
-  //   // @ts-ignore
-  //   forProfileId: profileId
-  // })
 
   const { data: chats } = useStreamChatsQuery({
     variables: {
