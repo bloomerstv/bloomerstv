@@ -41,6 +41,7 @@ import LiveChatInput from './LiveChatInput'
 import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import ChatOptions from './ChatOptions'
 
 // Base type for common fields
 interface MessageBase {
@@ -121,8 +122,6 @@ const LiveChat = ({
       })
     }
   }, [chats])
-
-  console.log('messages', messages)
 
   const liveChatPopUpSound = useMyPreferences(
     (state) => state.liveChatPopUpSound
@@ -222,6 +221,16 @@ const LiveChat = ({
       }
 
       setMessages((prev: Message[]) => [...prev, receivedMessage as Message])
+    })
+
+    newSocket.on('remove-messages', (profileId: string) => {
+      setMessages((prev) =>
+        prev.filter((msg) => {
+          if (msg.type === 'System') return true
+
+          return msg.authorProfileId !== profileId
+        })
+      )
     })
     // }
 
@@ -397,8 +406,17 @@ const LiveChat = ({
             return (
               <div
                 key={index}
-                className="bg-brand shadow-md m-1.5 text-white rounded-xl p-2 flex flex-row items-start gap-x-2.5"
+                className="bg-brand group relative shadow-md m-1.5 text-white rounded-xl p-2 flex flex-row items-start gap-x-2.5"
               >
+                <div className="absolute top-0 right-0 hidden group-hover:block ">
+                  <ChatOptions
+                    chatProfileId={profileId}
+                    profileId={msg.authorProfileId}
+                    handle={msg.handle}
+                    avatarUrl={msg.avatarUrl!}
+                    socket={socket}
+                  />
+                </div>
                 <img
                   src={msg.avatarUrl}
                   alt="avatar"
@@ -427,7 +445,19 @@ const LiveChat = ({
             )
           }
           return (
-            <div key={index} className="flex flex-row px-3 my-1.5">
+            <div
+              key={index}
+              className="flex group relative flex-row px-3 my-1.5"
+            >
+              <div className="absolute top-0 right-0 hidden group-hover:block ">
+                <ChatOptions
+                  chatProfileId={profileId}
+                  profileId={msg.authorProfileId}
+                  handle={msg.handle}
+                  avatarUrl={msg.avatarUrl!}
+                  socket={socket}
+                />
+              </div>
               <img
                 src={msg.avatarUrl}
                 alt="avatar"
