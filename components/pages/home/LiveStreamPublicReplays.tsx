@@ -156,7 +156,11 @@ const HomePageCards = () => {
     }
   }
 
-  const lengthToShow = isMobile ? 9 : width < 1536 ? 12 : 16
+  const lengthToShow = isMobile
+    ? 9
+    : width < 1536
+      ? Math.max(12 - (streamersWithProfiles?.length ?? 0), 0)
+      : Math.max(16 - (streamersWithProfiles?.length ?? 0), 0)
 
   const renderLoadingCards = () => {
     // Create an array of 8 elements and map over it
