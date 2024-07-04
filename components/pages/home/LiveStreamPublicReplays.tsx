@@ -145,8 +145,8 @@ const HomePageCards = () => {
 
   useEffect(() => {
     checkOverflow()
-    // window.addEventListener('resize', checkOverflow)
-    // return () => window.removeEventListener('resize', checkOverflow)
+    window.addEventListener('resize', checkOverflow)
+    return () => window.removeEventListener('resize', checkOverflow)
   }, [])
 
   const scrollLeft = () => {
