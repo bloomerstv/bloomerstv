@@ -48,13 +48,6 @@ const HomePageCards = () => {
 
   const publicationsMap = new Map(publications?.map((p) => [p?.id, p]))
 
-  const renderLoadingCards = () => {
-    // Create an array of 8 elements and map over it
-    return Array(8)
-      .fill(null)
-      .map((_, i) => <LoadingVideoCard key={i} />)
-  }
-
   const filteredPublications =
     streamReplayPublication?.streamReplayPublications?.filter((p) => {
       const post = p?.publicationId
@@ -164,6 +157,13 @@ const HomePageCards = () => {
   }
 
   const lengthToShow = isMobile ? 9 : width < 1536 ? 12 : 16
+
+  const renderLoadingCards = () => {
+    // Create an array of 8 elements and map over it
+    return Array(lengthToShow)
+      .fill(null)
+      .map((_, i) => <LoadingVideoCard key={i} />)
+  }
 
   useEffect(() => {
     if (combinedData?.length <= lengthToShow) {
