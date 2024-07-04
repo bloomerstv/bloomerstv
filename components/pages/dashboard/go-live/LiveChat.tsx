@@ -408,7 +408,7 @@ const LiveChat = ({
                 key={index}
                 className="bg-brand group relative shadow-md m-1.5 text-white rounded-xl p-2 flex flex-row items-start gap-x-2.5"
               >
-                <div className="absolute top-0 right-0 hidden group-hover:block ">
+                <div className="absolute top-0  right-0 hidden group-hover:block ">
                   <ChatOptions
                     chatProfileId={profileId}
                     profileId={msg.authorProfileId}
@@ -449,7 +449,7 @@ const LiveChat = ({
               key={index}
               className="flex group relative flex-row px-3 my-1.5"
             >
-              <div className="absolute top-0 right-0 hidden group-hover:block ">
+              <div className="absolute top-0 -translate-y-1 right-0 hidden group-hover:block ">
                 <ChatOptions
                   chatProfileId={profileId}
                   profileId={msg.authorProfileId}

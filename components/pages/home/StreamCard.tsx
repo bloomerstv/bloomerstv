@@ -14,7 +14,7 @@ const StreamCard = ({ streamer }: { streamer: StreamerWithProfile }) => {
     <Link
       prefetch
       href={`/${formatHandle(streamer?.profile)}`}
-      className="no-underline text-p-text w-full lg:w-1/3 sm:px-2"
+      className="no-underline text-p-text w-full lg:w-1/3 2xl:w-1/4 sm:px-2"
     >
       {/* xl:w-[368px] xl:h-[207px] 2xl:w-[392px] 2xl:h-[220px] */}
       <div className="w-full aspect-video relative mb-2 sm:rounded-xl overflow-hidden">

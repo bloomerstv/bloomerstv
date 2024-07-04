@@ -12,6 +12,7 @@ import toast from 'react-hot-toast'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import { useStreamReplayRecordingQuery } from '../../../graphql/generated'
 import Player from '../../common/Player'
+import { getCategoryForTag } from '../../../utils/categories'
 const VideoPage = ({
   post,
   sessionId
@@ -118,14 +119,23 @@ const VideoPage = ({
       />
 
       <div className="sm:mx-8 sm:mt-6 sm:mb-0 text-p-text font-semibold sm:text-base text-sm sm:p-6 m-2 p-3 gap-y-1 start-col  rounded-xl shadow-sm bg-p-hover lg:bg-s-bg">
-        {/* // add total views count here */}
-        <div className="">
-          {`${
-            post?.metadata?.__typename === 'LiveStreamMetadataV3' ||
-            (!post && sessionId)
-              ? 'Streamed'
-              : 'Posted'
-          } ${timeAgo(post?.createdAt || data?.streamReplayRecording?.createdAt)}`}{' '}
+        <div className="flex flex-row flex-wrap gap-3 items-center">
+          {/* // todo add total views count here */}
+
+          <div className="">
+            {`${
+              post?.metadata?.__typename === 'LiveStreamMetadataV3' ||
+              (!post && sessionId)
+                ? 'Streamed'
+                : 'Posted'
+            } ${timeAgo(post?.createdAt || data?.streamReplayRecording?.createdAt)}`}{' '}
+          </div>
+          {post?.metadata?.tags?.[0] &&
+            getCategoryForTag(post?.metadata?.tags?.[0]) && (
+              <div className="text-p-text bg-p-bg sm:bg-p-hover rounded-lg px-2 sm:px-3 py-0.5 sm:py-1 text-xs">
+                {getCategoryForTag(post?.metadata?.tags?.[0])}
+              </div>
+            )}
         </div>
         <Markup className="">
           {post

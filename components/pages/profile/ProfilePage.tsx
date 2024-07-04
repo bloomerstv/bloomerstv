@@ -219,7 +219,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         {(streamer?.streamer?.startedStreaming ||
           streamer?.streamer?.streamDescription) && (
           <div className="sm:mx-8 sm:mt-6 sm:mb-0 text-p-text font-semibold sm:text-base text-sm sm:p-6 m-2 p-3 gap-y-1 start-col  rounded-xl shadow-sm bg-p-hover lg:bg-s-bg">
-            {/* // add total views count here */}
+            {/* // todo add total views count here */}
             {streamer?.streamer?.startedStreaming && (
               <div className="">
                 {`${
@@ -233,6 +233,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
                 }`}
               </div>
             )}
+
             {streamer?.streamer?.streamDescription && (
               <Markup className="">
                 {String(streamer?.streamer?.streamDescription)}

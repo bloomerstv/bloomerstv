@@ -7,9 +7,34 @@ export const CATEGORIES = [
     name: 'Gaming',
     tags: ['gaming', 'orbcommunitiesgaming']
   },
+
+  {
+    name: 'Just chilling',
+    tags: ['justchalling']
+  },
   {
     name: 'Music',
     tags: ['music', 'orbcommunitiesMusic']
+  },
+  {
+    name: 'Metaverse',
+    tags: ['metaverse', 'orbcommunitiesmetaverse']
+  },
+  {
+    name: 'Podcast',
+    tags: ['podcast']
+  },
+  {
+    name: 'Lens Ecosystem',
+    tags: ['lens', 'orbcommunitieslens']
+  },
+  {
+    name: 'Crypto & Blockchain',
+    tags: ['crypto', 'orbcommunitiesDeFi', 'blockchain']
+  },
+  {
+    name: 'Arts',
+    tags: ['arts', 'orbcommunitiesrefraction']
   },
   {
     name: 'Coding & Tech',
@@ -22,49 +47,26 @@ export const CATEGORIES = [
     ]
   },
   {
-    name: 'Just chilling',
-    tags: ['justchalling']
-  },
-  {
-    name: 'Podcast',
-    tags: ['podcast']
-  },
-  {
-    name: 'Crypto & Blockchain',
-    tags: ['crypto', 'orbcommunitiesDeFi', 'blockchain']
-  },
-  {
-    name: 'Arts',
-    tags: ['arts', 'orbcommunitiesrefraction']
-  },
-  {
     name: 'Travel & Events',
     tags: ['travel', 'orbcommunitiestravel']
   },
-  {
-    name: 'Metaverse',
-    tags: ['metaverse', 'orbcommunitiesmetaverse']
-  },
+
   {
     name: 'Fashion & Beauty',
     tags: ['fashion', 'beauty', 'orbcommunitiesfashion']
   },
-  {
-    name: 'Pets & Animals',
-    tags: ['pets', 'orbcommunitiespets']
-  },
-  {
-    name: 'Film & Animation',
-    tags: ['film', 'orbcommunitiestvnfilms']
-  },
-  {
-    name: 'Health & Fitness',
-    tags: ['health', 'wellness', 'fitness', 'orbcommunitiesfitness']
-  },
-  {
-    name: 'Lens Ecosystem',
-    tags: ['lens', 'orbcommunitieslens']
-  },
+  // {
+  //   name: 'Pets & Animals',
+  //   tags: ['pets', 'orbcommunitiespets']
+  // },
+  // {
+  //   name: 'Film & Animation',
+  //   tags: ['film', 'orbcommunitiestvnfilms']
+  // },
+  // {
+  //   name: 'Health & Fitness',
+  //   tags: ['health', 'wellness', 'fitness', 'orbcommunitiesfitness']
+  // },
   {
     name: 'Comedy & Memes',
     tags: ['comedy', 'memes', 'orbcommunitiesmemes']
@@ -81,18 +83,19 @@ export const CATEGORIES = [
     name: 'News & Politics',
     tags: ['news']
   },
-  {
-    name: 'Books & Literature',
-    tags: ['literature', 'orbcommunities-t2/post']
-  },
+
+  // {
+  //   name: 'Books & Literature',
+  //   tags: ['literature', 'orbcommunities-t2/post']
+  // },
   {
     name: 'Education',
     tags: ['education']
-  },
-  {
-    name: 'Howto & Style',
-    tags: ['howto']
   }
+  // {
+  //   name: 'Howto & Style',
+  //   tags: ['howto']
+  // }
 ]
 
 export const TOKEN_TAGS = [
@@ -118,4 +121,10 @@ export const getTagsForSymbol = (symbol?: string) => {
   if (!symbol) return []
   const tokenObj = TOKEN_TAGS.find((c) => c.symbol === symbol)
   return tokenObj?.tags ?? []
+}
+
+export const getCategoryForTag = (tag?: string) => {
+  if (!tag) return 'None'
+  const categoryObj = CATEGORIES.find((c) => c.tags.includes(tag))
+  return categoryObj?.name ?? 'None'
 }
