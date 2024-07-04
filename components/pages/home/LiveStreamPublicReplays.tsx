@@ -145,8 +145,8 @@ const HomePageCards = () => {
 
   useEffect(() => {
     checkOverflow()
-    window.addEventListener('resize', checkOverflow)
-    return () => window.removeEventListener('resize', checkOverflow)
+    // window.addEventListener('resize', checkOverflow)
+    // return () => window.removeEventListener('resize', checkOverflow)
   }, [])
 
   const scrollLeft = () => {
@@ -171,7 +171,7 @@ const HomePageCards = () => {
     } else {
       setShowShowMoreButton(true)
     }
-  }, [combinedData])
+  }, [combinedData?.length])
 
   return (
     <>
@@ -195,7 +195,10 @@ const HomePageCards = () => {
           {CATEGORIES.map((category) => (
             <button
               key={category?.name}
-              onClick={() => setSelectedCategory(category)}
+              onClick={(e) => {
+                e.preventDefault() // Ensure this is not preventing navigation
+                setSelectedCategory(category)
+              }}
               className={clsx(
                 'flex-shrink-0 cursor-pointer border-none py-1.5 px-3 sm:py-2 sm:px-4 font-semibold text-sm outline-none shadow-sm transition duration-300 ease-in-out transform rounded-md ',
                 selectedCategory?.name === category?.name
