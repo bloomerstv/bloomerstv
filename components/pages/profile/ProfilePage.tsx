@@ -32,6 +32,7 @@ import {
   useMyPreferences
 } from '../../store/useMyPreferences'
 import { Src } from '@livepeer/react'
+import HorizontalNavigation from '../../ui/HorizontalNavigation'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
@@ -187,6 +188,36 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     return <div>Profile not found</div>
   }
 
+  const navItems = [
+    {
+      name: `About`,
+      component: 'AboutProfile',
+      render: () => (
+        <div className="pb-[80vh]">
+          <AboutProfile profile={data} />{' '}
+        </div>
+      )
+    },
+    {
+      name: 'Clips',
+      component: 'ClipsFeed',
+      render: () => (
+        <div className="pb-[80vh]">
+          <ClipsFeed handle={formatHandle(data)} />
+        </div>
+      )
+    },
+    {
+      name: 'Streams',
+      component: 'LiveStreamPublicReplays',
+      render: () => (
+        <div className="pb-[80vh]">
+          <LiveStreamPublicReplays profileId={data?.id} />
+        </div>
+      )
+    }
+  ]
+
   return (
     <div className="flex flex-row h-full w-full">
       {clipUrl && data && sessionData?.type === SessionType.WithProfile && (
@@ -243,14 +274,11 @@ const ProfilePage = ({ handle }: { handle: string }) => {
           </div>
         )}
 
-        <AboutProfile profile={data} />
-
-        <div className="sm:mx-8">
-          <ClipsFeed handle={formatHandle(data)} />
-        </div>
-
-        <div className="mt-4 sm:mx-8">
-          <LiveStreamPublicReplays profileId={data?.id} />
+        <div className="sm:mx-8 sm:my-6">
+          <HorizontalNavigation
+            navClassName="mx-2 sm:mx-0"
+            navItems={navItems}
+          />
         </div>
       </div>
       {data?.id && !isMobile && (

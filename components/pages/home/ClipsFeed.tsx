@@ -47,9 +47,6 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
   }
   return (
     <div className="w-full">
-      <div className="text-p-text font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
-        {handle ? `Clips from ${handle}'s Streams` : 'Stream Clips & Edits'}
-      </div>
       {/* @ts-ignore */}
       {data?.length > 0 ? (
         <div className="flex flex-row flex-wrap w-full gap-y-6">

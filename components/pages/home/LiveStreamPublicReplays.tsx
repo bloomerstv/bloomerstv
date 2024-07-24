@@ -343,15 +343,8 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
 }
 
 const LiveStreamPublicReplays = ({ profileId }: { profileId?: string }) => {
-  const isMobile = useIsMobile()
   return (
     <div className="w-full">
-      {!isMobile && profileId && (
-        <div className="text-p-text leading-5 font-bold text-2xl py-2 px-2 mb-2 sm:mb-4">
-          Past Streams
-        </div>
-      )}
-
       {profileId ? (
         <ProfilesHomeCards profileId={profileId} />
       ) : (
