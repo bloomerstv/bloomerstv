@@ -1,11 +1,15 @@
 query StreamReplayPublications($skip: Int, $profileId: String) {
   streamReplayPublications(skip: $skip, profileId: $profileId) {
-    publicationId
-    thumbnail
-    sourceSegmentsDuration
-    premium
-    sessionId
-    createdAt
-    profileId
+    streamReplayPublications {
+      publicationId
+      thumbnail
+      sourceSegmentsDuration
+      premium
+      createdAt
+      sessionId
+      profileId
+    }
+    next
+    hasMore
   }
 }

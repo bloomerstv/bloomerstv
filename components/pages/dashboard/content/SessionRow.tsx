@@ -30,6 +30,7 @@ import ContentCutIcon from '@mui/icons-material/ContentCut'
 import DeleteIcon from '@mui/icons-material/Delete'
 import toast from 'react-hot-toast'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
+import LoadingImage from '../../../ui/LoadingImage'
 // import Player from '../../../common/Player'
 
 const SessionRow = ({ session }: { session: RecordedSession }) => {
@@ -138,8 +139,11 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
       <TableCell>
         <div className="flex flex-row items-start gap-x-4 w-[450px]">
           <div className="relative">
-            <img
-              src={getThumbnailFromRecordingUrl(session?.recordingUrl)}
+            <LoadingImage
+              src={
+                data?.metadata?.marketplace?.image?.optimized?.uri ??
+                getThumbnailFromRecordingUrl(session?.recordingUrl)
+              }
               className="w-[120px] rounded-sm"
             />
             {session?.sourceSegmentsDuration && (

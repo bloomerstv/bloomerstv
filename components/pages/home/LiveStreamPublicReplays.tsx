@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
+  AnyPublication,
   Post,
   PublicationMetadataMainFocusType,
   PublicationType,
@@ -14,7 +15,10 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import { useStreamersWithProfiles } from '../../store/useStreamersWithProfiles'
 import useInnerWidth from '../../../utils/hooks/useInnerWidth'
-import { useIsVerifiedQuery } from '../../../graphql/generated'
+import {
+  StreamReplayPublication,
+  useIsVerifiedQuery
+} from '../../../graphql/generated'
 import { APP_ID } from '../../../utils/config'
 import { CATEGORIES } from '../../../utils/categories'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
@@ -49,25 +53,27 @@ const HomePageCards = () => {
   const publicationsMap = new Map(publications?.map((p) => [p?.id, p]))
 
   const filteredPublications =
-    streamReplayPublication?.streamReplayPublications?.filter((p) => {
-      const post = p?.publicationId
-        ? // @ts-ignore
-          publicationsMap.get(p?.publicationId)
-        : null
+    streamReplayPublication?.streamReplayPublications?.streamReplayPublications?.filter(
+      (p) => {
+        const post = p?.publicationId
+          ? // @ts-ignore
+            publicationsMap.get(p?.publicationId)
+          : null
 
-      if (p?.publicationId && !post) return false
+        if (p?.publicationId && !post) return false
 
-      if (selectedCategory?.tags?.length > 0) {
-        return (
-          post?.__typename === 'Post' &&
-          post?.metadata?.tags?.some((tag) =>
-            selectedCategory?.tags?.includes(tag)
+        if (selectedCategory?.tags?.length > 0) {
+          return (
+            post?.__typename === 'Post' &&
+            post?.metadata?.tags?.some((tag) =>
+              selectedCategory?.tags?.includes(tag)
+            )
           )
-        )
-      }
+        }
 
-      return true
-    })
+        return true
+      }
+    )
 
   // for clips
 
@@ -231,8 +237,10 @@ const HomePageCards = () => {
           })}
         {!loading &&
         !profilesLoading &&
-        streamReplayPublication?.streamReplayPublications &&
-        streamReplayPublication?.streamReplayPublications?.length > 0 &&
+        streamReplayPublication?.streamReplayPublications
+          ?.streamReplayPublications &&
+        streamReplayPublication?.streamReplayPublications
+          ?.streamReplayPublications?.length > 0 &&
         combinedData &&
         combinedData?.length > 0
           ? combinedData
@@ -304,41 +312,112 @@ const HomePageCards = () => {
 }
 
 const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
+  const [skip, setSkip] = useState(0)
   const { loading, publications, streamReplayPublication } =
     useStreamReplayPublications({
-      profileId: profileId
+      profileId: profileId,
+      skip: skip
     })
 
+  const [allStreamReplayPublications, setAllStreamReplayPublications] =
+    useState<StreamReplayPublication[]>([])
+
+  const [allPublications, setAllPublications] = useState<AnyPublication[]>([])
+
+  useEffect(() => {
+    // add it to allPublications if it isn't already added
+
+    setAllPublications((prev) => {
+      const newPublications = publications?.filter(
+        (p) => !prev?.some((prevP) => prevP?.id === p?.id)
+      )
+
+      if (!newPublications || newPublications?.length === 0) return prev
+
+      return [...prev, ...newPublications!]
+    })
+  }, [publications])
+
+  useEffect(() => {
+    // @ts-ignore
+    setAllStreamReplayPublications((prev) => {
+      const newStreamReplayPublications =
+        streamReplayPublication?.streamReplayPublications?.streamReplayPublications?.filter(
+          (p) =>
+            !prev?.some((prevP) => prevP?.publicationId === p?.publicationId)
+        )
+
+      if (
+        !newStreamReplayPublications ||
+        newStreamReplayPublications?.length === 0
+      )
+        return prev
+
+      return [...prev, ...newStreamReplayPublications!]
+    })
+  }, [
+    streamReplayPublication?.streamReplayPublications?.streamReplayPublications
+  ])
+
   const streamReplayMap = new Map(
-    streamReplayPublication?.streamReplayPublications?.map((p) => [
-      p?.publicationId,
-      p
-    ])
+    allStreamReplayPublications?.map((p) => [p?.publicationId, p])
   )
 
+  const loadMoreRef = useRef(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (
+          entries[0].isIntersecting &&
+          streamReplayPublication?.streamReplayPublications?.hasMore &&
+          !loading
+        ) {
+          setSkip(streamReplayPublication?.streamReplayPublications?.next)
+        }
+      },
+      { threshold: 1.0 }
+    )
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current)
+      }
+    }
+  }, [
+    streamReplayPublication?.streamReplayPublications?.hasMore,
+    loading,
+    streamReplayPublication?.streamReplayPublications?.next
+  ])
+
   return (
-    <>
+    <div className="w-full">
       {/* @ts-ignore */}
-      {publications?.length > 0 ? (
-        <div className="flex flex-row flex-wrap w-full gap-y-6">
-          {publications?.map((post) => {
-            return (
-              <HomeVideoCard
-                // @ts-ignore
-                cover={streamReplayMap.get(post?.id)?.thumbnail}
-                // @ts-ignore
-                duration={streamReplayMap.get(post?.id)?.sourceSegmentsDuration}
-                premium={!!streamReplayMap.get(post?.id)?.premium}
-                key={post?.id}
-                post={post as Post}
-              />
-            )
-          })}
-        </div>
-      ) : (
-        <>{loading && <LoadingVideoCard />}</>
-      )}
-    </>
+      <div className="flex flex-row flex-wrap w-full gap-y-6">
+        {allPublications?.map((post) => {
+          return (
+            <HomeVideoCard
+              // @ts-ignore
+              cover={streamReplayMap.get(post?.id)?.thumbnail}
+              // @ts-ignore
+              duration={streamReplayMap.get(post?.id)?.sourceSegmentsDuration}
+              premium={!!streamReplayMap.get(post?.id)?.premium}
+              key={post?.id}
+              post={post as Post}
+            />
+          )
+        })}
+
+        {(streamReplayPublication?.streamReplayPublications?.hasMore ||
+          (!allPublications?.length && loading)) &&
+          Array.from({ length: 3 }, (_, i) => <LoadingVideoCard key={i} />)}
+      </div>
+      <div ref={loadMoreRef} className="h-1" />
+    </div>
   )
 }
 

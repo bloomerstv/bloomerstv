@@ -156,7 +156,7 @@ export type Query = {
   ping?: Maybe<Scalars['JSON']['output']>
   shouldCreateNewPost?: Maybe<Scalars['String']['output']>
   streamChats?: Maybe<Array<Maybe<Chat>>>
-  streamReplayPublications?: Maybe<Array<Maybe<StreamReplayPublications>>>
+  streamReplayPublications?: Maybe<StreamReplayPublicationsResult>
   streamReplayRecording?: Maybe<StreamReplayRecording>
   streamer?: Maybe<SingleStreamer>
   thumbnail?: Maybe<Scalars['String']['output']>
@@ -241,8 +241,8 @@ export type Stream = {
   streamName?: Maybe<Scalars['String']['output']>
 }
 
-export type StreamReplayPublications = {
-  __typename?: 'StreamReplayPublications'
+export type StreamReplayPublication = {
+  __typename?: 'StreamReplayPublication'
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
   profileId?: Maybe<Scalars['String']['output']>
@@ -250,6 +250,13 @@ export type StreamReplayPublications = {
   sessionId?: Maybe<Scalars['String']['output']>
   sourceSegmentsDuration?: Maybe<Scalars['Float']['output']>
   thumbnail?: Maybe<Scalars['String']['output']>
+}
+
+export type StreamReplayPublicationsResult = {
+  __typename?: 'StreamReplayPublicationsResult'
+  hasMore: Scalars['Boolean']['output']
+  next: Scalars['Int']['output']
+  streamReplayPublications?: Maybe<Array<Maybe<StreamReplayPublication>>>
 }
 
 export type StreamReplayRecording = {
@@ -495,16 +502,21 @@ export type StreamReplayPublicationsQueryVariables = Exact<{
 
 export type StreamReplayPublicationsQuery = {
   __typename?: 'Query'
-  streamReplayPublications?: Array<{
-    __typename?: 'StreamReplayPublications'
-    publicationId?: string | null
-    thumbnail?: string | null
-    sourceSegmentsDuration?: number | null
-    premium?: boolean | null
-    sessionId?: string | null
-    createdAt?: any | null
-    profileId?: string | null
-  } | null> | null
+  streamReplayPublications?: {
+    __typename?: 'StreamReplayPublicationsResult'
+    next: number
+    hasMore: boolean
+    streamReplayPublications?: Array<{
+      __typename?: 'StreamReplayPublication'
+      publicationId?: string | null
+      thumbnail?: string | null
+      sourceSegmentsDuration?: number | null
+      premium?: boolean | null
+      createdAt?: any | null
+      sessionId?: string | null
+      profileId?: string | null
+    } | null> | null
+  } | null
 }
 
 export type StreamerQueryVariables = Exact<{
@@ -1571,13 +1583,17 @@ export type StreamChatsQueryResult = Apollo.QueryResult<
 export const StreamReplayPublicationsDocument = gql`
   query StreamReplayPublications($skip: Int, $profileId: String) {
     streamReplayPublications(skip: $skip, profileId: $profileId) {
-      publicationId
-      thumbnail
-      sourceSegmentsDuration
-      premium
-      sessionId
-      createdAt
-      profileId
+      streamReplayPublications {
+        publicationId
+        thumbnail
+        sourceSegmentsDuration
+        premium
+        createdAt
+        sessionId
+        profileId
+      }
+      next
+      hasMore
     }
   }
 `

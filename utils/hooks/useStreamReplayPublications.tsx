@@ -13,9 +13,11 @@ import { useStreamersWithProfiles } from '../../components/store/useStreamersWit
 import { usePublicationsStore } from '../../components/store/usePublications'
 
 export const useStreamReplayPublications = ({
-  profileId
+  profileId,
+  skip = 0
 }: {
   profileId?: string
+  skip?: number
 }): {
   streamReplayPublication?: StreamReplayPublicationsQuery
   publications?: AnyPublication[]
@@ -32,7 +34,7 @@ export const useStreamReplayPublications = ({
   const { data, loading: streamReplayLoading } =
     useStreamReplayPublicationsQuery({
       variables: {
-        skip: 0,
+        skip: skip,
         profileId: profileId
       }
     })
@@ -42,7 +44,7 @@ export const useStreamReplayPublications = ({
       // @ts-ignore
       profileIds: Array.from(
         new Set(
-          data?.streamReplayPublications
+          data?.streamReplayPublications?.streamReplayPublications
             ?.map((p) => {
               if (!p?.publicationId && p?.profileId) {
                 return p?.profileId
@@ -57,7 +59,7 @@ export const useStreamReplayPublications = ({
   const { data: publications, loading } = usePublications({
     where: {
       // @ts-ignore
-      publicationIds: data?.streamReplayPublications
+      publicationIds: data?.streamReplayPublications?.streamReplayPublications
         ?.map((p) => p?.publicationId)
         .filter((p) => p)
     }
