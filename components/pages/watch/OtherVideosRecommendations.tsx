@@ -38,7 +38,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
   const getStreamReplay = useCallback(
     (publicationId: string) => {
       const streamReplay =
-        streamReplayPublication?.streamReplayPublications?.find(
+        streamReplayPublication?.streamReplayPublications?.streamReplayPublications?.find(
           (p) => p?.publicationId === publicationId
         )
       return {
