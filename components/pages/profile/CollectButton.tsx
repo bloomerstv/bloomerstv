@@ -20,6 +20,9 @@ import toast from 'react-hot-toast'
 import { AnimatePresence, motion, useAnimation } from 'framer-motion'
 import { useRef } from 'react'
 import clsx from 'clsx'
+import useHandleWrongNetwork from '../../../utils/hooks/useHandleWrongNetwork'
+import { useAccount } from 'wagmi'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 const CollectButton = ({
   post,
@@ -32,6 +35,9 @@ const CollectButton = ({
   handleFollow: () => void
   followLoading: boolean
 }) => {
+  const { isConnected } = useAccount()
+  const { openConnectModal } = useConnectModal()
+
   const { data } = useSession()
   const { execute: approve } = useApproveModule()
   const { execute, error } = useOpenAction({
@@ -101,8 +107,12 @@ const CollectButton = ({
     handleMouseUp()
   }, [error])
 
+  const handleWrongNetwork = useHandleWrongNetwork()
+
   const handleCollect = async (post: Post | Quote) => {
     try {
+      await handleWrongNetwork()
+
       const result = await execute({
         publication: post,
         sponsored: defaultSponsored
@@ -263,6 +273,12 @@ const CollectButton = ({
         <motion.button
           onTapStart={
             () => {
+              // @ts-ignore
+              if (amount?.value && amount?.value !== '0' && !isConnected) {
+                openConnectModal?.()
+                return
+              }
+
               if (
                 followerOnly &&
                 !isFollowing &&
@@ -326,11 +342,14 @@ const CollectButton = ({
 
           <div className="centered-col" style={{ zIndex: 2 }}>
             <div className={'font-semibold text-base leading-6'}>
-              {followerOnly &&
-              !isFollowing &&
-              post?.by?.id !== data?.profile?.id
-                ? 'Follow to collect'
-                : 'Hold to collect'}
+              {/* @ts-ignore */}
+              {amount?.value && amount?.value !== '0' && !isConnected
+                ? 'Connect Wallet'
+                : followerOnly &&
+                    !isFollowing &&
+                    post?.by?.id !== data?.profile?.id
+                  ? 'Follow to collect'
+                  : 'Hold to collect'}
             </div>
 
             <div className="start-center-row space-x-2">
