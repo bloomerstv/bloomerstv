@@ -3,6 +3,7 @@ import ProfilePage from '../../components/pages/profile/ProfilePage'
 import { getHandle } from '../../utils/lib/getHandle'
 import { Metadata } from 'next'
 import { NODE_GRAPHQL_URL } from '../../utils/config'
+import { fetchMetadata } from 'frames.js/next'
 
 type Props = {
   params: { slug: string }
@@ -59,7 +60,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           alt: 'BloomersTV Logo'
         }
       ]
-    }
+    },
+    other: await fetchMetadata(
+      new URL(
+        '/frames',
+        process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : 'http://localhost:3000'
+      )
+    )
   }
 }
 
