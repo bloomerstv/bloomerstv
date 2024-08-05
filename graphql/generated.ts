@@ -177,6 +177,7 @@ export type QueryIsVerifiedArgs = {
 }
 
 export type QueryStreamChatsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
   profileId: Scalars['String']['input']
 }
 
@@ -276,7 +277,7 @@ export type StreamReplayRecording = {
 
 export type StreamStats = {
   __typename?: 'StreamStats'
-  startedStreaming?: Maybe<Scalars['String']['output']>
+  startedStreaming?: Maybe<Scalars['BigNumber']['output']>
   totalStreams?: Maybe<Scalars['Int']['output']>
 }
 

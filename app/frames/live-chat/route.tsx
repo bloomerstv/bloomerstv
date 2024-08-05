@@ -28,7 +28,7 @@ export const POST = frames(async (ctx) => {
       body: JSON.stringify({
         query: `
         query StreamChats {
-  streamChats(profileId: "${profileId}") {
+  streamChats(profileId: "${profileId}", limit: 4) {
     content
     currencySymbol
     formattedAmount
@@ -40,7 +40,9 @@ export const POST = frames(async (ctx) => {
       })
     }).then((res) => res.json())
 
-    chats = data?.streamChats.slice(-4) || []
+    console.log('data', data)
+
+    chats = data?.streamChats || []
   } catch (error) {
     console.error('error', error)
   }
@@ -59,7 +61,7 @@ export const POST = frames(async (ctx) => {
             {chats ? (
               chats.map((chat) => (
                 <div
-                  id={chat?.id}
+                  key={chat?.id}
                   tw="flex flex-col items-start justify-center mb-8"
                 >
                   <div tw="text-5xl font-bold text-black">
