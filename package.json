@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@aws-sdk/lib-storage": "^3.600.0",
+    "@lens-protocol/client": "^2.3.1",
     "@lens-protocol/metadata": "^1.2.0",
     "@lens-protocol/react-web": "^2.3.1",
     "@lens-protocol/wagmi": "^4.1.4",

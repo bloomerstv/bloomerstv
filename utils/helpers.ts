@@ -5,7 +5,11 @@ export const shortFormOfLink = (link?: string) => {
   return link.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '')
 }
 
-export const humanReadableNumber = (num: number) => {
+export const humanReadableNumber = (num?: number) => {
+  console.log('num', num)
+  if (!num) {
+    return '0'
+  }
   if (num < 1000) {
     return num
   }
@@ -14,6 +18,14 @@ export const humanReadableNumber = (num: number) => {
   }
   return `${(num / 1000000).toFixed(1)}m`
 }
+
+export const numberWithCommas = (num?: number) => {
+  if (!num) {
+    return '0'
+  }
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
 export const simpleTime = (time: number) => {
   const date = new Date(time)
   const hours = date.getHours()
@@ -24,6 +36,41 @@ export const simpleTime = (time: number) => {
   const minutes12 = minutes < 10 ? `0${minutes}` : minutes
   const seconds12 = seconds < 10 ? `0${seconds}` : seconds
   return `${hours12}:${minutes12}:${seconds12} ${ampm}`
+}
+
+export const timeToGo = (futureTime: number): string | null => {
+  const now = new Date().getTime()
+  const futureTimeDate = new Date(futureTime).getTime()
+
+  const timeDifference = futureTimeDate - now
+
+  if (timeDifference <= 0) {
+    return null
+  }
+
+  const seconds = Math.floor((timeDifference / 1000) % 60)
+  const minutes = Math.floor((timeDifference / (1000 * 60)) % 60)
+  const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24)
+  const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
+
+  const daysStr = days > 0 ? `${days}d ` : ''
+  const hoursStr = hours > 0 ? `${hours}h ` : ''
+  const minutesStr = minutes > 0 ? `${minutes}m ` : ''
+  const secondsStr = seconds > 0 ? `${seconds}s` : ''
+
+  return `${daysStr}${hoursStr}${minutesStr}${secondsStr}`.trim()
+}
+
+// Function to format the date
+export const formatDate = (dateString: string): string => {
+  console.log('dateString', dateString)
+  const date = new Date(dateString)
+
+  console.log('date', date)
+  const day = date.getDate()
+  const month = date.toLocaleString('default', { month: 'short' })
+  const year = date.getFullYear()
+  return `${day} ${month} ${year}`
 }
 
 export const timeAgo = (time?: number | string) => {

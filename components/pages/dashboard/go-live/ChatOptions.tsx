@@ -20,19 +20,22 @@ import {
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import toast from 'react-hot-toast'
 import LoadingButton from '@mui/lab/LoadingButton'
+import clsx from 'clsx'
 
 const ChatOptions = ({
   handle,
   avatarUrl,
   profileId,
   chatProfileId,
-  socket
+  socket,
+  className
 }: {
   chatProfileId?: string
   profileId?: string
   handle: string
   avatarUrl: string
   socket: any
+  className?: string
 }) => {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [isPopUpOpen, setIsPopUpOpen] = React.useState(false)
@@ -127,15 +130,16 @@ const ChatOptions = ({
           </div>
         </div>
       </ModalWrapper>
-      <div className="bg-s-bg rounded-full">
+      <div className={clsx('rounded-full', className)}>
         <IconButton
           size="small"
           aria-controls={open ? 'options' : undefined}
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
           onClick={handleClick}
+          color="inherit"
         >
-          <MoreVertIcon />
+          <MoreVertIcon color="inherit" />
         </IconButton>
       </div>
       <Menu

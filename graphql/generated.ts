@@ -159,6 +159,7 @@ export type Query = {
   streamReplayPublications?: Maybe<StreamReplayPublicationsResult>
   streamReplayRecording?: Maybe<StreamReplayRecording>
   streamer?: Maybe<SingleStreamer>
+  streamerStats?: Maybe<StreamStats>
   thumbnail?: Maybe<Scalars['String']['output']>
   tokenPrice?: Maybe<Price>
 }
@@ -194,6 +195,10 @@ export type QueryStreamerArgs = {
   profileId: Scalars['String']['input']
 }
 
+export type QueryStreamerStatsArgs = {
+  profileId: Scalars['String']['input']
+}
+
 export type QueryThumbnailArgs = {
   handle: Scalars['String']['input']
 }
@@ -225,7 +230,7 @@ export type SingleStreamer = Stream & {
   playbackId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
   profileId: Scalars['String']['output']
-  startedStreaming?: Maybe<Scalars['BigNumber']['output']>
+  startedStreaming?: Maybe<Scalars['String']['output']>
   streamDescription?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
   thumbnail?: Maybe<Scalars['String']['output']>
@@ -267,6 +272,12 @@ export type StreamReplayRecording = {
   publicationId?: Maybe<Scalars['String']['output']>
   recordingUrl?: Maybe<Scalars['String']['output']>
   sessionId?: Maybe<Scalars['String']['output']>
+}
+
+export type StreamStats = {
+  __typename?: 'StreamStats'
+  startedStreaming?: Maybe<Scalars['String']['output']>
+  totalStreams?: Maybe<Scalars['Int']['output']>
 }
 
 export type Streamer = Stream & {
@@ -536,7 +547,7 @@ export type StreamerQuery = {
     streamDescription?: string | null
     latestStreamPublicationId?: string | null
     latestSessionId?: string | null
-    startedStreaming?: any | null
+    startedStreaming?: string | null
     nextStreamTime?: any | null
     premium?: boolean | null
   } | null

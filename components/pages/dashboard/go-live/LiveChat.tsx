@@ -1,11 +1,6 @@
 import { Button, IconButton } from '@mui/material'
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
-
-// import { WebSocket } from 'ws'
-// import { createClient } from 'graphql-ws'
-// import { wsLensGraphEndpoint } from '../../../../utils/config'
 import { sleep } from '../../../../utils/helpers'
-// import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
 import {
   APP_ID,
   LIVE_CHAT_WEB_SOCKET_URL,
@@ -38,10 +33,10 @@ import { textOnly } from '@lens-protocol/metadata'
 import { v4 as uuid } from 'uuid'
 import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
 import LiveChatInput from './LiveChatInput'
-import { getAccessToken } from '../../../../utils/lib/getAccessTokenAsync'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import ChatOptions from './ChatOptions'
+import { getAccessTokenAsync } from '../../../../utils/lib/getIdentityTokenAsync'
 
 // Base type for common fields
 interface MessageBase {
@@ -152,8 +147,7 @@ const LiveChat = ({
 
   const joinChatWithProfile = useCallback(async () => {
     if (data?.type === SessionType.WithProfile && socket) {
-      // this accessToken is used to verify the profile on the api side
-      const accessToken = await getAccessToken()
+      const accessToken = await getAccessTokenAsync()
 
       socket.on('verified-to-send', () => {
         setVerifiedToSend(true)
@@ -415,6 +409,7 @@ const LiveChat = ({
                     handle={msg.handle}
                     avatarUrl={msg.avatarUrl!}
                     socket={socket}
+                    className="bg-brand text-white"
                   />
                 </div>
                 <img
@@ -456,6 +451,7 @@ const LiveChat = ({
                   handle={msg.handle}
                   avatarUrl={msg.avatarUrl!}
                   socket={socket}
+                  className="bg-s-bg"
                 />
               </div>
               <img

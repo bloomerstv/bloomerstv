@@ -37,6 +37,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     console.log(e)
   }
 
+  console.log('thumbnail', thumbnail)
+
+  const frameUrl = new URL(
+    '/frames',
+    process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000'
+  )
+
+  const urlParams = new URLSearchParams({
+    handle: encodeURIComponent(handle),
+    thumbnail: encodeURIComponent(thumbnail)
+  })
+
+  frameUrl.search = urlParams.toString()
+
   return {
     manifest: '/manifest.json', // we are accessing our manifest file here
     title: `${handle.split('/')[1]} - Live on BloomersTV`,
@@ -61,14 +77,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         }
       ]
     },
-    other: await fetchMetadata(
-      new URL(
-        '/frames',
-        process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : 'http://localhost:3000'
-      )
-    )
+    other: await fetchMetadata(frameUrl)
   }
 }
 
