@@ -40,8 +40,6 @@ export const POST = frames(async (ctx) => {
       })
     }).then((res) => res.json())
 
-    console.log('data', data)
-
     chats = data?.streamChats || []
   } catch (error) {
     console.error('error', error)
