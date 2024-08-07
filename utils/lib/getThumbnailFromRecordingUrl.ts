@@ -2,10 +2,11 @@ export const getThumbnailFromRecordingUrl = (
   url: string,
   keyframe: number = 0
 ): string => {
-  return `${url
-    .split('/')
-    .slice(0, -1)
-    .join('/')}/thumbnails/keyframes_${keyframe}.jpg`
+  const baseUrl = `${url.split('/').slice(0, -1).join('/')}/thumbnails/keyframes_${keyframe}`
+  // const jpgUrl = `${baseUrl}.jpg`
+  const pngUrl = `${baseUrl}.png`
+
+  return pngUrl
 }
 
 export const getListOfThumbnailsFromRecordingUrl = (

@@ -6,7 +6,6 @@ export const shortFormOfLink = (link?: string) => {
 }
 
 export const humanReadableNumber = (num?: number) => {
-  console.log('num', num)
   if (!num) {
     return '0'
   }
@@ -63,10 +62,8 @@ export const timeToGo = (futureTime: number): string | null => {
 
 // Function to format the date
 export const formatDate = (dateString: string): string => {
-  console.log('dateString', dateString)
   const date = new Date(dateString)
 
-  console.log('date', date)
   const day = date.getDate()
   const month = date.toLocaleString('default', { month: 'short' })
   const year = date.getFullYear()
