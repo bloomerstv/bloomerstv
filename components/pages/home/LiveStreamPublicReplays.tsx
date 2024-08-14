@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
   AnyPublication,
+  LimitType,
   Post,
   PublicationMetadataMainFocusType,
   PublicationType,
@@ -94,7 +95,8 @@ const HomePageCards = () => {
               }
             : undefined
       }
-    }
+    },
+    limit: LimitType.TwentyFive
   })
 
   const { data: isVerified } = useIsVerifiedQuery({
