@@ -18,8 +18,8 @@ const handleRequest = frames(async (ctx) => {
 
   const finalThumbnail = thumbnail
     ? thumbnail
-    : profile?.metadata?.coverPicture?.optimized?.uri ??
-      'https://bloomers.tv/banner.png'
+    : (profile?.metadata?.coverPicture?.optimized?.uri ??
+      'https://bloomers.tv/banner.png')
 
   const commonQueryParams = new URLSearchParams({
     handle: encodeURIComponent(handle),

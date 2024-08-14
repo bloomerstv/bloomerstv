@@ -314,8 +314,8 @@ const ProfileBar = ({
                   streamer?.streamName
                     ? streamer?.streamName
                     : // @ts-ignore
-                      publication?.metadata?.title ?? // @ts-ignore
-                      publication?.metadata?.content
+                      (publication?.metadata?.title ?? // @ts-ignore
+                      publication?.metadata?.content)
                 }
                 numberOfQuotes={publication?.stats?.quotes}
               />
@@ -365,8 +365,8 @@ const ProfileBar = ({
                   streamer?.streamName
                     ? streamer?.streamName
                     : // @ts-ignore
-                      publication?.metadata?.title ?? // @ts-ignore
-                      publication?.metadata?.content
+                      (publication?.metadata?.title ?? // @ts-ignore
+                      publication?.metadata?.content)
                 }
                 numberOfQuotes={publication?.stats?.quotes}
               />
