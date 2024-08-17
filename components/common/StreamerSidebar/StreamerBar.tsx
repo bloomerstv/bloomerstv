@@ -7,10 +7,11 @@ import PermIdentityIcon from '@mui/icons-material/PermIdentity'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import LiveDiv from '../../ui/LiveDiv'
-import { humanReadableNumber, timeAgoShort } from '../../../utils/helpers'
+import { humanReadableDateTime, humanReadableNumber, timeAgoShort } from '../../../utils/helpers'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import VerifiedBadge from '../../ui/VerifiedBadge'
 import Countdown from 'react-countdown'
+import { Tooltip } from '@mui/material'
 const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
@@ -88,11 +89,13 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
               </div>
             </div>
           ) : (
+            <Tooltip title={streamer?.lastSeen ? humanReadableDateTime(streamer?.lastSeen) : 'Offline'} arrow >
             <div className="text-s-text text-xs">
               {streamer?.lastSeen
                 ? `${timeAgoShort(streamer?.lastSeen)} ago`
                 : 'Offline'}
             </div>
+            </Tooltip>
           )}
         </>
       )}

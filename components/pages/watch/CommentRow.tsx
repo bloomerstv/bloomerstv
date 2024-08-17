@@ -10,12 +10,13 @@ import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
 import Markup from '../../common/Lexical/Markup'
 import CommentSection from './CommentSection'
-import { Button } from '@mui/material'
+import { Button, Tooltip } from '@mui/material'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import CommentIcon from '@mui/icons-material/Comment'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import clsx from 'clsx'
+import { humanReadableDateTime, timeAgo, timeAgoShort } from '../../../utils/helpers'
 
 const CommentRow = ({
   comment,
@@ -67,10 +68,15 @@ const CommentRow = ({
     >
       <img src={getAvatar(comment?.by)} className="w-8 h-8 rounded-full" />
       <div className="flex flex-col w-full">
-        <div className="start-col">
+        <div className="start-center-row gap-x-2">
           <div className="text-sm sm:text-base font-semibold">
             {formatHandle(comment?.by)}
           </div>
+          <Tooltip title={humanReadableDateTime(comment?.createdAt)} arrow>
+          <div className='text-sm sm:text-base font-semibold text-s-text cursor-pointer'>
+            {timeAgo(comment?.createdAt)}
+          </div>
+          </Tooltip>
         </div>
         <Markup className="text-sm sm:text-base font-semibold text-s-text">
           {content!}

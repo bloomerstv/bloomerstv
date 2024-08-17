@@ -18,6 +18,19 @@ export const humanReadableNumber = (num?: number) => {
   return `${(num / 1000000).toFixed(1)}m`
 }
 
+export const humanReadableDateTime = (date: string | number) => {
+  const d = typeof date === 'string' ? new Date(date) : new Date(date);
+   const month = d.toLocaleString('default', { month: 'short' });
+  const day = d.getDate();
+  const year = d.getFullYear();
+  const time = d.toLocaleString('default', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  });
+  return `${month} ${day}, ${year} ${time}`;
+};
+
 export const numberWithCommas = (num?: number) => {
   if (!num) {
     return '0'
