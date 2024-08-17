@@ -26,6 +26,7 @@ import GitHubIcon from '@mui/icons-material/GitHub'
 import { useTheme } from '../wrappers/TailwindThemeProvider'
 import { useOfflineStreamersQuery } from '../../graphql/generated'
 import useIsMobile from '../../utils/hooks/useIsMobile'
+import StreamerBarLoading from './StreamerSidebar/StreamerBarLoading'
 const StreamerSidebar = () => {
   const { data } = useSession()
   const pathname = usePathname()
@@ -35,7 +36,8 @@ const StreamerSidebar = () => {
     (state) => state.streamersWithProfiles
   )
 
-  const { data: offlineStreamers } = useOfflineStreamersQuery()
+  const { data: offlineStreamers, loading } = useOfflineStreamersQuery()
+
   // Assuming offlineStreamers is already fetched and available
   const sortedOfflineStreamers = React.useMemo(() => {
     if (!offlineStreamers?.offlineStreamers) return []
@@ -84,7 +86,7 @@ const StreamerSidebar = () => {
     })
     return map
   }, [sortedOfflineStreamers])
-  const { data: offlineProfiles } = useProfiles({
+  const { data: offlineProfiles, loading: profileLoading } = useProfiles({
     where: {
       // @ts-ignore
       profileIds:
@@ -152,6 +154,16 @@ const StreamerSidebar = () => {
               {!minimize && (
                 <div className="font-bold px-4 sm:py-2">Following Channels</div>
               )}
+              {(loading || profileLoading) && 
+              <div className='flex flex-col w-full'>
+                <StreamerBarLoading />
+                <StreamerBarLoading />
+                <StreamerBarLoading />
+                <StreamerBarLoading />
+                <StreamerBarLoading />
+                <StreamerBarLoading />
+
+              </div>}
               {Boolean(followingStreamers?.length) ||
               Boolean(offlineFollowingStreamers?.length) ? (
                 <div className="flex flex-col w-full">
@@ -187,9 +199,9 @@ const StreamerSidebar = () => {
                 </div>
               ) : (
                 <>
-                  {!minimize && (
+                  {!minimize && !(loading || profileLoading) && (
                     <div className="px-4 py-2 text-sm text-s-text font-semibold">
-                      No one from your followings has gone live yet.
+                      No one from your followings has been streaming recently.
                     </div>
                   )}
                 </>
@@ -197,12 +209,17 @@ const StreamerSidebar = () => {
             </>
           )}
 
-          {(Boolean(restOfTheStreamers?.length) ||
-            Boolean(offlineRecommendedStreamers?.length)) && (
+          
             <>
               {!minimize && (
                 <div className="font-bold px-4 py-2">Recommended Channels</div>
               )}
+               {(loading || profileLoading) && 
+              <div className='flex flex-col w-full'>
+                <StreamerBarLoading />
+                <StreamerBarLoading />
+                <StreamerBarLoading />
+              </div>}
               {(Boolean(restOfTheStreamers?.length) ||
                 Boolean(offlineRecommendedStreamers?.length)) && (
                 <div className="flex flex-col w-full">
@@ -238,7 +255,6 @@ const StreamerSidebar = () => {
                 </div>
               )}
             </>
-          )}
         </div>
 
         {!isMobile && (
