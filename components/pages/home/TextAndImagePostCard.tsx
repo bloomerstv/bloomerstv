@@ -166,8 +166,14 @@ const TextAndImagePostCard = ({
               e.stopPropagation()
             }}
           >
-            <LikeButton publication={publication} />
-            <MirrorButton publication={publication} />
+            <LikeButton
+              likeCount={publication?.stats?.upvotes}
+              publication={publication}
+            />
+            <MirrorButton
+              mirrorsCount={publication?.stats?.mirrors}
+              publication={publication}
+            />
             <Tooltip title="Comments" arrow>
               <Button
                 size="small"
