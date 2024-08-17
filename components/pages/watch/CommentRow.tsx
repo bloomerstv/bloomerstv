@@ -16,7 +16,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 import CommentIcon from '@mui/icons-material/Comment'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import clsx from 'clsx'
-import { humanReadableDateTime, timeAgo, timeAgoShort } from '../../../utils/helpers'
+import { humanReadableDateTime, timeAgo } from '../../../utils/helpers'
 
 const CommentRow = ({
   comment,
@@ -73,9 +73,9 @@ const CommentRow = ({
             {formatHandle(comment?.by)}
           </div>
           <Tooltip title={humanReadableDateTime(comment?.createdAt)} arrow>
-          <div className='text-sm sm:text-base font-semibold text-s-text cursor-pointer'>
-            {timeAgo(comment?.createdAt)}
-          </div>
+            <div className="text-sm sm:text-base font-semibold text-s-text cursor-pointer">
+              {timeAgo(comment?.createdAt)}
+            </div>
           </Tooltip>
         </div>
         <Markup className="text-sm sm:text-base font-semibold text-s-text">
