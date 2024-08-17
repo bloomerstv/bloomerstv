@@ -59,8 +59,8 @@ export const localStorageCredKey = isMainnet
 export const lensTestnetUrl = 'https://api-v2-amoy.lens.dev'
 export const lensMainnetUrl = 'https://api-v2.lens.dev'
 export const wsLensGraphEndpoint = isMainnet
-  ? 'wss://api-v2.lens.dev'
-  : 'wss://api-v2-amoy.lens.dev'
+  ? 'ws://api-v2.lens.dev'
+  : 'ws://api-v2-amoy.lens.dev'
 export const lensUrl = isMainnet ? lensMainnetUrl : lensTestnetUrl
 export const handlePrefix = 'lens/'
 export const defaultSponsored = process.env.NEXT_PUBLIC_DEFAULT_SPONSORED

@@ -11,12 +11,20 @@ import {
 } from '@lens-protocol/react-web'
 import { useModal } from '../../common/ModalContext'
 import clsx from 'clsx'
+import { AnimatedCounter } from 'react-animated-counter'
+import { useTheme } from '../../wrappers/TailwindThemeProvider'
 
-const MirrorButton = ({ publication }: { publication: AnyPublication }) => {
+const MirrorButton = ({
+  publication,
+  mirrorsCount
+}: {
+  publication: AnyPublication
+  mirrorsCount: number
+}) => {
+  const { theme } = useTheme()
   const { data: mySession } = useSession()
   const { openModal } = useModal()
   const [isMirrored, setIsMirrored] = React.useState(false)
-  const [mirrors, setMirrors] = React.useState(0)
 
   const { execute: createMirror, loading: mirroring } = useCreateMirror()
 
@@ -43,7 +51,6 @@ const MirrorButton = ({ publication }: { publication: AnyPublication }) => {
       }
 
       setIsMirrored(true)
-      setMirrors(mirrors + 1)
     } catch (error) {
       console.log(error)
       // @ts-ignore
@@ -54,7 +61,6 @@ const MirrorButton = ({ publication }: { publication: AnyPublication }) => {
   useEffect(() => {
     if (publication?.__typename === 'Mirror') return
     setIsMirrored(publication?.operations?.hasMirrored)
-    setMirrors(publication?.stats?.mirrors)
   }, [publication])
   return (
     <Tooltip title="Mirror" arrow>
@@ -73,10 +79,22 @@ const MirrorButton = ({ publication }: { publication: AnyPublication }) => {
         }
         sx={{
           boxShadow: 'none',
-          borderRadius: '20px'
+          borderRadius: '20px',
+          paddingLeft: '14px'
         }}
       >
-        {mirrors}
+        <AnimatedCounter
+          value={mirrorsCount}
+          includeDecimals={false}
+          includeCommas={true}
+          color={theme === 'dark' ? '#ceced3' : '#1f1f23'}
+          incrementColor="#1976d2"
+          fontSize="15px"
+          containerStyles={{
+            marginTop: '4px',
+            marginBottom: '4px'
+          }}
+        />
       </Button>
     </Tooltip>
   )

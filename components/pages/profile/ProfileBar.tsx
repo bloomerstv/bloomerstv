@@ -2,6 +2,7 @@ import {
   Post,
   Profile,
   SessionType,
+  useApolloClient,
   useFollow,
   usePublication,
   useSession,
@@ -19,7 +20,12 @@ import {
   MenuItem,
   MenuList
 } from '@mui/material'
-import { APP_LINK, APP_NAME, defaultSponsored } from '../../../utils/config'
+import {
+  APP_LINK,
+  APP_NAME,
+  defaultSponsored,
+  wsLensGraphEndpoint
+} from '../../../utils/config'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import MobileChatButton from './MobileChatButton'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
@@ -37,6 +43,36 @@ import QuoteButton from './QuoteButton'
 import { useModal } from '../../common/ModalContext'
 import LikeButton from './LikeButton'
 import MirrorButton from './MirrorButton'
+import { createClient } from 'graphql-ws'
+
+const client = createClient({
+  url: wsLensGraphEndpoint
+})
+
+const NEW_PUBLICATION_STATS = `
+  subscription NewPublicationStats(
+    $for: PublicationId!,
+    $request: PublicationStatsCountOpenActionArgs,
+    $reactionsRequest: PublicationStatsReactionArgs
+  ) {
+    newPublicationStats(for: $for) {
+      id
+      comments
+      mirrors
+      quotes
+      reactions(request: $reactionsRequest)
+      countOpenActions(request: $request)
+    }
+  }
+`
+export interface NewPublicationStatsType {
+  comments: number
+  countOpenActions: number
+  id: string
+  mirrors: number
+  quotes: number
+  reactions: number
+}
 
 const ProfileBar = ({
   profile,
@@ -49,6 +85,8 @@ const ProfileBar = ({
   post?: Post
   premium?: boolean
 }) => {
+  const [newPublicationStats, setNewPublicationStats] =
+    useState<NewPublicationStatsType | null>(null)
   const [isFollowing, setIsFollowing] = React.useState<boolean>(
     profile?.operations?.isFollowedByMe?.value
   )
@@ -62,6 +100,8 @@ const ProfileBar = ({
     forId: streamer?.latestStreamPublicationId
   })
 
+  const lensApolloClient = useApolloClient()
+
   const [publication, setPublication] = useState<Post | null | undefined>(post)
   const isMobile = useIsMobile()
   const { openModal } = useModal()
@@ -74,6 +114,57 @@ const ProfileBar = ({
   const handleMenuClose = () => {
     setAnchorEl(null)
   }
+
+  useEffect(() => {
+    if (!streamer?.latestStreamPublicationId || !lensApolloClient) return
+
+    console.log(
+      'subscribing to new publication stats',
+      streamer?.latestStreamPublicationId
+    )
+
+    const unsubscribe = client.subscribe(
+      {
+        query: NEW_PUBLICATION_STATS,
+        variables: {
+          for: streamer?.latestStreamPublicationId,
+          request: {
+            anyOf: [
+              {
+                category: 'COLLECT'
+              }
+            ]
+          },
+          reactionsRequest: {
+            type: 'UPVOTE'
+          }
+        }
+      },
+      {
+        next: ({ data }) => {
+          console.log('data', data)
+          // @ts-ignore
+          console.log('subscribe', data?.newPublicationStats)
+          // @ts-ignore
+          if (!data?.newPublicationStats) return
+          // @ts-ignore
+          setNewPublicationStats(data?.newPublicationStats)
+        },
+        complete: () => {
+          console.log('complete')
+        },
+        error: (err) => {
+          console.error('err', err)
+        }
+      }
+    )
+
+    // return subscription()
+    return () => {
+      console.log('unsubscribing')
+      unsubscribe()
+    }
+  }, [lensApolloClient, streamer?.latestStreamPublicationId])
 
   useEffect(() => {
     if (data?.__typename === 'Post' && !post) {
@@ -279,7 +370,9 @@ const ProfileBar = ({
               {isMobile && (
                 <div className="centered-row">
                   {profile?.id && !post && (
-                    <LiveCount className="-mr-2" profileId={profile?.id} />
+                    <div className="-mr-2">
+                      <LiveCount profileId={profile?.id} />
+                    </div>
                   )}
                   <div className="-mr-3">
                     <IconButton onClick={handleMenuClick}>
@@ -299,11 +392,25 @@ const ProfileBar = ({
             )}
 
             {/* like button  */}
-            {publication?.id && <LikeButton publication={publication} />}
+            {publication?.id && (
+              <LikeButton
+                publication={publication}
+                likeCount={
+                  newPublicationStats?.reactions ?? publication?.stats?.upvotes
+                }
+              />
+            )}
 
             {/* mirror button */}
 
-            {publication?.id && <MirrorButton publication={publication} />}
+            {publication?.id && (
+              <MirrorButton
+                mirrorsCount={
+                  newPublicationStats?.mirrors ?? publication?.stats?.mirrors
+                }
+                publication={publication}
+              />
+            )}
 
             {publication && (
               <QuoteButton
@@ -317,7 +424,9 @@ const ProfileBar = ({
                       (publication?.metadata?.title ?? // @ts-ignore
                       publication?.metadata?.content)
                 }
-                numberOfQuotes={publication?.stats?.quotes}
+                numberOfQuotes={
+                  newPublicationStats?.quotes ?? publication?.stats?.quotes
+                }
               />
             )}
 
@@ -351,10 +460,24 @@ const ProfileBar = ({
               />
             )}
             {/* like button */}
-            {publication?.id && <LikeButton publication={publication} />}
+            {publication?.id && (
+              <LikeButton
+                likeCount={
+                  newPublicationStats?.reactions ?? publication?.stats?.upvotes
+                }
+                publication={publication}
+              />
+            )}
             {/* mirror button */}
 
-            {publication?.id && <MirrorButton publication={publication} />}
+            {publication?.id && (
+              <MirrorButton
+                mirrorsCount={
+                  newPublicationStats?.mirrors ?? publication?.stats?.mirrors
+                }
+                publication={publication}
+              />
+            )}
 
             {publication && (
               <QuoteButton
@@ -368,7 +491,9 @@ const ProfileBar = ({
                       (publication?.metadata?.title ?? // @ts-ignore
                       publication?.metadata?.content)
                 }
-                numberOfQuotes={publication?.stats?.quotes}
+                numberOfQuotes={
+                  newPublicationStats?.quotes ?? publication?.stats?.quotes
+                }
               />
             )}
 

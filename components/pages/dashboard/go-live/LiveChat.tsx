@@ -359,9 +359,7 @@ const LiveChat = ({
             {liveChatPopUpSound ? <VolumeUpIcon /> : <VolumeOffIcon />}
           </IconButton>
 
-          {showLiveCount && profileId && (
-            <LiveCount profileId={profileId} className="text-sm text-s-text" />
-          )}
+          {showLiveCount && profileId && <LiveCount profileId={profileId} />}
         </div>
         {isMobile && onClose && (
           <IconButton onClick={onClose}>

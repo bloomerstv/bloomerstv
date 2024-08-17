@@ -154,16 +154,16 @@ const StreamerSidebar = () => {
               {!minimize && (
                 <div className="font-bold px-4 sm:py-2">Following Channels</div>
               )}
-              {(loading || profileLoading) && 
-              <div className='flex flex-col w-full'>
-                <StreamerBarLoading />
-                <StreamerBarLoading />
-                <StreamerBarLoading />
-                <StreamerBarLoading />
-                <StreamerBarLoading />
-                <StreamerBarLoading />
-
-              </div>}
+              {(loading || profileLoading) && (
+                <div className="flex flex-col w-full">
+                  <StreamerBarLoading />
+                  <StreamerBarLoading />
+                  <StreamerBarLoading />
+                  <StreamerBarLoading />
+                  <StreamerBarLoading />
+                  <StreamerBarLoading />
+                </div>
+              )}
               {Boolean(followingStreamers?.length) ||
               Boolean(offlineFollowingStreamers?.length) ? (
                 <div className="flex flex-col w-full">
@@ -209,52 +209,52 @@ const StreamerSidebar = () => {
             </>
           )}
 
-          
-            <>
-              {!minimize && (
-                <div className="font-bold px-4 py-2">Recommended Channels</div>
-              )}
-               {(loading || profileLoading) && 
-              <div className='flex flex-col w-full'>
+          <>
+            {!minimize && (
+              <div className="font-bold px-4 py-2">Recommended Channels</div>
+            )}
+            {(loading || profileLoading) && (
+              <div className="flex flex-col w-full">
                 <StreamerBarLoading />
                 <StreamerBarLoading />
                 <StreamerBarLoading />
-              </div>}
-              {(Boolean(restOfTheStreamers?.length) ||
-                Boolean(offlineRecommendedStreamers?.length)) && (
-                <div className="flex flex-col w-full">
-                  {restOfTheStreamers?.map((streamer) => {
-                    return (
-                      // @ts-ignore
-                      <StreamerBar
-                        key={streamer?.profileId}
-                        streamer={streamer}
-                      />
-                    )
-                  })}
+              </div>
+            )}
+            {(Boolean(restOfTheStreamers?.length) ||
+              Boolean(offlineRecommendedStreamers?.length)) && (
+              <div className="flex flex-col w-full">
+                {restOfTheStreamers?.map((streamer) => {
+                  return (
+                    // @ts-ignore
+                    <StreamerBar
+                      key={streamer?.profileId}
+                      streamer={streamer}
+                    />
+                  )
+                })}
 
-                  {offlineRecommendedStreamers?.slice(0, 10)?.map((profile) => {
-                    return (
-                      // @ts-ignore
-                      <StreamerBar
-                        key={profile?.id}
-                        streamer={{
-                          profile,
-                          profileId: profile?.id,
-                          lastSeen: offlineStreamersMap.get(profile?.id)
-                            ?.lastSeen,
-                          premium:
-                            offlineStreamersMap.get(profile?.id)?.premium ??
-                            false,
-                          nextStreamTime: offlineStreamersMap.get(profile?.id)
-                            ?.nextStreamTime
-                        }}
-                      />
-                    )
-                  })}
-                </div>
-              )}
-            </>
+                {offlineRecommendedStreamers?.slice(0, 10)?.map((profile) => {
+                  return (
+                    // @ts-ignore
+                    <StreamerBar
+                      key={profile?.id}
+                      streamer={{
+                        profile,
+                        profileId: profile?.id,
+                        lastSeen: offlineStreamersMap.get(profile?.id)
+                          ?.lastSeen,
+                        premium:
+                          offlineStreamersMap.get(profile?.id)?.premium ??
+                          false,
+                        nextStreamTime: offlineStreamersMap.get(profile?.id)
+                          ?.nextStreamTime
+                      }}
+                    />
+                  )
+                })}
+              </div>
+            )}
+          </>
         </div>
 
         {!isMobile && (

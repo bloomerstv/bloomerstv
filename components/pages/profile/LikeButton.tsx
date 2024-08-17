@@ -11,14 +11,21 @@ import { useModal } from '../../common/ModalContext'
 import toast from 'react-hot-toast'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
+import { AnimatedCounter } from 'react-animated-counter'
+import { useTheme } from '../../wrappers/TailwindThemeProvider'
 
-const LikeButton = ({ publication }: { publication: AnyPublication }) => {
+const LikeButton = ({
+  publication,
+  likeCount
+}: {
+  publication: AnyPublication
+  likeCount: number
+}) => {
+  const { theme } = useTheme()
   const [liked, setLiked] = React.useState(false)
   const { data: mySession } = useSession()
   const { openModal } = useModal()
-  const [upvotes, setUpvotes] = React.useState(
-    publication?.__typename !== 'Mirror' ? publication?.stats?.upvotes : 0
-  )
+
   const { execute: toggleReaction } = useReactionToggle()
 
   const handleLike = async () => {
@@ -33,7 +40,7 @@ const LikeButton = ({ publication }: { publication: AnyPublication }) => {
                 ...publication,
                 stats: {
                   ...publication.stats,
-                  upvotes: liked ? upvotes + 1 : upvotes - 1
+                  upvotes: likeCount
                 },
                 operations: {
                   ...publication.operations,
@@ -48,7 +55,6 @@ const LikeButton = ({ publication }: { publication: AnyPublication }) => {
       }
 
       setLiked(!liked)
-      setUpvotes(liked ? upvotes - 1 : upvotes + 1)
     } catch (error) {
       console.log(error)
       // @ts-ignore
@@ -57,9 +63,6 @@ const LikeButton = ({ publication }: { publication: AnyPublication }) => {
   }
 
   useEffect(() => {
-    if (publication?.__typename !== 'Mirror' && publication?.stats?.upvotes) {
-      setUpvotes(publication?.stats?.upvotes)
-    }
     if (publication?.__typename !== 'Mirror') {
       setLiked(publication?.operations?.hasUpvoted)
     }
@@ -89,10 +92,22 @@ const LikeButton = ({ publication }: { publication: AnyPublication }) => {
         }
         sx={{
           boxShadow: 'none',
-          borderRadius: '20px'
+          borderRadius: '20px',
+          paddingLeft: '14px'
         }}
       >
-        {upvotes}
+        <AnimatedCounter
+          value={likeCount}
+          includeDecimals={false}
+          includeCommas={true}
+          color={theme === 'dark' ? '#ceced3' : '#1f1f23'}
+          incrementColor="#1976d2"
+          fontSize="15px"
+          containerStyles={{
+            marginTop: '4px',
+            marginBottom: '4px'
+          }}
+        />
       </Button>
     </Tooltip>
   )
