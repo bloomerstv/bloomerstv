@@ -16,15 +16,18 @@ import { useTheme } from '../../wrappers/TailwindThemeProvider'
 
 const LikeButton = ({
   publication,
-  likeCount
+  likeCount,
+  isAutoUpdating = true
 }: {
   publication: AnyPublication
   likeCount: number
+  isAutoUpdating?: boolean
 }) => {
   const { theme } = useTheme()
   const [liked, setLiked] = React.useState(false)
   const { data: mySession } = useSession()
   const { openModal } = useModal()
+  const [newLikeCount, setNewLikeCount] = React.useState(likeCount)
 
   const { execute: toggleReaction } = useReactionToggle()
 
@@ -54,6 +57,7 @@ const LikeButton = ({
         toast.error(result.error)
       }
 
+      setNewLikeCount(liked ? newLikeCount - 1 : newLikeCount + 1)
       setLiked(!liked)
     } catch (error) {
       console.log(error)
@@ -97,7 +101,7 @@ const LikeButton = ({
         }}
       >
         <AnimatedCounter
-          value={likeCount}
+          value={isAutoUpdating ? likeCount : newLikeCount}
           includeDecimals={false}
           includeCommas={true}
           color={theme === 'dark' ? '#ceced3' : '#1f1f23'}

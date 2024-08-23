@@ -16,15 +16,18 @@ import { useTheme } from '../../wrappers/TailwindThemeProvider'
 
 const MirrorButton = ({
   publication,
-  mirrorsCount
+  mirrorsCount,
+  isAutoUpdating = true
 }: {
   publication: AnyPublication
   mirrorsCount: number
+  isAutoUpdating?: boolean
 }) => {
   const { theme } = useTheme()
   const { data: mySession } = useSession()
   const { openModal } = useModal()
   const [isMirrored, setIsMirrored] = React.useState(false)
+  const [newMirrorsCount, setNewMirrorsCount] = React.useState(mirrorsCount)
 
   const { execute: createMirror, loading: mirroring } = useCreateMirror()
 
@@ -49,7 +52,7 @@ const MirrorButton = ({
       if (result.isFailure()) {
         toast.error(result?.error?.message)
       }
-
+      setNewMirrorsCount(newMirrorsCount + 1)
       setIsMirrored(true)
     } catch (error) {
       console.log(error)
@@ -84,7 +87,7 @@ const MirrorButton = ({
         }}
       >
         <AnimatedCounter
-          value={mirrorsCount}
+          value={isAutoUpdating ? mirrorsCount : newMirrorsCount}
           includeDecimals={false}
           includeCommas={true}
           color={theme === 'dark' ? '#ceced3' : '#1f1f23'}

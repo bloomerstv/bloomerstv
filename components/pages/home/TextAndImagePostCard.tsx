@@ -169,10 +169,12 @@ const TextAndImagePostCard = ({
             <LikeButton
               likeCount={publication?.stats?.upvotes}
               publication={publication}
+              isAutoUpdating={false}
             />
             <MirrorButton
               mirrorsCount={publication?.stats?.mirrors}
               publication={publication}
+              isAutoUpdating={false}
             />
             <Tooltip title="Comments" arrow>
               <Button
