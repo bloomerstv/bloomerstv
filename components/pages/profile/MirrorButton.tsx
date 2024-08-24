@@ -43,6 +43,8 @@ const MirrorButton = ({
   const handleMirror = async () => {
     try {
       if (!mustLogin('Must Login to mirror')) return
+      setNewMirrorsCount(newMirrorsCount + 1)
+      setIsMirrored(true)
       const result = await createMirror({
         // @ts-ignore
         mirrorOn: publication?.id,
@@ -52,8 +54,6 @@ const MirrorButton = ({
       if (result.isFailure()) {
         toast.error(result?.error?.message)
       }
-      setNewMirrorsCount(newMirrorsCount + 1)
-      setIsMirrored(true)
     } catch (error) {
       console.log(error)
       // @ts-ignore

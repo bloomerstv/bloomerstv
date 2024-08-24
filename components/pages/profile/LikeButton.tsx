@@ -34,6 +34,8 @@ const LikeButton = ({
   const handleLike = async () => {
     try {
       if (!mustLogin('Must Login to like')) return
+      setNewLikeCount(liked ? newLikeCount - 1 : newLikeCount + 1)
+      setLiked(!liked)
       const result = await toggleReaction({
         // @ts-ignore
         publication:
@@ -56,9 +58,6 @@ const LikeButton = ({
       if (result.isFailure()) {
         toast.error(result.error)
       }
-
-      setNewLikeCount(liked ? newLikeCount - 1 : newLikeCount + 1)
-      setLiked(!liked)
     } catch (error) {
       console.log(error)
       // @ts-ignore
