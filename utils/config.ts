@@ -85,7 +85,7 @@ export const PROJECT_ADDRESS = '0xC8D0E78379d96D0A436b8597835670b13445A6Db'
 export const POLYGON_CHAIN_ID = 137
 export const AMOY_CHAIN_ID = 80002
 
-export const LENS_CHAIN_ID = POLYGON_CHAIN_ID
+export const LENS_CHAIN_ID = isMainnet ? POLYGON_CHAIN_ID : AMOY_CHAIN_ID
 
 export const TESTNET_CURRENCIES = [
   {
@@ -93,7 +93,7 @@ export const TESTNET_CURRENCIES = [
     name: 'Wrapped Matic',
     symbol: 'WMATIC',
     decimals: 18,
-    address: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
+    address: '0x360ad4f9a9A8EFe9A8DCB5f461c4Cc1047E1Dcf9',
     chainType: 'polygon'
   },
   {
