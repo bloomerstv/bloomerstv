@@ -16,12 +16,10 @@ import { useTheme } from '../../wrappers/TailwindThemeProvider'
 
 const LikeButton = ({
   publication,
-  likeCount,
-  isAutoUpdating = true
+  likeCount
 }: {
   publication: AnyPublication
   likeCount: number
-  isAutoUpdating?: boolean
 }) => {
   const { theme } = useTheme()
   const [liked, setLiked] = React.useState(false)
@@ -66,6 +64,10 @@ const LikeButton = ({
   }
 
   useEffect(() => {
+    setNewLikeCount(likeCount)
+  }, [likeCount])
+
+  useEffect(() => {
     if (publication?.__typename !== 'Mirror') {
       setLiked(publication?.operations?.hasUpvoted)
     }
@@ -100,7 +102,7 @@ const LikeButton = ({
         }}
       >
         <AnimatedCounter
-          value={isAutoUpdating ? likeCount : newLikeCount}
+          value={newLikeCount}
           includeDecimals={false}
           includeCommas={true}
           color={theme === 'dark' ? '#ceced3' : '#1f1f23'}

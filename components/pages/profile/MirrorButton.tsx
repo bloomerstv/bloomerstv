@@ -16,12 +16,10 @@ import { useTheme } from '../../wrappers/TailwindThemeProvider'
 
 const MirrorButton = ({
   publication,
-  mirrorsCount,
-  isAutoUpdating = true
+  mirrorsCount
 }: {
   publication: AnyPublication
   mirrorsCount: number
-  isAutoUpdating?: boolean
 }) => {
   const { theme } = useTheme()
   const { data: mySession } = useSession()
@@ -29,7 +27,7 @@ const MirrorButton = ({
   const [isMirrored, setIsMirrored] = React.useState(false)
   const [newMirrorsCount, setNewMirrorsCount] = React.useState(mirrorsCount)
 
-  const { execute: createMirror, loading: mirroring } = useCreateMirror()
+  const { execute: createMirror } = useCreateMirror()
 
   const mustLogin = (infoMsg: string = 'Must Login'): Boolean => {
     if (mySession?.type !== SessionType.WithProfile) {
@@ -43,6 +41,7 @@ const MirrorButton = ({
   const handleMirror = async () => {
     try {
       if (!mustLogin('Must Login to mirror')) return
+      if (isMirrored) return
       setNewMirrorsCount(newMirrorsCount + 1)
       setIsMirrored(true)
       const result = await createMirror({
@@ -62,9 +61,13 @@ const MirrorButton = ({
   }
 
   useEffect(() => {
+    setNewMirrorsCount(mirrorsCount)
+  }, [mirrorsCount])
+
+  useEffect(() => {
     if (publication?.__typename === 'Mirror') return
     setIsMirrored(publication?.operations?.hasMirrored)
-  }, [publication])
+  }, [publication?.id])
   return (
     <Tooltip title="Mirror" arrow>
       <Button
@@ -73,12 +76,7 @@ const MirrorButton = ({
         variant="contained"
         onClick={handleMirror}
         startIcon={
-          <AutorenewIcon
-            className={clsx(
-              isMirrored && 'text-brand',
-              mirroring && 'animate-spin'
-            )}
-          />
+          <AutorenewIcon className={clsx(isMirrored && 'text-brand')} />
         }
         sx={{
           boxShadow: 'none',
@@ -87,7 +85,7 @@ const MirrorButton = ({
         }}
       >
         <AnimatedCounter
-          value={isAutoUpdating ? mirrorsCount : newMirrorsCount}
+          value={newMirrorsCount}
           includeDecimals={false}
           includeCommas={true}
           color={theme === 'dark' ? '#ceced3' : '#1f1f23'}

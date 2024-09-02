@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import CreatePostPopUp from '../all/Header/CreatePostPopUp'
 import { Button, Tooltip } from '@mui/material'
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote'
@@ -17,6 +17,11 @@ const QuoteButton = ({
 }) => {
   const { theme } = useTheme()
   const [open, setOpen] = React.useState(false)
+  const [quoteCount, setQuoteCount] = React.useState(numberOfQuotes)
+
+  useEffect(() => {
+    setQuoteCount(numberOfQuotes)
+  }, [numberOfQuotes])
   return (
     <div>
       <Tooltip title="Create a Quote Post">
@@ -33,7 +38,7 @@ const QuoteButton = ({
           }}
         >
           <AnimatedCounter
-            value={numberOfQuotes}
+            value={quoteCount}
             includeDecimals={false}
             includeCommas={true}
             color={theme === 'dark' ? '#ceced3' : '#1f1f23'}
@@ -51,6 +56,7 @@ const QuoteButton = ({
         open={open}
         setOpen={setOpen}
         quoteOn={quoteOn}
+        onCreatedCallback={() => setQuoteCount(quoteCount + 1)}
         quotingTitle={quotingTitle}
         quotingOnProfileHandle={quotingOnProfileHandle}
       />

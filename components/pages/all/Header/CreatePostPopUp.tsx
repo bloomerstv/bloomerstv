@@ -59,12 +59,14 @@ interface previewFileType {
 const CreatePostPopUp = ({
   open,
   setOpen,
+  onCreatedCallback = () => {},
   quoteOn,
   quotingTitle,
   quotingOnProfileHandle
 }: {
   open: boolean
   setOpen: (open: boolean) => void
+  onCreatedCallback?: () => void
   quoteOn?: string
   quotingTitle?: string
   quotingOnProfileHandle?: string
@@ -321,6 +323,7 @@ const CreatePostPopUp = ({
       throw new Error('Error creating post')
     } else {
       setLoading(false)
+      onCreatedCallback()
       toast.success('Post created!')
       setOpen(false)
       setContent('')
