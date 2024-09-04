@@ -2,7 +2,7 @@ import React from 'react'
 import {
   RecordedSession,
   ViewType,
-  useSetViewTypeMutation
+  useUpdateLensStreamSessionMutation
 } from '../../../../graphql/generated'
 import { Box, FormControl, MenuItem, Select } from '@mui/material'
 import toast from 'react-hot-toast'
@@ -11,7 +11,7 @@ const ContentVisibiltyButton = ({ session }: { session: RecordedSession }) => {
   const [visibility, setVisibility] = React.useState<ViewType>(
     session?.viewType!
   )
-  const [setViewType] = useSetViewTypeMutation()
+  const [setViewType] = useUpdateLensStreamSessionMutation()
   const handleVisibilityChange = async (e: any) => {
     setVisibility(e.target.value)
     try {
@@ -22,7 +22,7 @@ const ContentVisibiltyButton = ({ session }: { session: RecordedSession }) => {
         }
       })
 
-      if (res.data?.setViewType) {
+      if (res.data?.updateLensStreamSession) {
         toast.success(`Visibility changed to ${e.target.value}`)
       } else {
         toast.error('Error changing visibility')

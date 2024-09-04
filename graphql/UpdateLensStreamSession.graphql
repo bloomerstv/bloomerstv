@@ -1,0 +1,11 @@
+mutation UpdateLensStreamSession(
+  $publicationId: String!
+  $viewType: ViewType
+  $customThumbnail: String
+) {
+  updateLensStreamSession(
+    publicationId: $publicationId
+    viewType: $viewType
+    customThumbnail: $customThumbnail
+  )
+}
