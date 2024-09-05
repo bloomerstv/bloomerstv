@@ -164,13 +164,14 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
   }
 
   useEffect(() => {
+    if (!session?.recordingUrl) return
     setThumbnail(
       session?.customThumbnail ??
         // @ts-ignore
         data?.metadata?.marketplace?.image?.optimized?.uri ??
-        getThumbnailFromRecordingUrl(session?.recordingUrl!)
+        getThumbnailFromRecordingUrl(session?.recordingUrl)
     )
-  }, [data?.id, session?.sessionId])
+  }, [data?.id, session?.recordingUrl])
 
   if (data && data?.__typename !== 'Post')
     // const [watching, setWatching] = React.useState(false)
