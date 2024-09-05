@@ -5,6 +5,7 @@ query GetMyRecordedStreamSessions($skip: Int) {
     sourceSegmentsDuration
     recordingUrl
     viewType
+    customThumbnail
     createdAt
     playbackId
     sessionId

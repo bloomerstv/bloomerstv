@@ -1,5 +1,8 @@
-import React from 'react'
-import { RecordedSession } from '../../../../graphql/generated'
+import React, { useEffect } from 'react'
+import {
+  RecordedSession,
+  useUpdateLensStreamSessionMutation
+} from '../../../../graphql/generated'
 import { useHidePublication, usePublication } from '@lens-protocol/react-web'
 import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import {
@@ -31,12 +34,19 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import toast from 'react-hot-toast'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import LoadingImage from '../../../ui/LoadingImage'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import { MediaImageMimeType } from '@lens-protocol/metadata'
+import uploadToIPFS from '../../../../utils/uploadToIPFS'
+import getIPFSLink from '../../../../utils/getIPFSLink'
 // import Player from '../../../common/Player'
 
 const SessionRow = ({ session }: { session: RecordedSession }) => {
   const [newPublicationId, setNewPublicationId] = React.useState<string | null>(
     null
   )
+  const imageFileInputRef = React.useRef<HTMLInputElement>(null)
+  const [thumbnail, setThumbnail] = React.useState<string | null>(null)
+  const [updateThumbnail] = useUpdateLensStreamSessionMutation()
 
   const [openDeleteConfirmation, setOpenDeleteConfirmation] =
     React.useState<boolean>(false)
@@ -76,9 +86,96 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
     // @ts-ignore
     Number(data?.stats?.mirrors ?? 0) + Number(data?.stats?.quotes ?? 0)
 
-  // const [watching, setWatching] = React.useState(false)
+  const checkImageAspectRatio = (file) => {
+    return new Promise<boolean>((resolve, reject) => {
+      const image = new Image()
+      image.src = URL.createObjectURL(file)
+      image.onload = () => {
+        if (image.width / image.height !== 16 / 9) {
+          toast.error(
+            'Invalid image aspect ratio. Please upload an image with 16:9 aspect ratio'
+          )
+          resolve(false)
+        } else {
+          resolve(true)
+        }
+      }
+      image.onerror = () => {
+        reject(new Error('Error loading image'))
+      }
+    })
+  }
 
-  if (data && data?.__typename !== 'Post') return null
+  const handleImageFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const mediaImageMimeTypes = Object.values(MediaImageMimeType)
+
+    const files = e.target.files
+    if (!files?.length) return
+
+    const file = files[0]
+
+    // check if file type is in mediaImageMimeTypes
+    // @ts-ignore
+    if (!mediaImageMimeTypes.includes(file.type)) {
+      toast.error('Invalid image file type. Please upload a valid image file')
+      return
+    }
+
+    try {
+      // check if image file is of ratio 16:9
+      const isOk = await checkImageAspectRatio(file)
+
+      if (!isOk) return
+    } catch (error) {
+      return
+    }
+
+    // upload to IPFS
+    const ipfsResult = await toast.promise(uploadToIPFS(file), {
+      error: 'Error uploading image',
+      loading: 'Uploading image...',
+      success: 'Image uploaded'
+    })
+
+    if (!ipfsResult) return
+
+    const newThumbnailUrl = getIPFSLink(ipfsResult.url)
+
+    const res = await toast.promise(
+      updateThumbnail({
+        variables: {
+          publicationId: String(data?.id),
+          customThumbnail: newThumbnailUrl
+        }
+      }),
+      {
+        error: 'Error updating thumbnail',
+        loading: 'Updating thumbnail...',
+        success: 'Thumbnail updated'
+      }
+    )
+
+    if (!res) return
+
+    // set as preview
+    setThumbnail(newThumbnailUrl)
+  }
+
+  useEffect(() => {
+    setThumbnail(
+      session?.customThumbnail ??
+        // @ts-ignore
+        data?.metadata?.marketplace?.image?.optimized?.uri ??
+        getThumbnailFromRecordingUrl(session?.recordingUrl!)
+    )
+  }, [data?.id, session?.sessionId])
+
+  if (data && data?.__typename !== 'Post')
+    // const [watching, setWatching] = React.useState(false)
+
+    return null
 
   if (!session?.recordingUrl) {
     return null
@@ -141,10 +238,11 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
           <div className="relative">
             <LoadingImage
               src={
-                data?.metadata?.marketplace?.image?.optimized?.uri ??
-                getThumbnailFromRecordingUrl(session?.recordingUrl)
+                // @ts-ignore
+                thumbnail ?? '/icons/placeholder.png'
               }
               className="w-[120px] rounded-sm"
+              loaderClassName="w-[120px] h-[67.5px]"
             />
             {session?.sourceSegmentsDuration && (
               <div className="absolute bottom-3 right-2 bg-black bg-opacity-80 px-1.5 rounded">
@@ -219,6 +317,30 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                   <RemoveRedEyeIcon />
                 </IconButton>
               </Tooltip>
+
+              {data?.id && (
+                <Tooltip title="Upload thumbnail image with 16:9 ratio">
+                  <IconButton
+                    size="large"
+                    onClick={() => {
+                      // Programmatically click the file input when the button is clicked
+                      if (!imageFileInputRef.current) return
+                      // @ts-ignore
+                      imageFileInputRef.current.click()
+                    }}
+                  >
+                    <AddPhotoAlternateIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              <input
+                type="file"
+                ref={imageFileInputRef}
+                style={{ display: 'none' }} // Hide the file input
+                onChange={handleImageFileChange}
+                accept="image/*" // Optional: limit the file chooser to only image files
+              />
 
               {session?.mp4Url && (
                 <Tooltip title="Download the video">

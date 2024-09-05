@@ -212,6 +212,7 @@ export type QueryTokenPriceArgs = {
 export type RecordedSession = {
   __typename?: 'RecordedSession'
   createdAt?: Maybe<Scalars['BigNumber']['output']>
+  customThumbnail?: Maybe<Scalars['String']['output']>
   mp4Url?: Maybe<Scalars['String']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   publicationId?: Maybe<Scalars['String']['output']>
@@ -369,6 +370,7 @@ export type GetMyRecordedStreamSessionsQuery = {
     sourceSegmentsDuration?: number | null
     recordingUrl?: string | null
     viewType?: ViewType | null
+    customThumbnail?: string | null
     createdAt?: any | null
     playbackId?: string | null
     sessionId?: string | null
@@ -853,6 +855,7 @@ export const GetMyRecordedStreamSessionsDocument = gql`
       sourceSegmentsDuration
       recordingUrl
       viewType
+      customThumbnail
       createdAt
       playbackId
       sessionId

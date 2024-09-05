@@ -17,10 +17,10 @@ import ToggleOffIcon from '@mui/icons-material/ToggleOff'
 import ToggleOnIcon from '@mui/icons-material/ToggleOn'
 import { useDisconnect } from 'wagmi'
 import { useRouter } from 'next/navigation'
-import Settings from '@mui/icons-material/Settings'
 // import CircleIcon from '@mui/icons-material/Circle'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
+import DashboardIcon from '@mui/icons-material/Dashboard'
 import Link from 'next/link'
 import {
   DISCORD_INVITE_URL,
@@ -149,7 +149,7 @@ const AvatarWithOptions = ({
                     }}
                   >
                     <ListItemIcon>
-                      <Settings fontSize="small" />
+                      <DashboardIcon fontSize="small" />
                     </ListItemIcon>
                     Dashboard
                   </MenuItem>
@@ -318,7 +318,7 @@ const AvatarWithOptions = ({
                 }}
               >
                 <ListItemIcon>
-                  <Settings fontSize="small" />
+                  <DashboardIcon fontSize="small" />
                 </ListItemIcon>
                 Dashboard
               </MenuItem>
