@@ -84,7 +84,7 @@ const TextAndImagePostCard = ({
               <div className="start-row gap-x-2 shrink-0 w-full">
                 <LoadingImage
                   src={getAvatar(publication?.by)}
-                  className="w-10 h-10 rounded-full"
+                  className="w-9 h-9 rounded-full"
                   alt="avatar"
                 />
                 <div className="start-col shrink-0 w-full">

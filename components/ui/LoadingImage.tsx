@@ -58,7 +58,7 @@ const LoadingImage: React.FC<LoadingImageProps> = ({
   }, [props.src, defaultImage, loadingTimeout])
 
   return (
-    <div className={clsx('relative overflow-hidden', props.className)}>
+    <div className={clsx('relative', props.className)}>
       {!isLoaded && (
         <div
           className={clsx(

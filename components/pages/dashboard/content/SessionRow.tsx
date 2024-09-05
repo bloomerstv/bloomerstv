@@ -242,7 +242,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                 // @ts-ignore
                 thumbnail ?? '/icons/placeholder.png'
               }
-              className="w-[120px] rounded-sm"
+              className="w-[120px] h-[67.5px] rounded-sm"
               loaderClassName="w-[120px] h-[67.5px]"
             />
             {session?.sourceSegmentsDuration && (
