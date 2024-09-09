@@ -213,8 +213,8 @@ export const SuperFluidInfo = {
   currentFlowRate_gte: '3801369863013',
   token: '0x07b24bbd834c1c546ece89ff95f71d9f13a2ebd1',
   checkoutLink:
-    'https://checkout.superfluid.finance/Qmdu86h75r1xYBt1zGsKrMk8WXiBrFsiV3PvvKk24RWos6',
+    'https://checkout.superfluid.finance/QmexS73hbnWuQJnHmWWiuA8LHrjJrgDYoLYQUU4cTFkrN1',
   getCancleLink: (address: string): string => {
-    return `https://app.superfluid.finance/stream/polygon/${address?.toLowerCase()}-0xc8d0e78379d96d0a436b8597835670b13445a6db-0x07b24bbd834c1c546ece89ff95f71d9f13a2ebd1?view=${address}`
+    return `https://app.superfluid.finance/?view=${address?.toLowerCase()}`
   }
 }
