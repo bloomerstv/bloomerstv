@@ -210,11 +210,26 @@ export const HOW_TO_ADD_WIDGETS_VIDEO =
 export const SuperFluidInfo = {
   endPoint: 'https://polygon-mainnet.subgraph.x.superfluid.dev/',
   receiver: '0xC8D0E78379d96D0A436b8597835670b13445A6Db',
-  currentFlowRate_gte: '3801369863013',
-  token: '0x07b24bbd834c1c546ece89ff95f71d9f13a2ebd1',
   checkoutLink:
-    'https://checkout.superfluid.finance/Qmdu86h75r1xYBt1zGsKrMk8WXiBrFsiV3PvvKk24RWos6',
+    'https://checkout.superfluid.finance/QmZ7n5bSBRtKFDDTTjbjmR4b3dbo1fSgGh8MvGnLAWZXzS',
   getCancleLink: (address: string): string => {
-    return `https://app.superfluid.finance/stream/polygon/${address?.toLowerCase()}-0xc8d0e78379d96d0a436b8597835670b13445a6db-0x07b24bbd834c1c546ece89ff95f71d9f13a2ebd1?view=${address}`
-  }
+    return `https://app.superfluid.finance/?view=${address}`
+  },
+  tokensAndMinFlowRate: [
+    {
+      // bonsai 500/month
+      token: '0x48a7908771c752aacf5cd0088dad0a0daaea3716',
+      minFlowRate: '190258751902586'
+    },
+    {
+      // wmatic 15/month
+      token: '0xe04ad5d86c40d53a12357e1ba2a9484f60db0da5',
+      minFlowRate: '5707762557076'
+    },
+    {
+      // usdc 5/month
+      token: '0x07b24bbd834c1c546ece89ff95f71d9f13a2ebd1',
+      minFlowRate: '1902587519024'
+    }
+  ]
 }

@@ -18,7 +18,7 @@ const page = () => {
     'Transcoding for VODs',
     'Super Bloomers Badge',
     'Priority Support',
-    'Much more to come... 👀'
+    'BloomersTV Token Rewards (Coming Soon)'
   ]
 
   if (data?.type !== SessionType.WithProfile) {
@@ -58,7 +58,7 @@ const page = () => {
         <div className="flex flex-col gap-y-4 w-[300px] bg-brand text-white rounded-2xl p-8 shadow-2xl">
           <div className="font-bold text-lg">Super</div>
           <div>
-            <div className="text-2xl">$9.99</div>
+            <div className="text-2xl">$5~</div>
             <div className="text-sm font-normal">per month</div>
           </div>
           {/* description */}

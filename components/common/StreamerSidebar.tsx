@@ -27,6 +27,8 @@ import { useTheme } from '../wrappers/TailwindThemeProvider'
 import { useOfflineStreamersQuery } from '../../graphql/generated'
 import useIsMobile from '../../utils/hooks/useIsMobile'
 import StreamerBarLoading from './StreamerSidebar/StreamerBarLoading'
+import SubscribeToSuperBloomers from './SubscribeToSuperBloomers'
+
 const StreamerSidebar = () => {
   const { data } = useSession()
   const pathname = usePathname()
@@ -256,6 +258,9 @@ const StreamerSidebar = () => {
             )}
           </>
         </div>
+
+        {/* subscribe to super bloomers */}
+        <SubscribeToSuperBloomers />
 
         {!isMobile && (
           <>
