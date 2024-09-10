@@ -5,6 +5,10 @@ export const shortFormOfLink = (link?: string) => {
   return link.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '')
 }
 
+export const randomNumberBetween = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 export const humanReadableNumber = (num?: number) => {
   if (!num) {
     return '0'
@@ -19,17 +23,17 @@ export const humanReadableNumber = (num?: number) => {
 }
 
 export const humanReadableDateTime = (date: string | number) => {
-  const d = typeof date === 'string' ? new Date(date) : new Date(date);
-   const month = d.toLocaleString('default', { month: 'short' });
-  const day = d.getDate();
-  const year = d.getFullYear();
+  const d = typeof date === 'string' ? new Date(date) : new Date(date)
+  const month = d.toLocaleString('default', { month: 'short' })
+  const day = d.getDate()
+  const year = d.getFullYear()
   const time = d.toLocaleString('default', {
     hour: 'numeric',
     minute: 'numeric',
-    hour12: true,
-  });
-  return `${month} ${day}, ${year} ${time}`;
-};
+    hour12: true
+  })
+  return `${month} ${day}, ${year} ${time}`
+}
 
 export const numberWithCommas = (num?: number) => {
   if (!num) {

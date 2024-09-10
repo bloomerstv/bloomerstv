@@ -77,8 +77,6 @@ export const HEY_APP_LINK = isMainnet
   : 'https://testnet.hey.xyz'
 export const DISCORD_INVITE_URL = 'https://discord.gg/rXUBVm7JxA'
 export const X_URL = 'https://twitter.com/bloomerstv'
-export const THUMBNAIL_FALLBACK =
-  'https://npwelch.com/wp-content/uploads/2022/06/video-placeholder-brain-bites.png'
 
 export const PROJECT_ADDRESS = '0xC8D0E78379d96D0A436b8597835670b13445A6Db'
 

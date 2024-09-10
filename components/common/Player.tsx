@@ -224,7 +224,7 @@ const PlayerWithControls = ({
                   <Player.Track className="bg-white/30 relative grow rounded-full transition h-[2px] md:h-[3px] group-hover:h-[3px] group-hover:md:h-[4px]">
                     <Player.Range className="absolute bg-white rounded-full h-full" />
                   </Player.Track>
-                  <Player.Thumb className="block transition group-hover:scale-110 w-2 h-2 bg-white rounded-full" />
+                  <Player.Thumb className="block transition group-hover:scale-105 w-2 h-2 bg-white rounded-full" />
                 </Player.Volume>
               </div>
               <div className="flex sm:flex-1 md:flex-[1.5] justify-end items-center gap-2.5">

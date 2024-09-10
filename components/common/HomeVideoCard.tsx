@@ -48,13 +48,13 @@ const HomeVideoCard = ({
       <div className="w-full aspect-video relative mb-2 overflow-hidden sm:rounded-xl">
         <LoadingImage
           src={cover ?? asset?.cover}
-          className="w-full h-full aspect-video transition-transform duration-500 ease-in-out transform group-hover:scale-110 object-cover"
+          className="w-full h-full aspect-video transition-transform duration-300 ease-in-out transform group-hover:scale-105 object-cover"
           alt="thumbnail"
         />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
           <PlayArrowIcon
             fontSize="large"
-            className="text-white transform transition-transform group-hover:scale-110 duration-500"
+            className="text-white transform transition-transform group-hover:scale-105 duration-300"
           />
         </div>
         {(duration || asset?.duration) && (

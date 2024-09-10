@@ -3,7 +3,6 @@ import { getListOfThumbnailsFromRecordingUrl } from '../../../../utils/lib/getTh
 import Draggable from 'react-draggable'
 import clsx from 'clsx'
 import { useStreamAsVideo } from '../../../store/useStreamAsVideo'
-import { THUMBNAIL_FALLBACK } from '../../../../utils/config'
 import {
   MediaScopedProps,
   useMediaContext,
@@ -137,7 +136,7 @@ const VideoClipper = ({
                 // @ts-ignore
                 e.target.onerror = null // Prevents infinite looping in case the fallback image also fails to load
                 // @ts-ignore
-                e.target.src = THUMBNAIL_FALLBACK // Replace with your default background image
+                e.target.src = `/placeholders/blur-bg-${randomNumberBetween(1, 6)}.png` // Replace with your default background image
               }}
             />
           </div>

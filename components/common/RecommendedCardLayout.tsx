@@ -36,7 +36,7 @@ const RecommendedCardLayout = ({
             className="h-[99px] w-[176px] object-cover rounded-md"
           />
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <PlayArrowIcon className="text-white transform transition-transform group-hover:scale-110 duration-500" />
+            <PlayArrowIcon className="text-white transform transition-transform group-hover:scale-105 duration-300" />
           </div>
         </div>
         <div>

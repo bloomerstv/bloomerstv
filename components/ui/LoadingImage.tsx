@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { THUMBNAIL_FALLBACK } from '../../utils/config'
 import { motion, HTMLMotionProps } from 'framer-motion'
 import clsx from 'clsx'
+import { randomNumberBetween } from '../../utils/helpers'
 
 interface LoadingImageProps extends HTMLMotionProps<'img'> {
   loaderClassName?: string
@@ -11,7 +11,7 @@ interface LoadingImageProps extends HTMLMotionProps<'img'> {
 
 const LoadingImage: React.FC<LoadingImageProps> = ({
   loaderClassName = '',
-  defaultImage = THUMBNAIL_FALLBACK,
+  defaultImage = `/placeholders/blur-bg-${randomNumberBetween(1, 6)}.png`,
   loadingTimeout = 5000, // 5 seconds default timeout
   ...props
 }) => {
