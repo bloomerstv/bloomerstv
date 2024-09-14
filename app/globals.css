@@ -119,6 +119,11 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #757372;
   }
+
+  /* Disable blue highlight on touch for all elements */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 :root {
