@@ -204,6 +204,7 @@ const LiveVideoComponent = ({
 
     if (type) {
       actions = [
+        // @ts-ignore
         {
           type,
           // @ts-ignore

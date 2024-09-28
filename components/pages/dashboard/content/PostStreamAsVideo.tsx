@@ -258,9 +258,9 @@ const PostStreamAsVideo = ({
 
     if (type) {
       actions = [
+        // @ts-ignore
         {
           type,
-          // @ts-ignore
           amount,
           collectLimit,
           endsAt,
@@ -391,6 +391,7 @@ const PostStreamAsVideo = ({
 
       if (type) {
         actions = [
+          // @ts-ignore
           {
             type,
             // @ts-ignore

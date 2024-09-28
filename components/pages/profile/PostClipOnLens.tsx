@@ -144,6 +144,7 @@ const PostClipOnLens = ({
 
     if (type) {
       actions = [
+        // @ts-ignore
         {
           type,
           // @ts-ignore

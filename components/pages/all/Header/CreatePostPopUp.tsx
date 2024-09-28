@@ -277,9 +277,9 @@ const CreatePostPopUp = ({
 
     if (type) {
       actions = [
+        // @ts-ignore
         {
           type,
-          // @ts-ignore
           amount,
           collectLimit,
           endsAt,
