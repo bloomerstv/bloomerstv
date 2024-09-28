@@ -19,12 +19,14 @@ import {
   production
 } from '@lens-protocol/react-web'
 import { bindings } from '@lens-protocol/wagmi'
-// import {
-//   rainbowWallet,
-//   walletConnectWallet,
-//   metaMaskWallet,
-//   zerionWallet
-// } from '@rainbow-me/rainbowkit/wallets'
+import {
+  coinbaseWallet,
+  injectedWallet,
+  metaMaskWallet,
+  trustWallet,
+  walletConnectWallet,
+  zerionWallet
+} from '@rainbow-me/rainbowkit/wallets'
 
 const defaultChains = isMainnet ? [polygon] : [polygonAmoy]
 const defaultTransports = {
@@ -38,6 +40,22 @@ const config = getDefaultConfig({
   // @ts-ignore
   chains: defaultChains,
   transports: defaultTransports,
+  wallets: [
+    {
+      groupName: 'Installed',
+      wallets: [injectedWallet]
+    },
+    {
+      groupName: 'Popular',
+      wallets: [
+        metaMaskWallet,
+        walletConnectWallet,
+        zerionWallet,
+        coinbaseWallet,
+        trustWallet
+      ]
+    }
+  ],
   ssr: true
 })
 
@@ -52,7 +70,13 @@ const RainbowKitWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={darkTheme()}>
+        <RainbowKitProvider
+          appInfo={{
+            appName: APP_NAME
+          }}
+          modalSize="compact"
+          theme={darkTheme()}
+        >
           <LensProvider config={lensConfig}>{children}</LensProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
