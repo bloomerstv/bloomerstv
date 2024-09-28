@@ -64,7 +64,7 @@ const LoginPage = () => {
           {data?.type !== SessionType.WithProfile ? (
             // login page
             <div className="between-col h-full">
-              <div className="font-bold text-5xl mt-16 mb-8">
+              <div className="font-bold text-5xl mt-4 mb-8">
                 Login with your profile
               </div>
 
@@ -135,7 +135,7 @@ const LoginPage = () => {
                 </div>
 
                 {/* continue as guest */}
-                <div className="start-col space-y-6 w-full">
+                <div className="start-col space-y-4 w-full">
                   <Button
                     startIcon={<PermIdentityIcon />}
                     onClick={() => setLoginAsGuest(true)}
@@ -152,12 +152,17 @@ const LoginPage = () => {
                     Continue as guest
                   </Button>
 
+                  <div className="centered-row w-full text-s-text font-bold text-xs">
+                    If you're unable to sign in to your Lens profile, please try
+                    clearing this site's cache and refreshing the page.
+                  </div>
+
                   {/* // disconnect wallet */}
                   <div
                     onClick={async () => {
                       await disconnectAsync()
                     }}
-                    className="text-s-text font-bold text-sm"
+                    className="text-s-text font-bold text-sm "
                   >
                     Disconnect wallet
                   </div>

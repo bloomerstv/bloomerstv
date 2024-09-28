@@ -135,12 +135,16 @@ const LoginComponent = ({
                 )}
               </div>
 
+              <div className="centered-row w-full text-s-text font-bold text-xs mb-2 px-2">
+                If you're unable to sign in to your Lens profile, please try
+                clearing this site's cache and refreshing the page.
+              </div>
               {/* // disconnect wallet */}
               <div
                 onClick={async () => {
                   await disconnectAsync()
                 }}
-                className="unselectable text-s-text hover:text-p-text cursor-pointer font-bold text-sm"
+                className="unselectable text-p-text cursor-pointer w-fit font-bold text-sm hover:bg-p-hover rounded-full px-3 py-1 -ml-1 text-center"
               >
                 Disconnect wallet
               </div>
