@@ -41,10 +41,6 @@ const MobileBottomNavbar = () => {
 
         setValue(newValue)
       }}
-      style={{
-        paddingTop: '25px',
-        paddingBottom: '25px'
-      }}
     >
       <BottomNavigationAction icon={<HomeIcon />} />
       <BottomNavigationAction icon={<OndemandVideoIcon />} />
