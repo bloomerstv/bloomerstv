@@ -211,7 +211,7 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
               title="Install BloomersTV on your mobile"
             >
               <div className="px-4 pb-4 pt-2 space-y-6">
-                <div className="font-bold text-3xl items-center">
+                <div className="font-bold text-2xl items-center">
                   <span className="mr-2">
                     <InstallMobileIcon />
                   </span>

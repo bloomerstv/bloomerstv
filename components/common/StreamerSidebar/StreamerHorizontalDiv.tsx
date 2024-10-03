@@ -53,7 +53,7 @@ const StreamerHorizontalDiv = () => {
             // loader for single horizontal streamer div
             <div key={i} className="centered-col gap-y-1">
               <div className="w-14 h-14 rounded-full bg-p-hover animate-pulse" />
-              <div className="w-24 h-2 rounded-md bg-p-hover animate-pulse" />
+              <div className="w-20 h-2 rounded-md bg-p-hover animate-pulse" />
             </div>
           ))}
 

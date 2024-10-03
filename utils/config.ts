@@ -9,7 +9,7 @@ export const isMainnet = process.env.NEXT_PUBLIC_LENS_MODE
   ? process.env.NEXT_PUBLIC_LENS_MODE === 'mainnet'
   : true
 
-export const AVATAR = 'tr:w-200,h-200'
+export const AVATAR = 'tr:w-120,h-120'
 
 export const NODE_API_MODE =
   process.env.NEXT_PUBLIC_NODE_API_MODE ?? 'production'

@@ -212,9 +212,13 @@ const StreamerSidebar = () => {
           )}
 
           <>
-            {!minimize && (
-              <div className="font-bold px-4 py-2">Recommended Channels</div>
-            )}
+            {!minimize &&
+              (loading ||
+                profileLoading ||
+                restOfTheStreamers.length > 0 ||
+                offlineRecommendedStreamers.length > 0) && (
+                <div className="font-bold px-4 py-2">Recommended Channels</div>
+              )}
             {(loading || profileLoading) && (
               <div className="flex flex-col w-full">
                 <StreamerBarLoading />
