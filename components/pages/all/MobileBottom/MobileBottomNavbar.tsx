@@ -46,46 +46,10 @@ const MobileBottomNavbar = () => {
         paddingBottom: '25px'
       }}
     >
-      <BottomNavigationAction
-        icon={
-          <HomeIcon
-            style={{
-              width: '30px',
-              height: '30px'
-            }}
-          />
-        }
-      />
-      <BottomNavigationAction
-        icon={
-          <OndemandVideoIcon
-            style={{
-              width: '30px',
-              height: '30px'
-            }}
-          />
-        }
-      />
-      <BottomNavigationAction
-        icon={
-          <Diversity1Icon
-            style={{
-              width: '30px',
-              height: '30px'
-            }}
-          />
-        }
-      />
-      <BottomNavigationAction
-        icon={
-          <SearchIcon
-            style={{
-              width: '30px',
-              height: '30px'
-            }}
-          />
-        }
-      />
+      <BottomNavigationAction icon={<HomeIcon />} />
+      <BottomNavigationAction icon={<OndemandVideoIcon />} />
+      <BottomNavigationAction icon={<Diversity1Icon />} />
+      <BottomNavigationAction icon={<SearchIcon />} />
     </BottomNavigation>
   )
 }
