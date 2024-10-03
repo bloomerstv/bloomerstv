@@ -7,7 +7,7 @@ const ShowLoadingWrapper = ({ children }: { children: React.ReactNode }) => {
 
   if (loading && !data) {
     return (
-      <div className="h-screen">
+      <div className="h-dvh">
         <StartLoadingPage />
       </div>
     )

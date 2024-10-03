@@ -193,7 +193,7 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
         <div
           className={clsx(
             inter.className,
-            'bg-s-bg text-p-text flex flex-col h-screen w-screen'
+            'bg-s-bg text-p-text flex flex-col h-dvh w-screen'
           )}
         >
           <LoginPage />
@@ -243,11 +243,11 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
         </div>
       ) : (
         <div className={clsx(inter.className, 'bg-p-bg text-p-text')}>
-          <div className="w-screen h-screen relative">
+          <div className="w-screen h-dvh relative">
             <div className="w-full absolute left-0 right-0 top-0 ">
               <TopHeader />
             </div>
-            <div className="start-center-row h-screen pt-[50px] overflow-hidden">
+            <div className="start-center-row h-dvh pt-[50px] overflow-hidden">
               {pathname.startsWith('/dashboard') ? (
                 <DashboardSidebar />
               ) : (

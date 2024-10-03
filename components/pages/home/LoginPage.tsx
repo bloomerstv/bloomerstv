@@ -58,7 +58,7 @@ const LoginPage = () => {
     return null
   }
   return (
-    <div className="absolute z-50 top-0 bottom-0 left-0 right-0 w-full h-screen bg-p-bg p-8 overflow-auto no-scrollbar">
+    <div className="absolute z-50 top-0 bottom-0 left-0 right-0 w-full h-dvh bg-p-bg p-8 overflow-auto no-scrollbar">
       {isConnected ? (
         <>
           {data?.type !== SessionType.WithProfile ? (
