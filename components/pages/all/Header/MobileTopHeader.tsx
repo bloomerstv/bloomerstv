@@ -9,7 +9,7 @@ const MobileTopHeader = () => {
 
   return (
     <>
-      <div className="flex flex-row items-center sticky top-0 z-10 justify-between p-2 sm:p-3 bg-s-bg">
+      <div className="flex flex-row items-center sticky top-0 left-0 right-0 w-full z-50 justify-between p-2 sm:p-3 bg-s-bg">
         <div className="centered-row unselectable">
           <img
             className="rounded-full w-8 h-8 mr-2"

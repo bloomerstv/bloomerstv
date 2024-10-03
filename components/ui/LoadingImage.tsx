@@ -63,6 +63,7 @@ const LoadingImage: React.FC<LoadingImageProps> = ({
         <div
           className={clsx(
             'absolute inset-0 bg-p-hover animate-pulse',
+            props.className,
             loaderClassName
           )}
         />
