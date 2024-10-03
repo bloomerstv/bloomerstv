@@ -42,10 +42,10 @@ const MobileBottomNavbar = () => {
         setValue(newValue)
       }}
     >
-      <BottomNavigationAction label="Home" icon={<HomeIcon />} />
-      <BottomNavigationAction label="Clips" icon={<OndemandVideoIcon />} />
-      <BottomNavigationAction label="Channels" icon={<Diversity1Icon />} />
-      <BottomNavigationAction label="Search" icon={<SearchIcon />} />
+      <BottomNavigationAction icon={<HomeIcon />} />
+      <BottomNavigationAction icon={<OndemandVideoIcon />} />
+      <BottomNavigationAction icon={<Diversity1Icon />} />
+      <BottomNavigationAction icon={<SearchIcon />} />
     </BottomNavigation>
   )
 }
