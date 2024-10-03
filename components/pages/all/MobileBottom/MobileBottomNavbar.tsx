@@ -42,10 +42,46 @@ const MobileBottomNavbar = () => {
         setValue(newValue)
       }}
     >
-      <BottomNavigationAction icon={<HomeIcon />} />
-      <BottomNavigationAction icon={<OndemandVideoIcon />} />
-      <BottomNavigationAction icon={<Diversity1Icon />} />
-      <BottomNavigationAction icon={<SearchIcon />} />
+      <BottomNavigationAction
+        icon={
+          <HomeIcon
+            style={{
+              width: '30px',
+              height: '30px'
+            }}
+          />
+        }
+      />
+      <BottomNavigationAction
+        icon={
+          <OndemandVideoIcon
+            style={{
+              width: '30px',
+              height: '30px'
+            }}
+          />
+        }
+      />
+      <BottomNavigationAction
+        icon={
+          <Diversity1Icon
+            style={{
+              width: '30px',
+              height: '30px'
+            }}
+          />
+        }
+      />
+      <BottomNavigationAction
+        icon={
+          <SearchIcon
+            style={{
+              width: '30px',
+              height: '30px'
+            }}
+          />
+        }
+      />
     </BottomNavigation>
   )
 }
