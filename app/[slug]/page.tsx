@@ -37,8 +37,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     console.log(e)
   }
 
-  console.log('thumbnail', thumbnail)
-
   const frameUrl = new URL(
     '/frames',
     process.env.VERCEL_URL
