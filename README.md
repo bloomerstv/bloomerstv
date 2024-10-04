@@ -62,7 +62,9 @@ Make sure you have the following installed:
 
 2. Install the dependencies:
 
-   ```pnpm install```
+```
+    pnpm install
+```
 
 3. Set up environment variables:
 
