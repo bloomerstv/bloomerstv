@@ -231,3 +231,6 @@ export const SuperFluidInfo = {
     }
   ]
 }
+
+export const NEXT_PUBLIC_VAPID_KEY =
+  'BDv44ZwY7G3E1fgEuHeiw74cda-LG9gOFwTLFaD2ArveOdd3meLf37noJbztWUeS8GFSR59SjRpYToF3oZrG1dE'

@@ -1,5 +1,7 @@
 // notification.js
 
+import { NEXT_PUBLIC_VAPID_KEY } from '../config'
+
 const base64ToUint8Array = (base64) => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4)
   const b64 = (base64 + padding).replace(/-/g, '+').replace(/_/g, '/')
@@ -60,9 +62,7 @@ export async function subscribeUserToPush(
       } else {
         const subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: base64ToUint8Array(
-            process.env.NEXT_PUBLIC_VAPID_KEY
-          )
+          applicationServerKey: base64ToUint8Array(NEXT_PUBLIC_VAPID_KEY)
         })
         await subscribe(subscription)
       }
