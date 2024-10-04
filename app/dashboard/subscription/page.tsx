@@ -9,7 +9,8 @@ const page = () => {
     'Unlimited Streams',
     'Creating Clips',
     'Stream VODs for 7 days',
-    'No Viewer Limit'
+    'No Viewer Limit',
+    '5% split on all collects'
   ]
 
   const superPlansPoints = [
@@ -17,8 +18,7 @@ const page = () => {
     'Stream VODs for 28 days',
     'Transcoding for VODs',
     'Super Bloomers Badge',
-    'Priority Support',
-    'BloomersTV Token Rewards (Coming Soon)'
+    '100% revenue on collects'
   ]
 
   if (data?.type !== SessionType.WithProfile) {

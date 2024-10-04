@@ -24,7 +24,10 @@ import { IconButton } from '@mui/material'
 import XIcon from '@mui/icons-material/X'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import { useTheme } from '../wrappers/TailwindThemeProvider'
-import { useOfflineStreamersQuery } from '../../graphql/generated'
+import {
+  useIsVerifiedQuery,
+  useOfflineStreamersQuery
+} from '../../graphql/generated'
 import useIsMobile from '../../utils/hooks/useIsMobile'
 import StreamerBarLoading from './StreamerSidebar/StreamerBarLoading'
 import SubscribeToSuperBloomers from './SubscribeToSuperBloomers'
@@ -39,6 +42,15 @@ const StreamerSidebar = () => {
   )
 
   const { data: offlineStreamers, loading } = useOfflineStreamersQuery()
+
+  const { data: isVerified } = useIsVerifiedQuery({
+    variables: {
+      // @ts-ignore
+      profileIds: [data?.profile?.id]
+    },
+    // @ts-ignore
+    skip: !data?.profile?.id
+  })
 
   // Assuming offlineStreamers is already fetched and available
   const sortedOfflineStreamers = React.useMemo(() => {
@@ -264,7 +276,10 @@ const StreamerSidebar = () => {
         </div>
 
         {/* subscribe to super bloomers */}
-        <SubscribeToSuperBloomers />
+
+        {!isVerified?.isVerified?.[0]?.isVerified && (
+          <SubscribeToSuperBloomers />
+        )}
 
         {!isMobile && (
           <>

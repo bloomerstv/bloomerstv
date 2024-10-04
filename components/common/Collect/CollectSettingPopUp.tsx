@@ -27,6 +27,7 @@ import { CURRENCIES, PROJECT_ADDRESS } from '../../../utils/config'
 import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1'
 import clsx from 'clsx'
 import WalletAddressTextField from './WalletAddressTextField'
+import { useIsVerifiedQuery } from '../../../graphql/generated'
 export interface SettingRecipientType {
   recipient?: string
   split?: number
@@ -97,7 +98,19 @@ const CollectSettingPopUp = () => {
 
   const { data } = useSession()
 
+  const { data: isVerified, loading: isVerifiedLoading } = useIsVerifiedQuery({
+    variables: {
+      // @ts-ignore
+      profileIds: [data?.profile?.id]
+    },
+    // @ts-ignore
+    skip: !data?.profile?.id
+  })
+
+  const isSubscribedToSuperBloomers = isVerified?.isVerified?.[0]?.isVerified
+
   useEffect(() => {
+    if (isVerifiedLoading) return
     if (collectLimit) {
       setIsCollectLimit(true)
     }
@@ -142,22 +155,66 @@ const CollectSettingPopUp = () => {
       })
       setSettingRecipients(initRecipients as SettingRecipientType[])
     }
-  }, [collectLimit, amount, referalFee, numberOfDays, recipients, data?.type])
+  }, [
+    collectLimit,
+    amount,
+    referalFee,
+    numberOfDays,
+    recipients,
+    data?.type,
+    isVerifiedLoading
+  ])
 
   useEffect(() => {
-    if (data?.type === SessionType.WithProfile && !recipients) {
-      setRecipients([
+    if (data?.type !== SessionType.WithProfile || isVerifiedLoading) return
+
+    if (!recipients || recipients?.length === 0) {
+      if (isSubscribedToSuperBloomers) {
+        setSettingRecipients([
+          {
+            recipient: data?.address,
+            handle: data?.profile?.handle?.localName,
+            split: 100
+          }
+        ])
+      } else {
+        setSettingRecipients([
+          {
+            recipient: PROJECT_ADDRESS,
+            handle: 'bloomerstv',
+            split: 5
+          },
+          {
+            recipient: data?.address,
+            handle: data?.profile?.handle?.localName,
+            split: 95
+          }
+        ])
+      }
+
+      return
+    }
+
+    // check if the user is not subscribed to superbloomers & the first recipient is not bloomerstv , because if it's not then set the first recipients
+    if (
+      !isSubscribedToSuperBloomers &&
+      (recipients[0]?.recipient !== PROJECT_ADDRESS ||
+        recipients[0]?.split !== 5)
+    ) {
+      setSettingRecipients([
         {
           recipient: PROJECT_ADDRESS,
+          handle: 'bloomerstv',
           split: 5
         },
         {
           recipient: data?.address,
+          handle: data?.profile?.handle?.localName,
           split: 95
         }
       ])
     }
-  }, [recipients, data?.type])
+  }, [recipients, data?.type, isSubscribedToSuperBloomers, isVerifiedLoading])
 
   useEffect(() => {
     if (!settingRecipients) return
@@ -217,7 +274,10 @@ const CollectSettingPopUp = () => {
 
     setRecipientError(undefined)
 
-    setRecipients(settingRecipients as RecipientWithSplit[])
+    // deep copy
+    const settingRecipientsCopy = JSON.parse(JSON.stringify(settingRecipients))
+
+    setRecipients(settingRecipientsCopy as RecipientWithSplit[])
   }, [settingRecipients])
 
   useEffect(() => {
@@ -485,7 +545,9 @@ const CollectSettingPopUp = () => {
                 <motion.div variants={itemWithHeightAndMt} className="w-full">
                   <div className="text-sm font-semibold">Revenue Split</div>
                   <div className="text-xs text-s-text font-normal">
-                    5% is allocated to maintain this open source project
+                    Free plan has a 5% revenue split. Subscribe to Super
+                    Bloomers to remove this and support this open source
+                    project!
                   </div>
                 </motion.div>
                 {settingRecipients?.map((recipient, index) => {
@@ -500,13 +562,16 @@ const CollectSettingPopUp = () => {
                         value={String(recipient?.recipient)}
                         setSettingRecipients={setSettingRecipients}
                         settingRecipients={settingRecipients}
+                        isSubscribedToSuperBloomers={
+                          !!isSubscribedToSuperBloomers
+                        }
                         key={index}
                       />
                       <TextField
                         type="number"
                         label="Split %"
                         value={recipient?.split}
-                        disabled={index === 0}
+                        disabled={index === 0 && !isSubscribedToSuperBloomers}
                         onChange={(e) => {
                           const newRecipients = [...settingRecipients]
                           newRecipients[index].split = Number(e.target.value)
@@ -526,9 +591,15 @@ const CollectSettingPopUp = () => {
                           newRecipients.splice(index, 1)
                           setSettingRecipients(newRecipients)
                         }}
-                        disabled={index === 0 || index === 1}
+                        disabled={
+                          settingRecipients?.length === 1 ||
+                          ((index === 0 || settingRecipients?.length === 2) &&
+                            !isSubscribedToSuperBloomers)
+                        }
                         className={clsx(
-                          (index === 0 || index === 1) &&
+                          (settingRecipients?.length === 1 ||
+                            ((index === 0 || settingRecipients?.length === 2) &&
+                              !isSubscribedToSuperBloomers)) &&
                             'opacity-50 cursor-not-allowed'
                         )}
                       >

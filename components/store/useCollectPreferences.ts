@@ -55,8 +55,8 @@ export const useCollectPreferences = create<CollectPreferencesStore>(
           disableCollect: state.disableCollect,
           followerOnly: state.followerOnly,
           numberOfDays: state.numberOfDays,
-          recipients: state.recipients,
-          settingRecipients: state.settingRecipients
+          recipients: state.recipients
+          // settingRecipients: state.settingRecipients
         }
       }
     }

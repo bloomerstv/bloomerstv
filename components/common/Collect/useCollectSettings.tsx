@@ -40,9 +40,10 @@ const useCollectSettings = (): CollectSettingsResponse => {
   }
 
   return {
-    type: amount
-      ? OpenActionType.MULTIRECIPIENT_COLLECT
-      : OpenActionType.SIMPLE_COLLECT,
+    type:
+      amount && recipients && recipients?.length > 1
+        ? OpenActionType.MULTIRECIPIENT_COLLECT
+        : OpenActionType.SIMPLE_COLLECT,
     amount,
     collectLimit,
     endsAt: numberOfDays

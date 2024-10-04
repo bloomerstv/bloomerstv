@@ -93,22 +93,6 @@ export const TESTNET_CURRENCIES = [
     decimals: 18,
     address: '0x360ad4f9a9A8EFe9A8DCB5f461c4Cc1047E1Dcf9',
     chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'USDC',
-    symbol: 'USDC',
-    decimals: 6,
-    address: '0x0FA8781a83E46826621b3BC094Ea2A0212e71B23',
-    chainType: 'polygon'
-  },
-  {
-    kind: 1,
-    name: 'DAI',
-    symbol: 'DAI',
-    decimals: 18,
-    address: '0x001B3B4d0F3714Ca98ba10F6042DaEbF0B1B7b6F',
-    chainType: 'polygon'
   }
 ]
 
@@ -209,7 +193,7 @@ export const SuperFluidInfo = {
   endPoint: 'https://polygon-mainnet.subgraph.x.superfluid.dev/',
   receiver: '0xC8D0E78379d96D0A436b8597835670b13445A6Db',
   checkoutLink:
-    'https://checkout.superfluid.finance/QmZ7n5bSBRtKFDDTTjbjmR4b3dbo1fSgGh8MvGnLAWZXzS',
+    'https://checkout.superfluid.finance/Qme2rLg4RQWJEYJY26gYiDUCZntY82tB2Y5ULzNmLLt1H9',
   getCancleLink: (address: string): string => {
     return `https://app.superfluid.finance/?view=${address}`
   },

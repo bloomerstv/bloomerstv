@@ -33,6 +33,10 @@ export const CATEGORIES = [
     tags: ['crypto', 'orbcommunitiesDeFi', 'blockchain']
   },
   {
+    name: 'Education',
+    tags: ['education']
+  },
+  {
     name: 'Arts',
     tags: ['arts', 'orbcommunitiesrefraction']
   },
@@ -54,7 +58,7 @@ export const CATEGORIES = [
   {
     name: 'Fashion & Beauty',
     tags: ['fashion', 'beauty', 'orbcommunitiesfashion']
-  },
+  }
   // {
   //   name: 'Pets & Animals',
   //   tags: ['pets', 'orbcommunitiespets']
@@ -67,31 +71,28 @@ export const CATEGORIES = [
   //   name: 'Health & Fitness',
   //   tags: ['health', 'wellness', 'fitness', 'orbcommunitiesfitness']
   // },
-  {
-    name: 'Comedy & Memes',
-    tags: ['comedy', 'memes', 'orbcommunitiesmemes']
-  },
-  {
-    name: 'Food & Cooking',
-    tags: ['food', 'orbcommunitiesWhatsCooking']
-  },
-  {
-    name: 'Sports',
-    tags: ['sports']
-  },
-  {
-    name: 'News & Politics',
-    tags: ['news']
-  },
+  // {
+  //   name: 'Comedy & Memes',
+  //   tags: ['comedy', 'memes', 'orbcommunitiesmemes']
+  // },
+  // {
+  //   name: 'Food & Cooking',
+  //   tags: ['food', 'orbcommunitiesWhatsCooking']
+  // },
+  // {
+  //   name: 'Sports',
+  //   tags: ['sports']
+  // },
+  // {
+  //   name: 'News & Politics',
+  //   tags: ['news']
+  // },
 
   // {
   //   name: 'Books & Literature',
   //   tags: ['literature', 'orbcommunities-t2/post']
   // },
-  {
-    name: 'Education',
-    tags: ['education']
-  }
+
   // {
   //   name: 'Howto & Style',
   //   tags: ['howto']

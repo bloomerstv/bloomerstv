@@ -8,12 +8,14 @@ import { SettingRecipientType } from './CollectSettingPopUp'
 const WalletAddressTextField = ({
   value,
   settingRecipients,
+  isSubscribedToSuperBloomers,
   index,
   setSettingRecipients
 }: {
   value: string
   settingRecipients: SettingRecipientType[]
   index: number
+  isSubscribedToSuperBloomers: boolean
   setSettingRecipients: (value: SettingRecipientType[]) => void
 }) => {
   const { data } = useSearchProfiles({
@@ -97,7 +99,7 @@ const WalletAddressTextField = ({
             setSettingRecipients(newRecipients)
           }}
           aria-describedby={id}
-          disabled={index === 0}
+          disabled={index === 0 && !isSubscribedToSuperBloomers}
           className="w-full"
           size="small"
           helperText={settingRecipients[index]?.handle}
