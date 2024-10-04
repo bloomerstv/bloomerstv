@@ -23,6 +23,7 @@ BloomersTV is an open-source live-streaming platform on Lens.
 - **Offline Page**: Show your last public stream replay on your offline page when not live.
 - **Community Posting**: Post text, and image Lens posts, and engage with the community through a dedicated posts section.
 - **Stream Replay Visibility**: Set replay visibility to public, unlisted, or private based on your preference.
+- **Profile Page Frame**: A unique frame that works on both lens & farcaster, for your profile page 
 
 
 ## Technologies Used
