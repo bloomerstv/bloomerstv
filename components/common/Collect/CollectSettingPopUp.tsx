@@ -544,11 +544,13 @@ const CollectSettingPopUp = () => {
                 {/* MULTIRECIPIENT_COLLECT */}
                 <motion.div variants={itemWithHeightAndMt} className="w-full">
                   <div className="text-sm font-semibold">Revenue Split</div>
-                  <div className="text-xs text-s-text font-normal">
-                    Free plan has a 5% revenue split. Subscribe to Super
-                    Bloomers to remove this and support this open source
-                    project!
-                  </div>
+                  {!isSubscribedToSuperBloomers && (
+                    <div className="text-xs text-s-text font-normal">
+                      Free plan has a 5% revenue split. Subscribe to Super
+                      Bloomers to remove this and support this open source
+                      project!
+                    </div>
+                  )}
                 </motion.div>
                 {settingRecipients?.map((recipient, index) => {
                   return (
