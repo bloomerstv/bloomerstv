@@ -62,7 +62,9 @@ Make sure you have the following installed:
 
 2. Install the dependencies:
 
-   ```pnpm install```
+```
+    pnpm install
+```
 
 3. Set up environment variables:
 
@@ -88,9 +90,23 @@ Make sure you have the following installed:
 
    The app should now be running on [http://localhost:3000](http://localhost:3000).
 
+## API Access Notes
+
+Currently, our production API is CORS-protected. While it can be used on localhost, if you want to use it on your site, please open an issue and mention your domain to be whitelisted for CORS.
+
+The GraphQL API will soon be open for all users without any restrictions; however, this is dependent on funding.
+
+
 ## Contributing
 
 Contributions are welcome! Please submit a pull request or open an issue for any suggestions or bug reports.
+
+## Widgets
+
+Explore our dedicated [Widgets Repository](https://github.com/bloomerstv/widgets) for stream overlays, including features like a chat box for live chat and an alert box for notifications, such as who collected the stream post or new followers.
+
+Feel free to customize the existing widgets or create your own to enhance your streaming experience!
+
 
 ## Stay Updated
 
@@ -99,4 +115,4 @@ For all major updates, follow us at [BloomersTV on Hey.xyz](https://hey.xyz/u/bl
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the AGPL-3.0 license. See the [LICENSE](/LICENSE) file for more details.
