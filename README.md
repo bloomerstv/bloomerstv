@@ -115,4 +115,4 @@ For all major updates, follow us at [BloomersTV on Hey.xyz](https://hey.xyz/u/bl
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the AGPL-3.0 license. See the [LICENSE](/LICENSE) file for more details.
