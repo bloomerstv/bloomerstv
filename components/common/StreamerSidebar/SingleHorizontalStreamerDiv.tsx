@@ -56,7 +56,7 @@ const SingleHorizontalStreamerDiv = ({
           />
         </Link>
         {live && (
-          <div className="-mt-4 absolute bottom-0">
+          <div className="-mt-4 absolute bottom-0 z-50">
             <LiveDiv />
           </div>
         )}
