@@ -58,10 +58,48 @@ const getPublicationData = (
     case 'VideoMetadataV3':
       const videoAttachments = getAttachmentsData(metadata.attachments)[0]
 
+      let videoUri =
+        metadata.asset.video.optimized?.uri || videoAttachments?.uri
+
+      const videoFormats = [
+        '.mp4',
+        '.m4v',
+        '.mov',
+        '.mpeg',
+        '.ogg',
+        '.ogv',
+        '.webm',
+        '.flv',
+        '.avi',
+        '.wmv',
+        '.mkv',
+        '.3gp',
+        '.3g2',
+        '.asf',
+        '.ts',
+        '.mxf',
+        '.vob',
+        '.rmvb',
+        '.rm',
+        '.qt',
+        '.divx',
+        '.xvid',
+        '.gltf',
+        '.gltf-binary' // Note: These are not traditional video formats, but rather 3D model formats
+      ]
+
+      const hasVideoFormat = videoFormats.some((format) =>
+        videoUri.endsWith(format)
+      )
+
+      if (!hasVideoFormat) {
+        videoUri += '?type=.mp4'
+      }
+
       return {
         content: metadata.content,
         asset: {
-          uri: metadata.asset.video.optimized?.uri || videoAttachments?.uri,
+          uri: videoUri,
           cover:
             metadata.asset.cover?.optimized?.uri || videoAttachments?.coverUri,
           type: 'Video',
