@@ -20,7 +20,7 @@ import {
   StreamReplayPublication,
   useIsVerifiedQuery
 } from '../../../graphql/generated'
-import { APP_ID } from '../../../utils/config'
+import { APP_ID, hideProfilesIds } from '../../../utils/config'
 import { CATEGORIES } from '../../../utils/categories'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
@@ -235,6 +235,9 @@ const HomePageCards = () => {
       <div className="flex flex-row flex-wrap w-full gap-y-6">
         {selectedCategory?.name === 'None' &&
           streamersWithProfiles?.map((streamer) => {
+            if (hideProfilesIds.includes(streamer.profileId)) {
+              return null
+            }
             return <StreamCard key={streamer?.profileId} streamer={streamer} />
           })}
         {!loading &&
@@ -249,6 +252,10 @@ const HomePageCards = () => {
               ?.slice(0, showAll ? combinedData?.length : lengthToShow)
               ?.map((post) => {
                 if (post?.type === 'streamClips') {
+                  // @ts-ignore
+                  if (hideProfilesIds.includes(post?.by?.id)) {
+                    return null
+                  }
                   return (
                     <HomeVideoCard
                       // @ts-ignore
@@ -265,6 +272,10 @@ const HomePageCards = () => {
                   ? // @ts-ignore
                     publicationsMap.get(post?.publicationId)
                   : null
+                // @ts-ignore
+                if (hideProfilesIds.includes(publication?.by?.id)) {
+                  return null
+                }
                 return (
                   <HomeVideoCard
                     // @ts-ignore

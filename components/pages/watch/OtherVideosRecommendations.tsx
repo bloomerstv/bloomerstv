@@ -5,7 +5,7 @@ import {
   usePublications
 } from '@lens-protocol/react-web'
 import React, { useCallback } from 'react'
-import { APP_ID } from '../../../utils/config'
+import { APP_ID, hideProfilesIds } from '../../../utils/config'
 import clsx from 'clsx'
 import RecommendedVideoCard from '../../common/RecommendedVideoCard'
 import { usePublicationsStore } from '../../store/usePublications'
@@ -76,6 +76,9 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
   return (
     <div className={clsx('flex flex-col w-full h-full gap-y-4', className)}>
       {combinedData?.map((post) => {
+        if (hideProfilesIds.includes(post?.by?.id)) {
+          return null
+        }
         if (post?.type === 'streamClips') {
           return <RecommendedVideoCard key={post?.id} post={post as Post} />
         } else {
@@ -108,39 +111,6 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
           }
         }
       })}
-
-      {/* {data?.map((post) => {
-        return <RecommendedVideoCard key={post?.id} post={post as Post} />
-      })}
-      {publications?.map((post) => {
-        if (isMobile) {
-          return (
-            <HomeVideoCard
-              post={post as Post}
-              // @ts-ignore
-              cover={getStreamReplay(post?.id)?.thumbnail}
-              // @ts-ignore
-              duration={getStreamReplay(post?.id)?.duration}
-              key={post?.id}
-            />
-          )
-        } else {
-          return (
-            <RecommendedCardLayout
-              createdAt={post?.createdAt}
-              // @ts-ignore
-              coverUrl={getStreamReplay(post?.id)?.thumbnail}
-              postLink={`/watch/${post?.id}`}
-              profile={post?.by}
-              // @ts-ignore
-              stats={post?.stats}
-              // @ts-ignore
-              title={post?.metadata?.title}
-              key={post?.id}
-            />
-          )
-        }
-      })} */}
     </div>
   )
 }

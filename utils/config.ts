@@ -216,5 +216,8 @@ export const SuperFluidInfo = {
   ]
 }
 
+// todo, move this to api to add / remove profiles from this list on the backend
+export const hideProfilesIds = ['0x06a275']
+
 export const NEXT_PUBLIC_VAPID_KEY =
   'BDv44ZwY7G3E1fgEuHeiw74cda-LG9gOFwTLFaD2ArveOdd3meLf37noJbztWUeS8GFSR59SjRpYToF3oZrG1dE'
