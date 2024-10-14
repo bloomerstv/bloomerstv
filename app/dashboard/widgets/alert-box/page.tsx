@@ -91,24 +91,6 @@ const AlexBoxWidgetPage = () => {
               />
             </div>
           </div>
-          <div className="start-row gap-x-4 mt-4">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleCopy}
-              startIcon={<ContentCopyIcon />}
-            >
-              Copy Source URL
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={refreshIframe}
-              startIcon={<PlayArrowIcon />}
-            >
-              Emulate
-            </Button>
-          </div>
         </div>
         {/* iframe */}
         <div className="">
@@ -124,6 +106,35 @@ const AlexBoxWidgetPage = () => {
               src={`${WIDGETS_URL}/alert-box/${data?.profile?.id}?newCollects=${collectAlert}&newFollowers=${followerAlert}&emulate=true`}
               className="w-full h-full"
             />
+          </div>
+          <div className="start-center-row gap-x-4 mt-4">
+            {/* // copy source url */}
+            <Button
+              startIcon={<ContentCopyIcon />}
+              onClick={handleCopy}
+              variant="contained"
+              style={{
+                borderRadius: '30px',
+                paddingLeft: '20px'
+              }}
+            >
+              Copy Source url
+            </Button>
+
+            {/* emulate */}
+            <Button
+              onClick={() => {
+                refreshIframe()
+              }}
+              startIcon={<PlayArrowIcon />}
+              variant="contained"
+              style={{
+                borderRadius: '30px',
+                paddingLeft: '15px'
+              }}
+            >
+              Emulate
+            </Button>
           </div>
         </div>
       </div>

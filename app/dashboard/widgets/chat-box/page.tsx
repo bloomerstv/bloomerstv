@@ -44,9 +44,9 @@ const ChatBoxWidgetPage = () => {
         </div>
       </div>
 
-      <div className="flex flex-row justify-between mt-6">
+      <div className="flex flex-row justify-between mt-6 h-full box-border">
         {/* options */}
-        <div className="start-col gap-y-3">
+        <div className="start-col gap-y-3 overflow-y-auto h-full box-border">
           <div className="start-col gap-y-3 w-fit">
             <div className="between-row w-full gap-x-6">
               <div>Width in px</div>
@@ -99,26 +99,60 @@ const ChatBoxWidgetPage = () => {
               />
             </div>
           </div>
-          <div className="start-center-row gap-x-4 mt-4">
-            {/* // copy source url */}
-            <Button
-              startIcon={<ContentCopyIcon />}
-              onClick={handleCopy}
-              variant="contained"
-            >
-              Copy Source url
-            </Button>
 
-            {/* emulate */}
-            <Button
-              onClick={() => {
-                refreshIframe()
-              }}
-              startIcon={<PlayArrowIcon />}
-              variant="contained"
-            >
-              Emulate
-            </Button>
+          <div className="mt-4 w-[500px]">
+            <div className="font-bold text-xl">Chat Widget Class Names</div>
+            <div className="text-s-text text-sm font-semibold">
+              Use this classnames to edit chat widget theme using custom css
+              field in browser source of obs
+            </div>
+            <ul>
+              <li>
+                <strong>chat-container:</strong>
+                <span>
+                  Container for each chat message, controlling positioning and
+                  margins.
+                </span>
+              </li>
+              <li>
+                <strong>profile-container:</strong>
+                <span>
+                  Container for the profile info (avatar and handle) displayed
+                  above the message.
+                </span>
+              </li>
+              <li>
+                <strong>avatar:</strong>
+                <span>
+                  Displays the user's avatar image. Make sure the size fits your
+                  design.
+                </span>
+              </li>
+              <li>
+                <strong>handle:</strong>
+                <span>
+                  User's handle (username), displayed alongside the avatar.
+                </span>
+              </li>
+              <li>
+                <strong>super-chat:</strong>
+                <span>
+                  Displays the super chat amount and currency symbol, if
+                  applicable.
+                </span>
+              </li>
+              <li>
+                <strong>message:</strong>
+                <span>The actual content of the chat message.</span>
+              </li>
+              <li>
+                <strong>message-container:</strong>
+                <span>
+                  Container for the message, with styles for padding and
+                  background.
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
         {/* iframe preview */}
@@ -135,6 +169,35 @@ const ChatBoxWidgetPage = () => {
               key={iframeKey}
               src={`${WIDGETS_URL}/live-chat/${data?.profile?.id}?emulate=true&limit=${limit}&autoRemoveChatInterval=${autoRemoveChatInterval}`}
             />
+          </div>
+          <div className="start-center-row gap-x-4 mt-4">
+            {/* // copy source url */}
+            <Button
+              startIcon={<ContentCopyIcon />}
+              onClick={handleCopy}
+              variant="contained"
+              style={{
+                borderRadius: '30px',
+                paddingLeft: '20px'
+              }}
+            >
+              Copy Source url
+            </Button>
+
+            {/* emulate */}
+            <Button
+              onClick={() => {
+                refreshIframe()
+              }}
+              startIcon={<PlayArrowIcon />}
+              variant="contained"
+              style={{
+                borderRadius: '30px',
+                paddingLeft: '15px'
+              }}
+            >
+              Emulate
+            </Button>
           </div>
         </div>
       </div>
