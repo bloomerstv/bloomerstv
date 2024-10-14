@@ -13,6 +13,7 @@ const ChatBoxWidgetPage = () => {
   const [width, setWidth] = useState(300)
   const [height, setHeight] = useState(300)
   const [limit, setLimit] = useState(3)
+  const [autoRemoveChatInterval, setAutoRemoveChatInterval] = useState(5)
   const [iframeKey, setIframeKey] = useState(Date.now())
 
   const refreshIframe = () => {
@@ -24,7 +25,7 @@ const ChatBoxWidgetPage = () => {
   }
 
   const handleCopy = () => {
-    const chatSourceUrl = `${WIDGETS_URL}/live-chat/${data?.profile?.id}?limit=${limit}`
+    const chatSourceUrl = `${WIDGETS_URL}/live-chat/${data?.profile?.id}?limit=${limit}&autoRemoveChatInterval=${autoRemoveChatInterval}`
     navigator.clipboard.writeText(chatSourceUrl)
     toast.success('Copied to clipboard')
   }
@@ -81,6 +82,22 @@ const ChatBoxWidgetPage = () => {
                 onChange={(e) => setLimit(Number(e.target.value))}
               />
             </div>
+            <div className="between-row w-full gap-x-6">
+              <div>
+                <div>Remove Chat after (s)</div>
+                <div className="text-s-text text-sm">Set to 0 to disable</div>
+              </div>
+              <Input
+                type="number"
+                defaultValue={4}
+                inputProps={{ min: 1, max: 10 }}
+                value={autoRemoveChatInterval}
+                className="w-[70px]"
+                onChange={(e) =>
+                  setAutoRemoveChatInterval(Number(e.target.value))
+                }
+              />
+            </div>
           </div>
           <div className="start-center-row gap-x-4 mt-4">
             {/* // copy source url */}
@@ -116,7 +133,7 @@ const ChatBoxWidgetPage = () => {
                 border: 'none'
               }}
               key={iframeKey}
-              src={`${WIDGETS_URL}/live-chat/${data?.profile?.id}?emulate=true&limit=${limit}`}
+              src={`${WIDGETS_URL}/live-chat/${data?.profile?.id}?emulate=true&limit=${limit}&autoRemoveChatInterval=${autoRemoveChatInterval}`}
             />
           </div>
         </div>
