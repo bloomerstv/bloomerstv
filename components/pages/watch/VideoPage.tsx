@@ -1,4 +1,9 @@
-import { Post, useProfile } from '@lens-protocol/react-web'
+import {
+  Post,
+  SessionType,
+  useProfile,
+  useSession
+} from '@lens-protocol/react-web'
 import React, { memo, useEffect } from 'react'
 import getPublicationData from '../../../utils/lib/getPublicationData'
 import ProfileInfoWithStream from '../profile/ProfileInfoWithStream'
@@ -13,6 +18,7 @@ import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFro
 import { useStreamReplayRecordingQuery } from '../../../graphql/generated'
 import Player from '../../common/Player'
 import { getCategoryForTag } from '../../../utils/categories'
+import Link from 'next/link'
 const VideoPage = ({
   post,
   sessionId
@@ -21,6 +27,7 @@ const VideoPage = ({
   sessionId?: string
 }) => {
   const isMobile = useIsMobile()
+  const { data: session } = useSession()
 
   const asset = post ? getPublicationData(post?.metadata)?.asset : null
 
@@ -137,26 +144,50 @@ const VideoPage = ({
               </div>
             )}
         </div>
-        <Markup className="">
-          {post
-            ? String(
-                getSenitizedContent(
-                  // @ts-ignore
-                  post?.metadata?.content,
-                  // @ts-ignore
-                  post?.metadata?.title
-                ).length > 0
-                  ? getSenitizedContent(
-                      // @ts-ignore
-                      post?.metadata?.content,
-                      // @ts-ignore
-                      post?.metadata?.title
-                    )
-                  : // @ts-ignore
+
+        {post ? (
+          <Markup className="">
+            {String(
+              getSenitizedContent(
+                // @ts-ignore
+                post?.metadata?.content,
+                // @ts-ignore
+                post?.metadata?.title
+              ).length > 0
+                ? getSenitizedContent(
+                    // @ts-ignore
+                    post?.metadata?.content,
+                    // @ts-ignore
                     post?.metadata?.title
-              )
-            : 'Untitled streams are those stream that are not associated with any lens post. They are not visible on other lens platform. These streams are only accessible through direct link. \n\n Why is you stream untitled?\nYou may have not been on go-live page when your stream was live, this means no lens post was created for your stream. Go-live page will automatically create a lens post for your stream, when you visit the page while your stream is still live, we can not create a post on your behalf otherwise.\nYou can create a lens post for your untitled streams from content page, then this stream replay wont remain untitled stream.'}
-        </Markup>
+                  )
+                : // @ts-ignore
+                  post?.metadata?.title
+            )}
+          </Markup>
+        ) : (
+          <div>
+            {session?.type === SessionType.WithProfile &&
+              session?.profile?.id !== profile?.id && (
+                <span className="text-2xl">
+                  You can create a lens post for your untitled streams from{' '}
+                  <span>
+                    <Link href={`/dashboard/content`} className="text-brand">
+                      {' '}
+                      content page
+                    </Link>
+                  </span>
+                  <br />
+                </span>
+              )}
+            <span className="text-sm font-normal">
+              Untitled streams are those stream that are not associated with any
+              lens post. They are not visible on other lens platform. These
+              streams are only accessible through direct link. This may happend
+              if for some reason go-live page isn't successfully able to create
+              a lens post while the stream was live.{' '}
+            </span>
+          </div>
+        )}
         {/* links */}
       </div>
 

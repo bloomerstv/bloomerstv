@@ -1,4 +1,9 @@
-import { Post, Profile } from '@lens-protocol/react-web'
+import {
+  Post,
+  Profile,
+  SessionType,
+  useSession
+} from '@lens-protocol/react-web'
 import Link from 'next/link'
 import React from 'react'
 import getAvatar from '../../utils/lib/getAvatar'
@@ -11,7 +16,8 @@ import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import VerifiedBadge from '../ui/VerifiedBadge'
 import LoadingImage from '../ui/LoadingImage'
-
+import { IconButton, Tooltip } from '@mui/material'
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 const HomeVideoCard = ({
   post,
   cover,
@@ -31,6 +37,7 @@ const HomeVideoCard = ({
 }) => {
   const pathname = usePathname()
   const asset = post ? getPublicationData(post?.metadata)?.asset : null
+  const { data } = useSession()
 
   if (!post && !session) return null
 
@@ -110,6 +117,30 @@ const HomeVideoCard = ({
             </div>
           </div>
         </div>
+
+        {/* @ts-ignore */}
+        {!post?.metadata?.title &&
+          data?.type === SessionType.WithProfile &&
+          data?.profile?.id === session?.profile?.id && (
+            <Tooltip
+              title="You can create a lens post for your untitled streams from content page"
+              arrow
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+              }}
+            >
+              <IconButton
+                size="medium"
+                href="/dashboard/content"
+                style={{
+                  backgroundColor: '#1976d2'
+                }}
+              >
+                <ArrowOutwardIcon className="text-white" />
+              </IconButton>
+            </Tooltip>
+          )}
       </div>
     </Link>
   )
