@@ -167,7 +167,7 @@ const VideoPage = ({
         ) : (
           <div>
             {session?.type === SessionType.WithProfile &&
-              session?.profile?.id !== profile?.id && (
+              session?.profile?.id === profile?.id && (
                 <span className="text-2xl">
                   You can create a lens post for your untitled streams from{' '}
                   <span>
