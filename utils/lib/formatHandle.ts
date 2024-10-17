@@ -10,7 +10,7 @@ const formatHandle = (profile?: Profile, keepSuffix = false): string => {
   const handleInfo = profile?.handle
 
   if (!handleInfo) {
-    return ''
+    return profile?.id || ''
   }
   if (keepSuffix) {
     return handleInfo?.fullHandle
