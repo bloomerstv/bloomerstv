@@ -38,6 +38,7 @@ import {
 import getStampFyiURL from '../../../../utils/getStampFyiURL'
 import { getShortAddress } from '../../../../utils/lib/getShortAddress'
 import useEns from '../../../../utils/hooks/useEns'
+import LoadingImage from '../../../ui/LoadingImage'
 const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const isMobile = useIsMobile()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
@@ -100,7 +101,11 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
         >
-          <img src={avatar} alt="avatar" className="w-8 h-8 rounded-full" />
+          <LoadingImage
+            src={avatar}
+            alt="avatar"
+            className="w-8 h-8 rounded-full"
+          />
         </IconButton>
 
         <SwipeableDrawer
@@ -130,7 +135,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
                   handleClose()
                 }}
               >
-                <img
+                <LoadingImage
                   src={avatar}
                   alt="avatar"
                   className="w-8 h-8 rounded-full mr-3"
@@ -254,7 +259,11 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
       >
-        <img src={avatar} alt="avatar" className="w-8 h-8 rounded-full" />
+        <LoadingImage
+          src={avatar}
+          alt="avatar"
+          className="w-8 h-8 rounded-full"
+        />
       </IconButton>
 
       <Menu
