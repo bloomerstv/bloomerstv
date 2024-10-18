@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { viemPublicClient } from '../lib/viemPublicClient'
+import { viemPublicClientEth } from '../lib/viemPublicClient'
 
 const useEns = ({
   address
@@ -14,14 +14,14 @@ const useEns = ({
   React.useEffect(() => {
     if (!address) return
     const foo = async () => {
-      const ensName = await viemPublicClient.getEnsName({
+      const ensName = await viemPublicClientEth.getEnsName({
         // @ts-ignore
         address: address
       })
 
       setEnsName(ensName)
 
-      const ensAvatar = await viemPublicClient.getEnsAvatar({
+      const ensAvatar = await viemPublicClientEth.getEnsAvatar({
         name: String(ensName),
         gatewayUrls: ['https://cloudflare-ipfs.com']
       })

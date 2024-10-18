@@ -45,10 +45,10 @@ import toast from 'react-hot-toast'
 import useHandleWrongNetwork from '../../../../utils/hooks/useHandleWrongNetwork'
 import { MAX_UINT256 } from '../../../../utils/contants'
 import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
-import { sleep } from '../../../../utils/helpers'
 import getStampFyiURL from '../../../../utils/getStampFyiURL'
 import { getShortAddress } from '../../../../utils/lib/getShortAddress'
 import useEns from '../../../../utils/hooks/useEns'
+import { viewPublicClientPolygon } from '../../../../utils/lib/viemPublicClient'
 
 const LiveChatInput = ({
   inputMessage,
@@ -126,7 +126,6 @@ const LiveChatInput = ({
     hash: txHash,
     query: { enabled: Boolean(txHash) }
   })
-
   const { address, isConnected, isConnecting, isReconnecting } = useAccount()
 
   const { data: balanceData } = useReadContract({
@@ -208,12 +207,12 @@ const LiveChatInput = ({
   }
 
   useEffect(() => {
-    if (tipped && !isWaitingForTransaction && txHash) {
+    if (tipped && txHash) {
       sendMessage(txHash)
       setTipped(false)
       setSuperChat(false)
     }
-  }, [tipped, isWaitingForTransaction])
+  }, [tipped, txHash])
 
   const handleTip = async () => {
     try {
@@ -225,7 +224,7 @@ const LiveChatInput = ({
       const lastStreamPublicationId =
         await getLastStreamPublicationId(liveChatProfileId)
 
-      await writeContractAsync({
+      const tx = await writeContractAsync({
         abi: tippingContractAbi,
         address: tippingContractAddress,
         functionName: 'tip',
@@ -238,8 +237,13 @@ const LiveChatInput = ({
           lastStreamPublicationId?.split('-')[1]
         ]
       })
-      // sleep for a second
-      await sleep(3000)
+      const transaction =
+        await viewPublicClientPolygon.waitForTransactionReceipt({
+          hash: tx,
+          confirmations: 1
+        })
+      console.log('transaction', transaction)
+
       setTipped(true)
     } catch (error) {
       console.error(error)

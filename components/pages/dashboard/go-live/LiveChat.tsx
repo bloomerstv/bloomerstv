@@ -1,6 +1,5 @@
 import { Button, IconButton } from '@mui/material'
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
-import { sleep } from '../../../../utils/helpers'
 import {
   APP_ID,
   LIVE_CHAT_WEB_SOCKET_URL,
@@ -247,10 +246,6 @@ const LiveChat = ({
 
     if (socket && inputMessage.trim() !== '') {
       setInputMessage('')
-
-      if (txHash) {
-        await sleep(2000)
-      }
 
       // the send-message will be listened to server only if the joined-chat event is emitted with accesstoken
       // the joined-chat event is listed on the server side to verify the profile and information like handle & avatarUrl are already stored for this socket there,

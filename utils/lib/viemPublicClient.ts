@@ -1,7 +1,12 @@
 import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
+import { mainnet, polygon } from 'viem/chains'
 
-export const viemPublicClient = createPublicClient({
+export const viemPublicClientEth = createPublicClient({
   chain: mainnet,
+  transport: http()
+})
+
+export const viewPublicClientPolygon = createPublicClient({
+  chain: polygon,
   transport: http()
 })
