@@ -1,13 +1,5 @@
 import React from 'react'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import {
-  Button,
-  IconButton,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  MenuList
-} from '@mui/material'
+import { Button, ListItemIcon, Menu, MenuItem, MenuList } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import { defaultSponsored, HEY_APP_LINK } from '../../../../utils/config'
 import BlockIcon from '@mui/icons-material/Block'
@@ -20,7 +12,6 @@ import {
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import toast from 'react-hot-toast'
 import LoadingButton from '@mui/lab/LoadingButton'
-import clsx from 'clsx'
 
 const ChatOptions = ({
   handle,
@@ -28,28 +19,28 @@ const ChatOptions = ({
   profileId,
   chatProfileId,
   socket,
-  className
+  anchorEl,
+  setAnchorEl,
+  onClose
 }: {
   chatProfileId?: string
   profileId?: string
   handle: string
   avatarUrl: string
   socket: any
-  className?: string
+  anchorEl?: any
+  setAnchorEl: (anchorEl: any) => void
+  onClose: () => void
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState(null)
   const [isPopUpOpen, setIsPopUpOpen] = React.useState(false)
 
-  const open = Boolean(anchorEl)
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
   const { data } = useSession()
   const handleClose = () => {
     setAnchorEl(null)
+    onClose?.()
   }
 
-  const { data: profile } = useProfile({
+  const { data: profile, loading: profileLoading } = useProfile({
     // @ts-ignore
     forProfileId: profileId
   })
@@ -57,35 +48,43 @@ const ChatOptions = ({
   const { execute: blockProfiles, loading } = useBlockProfiles()
 
   const handleBanAndBlock = async () => {
-    if (!profile) return
+    console.log('profileid', profileId)
+    if (!profileId || profileLoading) return
 
-    try {
-      // send block request on lens
+    if (profile) {
+      try {
+        // send block request on lens
 
-      const { isFailure } = await blockProfiles({
-        profiles: [profile],
-        sponsored: defaultSponsored
-      })
+        const { isFailure } = await blockProfiles({
+          profiles: [profile],
+          sponsored: defaultSponsored
+        })
 
-      if (isFailure()) {
-        toast.error(
-          'Failed to block profile on lens. But message will be removed from chat.'
-        )
+        if (isFailure()) {
+          toast.error(
+            'Failed to block profile on lens. But message will be removed from chat.'
+          )
+        }
+
+        // send block request on ws, after confirmation from ws, user with profileId will be blocked in real time from chatting
+        socket.emit('block-profile', profile?.id)
+
+        setIsPopUpOpen(false)
+      } catch (error) {
+        toast.error(String(error))
       }
-
-      // send block request on ws, after confirmation from ws, user with profileId will be blocked in real time from chatting
-      socket.emit('block-profile', profile?.id)
+    } else {
+      socket.emit('block-profile', profileId)
 
       setIsPopUpOpen(false)
-    } catch (error) {
-      toast.error(String(error))
     }
   }
 
   const openBanAndBlockPopup = () => {
-    handleClose()
     setIsPopUpOpen(true)
   }
+
+  const open = Boolean(anchorEl)
 
   return (
     <div>
@@ -120,28 +119,22 @@ const ChatOptions = ({
             {handle}?
           </div>
 
-          <div className="text-sm text-s-text font-semibold">
-            This actions is also a lens block, so you won't be able to see{' '}
-            {handle}'s posts from other lens clients.
-          </div>
-          <div className="text-sm text-s-text font-semibold">
-            Chat Messages are removed just from this bloomerstv chat and
-            corresponding Lens Comments can't be removed.
-          </div>
+          {profile && (
+            <div className="text-sm text-s-text font-semibold">
+              This actions is also a lens block, so you won't be able to see{' '}
+              {handle}'s posts from other lens clients.
+            </div>
+          )}
+
+          {profile && (
+            <div className="text-sm text-s-text font-semibold">
+              Chat Messages are removed just from this bloomerstv chat and
+              corresponding Lens Comments can't be removed.
+            </div>
+          )}
         </div>
       </ModalWrapper>
-      <div className={clsx('rounded-full', className)}>
-        <IconButton
-          size="small"
-          aria-controls={open ? 'options' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={handleClick}
-          color="inherit"
-        >
-          <MoreVertIcon color="inherit" />
-        </IconButton>
-      </div>
+
       <Menu
         anchorEl={anchorEl}
         id="options"
@@ -190,8 +183,8 @@ const ChatOptions = ({
             Hey Profile
           </MenuItem>
 
-          {profile &&
-            socket &&
+          {socket &&
+            !profileLoading &&
             data?.type === SessionType.WithProfile &&
             profile?.id !== data?.profile?.id &&
             chatProfileId === data?.profile?.id && (

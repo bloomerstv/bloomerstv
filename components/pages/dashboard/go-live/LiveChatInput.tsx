@@ -14,8 +14,10 @@ import getAvatar from '../../../../utils/lib/getAvatar'
 import {
   LimitType,
   Profile,
+  SessionType,
   useProfile,
-  useSearchProfiles
+  useSearchProfiles,
+  useSession
 } from '@lens-protocol/react-web'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
@@ -25,6 +27,8 @@ import { CURRENCIES, LENS_CHAIN_ID } from '../../../../utils/config'
 import { useTokenPriceQuery } from '../../../../graphql/generated'
 import {
   useAccount,
+  useEnsAvatar,
+  useEnsName,
   useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract
@@ -44,20 +48,53 @@ import useHandleWrongNetwork from '../../../../utils/hooks/useHandleWrongNetwork
 import { MAX_UINT256 } from '../../../../utils/contants'
 import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
 import { sleep } from '../../../../utils/helpers'
+import getStampFyiURL from '../../../../utils/getStampFyiURL'
+import { getShortAddress } from '../../../../utils/lib/getShortAddress'
 
 const LiveChatInput = ({
-  profile,
   inputMessage,
   sendMessage,
   setInputMessage,
   liveChatProfileId
 }: {
-  profile: Profile
   inputMessage: string
   sendMessage: (txHash?: string) => Promise<void>
   setInputMessage: (value: string) => void
   liveChatProfileId: string
 }) => {
+  const { data: session } = useSession()
+  const { data: ensName } = useEnsName({
+    // @ts-ignore
+    address:
+      session?.type === SessionType.JustWallet ? session?.address : undefined
+  })
+
+  const { data: ensAvatar } = useEnsAvatar({
+    // @ts-ignore
+    name: ensName
+  })
+  const profileId =
+    session?.type === SessionType.WithProfile
+      ? session?.profile?.id
+      : // @ts-ignore
+        (session?.address ?? '')
+  const avatar =
+    session?.type === SessionType.WithProfile
+      ? getAvatar(session?.profile)
+      : ensAvatar
+        ? ensAvatar
+        : session?.type === SessionType.JustWallet
+          ? getStampFyiURL(session?.address!)
+          : ''
+  const profileHandle =
+    session?.type === SessionType.WithProfile
+      ? formatHandle(session?.profile)
+      : ensName
+        ? ensName
+        : session?.type === SessionType.JustWallet
+          ? getShortAddress(session?.address!)
+          : ''
+
   const [open, setOpen] = React.useState(false)
 
   const handleTooltipToggle = () => {
@@ -193,9 +230,8 @@ const LiveChatInput = ({
 
       setIsTipping(true)
 
-      const lastStreamPublicationId = await getLastStreamPublicationId(
-        profile?.id
-      )
+      const lastStreamPublicationId =
+        await getLastStreamPublicationId(liveChatProfileId)
 
       await writeContractAsync({
         abi: tippingContractAbi,
@@ -205,7 +241,7 @@ const LiveChatInput = ({
           selectedCurrency?.address,
           liveChatProfile?.ownedBy?.address,
           finalValue,
-          profile?.id,
+          profileId,
           liveChatProfileId,
           lastStreamPublicationId?.split('-')[1]
         ]
@@ -277,7 +313,7 @@ const LiveChatInput = ({
                       {profile?.metadata?.displayName}
                     </div>
                   )}
-                  <div className="text-p-text text-sm leading-0 text-s-text">
+                  <div className="text-p-text text-sm leading-0">
                     {formatHandle(profile)}
                   </div>
                 </div>
@@ -321,13 +357,9 @@ const LiveChatInput = ({
             {/* profile header */}
 
             <div className="flex flex-row items-center gap-x-2.5">
-              <img
-                src={getAvatar(profile)}
-                alt="avatar"
-                className="w-7 h-7 rounded-full"
-              />
+              <img src={avatar} alt="avatar" className="w-7 h-7 rounded-full" />
 
-              <div className="font-semibold">{formatHandle(profile)}</div>
+              <div className="font-semibold">{profileHandle}</div>
 
               <div className="font-semibold">
                 {`${amountValue} ${amountCurrency}`}
@@ -335,7 +367,7 @@ const LiveChatInput = ({
             </div>
 
             <TextareaAutosize
-              className="text-sm bg-brand font-semibold textarea-placeholder text-white resize-none mb-1 w-full font-normal font-sans leading-normal outline-none border-none"
+              className="text-sm bg-brand textarea-placeholder text-white resize-none mb-1 w-full font-normal font-sans leading-normal outline-none border-none"
               aria-label="empty textarea"
               placeholder="Chat..."
               style={{
@@ -506,7 +538,7 @@ const LiveChatInput = ({
         <div className="w-full flex flex-row items-end gap-x-1.5">
           {inputMessage.trim().length > 0 && (
             <img
-              src={getAvatar(profile)}
+              src={avatar}
               alt="avatar"
               className="w-7 h-7 rounded-full mb-1"
             />

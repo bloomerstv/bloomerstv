@@ -56,14 +56,14 @@ const SingleHorizontalStreamerDiv = ({
           />
         </Link>
         {live && (
-          <div className="-mt-4 absolute bottom-0 z-50">
+          <div className="-mt-4 absolute bottom-0 z-40">
             <LiveDiv />
           </div>
         )}
         {!live &&
           data?.type === SessionType.WithProfile &&
           !profile?.operations?.isFollowedByMe?.value && (
-            <div className="-mt-4 absolute bottom-0">
+            <div className="-mt-4 absolute bottom-0 z-40">
               <LoadingButton
                 startIcon={
                   <PersonAddIcon

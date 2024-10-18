@@ -35,8 +35,8 @@ import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
 import LiveChatInput from './LiveChatInput'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
-import ChatOptions from './ChatOptions'
 import { getAccessTokenAsync } from '../../../../utils/lib/getIdentityTokenAsync'
+import ChatOptionsButton from './ChatOptionsButton'
 
 // Base type for common fields
 interface MessageBase {
@@ -146,22 +146,21 @@ const LiveChat = ({
   }, [data?.type])
 
   const joinChatWithProfile = useCallback(async () => {
-    if (data?.type === SessionType.WithProfile && socket) {
-      const accessToken = await getAccessTokenAsync()
+    if (data?.type === SessionType.Anonymous || !socket) return
+    const accessToken = await getAccessTokenAsync()
 
-      socket.on('verified-to-send', () => {
-        setVerifiedToSend(true)
-      })
+    socket.on('verified-to-send', () => {
+      setVerifiedToSend(true)
+    })
 
-      socket.on('error', (error: any) => {
-        toast.error(String(error))
-        if (error === 'You are blocked by the streamer') {
-          setStreamerHasBlockedMe(true)
-        }
-      })
-      // emit joined chat room
-      socket.emit('joined-chat', accessToken)
-    }
+    socket.on('error', (error: any) => {
+      toast.error(String(error))
+      if (error === 'You are blocked by the streamer') {
+        setStreamerHasBlockedMe(true)
+      }
+    })
+    // emit joined chat room
+    socket.emit('joined-chat', accessToken)
   }, [socket, data?.type])
 
   useEffect(() => {
@@ -242,7 +241,7 @@ const LiveChat = ({
   }, [])
 
   const sendMessage = async (txHash?: string) => {
-    if (data?.type !== SessionType.WithProfile) {
+    if (data?.type === SessionType.Anonymous) {
       return
     }
 
@@ -400,16 +399,14 @@ const LiveChat = ({
                 key={index}
                 className="bg-brand group relative shadow-md m-1.5 text-white rounded-xl p-2 flex flex-row items-start gap-x-2.5"
               >
-                <div className="absolute top-0  right-0 hidden group-hover:block ">
-                  <ChatOptions
-                    chatProfileId={profileId}
-                    profileId={msg.authorProfileId}
-                    handle={msg.handle}
-                    avatarUrl={msg.avatarUrl!}
-                    socket={socket}
-                    className="bg-brand text-white"
-                  />
-                </div>
+                <ChatOptionsButton
+                  chatProfileId={profileId}
+                  profileId={msg.authorProfileId}
+                  handle={msg.handle}
+                  avatarUrl={msg.avatarUrl!}
+                  socket={socket}
+                  className="bg-brand text-white"
+                />
                 <img
                   src={msg.avatarUrl}
                   alt="avatar"
@@ -442,16 +439,14 @@ const LiveChat = ({
               key={index}
               className="flex group relative flex-row px-3 my-1.5"
             >
-              <div className="absolute top-0 -translate-y-1 right-0 hidden group-hover:block ">
-                <ChatOptions
-                  chatProfileId={profileId}
-                  profileId={msg.authorProfileId}
-                  handle={msg.handle}
-                  avatarUrl={msg.avatarUrl!}
-                  socket={socket}
-                  className="bg-s-bg"
-                />
-              </div>
+              <ChatOptionsButton
+                chatProfileId={profileId}
+                profileId={msg.authorProfileId}
+                handle={msg.handle}
+                avatarUrl={msg.avatarUrl!}
+                socket={socket}
+                className="bg-s-bg"
+              />
               <img
                 src={msg.avatarUrl}
                 alt="avatar"
@@ -487,7 +482,7 @@ const LiveChat = ({
 
       {/* input section */}
       <div className="w-full py-1.5 px-1.5 border-t border-p-border">
-        {data?.type !== SessionType.WithProfile || !socket ? (
+        {data?.type === SessionType.Anonymous || !socket ? (
           <Button
             variant="contained"
             onClick={() => setOpen(true)}
@@ -525,7 +520,6 @@ const LiveChat = ({
           </Button>
         ) : (
           <LiveChatInput
-            profile={data?.profile}
             liveChatProfileId={profileId}
             inputMessage={inputMessage}
             sendMessage={sendMessage}

@@ -10,7 +10,7 @@ const getStampFyiURL = (address: string) => {
   if (!address) {
     currentAddress = ZERO_ADDRESS
   }
-  return `https://cdn.stamp.fyi/avatar/eth:${currentAddress.toLowerCase()}?s=300`
+  return `https://cdn.stamp.fyi/avatar/eth:${currentAddress.toLowerCase()}?s=250`
 }
 
 export default getStampFyiURL

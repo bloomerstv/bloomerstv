@@ -118,11 +118,6 @@ const ProfileBar = ({
   useEffect(() => {
     if (!streamer?.latestStreamPublicationId || !lensApolloClient) return
 
-    console.log(
-      'subscribing to new publication stats',
-      streamer?.latestStreamPublicationId
-    )
-
     const unsubscribe = client.subscribe(
       {
         query: NEW_PUBLICATION_STATS,
@@ -142,17 +137,12 @@ const ProfileBar = ({
       },
       {
         next: ({ data }) => {
-          console.log('data', data)
-          // @ts-ignore
-          console.log('subscribe', data?.newPublicationStats)
           // @ts-ignore
           if (!data?.newPublicationStats) return
           // @ts-ignore
           setNewPublicationStats(data?.newPublicationStats)
         },
-        complete: () => {
-          console.log('complete')
-        },
+        complete: () => {},
         error: (err) => {
           console.error('err', err)
         }
@@ -161,7 +151,6 @@ const ProfileBar = ({
 
     // return subscription()
     return () => {
-      console.log('unsubscribing')
       unsubscribe()
     }
   }, [lensApolloClient, streamer?.latestStreamPublicationId])
@@ -239,7 +228,6 @@ const ProfileBar = ({
             text: publication?.metadata?.title,
             url: `${APP_LINK}/watch/${publication?.id}`
           })
-          .then(() => console.log('Successful share'))
           .catch((error) => console.log('Error sharing', error))
         return
       }
@@ -250,7 +238,6 @@ const ProfileBar = ({
           text: `Check out ${formatHandle(profile)} on ${APP_NAME}`,
           url: `${APP_LINK}/${formatHandle(profile)}`
         })
-        .then(() => console.log('Successful share'))
         .catch((error) => console.log('Error sharing', error))
     }
   }

@@ -45,7 +45,7 @@ const LoginButton = () => {
       >
         <LoginComponent open={open} onClose={handleClose} />
       </ModalWrapper>
-      {(data?.type !== SessionType.WithProfile ||
+      {(data?.type === SessionType.Anonymous ||
         (data?.type === SessionType.WithProfile &&
           !data?.profile?.signless)) && (
         <div className="centered-row gap-x-2 sm:gap-x-4">
@@ -74,7 +74,7 @@ const LoginButton = () => {
               />
             </IconButton>
           ) : ( */}
-          {(data?.type !== SessionType.WithProfile ||
+          {(data?.type === SessionType.Anonymous ||
             (data?.type === SessionType.WithProfile &&
               !data?.profile?.signless)) && (
             <Button
@@ -98,7 +98,7 @@ const LoginButton = () => {
         </div>
       )}
       {/* @ts-ignore */}
-      <AvatarWithOptions profile={data?.profile} handleOpen={handleOpen} />
+      <AvatarWithOptions handleOpen={handleOpen} />
     </div>
   )
 }

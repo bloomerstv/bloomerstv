@@ -1,4 +1,9 @@
-import { Profile, useLogout } from '@lens-protocol/react-web'
+import {
+  Profile,
+  SessionType,
+  useLogout,
+  useSession
+} from '@lens-protocol/react-web'
 import React from 'react'
 import getAvatar from '../../../../utils/lib/getAvatar'
 import {
@@ -15,7 +20,7 @@ import formatHandle from '../../../../utils/lib/formatHandle'
 import { useTheme } from '../../../wrappers/TailwindThemeProvider'
 import ToggleOffIcon from '@mui/icons-material/ToggleOff'
 import ToggleOnIcon from '@mui/icons-material/ToggleOn'
-import { useDisconnect } from 'wagmi'
+import { useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
 import { useRouter } from 'next/navigation'
 // import CircleIcon from '@mui/icons-material/Circle'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
@@ -30,18 +35,26 @@ import {
   REPORT_URL,
   X_URL
 } from '../../../../utils/config'
+import getStampFyiURL from '../../../../utils/getStampFyiURL'
+import { getShortAddress } from '../../../../utils/lib/getShortAddress'
 
-const AvatarWithOptions = ({
-  profile,
-  handleOpen
-}: {
-  profile?: Profile
-  handleOpen: () => void
-}) => {
+const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const isMobile = useIsMobile()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
+
+  const { data } = useSession()
+  const { data: ensName } = useEnsName({
+    // @ts-ignore
+    address: data?.type === SessionType.JustWallet ? data?.address : undefined
+  })
+
+  const { data: ensAvatar } = useEnsAvatar({
+    // @ts-ignore
+    name: ensName
+  })
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
@@ -66,7 +79,20 @@ const AvatarWithOptions = ({
   }
 
   const { push } = useRouter()
-  if (!profile) return null
+  if (data?.type === SessionType.Anonymous) return null
+
+  const avatar =
+    data?.type === SessionType.WithProfile
+      ? getAvatar(data?.profile)
+      : (ensAvatar ?? getStampFyiURL(data?.address!))
+
+  const handle =
+    data?.type === SessionType.WithProfile
+      ? formatHandle(data?.profile)
+      : (ensName ?? getShortAddress(data?.address!))
+
+  const profile =
+    data?.type === SessionType.WithProfile ? data?.profile : undefined
 
   if (isMobile) {
     return (
@@ -80,11 +106,7 @@ const AvatarWithOptions = ({
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
         >
-          <img
-            src={getAvatar(profile)}
-            alt="avatar"
-            className="w-8 h-8 rounded-full"
-          />
+          <img src={avatar} alt="avatar" className="w-8 h-8 rounded-full" />
         </IconButton>
 
         <SwipeableDrawer
@@ -109,26 +131,30 @@ const AvatarWithOptions = ({
             <MenuList>
               <MenuItem
                 onClick={() => {
+                  if (!profile) return
                   push(`/${formatHandle(profile)}`)
                   handleClose()
                 }}
               >
                 <img
-                  src={getAvatar(profile)}
+                  src={avatar}
                   alt="avatar"
                   className="w-8 h-8 rounded-full mr-3"
                 />
-                {formatHandle(profile)}
+                {handle}
               </MenuItem>
-              <MenuItem onClick={handleSwitchProfile}>
-                <ListItemIcon>
-                  <SwapHorizIcon fontSize="small" />
-                </ListItemIcon>
-                Switch Profile
-              </MenuItem>
+
+              {profile && (
+                <MenuItem onClick={handleSwitchProfile}>
+                  <ListItemIcon>
+                    <SwapHorizIcon fontSize="small" />
+                  </ListItemIcon>
+                  Switch Profile
+                </MenuItem>
+              )}
               {/* <Divider /> */}
 
-              {!isMobile && (
+              {!isMobile && profile && (
                 <>
                   {/* <MenuItem
                 onClick={() => {
@@ -234,11 +260,7 @@ const AvatarWithOptions = ({
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
       >
-        <img
-          src={getAvatar(profile)}
-          alt="avatar"
-          className="w-8 h-8 rounded-full"
-        />
+        <img src={avatar} alt="avatar" className="w-8 h-8 rounded-full" />
       </IconButton>
 
       <Menu
@@ -278,39 +300,31 @@ const AvatarWithOptions = ({
         <MenuList>
           <MenuItem
             onClick={() => {
+              if (!profile) return
               push(`/${formatHandle(profile)}`)
               handleClose()
             }}
           >
             <img
-              src={getAvatar(profile)}
+              src={avatar}
               alt="avatar"
               className="w-6 h-6 rounded-full mr-3"
             />
-            {formatHandle(profile)}
+            {handle}
           </MenuItem>
-          <MenuItem onClick={handleSwitchProfile}>
-            <ListItemIcon>
-              <SwapHorizIcon fontSize="small" />
-            </ListItemIcon>
-            Switch Profile
-          </MenuItem>
+
+          {profile && (
+            <MenuItem onClick={handleSwitchProfile}>
+              <ListItemIcon>
+                <SwapHorizIcon fontSize="small" />
+              </ListItemIcon>
+              Switch Profile
+            </MenuItem>
+          )}
           <Divider />
 
-          {!isMobile && (
+          {!isMobile && profile && (
             <>
-              {/* <MenuItem
-                onClick={() => {
-                  push(`/dashboard/go-live`)
-                  handleClose()
-                }}
-              >
-                <ListItemIcon>
-                  <CircleIcon fontSize="small" />
-                </ListItemIcon>
-                Go live
-              </MenuItem> */}
-
               <MenuItem
                 onClick={() => {
                   push(`/dashboard/content`)

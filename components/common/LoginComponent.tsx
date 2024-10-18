@@ -16,6 +16,7 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import toast from 'react-hot-toast'
+import WalletIcon from '@mui/icons-material/Wallet'
 const LoginComponent = ({
   open,
   onClose
@@ -63,7 +64,9 @@ const LoginComponent = ({
         <>
           {data?.type !== SessionType.WithProfile ? (
             <>
-              <div className="text-2xl font-bold">Login with your handle</div>
+              <div className="text-2xl font-bold">
+                Login with your Lens Profile
+              </div>
 
               <div className="start-col my-4 w-full rounded-xl bg-s-bg border border-p-border">
                 {loadingProfiles && (
@@ -127,17 +130,72 @@ const LoginComponent = ({
                   </div>
                 ))}
 
-                {profiles?.length === 0 && !loadingProfiles && (
-                  <div className="centered-row w-full p-4">
-                    You don't own any lens profiles associated with this wallet
-                    address.
-                  </div>
-                )}
+                {profiles?.length === 0 &&
+                  !loadingProfiles &&
+                  data?.type !== SessionType.JustWallet && (
+                    <div className="centered-row w-full text-s-text p-4 text-sm">
+                      You don’t have any lens profiles linked to this wallet
+                      address. You can log in with your wallet and chat with
+                      streamers
+                    </div>
+                  )}
+
+                {profiles?.length === 0 &&
+                  !loadingProfiles &&
+                  data?.type === SessionType.JustWallet && (
+                    <div className="p-4 space-y-4">
+                      <div className="centered-row w-full text-s-text text-sm">
+                        You don’t have any lens profiles linked to this wallet
+                        address.
+                      </div>
+                      <div className="text-xs sm:text-sm text-s-text font-semibold">
+                        {address}
+                      </div>
+                    </div>
+                  )}
+
+                {profiles?.length === 0 &&
+                  !loadingProfiles &&
+                  data?.type !== SessionType.JustWallet && (
+                    <div className="px-4 pb-4 space-y-4">
+                      <div className="text-xs sm:text-sm text-s-text font-semibold">
+                        {address}
+                      </div>
+                      <LoadingButton
+                        startIcon={<WalletIcon />}
+                        onClick={async () => {
+                          const data = await execute({
+                            // @ts-ignore
+                            address: address
+                          })
+
+                          if (data?.isSuccess()) {
+                            onClose?.()
+                          } else {
+                            toast.error('Failed to login')
+                          }
+                        }}
+                        loading={logging}
+                        loadingPosition="start"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        className="text-3xl"
+                        sx={{
+                          borderRadius: '1rem',
+                          padding: '1rem 0'
+                        }}
+                      >
+                        Login with Wallet
+                      </LoadingButton>
+                    </div>
+                  )}
               </div>
 
-              <div className="centered-row w-full text-s-text font-bold text-xs mb-2 px-2">
-                If you're unable to sign in to your Lens profile, please try
-                clearing this site's cache and refreshing the page.
+              <div className="centered-row w-full text-s-text text-xs mb-2 px-2">
+                If you're unable to login, please try clearing this site's cache
+                and refreshing the page.
               </div>
               {/* // disconnect wallet */}
               <div

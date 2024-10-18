@@ -19,6 +19,8 @@ import { usePathname } from 'next/navigation'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import toast from 'react-hot-toast'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
+import WalletIcon from '@mui/icons-material/Wallet'
+import { getShortAddress } from '../../../utils/lib/getShortAddress'
 
 const LoginPage = () => {
   const [loginAsGuest, setLoginAsGuest] = React.useState(false)
@@ -53,19 +55,20 @@ const LoginPage = () => {
     loginAsGuest ||
     loading ||
     (data?.type === SessionType.WithProfile && data?.profile?.signless) ||
+    data?.type === SessionType.JustWallet ||
     path !== '/'
   ) {
     return null
   }
   return (
-    <div className="absolute z-50 top-0 bottom-0 left-0 right-0 w-full h-dvh bg-p-bg p-8 overflow-auto no-scrollbar">
+    <div className="absolute z-[60] top-0 bottom-0 left-0 right-0 w-full h-dvh bg-p-bg p-8 overflow-auto no-scrollbar">
       {isConnected ? (
         <>
           {data?.type !== SessionType.WithProfile ? (
             // login page
             <div className="between-col h-full">
               <div className="font-bold text-5xl mt-4 mb-8">
-                Login with your profile
+                Login with your Lens profile
               </div>
 
               <div className="start-col space-y-8 ">
@@ -132,6 +135,48 @@ const LoginPage = () => {
                       </div>
                     </div>
                   ))}
+
+                  {profiles?.length === 0 && !loadingProfiles && (
+                    <div className="centered-row w-full text-s-text p-4 text-sm">
+                      You don’t have any lens profiles linked to this wallet
+                      address. You can log in with your wallet and chat with
+                      streamers
+                    </div>
+                  )}
+
+                  {profiles?.length === 0 && !loadingProfiles && (
+                    <div className="px-4 pb-4 space-y-4">
+                      <div className="text-sm font-semibold text-s-text">
+                        {getShortAddress(address as `0x${string}`, 22)}
+                      </div>
+                      <LoadingButton
+                        startIcon={<WalletIcon />}
+                        onClick={async () => {
+                          const data = await execute({
+                            // @ts-ignore
+                            address: address
+                          })
+
+                          if (!data?.isSuccess()) {
+                            toast.error('Failed to login')
+                          }
+                        }}
+                        loading={logging}
+                        loadingPosition="start"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        className="text-3xl"
+                        sx={{
+                          borderRadius: '1rem',
+                          padding: '1rem 0'
+                        }}
+                      >
+                        Login with Wallet
+                      </LoadingButton>
+                    </div>
+                  )}
                 </div>
 
                 {/* continue as guest */}
@@ -152,9 +197,9 @@ const LoginPage = () => {
                     Continue as guest
                   </Button>
 
-                  <div className="centered-row w-full text-s-text font-bold text-xs">
-                    If you're unable to sign in to your Lens profile, please try
-                    clearing this site's cache and refreshing the page.
+                  <div className="centered-row w-full text-s-text text-xs">
+                    If you're unable to login, please try clearing this site's
+                    cache and refreshing the page.
                   </div>
 
                   {/* // disconnect wallet */}
