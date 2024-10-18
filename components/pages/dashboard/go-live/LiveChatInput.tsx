@@ -27,8 +27,6 @@ import { CURRENCIES, LENS_CHAIN_ID } from '../../../../utils/config'
 import { useTokenPriceQuery } from '../../../../graphql/generated'
 import {
   useAccount,
-  useEnsAvatar,
-  useEnsName,
   useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract
@@ -50,6 +48,7 @@ import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
 import { sleep } from '../../../../utils/helpers'
 import getStampFyiURL from '../../../../utils/getStampFyiURL'
 import { getShortAddress } from '../../../../utils/lib/getShortAddress'
+import useEns from '../../../../utils/hooks/useEns'
 
 const LiveChatInput = ({
   inputMessage,
@@ -63,15 +62,8 @@ const LiveChatInput = ({
   liveChatProfileId: string
 }) => {
   const { data: session } = useSession()
-  const { data: ensName } = useEnsName({
-    // @ts-ignore
-    address:
-      session?.type === SessionType.JustWallet ? session?.address : undefined
-  })
-
-  const { data: ensAvatar } = useEnsAvatar({
-    // @ts-ignore
-    name: ensName
+  const { ensAvatar, ensName } = useEns({
+    address: session?.type === SessionType.JustWallet ? session?.address : null
   })
   const profileId =
     session?.type === SessionType.WithProfile

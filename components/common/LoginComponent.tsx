@@ -17,6 +17,9 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import toast from 'react-hot-toast'
 import WalletIcon from '@mui/icons-material/Wallet'
+import useEns from '../../utils/hooks/useEns'
+import getStampFyiURL from '../../utils/getStampFyiURL'
+import { getShortAddress } from '../../utils/lib/getShortAddress'
 const LoginComponent = ({
   open,
   onClose
@@ -25,6 +28,7 @@ const LoginComponent = ({
   onClose?: () => void
 }) => {
   const { data } = useSession()
+
   const { disconnectAsync } = useDisconnect()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
   const { openConnectModal } = useConnectModal()
@@ -33,6 +37,10 @@ const LoginComponent = ({
     // @ts-ignore
     for: address,
     includeOwned: true
+  })
+
+  const { ensAvatar, ensName } = useEns({
+    address: profiles?.length === 0 ? address : null
   })
   const { execute, loading: logging } = useLogin()
   const {
@@ -135,8 +143,8 @@ const LoginComponent = ({
                   data?.type !== SessionType.JustWallet && (
                     <div className="centered-row w-full text-s-text p-4 text-sm">
                       You don’t have any lens profiles linked to this wallet
-                      address. You can log in with your wallet and chat with
-                      streamers
+                      address. However, You can log in with your wallet and chat
+                      with streamers
                     </div>
                   )}
 
@@ -158,8 +166,19 @@ const LoginComponent = ({
                   !loadingProfiles &&
                   data?.type !== SessionType.JustWallet && (
                     <div className="px-4 pb-4 space-y-4">
-                      <div className="text-xs sm:text-sm text-s-text font-semibold">
-                        {address}
+                      <div className="start-center-row gap-x-3">
+                        <img
+                          src={ensAvatar ?? getStampFyiURL(String(address))}
+                          className="w-10 h-10 rounded-full"
+                        />
+                        <div>
+                          <div className="text-xs sm:text-sm text-s-text font-semibold">
+                            {getShortAddress(String(address), 30)}
+                          </div>
+                          <div>
+                            {ensName ?? getShortAddress(String(address))}
+                          </div>
+                        </div>
                       </div>
                       <LoadingButton
                         startIcon={<WalletIcon />}

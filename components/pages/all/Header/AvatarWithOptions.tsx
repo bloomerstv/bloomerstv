@@ -20,7 +20,7 @@ import formatHandle from '../../../../utils/lib/formatHandle'
 import { useTheme } from '../../../wrappers/TailwindThemeProvider'
 import ToggleOffIcon from '@mui/icons-material/ToggleOff'
 import ToggleOnIcon from '@mui/icons-material/ToggleOn'
-import { useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
+import { useDisconnect } from 'wagmi'
 import { useRouter } from 'next/navigation'
 // import CircleIcon from '@mui/icons-material/Circle'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
@@ -37,7 +37,7 @@ import {
 } from '../../../../utils/config'
 import getStampFyiURL from '../../../../utils/getStampFyiURL'
 import { getShortAddress } from '../../../../utils/lib/getShortAddress'
-
+import useEns from '../../../../utils/hooks/useEns'
 const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const isMobile = useIsMobile()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
@@ -45,14 +45,8 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const open = Boolean(anchorEl)
 
   const { data } = useSession()
-  const { data: ensName } = useEnsName({
-    // @ts-ignore
-    address: data?.type === SessionType.JustWallet ? data?.address : undefined
-  })
-
-  const { data: ensAvatar } = useEnsAvatar({
-    // @ts-ignore
-    name: ensName
+  const { ensAvatar, ensName } = useEns({
+    address: data?.type === SessionType.JustWallet ? data?.address : null
   })
 
   const handleClick = (event) => {

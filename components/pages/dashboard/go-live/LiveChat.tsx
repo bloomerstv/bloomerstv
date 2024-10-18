@@ -260,7 +260,9 @@ const LiveChat = ({
         txHash: txHash ?? null
       })
 
-      createComment(inputMessage)
+      if (data?.type === SessionType.WithProfile) {
+        createComment(inputMessage)
+      }
     }
   }
 

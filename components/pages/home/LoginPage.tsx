@@ -21,6 +21,8 @@ import toast from 'react-hot-toast'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
 import WalletIcon from '@mui/icons-material/Wallet'
 import { getShortAddress } from '../../../utils/lib/getShortAddress'
+import useEns from '../../../utils/hooks/useEns'
+import getStampFyiURL from '../../../utils/getStampFyiURL'
 
 const LoginPage = () => {
   const [loginAsGuest, setLoginAsGuest] = React.useState(false)
@@ -34,6 +36,10 @@ const LoginPage = () => {
     // @ts-ignore
     for: address,
     includeOwned: true
+  })
+
+  const { ensAvatar, ensName } = useEns({
+    address: profiles?.length === 0 ? address : null
   })
   const {
     execute: enableProfileManager,
@@ -139,15 +145,26 @@ const LoginPage = () => {
                   {profiles?.length === 0 && !loadingProfiles && (
                     <div className="centered-row w-full text-s-text p-4 text-sm">
                       You don’t have any lens profiles linked to this wallet
-                      address. You can log in with your wallet and chat with
-                      streamers
+                      address. However, You can log in with your wallet and chat
+                      with streamers
                     </div>
                   )}
 
                   {profiles?.length === 0 && !loadingProfiles && (
                     <div className="px-4 pb-4 space-y-4">
-                      <div className="text-sm font-semibold text-s-text">
-                        {getShortAddress(address as `0x${string}`, 22)}
+                      <div className="start-center-row gap-x-3">
+                        <img
+                          src={ensAvatar ?? getStampFyiURL(String(address))}
+                          className="w-10 h-10 rounded-full"
+                        />
+                        <div>
+                          <div className="text-xs sm:text-sm text-s-text font-semibold">
+                            {getShortAddress(String(address), 20)}
+                          </div>
+                          <div>
+                            {ensName ?? getShortAddress(String(address))}
+                          </div>
+                        </div>
                       </div>
                       <LoadingButton
                         startIcon={<WalletIcon />}
