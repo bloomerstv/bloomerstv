@@ -6,11 +6,11 @@ const useEns = ({
 }: {
   address?: string | null
 }): {
-  ensName: string
-  ensAvatar: string
+  ensName: string | null
+  ensAvatar: string | null
 } => {
-  const [ensName, setEnsName] = useState('')
-  const [ensAvatar, setEnsAvatar] = useState('')
+  const [ensName, setEnsName] = useState<string | null>(null)
+  const [ensAvatar, setEnsAvatar] = useState<string | null>(null)
   React.useEffect(() => {
     if (!address) return
     const foo = async () => {
@@ -19,13 +19,13 @@ const useEns = ({
         address: address
       })
 
-      setEnsName(ensName as string)
+      setEnsName(ensName)
 
       const ensAvatar = await viemPublicClient.getEnsAvatar({
         name: String(ensName),
         gatewayUrls: ['https://cloudflare-ipfs.com']
       })
-      setEnsAvatar(ensAvatar as string)
+      setEnsAvatar(ensAvatar)
     }
 
     foo()

@@ -20,6 +20,7 @@ import WalletIcon from '@mui/icons-material/Wallet'
 import useEns from '../../utils/hooks/useEns'
 import getStampFyiURL from '../../utils/getStampFyiURL'
 import { getShortAddress } from '../../utils/lib/getShortAddress'
+import LoadingImage from '../ui/LoadingImage'
 const LoginComponent = ({
   open,
   onClose
@@ -167,9 +168,10 @@ const LoginComponent = ({
                   data?.type !== SessionType.JustWallet && (
                     <div className="px-4 pb-4 space-y-4">
                       <div className="start-center-row gap-x-3">
-                        <img
+                        <LoadingImage
                           src={ensAvatar ?? getStampFyiURL(String(address))}
                           className="w-10 h-10 rounded-full"
+                          loading="eager"
                         />
                         <div>
                           <div className="text-xs sm:text-sm text-s-text font-semibold">

@@ -23,6 +23,7 @@ import WalletIcon from '@mui/icons-material/Wallet'
 import { getShortAddress } from '../../../utils/lib/getShortAddress'
 import useEns from '../../../utils/hooks/useEns'
 import getStampFyiURL from '../../../utils/getStampFyiURL'
+import LoadingImage from '../../ui/LoadingImage'
 
 const LoginPage = () => {
   const [loginAsGuest, setLoginAsGuest] = React.useState(false)
@@ -153,7 +154,7 @@ const LoginPage = () => {
                   {profiles?.length === 0 && !loadingProfiles && (
                     <div className="px-4 pb-4 space-y-4">
                       <div className="start-center-row gap-x-3">
-                        <img
+                        <LoadingImage
                           src={ensAvatar ?? getStampFyiURL(String(address))}
                           className="w-10 h-10 rounded-full"
                         />
