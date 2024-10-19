@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import React from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ChatOptions from './ChatOptions'
+import { SessionType, useSession } from '@lens-protocol/react-web'
 
 const ChatOptionsButton = ({
   handle,
@@ -21,11 +22,23 @@ const ChatOptionsButton = ({
 }) => {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [keepShowingMoreIcon, setKeepShowingMoreIcon] = React.useState(false)
+  const { data } = useSession()
 
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
     setKeepShowingMoreIcon(true)
     setAnchorEl(event.currentTarget)
+  }
+
+  const isWalletMsg = profileId && profileId?.length > 20
+
+  // meaning most probably a wallet address
+  if (
+    isWalletMsg &&
+    data?.type === SessionType.WithProfile &&
+    data?.profile?.id !== chatProfileId?.toLowerCase()
+  ) {
+    return null
   }
   return (
     <div

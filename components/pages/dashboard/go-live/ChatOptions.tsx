@@ -48,7 +48,6 @@ const ChatOptions = ({
   const { execute: blockProfiles, loading } = useBlockProfiles()
 
   const handleBanAndBlock = async () => {
-    console.log('profileid', profileId)
     if (!profileId || profileLoading) return
 
     if (profile) {
@@ -85,6 +84,8 @@ const ChatOptions = ({
   }
 
   const open = Boolean(anchorEl)
+
+  const isWalletMsg = profileId && profileId?.length > 20
 
   return (
     <div>
@@ -157,34 +158,38 @@ const ChatOptions = ({
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuList>
-          <MenuItem
-            onClick={() => {
-              push(`/${handle}`)
-              handleClose()
-            }}
-          >
-            <img
-              src={avatarUrl}
-              alt="avatar"
-              className="w-6 h-6 rounded-full mr-3"
-            />
-            Visit Profile
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              window.open(`${HEY_APP_LINK}/u/${handle}`, '_blank')
-            }}
-          >
-            <img
-              src={'/icons/heyIcon.png'}
-              className="w-6 h-6 mr-3"
-              alt="hey"
-            />
-            Hey Profile
-          </MenuItem>
+          {!isWalletMsg && (
+            <MenuItem
+              onClick={() => {
+                push(`/${handle}`)
+                handleClose()
+              }}
+            >
+              <img
+                src={avatarUrl}
+                alt="avatar"
+                className="w-6 h-6 rounded-full mr-3"
+              />
+              Visit Profile
+            </MenuItem>
+          )}
+
+          {!isWalletMsg && (
+            <MenuItem
+              onClick={() => {
+                window.open(`${HEY_APP_LINK}/u/${handle}`, '_blank')
+              }}
+            >
+              <img
+                src={'/icons/heyIcon.png'}
+                className="w-6 h-6 mr-3"
+                alt="hey"
+              />
+              Hey Profile
+            </MenuItem>
+          )}
 
           {socket &&
-            !profileLoading &&
             data?.type === SessionType.WithProfile &&
             profile?.id !== data?.profile?.id &&
             chatProfileId === data?.profile?.id && (
