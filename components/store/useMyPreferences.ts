@@ -19,7 +19,7 @@ interface MyPreferencesStore {
 export const useMyPreferences = create<MyPreferencesStore>(
   persist(
     (set) => ({
-      playerStreamingMode: PlayerStreamingMode.LowLatency,
+      playerStreamingMode: PlayerStreamingMode.Quality,
       setPlayerStreamingMode: (playerStreamingMode) =>
         set(() => ({ playerStreamingMode })),
       liveChatPopUpSound: true,
@@ -38,8 +38,7 @@ export const useMyPreferences = create<MyPreferencesStore>(
         return {
           liveChatPopUpSound: state.liveChatPopUpSound,
           streamReplayViewType: state.streamReplayViewType,
-          category: state.category,
-          playerStreamingMode: state.playerStreamingMode
+          category: state.category
         }
       }
     }
