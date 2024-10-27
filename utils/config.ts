@@ -189,6 +189,9 @@ export const ALERT_BOX_PREVIEW_VIDEO =
 export const HOW_TO_ADD_WIDGETS_VIDEO =
   'https://vod-cdn.lp-playback.studio/raw/jxf4iblf6wlsyor6526t4tcmtmqa/catalyst-vod-com/hls/6913ct06fo4vrc9p/1080p0.mp4'
 
+export const GITCOIN_ROUND_LINK =
+  'https://explorer.gitcoin.co/#/round/42161/608/149'
+
 export const SuperFluidInfo = {
   endPoint: 'https://polygon-mainnet.subgraph.x.superfluid.dev/',
   receiver: '0xC8D0E78379d96D0A436b8597835670b13445A6Db',

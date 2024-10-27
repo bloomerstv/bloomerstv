@@ -26,6 +26,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import clsx from 'clsx'
 import StreamCard from './StreamCard'
+import ContributeDiv from './ContributeDiv'
 const HomePageCards = () => {
   const [showShowMoreButton, setShowShowMoreButton] = useState(true)
   const [showAll, setShowAll] = React.useState(false)
@@ -233,6 +234,7 @@ const HomePageCards = () => {
 
       {/* @ts-ignore */}
       <div className="flex flex-row flex-wrap w-full gap-y-6">
+        <ContributeDiv />
         {selectedCategory?.name === 'None' &&
           streamersWithProfiles?.map((streamer) => {
             if (hideProfilesIds.includes(streamer.profileId)) {
