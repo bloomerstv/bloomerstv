@@ -65,8 +65,9 @@ const ContributeDiv = () => {
               Support BloomersTV on Gitcion Grants Round 22
             </div>
             <div className="text-xs font-normal">
-              Your donation of even just $1 will be matched, helping to create a
-              greater impact in the development of this open-source project.
+              Your contribution of even just $1 will be matched, helping to
+              create a greater impact in the development of this open-source
+              project.
             </div>
           </div>
 
