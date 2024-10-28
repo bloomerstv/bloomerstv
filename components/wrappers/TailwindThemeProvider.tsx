@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import { createContext } from 'react'
+import { DEFAULT_THEME } from '../../utils/config'
 
 interface ContextType {
   theme: 'light' | 'dark'
@@ -16,7 +17,7 @@ export const ThemeContext = createContext<ContextType>({
 })
 // import MUITheme from './MUITheme'
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [theme, setTheme] = useState<'light' | 'dark'>(DEFAULT_THEME)
 
   const toggleTheme = () => {
     if (theme === 'light') {
@@ -40,10 +41,14 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       // @ts-ignore
       setTheme(theme)
     } else {
-      document.body.classList.add('light')
-      document.documentElement.setAttribute('data-theme', 'light')
-      window.localStorage.setItem('data-theme', 'light')
-      setTheme('light')
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
+        ? 'dark'
+        : DEFAULT_THEME
+      document.body.classList.add(systemTheme)
+      document.documentElement.setAttribute('data-theme', systemTheme)
+      window.localStorage.setItem('data-theme', systemTheme)
+      setTheme(systemTheme)
     }
   }, [])
 
