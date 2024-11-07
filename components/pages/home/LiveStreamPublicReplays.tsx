@@ -234,7 +234,7 @@ const HomePageCards = () => {
 
       {/* @ts-ignore */}
       <div className="flex flex-row flex-wrap w-full gap-y-6">
-        <ContributeDiv />
+        {/* <ContributeDiv /> */}
         {selectedCategory?.name === 'None' &&
           streamersWithProfiles?.map((streamer) => {
             if (hideProfilesIds.includes(streamer.profileId)) {
