@@ -375,7 +375,11 @@ const LiveChatInput = ({
               value={inputMessage}
             />
           </div>
-
+          {address && (
+            <div className="text-xs text-s-text font-semibold">
+              <span>{`Connected: ${getShortAddress(address)}`}</span>
+            </div>
+          )}
           {/* amount */}
           {/* balance */}
           <div className="text-xs text-s-text font-semibold">
