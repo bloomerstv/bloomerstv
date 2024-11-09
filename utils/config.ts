@@ -79,6 +79,8 @@ export const DISCORD_INVITE_URL = 'https://discord.gg/rXUBVm7JxA'
 export const X_URL = 'https://x.com/intent/follow?screen_name=bloomerstv'
 export const DONATE_LINK =
   'https://explorer.gitcoin.co/#/projects/0x16429f74cbb2cef6f9f48481b6c8bc49fa12989d75c1f9d82462f8bb91f079eb'
+export const PRIVACY_POLICY =
+  'https://www.termsfeed.com/live/2064c7f9-de9e-44a0-b640-20cbc51c3b04'
 
 export const PROJECT_ADDRESS = '0xC8D0E78379d96D0A436b8597835670b13445A6Db'
 

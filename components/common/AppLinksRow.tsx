@@ -6,6 +6,7 @@ import {
   FEEDBACK_URL,
   GITHUB_URL,
   HEY_URL,
+  PRIVACY_POLICY,
   REPORT_URL,
   X_URL
 } from '../../utils/config'
@@ -69,6 +70,13 @@ const AppLinksRow = ({ className, ...props }: { className?: string }) => {
         target="_blank"
       >
         Donate
+      </Link>
+      <Link
+        href={PRIVACY_POLICY}
+        className="no-underline text-s-text hover:text-p-text"
+        target="_blank"
+      >
+        Privacy
       </Link>
     </div>
   )
