@@ -12,10 +12,11 @@ import { usePublicationsStore } from '../../store/usePublications'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import RecommendedCardLayout from '../../common/RecommendedCardLayout'
+import { usePathname } from 'next/navigation'
 
 const OtherVideosRecommendations = ({ className }: { className?: string }) => {
   const isMobile = useIsMobile()
-
+  const pathname = usePathname()
   const { data } = usePublications({
     where: {
       publicationTypes: [PublicationType.Post],
@@ -72,13 +73,22 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
       new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
   )
 
+  console.log('pathname', pathname)
+  const currentPostId = pathname?.split('/')[2]
+  console.log('currentPostId', currentPostId)
+
   if (!data) return null
   return (
     <div className={clsx('flex flex-col w-full h-full gap-y-4', className)}>
       {combinedData?.map((post) => {
-        if (hideProfilesIds.includes(post?.by?.id)) {
+        if (
+          // @ts-ignore
+          hideProfilesIds.includes(post?.by?.id) ||
+          currentPostId === post?.id
+        ) {
           return null
         }
+
         if (post?.type === 'streamClips') {
           return <RecommendedVideoCard key={post?.id} post={post as Post} />
         } else {

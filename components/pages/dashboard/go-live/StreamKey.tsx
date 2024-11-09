@@ -21,12 +21,11 @@ const StreamKey = ({ myStream }: { myStream: MyStream }) => {
         label="Stream Key"
         hideText
       />
+      <TextInputWithCopy text={LIVE_PEER_RTMP_URL} label="Stream RTMP URL" />
 
       <TextInputWithCopy text={m3u8Url} label="m3u8 URL" />
 
       <TextInputWithCopy text={webrtcUrl} label="WebRTC URL" />
-
-      <TextInputWithCopy text={LIVE_PEER_RTMP_URL} label="Stream RTMP URL" />
     </div>
   )
 }

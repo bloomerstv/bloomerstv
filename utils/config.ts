@@ -76,7 +76,9 @@ export const HEY_APP_LINK = isMainnet
   ? 'https://hey.xyz'
   : 'https://testnet.hey.xyz'
 export const DISCORD_INVITE_URL = 'https://discord.gg/rXUBVm7JxA'
-export const X_URL = 'https://twitter.com/bloomerstv'
+export const X_URL = 'https://x.com/intent/follow?screen_name=bloomerstv'
+export const DONATE_LINK =
+  'https://explorer.gitcoin.co/#/projects/0x16429f74cbb2cef6f9f48481b6c8bc49fa12989d75c1f9d82462f8bb91f079eb'
 
 export const PROJECT_ADDRESS = '0xC8D0E78379d96D0A436b8597835670b13445A6Db'
 
@@ -220,7 +222,7 @@ export const SuperFluidInfo = {
 }
 
 // todo, move this to api to add / remove profiles from this list on the backend
-export const hideProfilesIds = ['0x06a275']
+export const hideProfilesIds = []
 
 export const NEXT_PUBLIC_VAPID_KEY =
   'BDv44ZwY7G3E1fgEuHeiw74cda-LG9gOFwTLFaD2ArveOdd3meLf37noJbztWUeS8GFSR59SjRpYToF3oZrG1dE'

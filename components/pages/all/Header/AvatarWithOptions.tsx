@@ -1,9 +1,4 @@
-import {
-  Profile,
-  SessionType,
-  useLogout,
-  useSession
-} from '@lens-protocol/react-web'
+import { SessionType, useLogout, useSession } from '@lens-protocol/react-web'
 import React from 'react'
 import getAvatar from '../../../../utils/lib/getAvatar'
 import {
@@ -26,19 +21,11 @@ import { useRouter } from 'next/navigation'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 import DashboardIcon from '@mui/icons-material/Dashboard'
-import Link from 'next/link'
-import {
-  DISCORD_INVITE_URL,
-  FEEDBACK_URL,
-  GITHUB_URL,
-  HEY_URL,
-  REPORT_URL,
-  X_URL
-} from '../../../../utils/config'
 import getStampFyiURL from '../../../../utils/getStampFyiURL'
 import { getShortAddress } from '../../../../utils/lib/getShortAddress'
 import useEns from '../../../../utils/hooks/useEns'
 import LoadingImage from '../../../ui/LoadingImage'
+import AppLinksRow from '../../../common/AppLinksRow'
 const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const isMobile = useIsMobile()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
@@ -199,51 +186,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
                 Logout
               </MenuItem>
             </MenuList>
-            <div className="start-row flex-wrap gap-y-2 gap-x-3 px-4 text-sm font-semibold">
-              <Link
-                href={HEY_URL}
-                className="no-underline text-s-text hover:text-p-text"
-                target="_blank"
-              >
-                Hey
-              </Link>
-              <Link
-                href={X_URL}
-                className="no-underline text-s-text hover:text-p-text"
-                target="_blank"
-              >
-                X
-              </Link>
-              <Link
-                href={GITHUB_URL}
-                className="no-underline text-s-text hover:text-p-text"
-                target="_blank"
-              >
-                Github
-              </Link>
-              <Link
-                href={FEEDBACK_URL}
-                className="no-underline text-s-text hover:text-p-text"
-                target="_blank"
-              >
-                Feedback
-              </Link>
-              <Link
-                href={REPORT_URL}
-                className="no-underline text-s-text hover:text-p-text"
-                target="_blank"
-              >
-                Report
-              </Link>
-
-              <Link
-                href={DISCORD_INVITE_URL}
-                className="no-underline text-s-text hover:text-p-text"
-                target="_blank"
-              >
-                Discord
-              </Link>
-            </div>
+            <AppLinksRow />
           </div>
         </SwipeableDrawer>
       </div>

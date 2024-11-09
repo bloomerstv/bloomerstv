@@ -490,7 +490,7 @@ const LiveVideoComponent = ({
   }, [])
 
   return (
-    <div className="w-[500px] shrink-0">
+    <div className="w-[520px] shrink-0">
       {streamFromBrowser ? broadcastComponent : videoComponent}
     </div>
   )

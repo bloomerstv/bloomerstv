@@ -3,14 +3,7 @@ import React, { useCallback } from 'react'
 import { useStreamersWithProfiles } from '../store/useStreamersWithProfiles'
 import StreamerBar from './StreamerSidebar/StreamerBar'
 import Link from 'next/link'
-import {
-  DISCORD_INVITE_URL,
-  FEEDBACK_URL,
-  GITHUB_URL,
-  HEY_URL,
-  REPORT_URL,
-  X_URL
-} from '../../utils/config'
+import { DISCORD_INVITE_URL, GITHUB_URL, X_URL } from '../../utils/config'
 import {
   LimitType,
   Profile,
@@ -31,6 +24,7 @@ import {
 import useIsMobile from '../../utils/hooks/useIsMobile'
 import StreamerBarLoading from './StreamerSidebar/StreamerBarLoading'
 import SubscribeToSuperBloomers from './SubscribeToSuperBloomers'
+import AppLinksRow from './AppLinksRow'
 
 const StreamerSidebar = () => {
   const { data } = useSession()
@@ -325,51 +319,7 @@ const StreamerSidebar = () => {
                 </IconButton>
               </div>
             ) : (
-              <div className="start-row flex-wrap gap-y-2 gap-x-3 px-4 text-sm font-semibold">
-                <Link
-                  href={HEY_URL}
-                  className="no-underline text-s-text hover:text-p-text"
-                  target="_blank"
-                >
-                  Hey
-                </Link>
-                <Link
-                  href={X_URL}
-                  className="no-underline text-s-text hover:text-p-text"
-                  target="_blank"
-                >
-                  X
-                </Link>
-                <Link
-                  href={GITHUB_URL}
-                  className="no-underline text-s-text hover:text-p-text"
-                  target="_blank"
-                >
-                  Github
-                </Link>
-                <Link
-                  href={FEEDBACK_URL}
-                  className="no-underline text-s-text hover:text-p-text"
-                  target="_blank"
-                >
-                  Feedback
-                </Link>
-                <Link
-                  href={REPORT_URL}
-                  className="no-underline text-s-text hover:text-p-text"
-                  target="_blank"
-                >
-                  Report
-                </Link>
-
-                <Link
-                  href={DISCORD_INVITE_URL}
-                  className="no-underline text-s-text hover:text-p-text"
-                  target="_blank"
-                >
-                  Discord
-                </Link>
-              </div>
+              <AppLinksRow />
             )}
           </>
         )}
