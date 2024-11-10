@@ -22,7 +22,7 @@ import { useRef } from 'react'
 import clsx from 'clsx'
 import useHandleWrongNetwork from '../../../utils/hooks/useHandleWrongNetwork'
 import { useAccount } from 'wagmi'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useAccountModal, useConnectModal } from '@rainbow-me/rainbowkit'
 
 const CollectButton = ({
   post,
@@ -37,6 +37,7 @@ const CollectButton = ({
 }) => {
   const { isConnected, address } = useAccount()
   const { openConnectModal } = useConnectModal()
+  const { openAccountModal } = useAccountModal()
 
   const { data } = useSession()
   const { execute: approve } = useApproveModule()
@@ -279,12 +280,15 @@ const CollectButton = ({
                 // @ts-ignore
                 amount?.value &&
                 // @ts-ignore
-                amount?.value !== '0' &&
-                (!isConnected ||
-                  address?.toLowerCase() !== data?.address.toLowerCase())
+                amount?.value !== '0'
               ) {
-                openConnectModal?.()
-
+                if (!isConnected) {
+                  openConnectModal?.()
+                } else if (
+                  address?.toLowerCase() !== data?.address.toLowerCase()
+                ) {
+                  openAccountModal?.()
+                }
                 return
               }
 

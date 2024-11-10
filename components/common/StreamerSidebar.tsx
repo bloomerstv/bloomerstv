@@ -221,7 +221,7 @@ const StreamerSidebar = () => {
             {!minimize &&
               (loading ||
                 profileLoading ||
-                restOfTheStreamers.length > 0 ||
+                restOfTheStreamers?.length > 0 ||
                 offlineRecommendedStreamers.length > 0) && (
                 <div className="font-bold px-4 py-2">Recommended Channels</div>
               )}
