@@ -179,6 +179,8 @@ const CollectButton = ({
               // @ts-ignore
               String(error?.message)
             )
+            openConnectModal?.()
+
             break
 
           case 'UserRejectedError':
