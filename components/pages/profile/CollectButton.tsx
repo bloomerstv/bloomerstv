@@ -35,7 +35,7 @@ const CollectButton = ({
   handleFollow: () => void
   followLoading: boolean
 }) => {
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
   const { openConnectModal } = useConnectModal()
 
   const { data } = useSession()
@@ -273,9 +273,16 @@ const CollectButton = ({
         <motion.button
           onTapStart={
             () => {
-              // @ts-ignore
-              if (amount?.value && amount?.value !== '0' && !isConnected) {
+              if (
+                // @ts-ignore
+                amount?.value &&
+                // @ts-ignore
+                amount?.value !== '0' &&
+                (!isConnected ||
+                  address?.toLowerCase() !== data?.address.toLowerCase())
+              ) {
                 openConnectModal?.()
+
                 return
               }
 
@@ -343,13 +350,18 @@ const CollectButton = ({
           <div className="centered-col" style={{ zIndex: 2 }}>
             <div className={'font-semibold text-base leading-6'}>
               {/* @ts-ignore */}
-              {amount?.value && amount?.value !== '0' && !isConnected
+              {amount?.value &&
+              // @ts-ignore
+              amount?.value !== '0' &&
+              !isConnected
                 ? 'Connect Wallet'
-                : followerOnly &&
-                    !isFollowing &&
-                    post?.by?.id !== data?.profile?.id
-                  ? 'Follow to collect'
-                  : 'Hold to collect'}
+                : address?.toLowerCase() !== data?.address?.toLowerCase()
+                  ? 'Switch Wallet'
+                  : followerOnly &&
+                      !isFollowing &&
+                      post?.by?.id !== data?.profile?.id
+                    ? 'Follow to collect'
+                    : 'Hold to collect'}
             </div>
 
             <div className="start-center-row space-x-2">
