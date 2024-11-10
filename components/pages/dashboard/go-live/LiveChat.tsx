@@ -203,6 +203,10 @@ const LiveChat = ({
       //   setSocket(newSocket)
       // }, 1000) // Wait for 1 second before joining the room
     })
+    newSocket.on('ping', () => {
+      console.log('received ping')
+      newSocket.emit('pong') // Respond with pong
+    })
 
     newSocket.on('message', (receivedData) => {
       const receivedMessage: Message = receivedData
