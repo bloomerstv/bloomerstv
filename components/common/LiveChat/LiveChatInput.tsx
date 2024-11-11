@@ -446,7 +446,7 @@ const LiveChatInput = ({
             })
             setSelectGif(false)
           }}
-          className="h-[400px]"
+          className="h-[350px]"
         />
       )}
 

@@ -47,7 +47,7 @@ const GifAndStickerSelector = ({
     <div
       className={clsx(
         className,
-        'w-full h-full box-border flex flex-col gap-y-3 py-2'
+        'w-full box-border flex flex-col gap-y-3 py-2'
       )}
       {...props}
     >
