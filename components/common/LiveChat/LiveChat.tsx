@@ -2,9 +2,10 @@ import { Button, IconButton } from '@mui/material'
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import {
   APP_ID,
+  APP_LINK,
   LIVE_CHAT_WEB_SOCKET_URL,
   defaultSponsored
-} from '../../../../utils/config'
+} from '../../../utils/config'
 import io from 'socket.io-client'
 import {
   PublicationId,
@@ -12,60 +13,57 @@ import {
   useCreateComment,
   useSession
 } from '@lens-protocol/react-web'
-import ModalWrapper from '../../../ui/Modal/ModalWrapper'
-import LoginComponent from '../../../common/LoginComponent'
+import ModalWrapper from '../../ui/Modal/ModalWrapper'
+import LoginComponent from '../LoginComponent'
 import LoginIcon from '@mui/icons-material/Login'
-import Markup from '../../../common/Lexical/Markup'
-import useIsMobile from '../../../../utils/hooks/useIsMobile'
+import Markup from '../Lexical/Markup'
+import useIsMobile from '../../../utils/hooks/useIsMobile'
 import CloseIcon from '@mui/icons-material/Close'
-import { useMyPreferences } from '../../../store/useMyPreferences'
+import { useMyPreferences } from '../../store/useMyPreferences'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeOffIcon from '@mui/icons-material/VolumeOff'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 import {
   useStreamChatsQuery,
   useUploadDataToArMutation
-} from '../../../../graphql/generated'
-import LiveCount from '../../profile/LiveCount'
-import getUserLocale from '../../../../utils/getUserLocale'
-import { textOnly } from '@lens-protocol/metadata'
+} from '../../../graphql/generated'
+import LiveCount from '../../pages/profile/LiveCount'
+import getUserLocale from '../../../utils/getUserLocale'
+import { textOnly, image } from '@lens-protocol/metadata'
 import { v4 as uuid } from 'uuid'
-import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
-import LiveChatInput from './LiveChatInput'
+import { getLastStreamPublicationId } from '../../../utils/lib/lensApi'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
-import { getAccessTokenAsync } from '../../../../utils/lib/getIdentityTokenAsync'
+import { getAccessTokenAsync } from '../../../utils/lib/getIdentityTokenAsync'
+import {
+  ContentType,
+  Message,
+  ProfileMessage,
+  SendMessageClipTyep,
+  SendMessageType
+} from './LiveChatType'
 import ChatOptionsButton from './ChatOptionsButton'
-
-// Base type for common fields
-interface MessageBase {
-  content: string
-  time?: string
-  type: 'System' | 'Profile'
-  id: string
+import LiveChatInput from './LiveChatInput'
+import LoadingImage from '../../ui/LoadingImage'
+import { stringToLength } from '../../../utils/stringToLength'
+import sanitizeDStorageUrl from '../../../utils/lib/sanitizeDStorageUrl'
+import { usePublicationsStore } from '../../store/usePublications'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import Link from 'next/link'
+export type SendMessageInput = {
+  txHash?: string
+  clip?: {
+    clipPostId: string
+    image: string
+    content: string
+  }
 }
 
-// Type for messages of type "System"
-interface SystemMessage extends MessageBase {
-  type: 'System'
+export type ImageAttachment = {
+  imageUrl?: string
+  imagePreviewUrl?: string
+  imageMimeType?: string
 }
-
-// Type for messages of type "Profile"
-
-interface ProfileMessage extends MessageBase {
-  type: 'Profile'
-  profileId: string
-  authorProfileId?: string
-  avatarUrl?: string
-  handle: string
-  amount?: number
-  formattedAmount?: string
-  currencySymbol?: string
-  id: string
-}
-
-// Union type for a message that can be either a SystemMessage or a ProfileMessage
-type Message = SystemMessage | ProfileMessage
 
 const LiveChat = ({
   profileId,
@@ -82,6 +80,14 @@ const LiveChat = ({
   preMessages?: ProfileMessage[]
   showLiveCount?: boolean
 }) => {
+  const { clipPost, setClipPost } = usePublicationsStore((state) => ({
+    clipPost: state.clipPost,
+    setClipPost: state.setClipPost
+  }))
+  const [imageAttachment, setImageAttachment] = useState<ImageAttachment>({
+    imageUrl: undefined,
+    imagePreviewUrl: undefined
+  })
   const [streamerHasBlockedMe, setStreamerHasBlockedMe] = React.useState(false)
   const audioRef = useRef(new Audio('/sounds/liveChatPopSound.mp3'))
   useEffect(() => {
@@ -167,6 +173,22 @@ const LiveChat = ({
   }, [socket, data?.type])
 
   useEffect(() => {
+    if (!socket || !clipPost) return
+    const id = uuid()
+    const sendMessage: SendMessageClipTyep = {
+      id,
+      clipPostId: clipPost?.id,
+      content: clipPost?.metadata?.marketplace?.name!,
+      image: sanitizeDStorageUrl(
+        clipPost?.metadata?.marketplace?.image?.optimized?.uri!
+      ),
+      type: ContentType.Clip
+    }
+    socket.emit('send-message', sendMessage)
+    setClipPost(null)
+  }, [socket, clipPost])
+
+  useEffect(() => {
     const seen = new Set()
     const filteredArr = messages.filter((el) => {
       const duplicate = seen.has(el.id)
@@ -204,7 +226,6 @@ const LiveChat = ({
       // }, 1000) // Wait for 1 second before joining the room
     })
     newSocket.on('ping', () => {
-      console.log('received ping')
       newSocket.emit('pong') // Respond with pong
     })
 
@@ -243,32 +264,65 @@ const LiveChat = ({
     // @ts-ignore
   }, [])
 
-  const sendMessage = async (txHash?: string) => {
+  const sendMessage = async (messageInput?: SendMessageInput) => {
     if (data?.type === SessionType.Anonymous) {
       return
     }
 
-    if (socket && inputMessage.trim() !== '') {
-      setInputMessage('')
+    if (socket) {
+      let sendMessagePayload: SendMessageType
+
+      // Handle the type logic for Clip vs Comment
+      if (messageInput?.clip) {
+        sendMessagePayload = {
+          id: uuid(),
+          type: ContentType.Clip,
+          content: messageInput.clip.content,
+          image: messageInput.clip.image,
+          clipPostId: messageInput.clip.clipPostId
+        }
+      } else {
+        if (inputMessage.trim() === '') return
+
+        sendMessagePayload = {
+          id: uuid(),
+          type: ContentType.Comment,
+          content: inputMessage,
+          image: sanitizeDStorageUrl(imageAttachment?.imageUrl), // No image for Comment
+          txHash: messageInput?.txHash
+        }
+      }
 
       // the send-message will be listened to server only if the joined-chat event is emitted with accesstoken
       // the joined-chat event is listed on the server side to verify the profile and information like handle & avatarUrl are already stored for this socket there,
       // so just need to send the message content from here
-      socket.emit('send-message', {
-        content: inputMessage,
-        txHash: txHash ?? null
-      })
+      socket.emit('send-message', sendMessagePayload)
 
       if (data?.type === SessionType.WithProfile) {
-        createComment(inputMessage)
+        createComment(
+          inputMessage,
+          imageAttachment?.imageUrl,
+          imageAttachment?.imageMimeType
+        )
       }
+      setInputMessage('')
+
+      setImageAttachment({
+        imagePreviewUrl: undefined,
+        imageUrl: undefined,
+        imageMimeType: ''
+      })
     }
   }
 
-  const createComment = async (inputMessage: string) => {
+  const createComment = async (
+    inputMessage: string,
+    imageUrl?: string,
+    imageMimeType?: string
+  ) => {
     try {
       // create a comment under live stream publication
-
+      console.time('createComment')
       const lastStreamPublicationId =
         await getLastStreamPublicationId(profileId)
 
@@ -276,15 +330,34 @@ const LiveChat = ({
       const id = uuid()
       const locale = getUserLocale()
 
-      const metadata = textOnly({
-        content: inputMessage,
-        marketplace: {
-          name: inputMessage
-        },
-        appId: APP_ID,
-        id: id,
-        locale: locale
-      })
+      console.log('imageUrl', imageUrl)
+
+      const metadata = imageUrl
+        ? image({
+            content: inputMessage,
+            marketplace: {
+              name: inputMessage,
+              image: imageUrl
+            },
+            image: {
+              item: imageUrl,
+              // @ts-ignore
+              type: imageMimeType,
+              altTag: inputMessage
+            },
+            appId: APP_ID,
+            id: id,
+            locale: locale
+          })
+        : textOnly({
+            content: inputMessage,
+            marketplace: {
+              name: inputMessage
+            },
+            appId: APP_ID,
+            id: id,
+            locale: locale
+          })
 
       const { data: txData } = await uploadDataToAR({
         variables: {
@@ -303,6 +376,11 @@ const LiveChat = ({
         sponsored: defaultSponsored,
         commentOn: lastStreamPublicationId as PublicationId
       })
+      // if (!data?.isSuccess()) return
+
+      // const comment = await data?.value?.waitForCompletion()
+      // console.log('comment', comment)
+      // console.timeEnd('createComment')
     } catch (error) {
       console.error('Error creating comment', error)
     }
@@ -435,6 +513,7 @@ const LiveChat = ({
               </div>
             )
           }
+
           return (
             <div
               key={index}
@@ -454,25 +533,78 @@ const LiveChat = ({
                 className="w-7 h-7 rounded-full"
                 style={{ flexShrink: 0 }}
               />
-              <div
-                className="pl-2.5 font-bold text-sm pt-1"
-                style={{ minWidth: 0, flexShrink: 1 }}
-              >
-                <span
-                  className={clsx(
-                    'text-s-text mr-1',
-                    msg?.authorProfileId &&
-                      msg.profileId === msg?.authorProfileId &&
-                      'bg-brand text-white rounded-md px-1.5 py-0.5'
-                  )}
+              <div>
+                <div
+                  className="pl-2.5 font-bold text-sm pt-1"
+                  style={{ minWidth: 0, flexShrink: 1 }}
                 >
-                  {msg.handle}
-                </span>
-                <span>
-                  <Markup className="break-words whitespace-pre-wrap">
-                    {msg.content}
-                  </Markup>
-                </span>
+                  <span
+                    className={clsx(
+                      'text-s-text mr-1',
+                      msg?.authorProfileId &&
+                        msg.profileId === msg?.authorProfileId &&
+                        'bg-brand text-white rounded-md px-1.5 py-0.5'
+                    )}
+                  >
+                    {msg.handle}
+                  </span>
+
+                  {(!msg?.contentType ||
+                    msg.contentType !== ContentType.Clip) && (
+                    <span>
+                      <Markup className="break-words whitespace-pre-wrap">
+                        {msg.content}
+                      </Markup>
+                    </span>
+                  )}
+                </div>
+
+                {msg?.contentType === ContentType.Comment && (
+                  <>
+                    {msg?.image && (
+                      <div className="px-1.5 py-1">
+                        <LoadingImage
+                          src={msg.image}
+                          className="max-w-full rounded-lg max-h-40 "
+                          alt="image"
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {msg?.contentType === ContentType.Clip && (
+                  <Link
+                    target="_blank"
+                    href={`${APP_LINK}/watch/${msg.clipPostId}`}
+                    className="group cursor-pointer box-border no-underline"
+                  >
+                    <div className="px-1.5 py-2">
+                      <div className="w-full gap-x-1.5 p-1.5 bg-p-hover start-center-row rounded-lg">
+                        {/* poster */}
+                        <div className="relative">
+                          <div className="absolute z-30 w-full h-full inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <PlayArrowIcon
+                              fontSize="large"
+                              className="text-white transform transition-transform group-hover:scale-105 duration-300"
+                            />
+                          </div>
+                          <LoadingImage
+                            src={msg.image}
+                            className="w-24 h-14 rounded-md"
+                          />
+                        </div>
+                        <div>
+                          <div className="start-center-row">
+                            <Markup className="text-xs font-semibold text-s-text group-hover:text-p-text leading-tight">
+                              {stringToLength('✂️ ' + msg.content, 100)}
+                            </Markup>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                )}
               </div>
             </div>
           )
@@ -525,6 +657,8 @@ const LiveChat = ({
             inputMessage={inputMessage}
             sendMessage={sendMessage}
             setInputMessage={setInputMessage}
+            imageAttachment={imageAttachment}
+            setImageAttachment={setImageAttachment}
           />
         )}
       </div>

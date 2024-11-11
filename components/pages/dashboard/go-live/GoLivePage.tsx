@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import LiveStreamEditor from './LiveStreamEditor'
-import LiveChat from './LiveChat'
+import LiveChat from '../../../common/LiveChat/LiveChat'
 import { useSession } from '@lens-protocol/react-web'
 
 const GoLivePage = () => {

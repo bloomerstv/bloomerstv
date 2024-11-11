@@ -11,6 +11,7 @@ import {
   Profile,
   SessionType,
   useCreatePost,
+  usePublications,
   useSession
 } from '@lens-protocol/react-web'
 import {
@@ -29,6 +30,7 @@ import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
 // import { getThumbnailFromVideoUrl } from '../../../utils/generateThumbnail'
 import { useMyPreferences } from '../../store/useMyPreferences'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
+import { usePublicationsStore } from '../../store/usePublications'
 // import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
 
@@ -55,6 +57,7 @@ const PostClipOnLens = ({
     referralFee,
     recipient
   } = useCollectSettings()
+  const setClipPost = usePublicationsStore((state) => state.setClipPost)
   const { data } = useSession()
   const { category, setCategory } = useMyPreferences((state) => {
     return {
@@ -190,6 +193,12 @@ const PostClipOnLens = ({
       toast.error(result.error.message)
       // handle failure scenarios
       throw new Error('Error creating post')
+    }
+
+    const post = await result?.value?.waitForCompletion()
+
+    if (post?.isSuccess()) {
+      setClipPost(post?.value)
     }
   }
 

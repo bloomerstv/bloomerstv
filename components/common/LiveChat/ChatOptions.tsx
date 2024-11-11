@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, ListItemIcon, Menu, MenuItem, MenuList } from '@mui/material'
 import { useRouter } from 'next/navigation'
-import { defaultSponsored, HEY_APP_LINK } from '../../../../utils/config'
 import BlockIcon from '@mui/icons-material/Block'
 import {
   SessionType,
@@ -9,9 +8,10 @@ import {
   useProfile,
   useSession
 } from '@lens-protocol/react-web'
-import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import toast from 'react-hot-toast'
 import LoadingButton from '@mui/lab/LoadingButton'
+import { defaultSponsored, HEY_APP_LINK } from '../../../utils/config'
+import ModalWrapper from '../../ui/Modal/ModalWrapper'
 
 const ChatOptions = ({
   handle,

@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import LiveChat from '../../../components/pages/dashboard/go-live/LiveChat'
+import LiveChat from '../../../components/common/LiveChat/LiveChat'
 
 const page = ({
   params

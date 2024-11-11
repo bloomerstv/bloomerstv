@@ -41,6 +41,8 @@
     "@ducanh2912/next-pwa": "^10.2.9",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@giphy/js-fetch-api": "^5.6.0",
+    "@giphy/react-components": "^9.8.0",
     "@lens-protocol/client": "^2.3.1",
     "@lens-protocol/metadata": "^1.2.0",
     "@lens-protocol/react-web": "^2.3.1",

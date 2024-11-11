@@ -10,5 +10,9 @@ query StreamChats($profileId: String!) {
     formattedAmount
     currencySymbol
     authorProfileId
+    contentType
+    clipPostId
+    image
+    content
   }
 }

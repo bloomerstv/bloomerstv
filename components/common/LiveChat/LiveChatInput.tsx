@@ -10,7 +10,6 @@ import {
 } from '@mui/material'
 import React, { useEffect } from 'react'
 import SendIcon from '@mui/icons-material/Send'
-import getAvatar from '../../../../utils/lib/getAvatar'
 import {
   LimitType,
   Profile,
@@ -19,12 +18,9 @@ import {
   useSearchProfiles,
   useSession
 } from '@lens-protocol/react-web'
-import formatHandle from '../../../../utils/lib/formatHandle'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import CloseIcon from '@mui/icons-material/Close'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
-import { CURRENCIES, LENS_CHAIN_ID } from '../../../../utils/config'
-import { useTokenPriceQuery } from '../../../../graphql/generated'
 import {
   useAccount,
   useReadContract,
@@ -34,33 +30,51 @@ import {
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import LoadingButton from '@mui/lab/LoadingButton'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
-import {
-  tippingContractAbi,
-  tippingContractAddress
-} from '../../../../utils/lib/tipping'
-import { Erc20TokenABI } from '../../../../utils/lib/erc20'
 import { Address, formatUnits } from 'viem'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
 import toast from 'react-hot-toast'
-import useHandleWrongNetwork from '../../../../utils/hooks/useHandleWrongNetwork'
-import { MAX_UINT256 } from '../../../../utils/contants'
-import { getLastStreamPublicationId } from '../../../../utils/lib/lensApi'
-import getStampFyiURL from '../../../../utils/getStampFyiURL'
-import { getShortAddress } from '../../../../utils/lib/getShortAddress'
-import useEns from '../../../../utils/hooks/useEns'
-import { viewPublicClientPolygon } from '../../../../utils/lib/viemPublicClient'
+import useEns from '../../../utils/hooks/useEns'
+import getAvatar from '../../../utils/lib/getAvatar'
+import getStampFyiURL from '../../../utils/getStampFyiURL'
+import formatHandle from '../../../utils/lib/formatHandle'
+import { getShortAddress } from '../../../utils/lib/getShortAddress'
+import { CURRENCIES, LENS_CHAIN_ID } from '../../../utils/config'
+import { Erc20TokenABI } from '../../../utils/lib/erc20'
+import {
+  tippingContractAbi,
+  tippingContractAddress
+} from '../../../utils/lib/tipping'
+import { useTokenPriceQuery } from '../../../graphql/generated'
+import useHandleWrongNetwork from '../../../utils/hooks/useHandleWrongNetwork'
+import { MAX_UINT256 } from '../../../utils/contants'
+import { getLastStreamPublicationId } from '../../../utils/lib/lensApi'
+import { viewPublicClientPolygon } from '../../../utils/lib/viemPublicClient'
+import { ImageAttachment, SendMessageInput } from './LiveChat'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import { MediaImageMimeType } from '@lens-protocol/metadata'
+import uploadToIPFS from '../../../utils/uploadToIPFS'
+import GifIcon from '@mui/icons-material/Gif'
+import { AnimatePresence, motion } from 'framer-motion'
+import GifAndStickerSelector from './GifAndStickerSelector'
 
 const LiveChatInput = ({
   inputMessage,
   sendMessage,
   setInputMessage,
-  liveChatProfileId
+  liveChatProfileId,
+  imageAttachment,
+  setImageAttachment
 }: {
   inputMessage: string
-  sendMessage: (txHash?: string) => Promise<void>
+  sendMessage: (messageInput?: SendMessageInput) => Promise<void>
   setInputMessage: (value: string) => void
   liveChatProfileId: string
+  imageAttachment: ImageAttachment
+  setImageAttachment: (value: ImageAttachment) => void
 }) => {
+  const imageFileInputRef = React.useRef(null)
+  const [selectGif, setSelectGif] = React.useState<boolean>(false)
+
   const { data: session } = useSession()
   const { ensAvatar, ensName } = useEns({
     address: session?.type === SessionType.JustWallet ? session?.address : null
@@ -208,7 +222,9 @@ const LiveChatInput = ({
 
   useEffect(() => {
     if (tipped && txHash) {
-      sendMessage(txHash)
+      sendMessage({
+        txHash: txHash
+      })
       setTipped(false)
       setSuperChat(false)
     }
@@ -258,6 +274,37 @@ const LiveChatInput = ({
     setInputMessage(e.target.value)
   }
 
+  const handleImageFileChange = async (event) => {
+    const files = event.target.files
+    if (!files?.length) return
+
+    const file = files[0]
+    const mediaImageMimeTypes = Object.values(MediaImageMimeType)
+
+    // check if file type is in mediaImageMimeTypes
+    if (!mediaImageMimeTypes.includes(file.type)) {
+      toast.error('Invalid image file type. Please upload a valid image file')
+      return
+    }
+
+    const url = URL.createObjectURL(file)
+
+    // @ts-ignore
+    setImageAttachment((prev) => ({
+      ...prev,
+      imagePreviewUrl: url,
+      imageMimeType: file.type
+    }))
+
+    const uploadedImage = await uploadToIPFS(file)
+
+    // @ts-ignore
+    setImageAttachment((prev) => ({
+      ...prev,
+      imageUrl: uploadedImage?.url
+    }))
+  }
+
   const handleSelected = (profile: Profile) => {
     // set the full handle by removing the last word and adding the selected handle
     const words = inputMessage.split(' ')
@@ -274,8 +321,50 @@ const LiveChatInput = ({
 
   const messageDisabled = isWaitingForTransaction || isTipping
 
+  const startIconVariants = {
+    hidden: {
+      opacity: 0,
+      x: -5,
+      transition: {
+        ease: 'linear',
+        duration: 0.15
+      }
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        ease: 'linear',
+        duration: 0.15
+      }
+    }
+  }
+
+  const endIconVariants = {
+    hidden: {
+      opacity: 0,
+      x: 5,
+      transition: {
+        ease: 'linear',
+        duration: 0.15
+      }
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        ease: 'linear',
+        duration: 0.15
+      }
+    }
+  }
+
+  const showAvatar =
+    inputMessage.trim().length > 0 || imageAttachment?.imagePreviewUrl
+
   return (
     <div className="">
+      {/* searched profiles */}
       {data && data?.length > 0 && (
         <div className="start-col w-full mb-2">
           {data?.slice(0, 4)?.map((profile: Profile) => {
@@ -318,13 +407,60 @@ const LiveChatInput = ({
           })}
         </div>
       )}
+
+      {/* image attachment preview */}
+      {imageAttachment?.imagePreviewUrl && (
+        <div className="max-w-full w-fit relative mb-1">
+          <img
+            src={imageAttachment?.imagePreviewUrl}
+            className="rounded-lg w-full max-h-40"
+          />
+          <div className="absolute top-1 right-1 bg-black/30 rounded-full">
+            <IconButton
+              onClick={() => {
+                // @ts-ignore
+                setImageAttachment((prev) => ({
+                  ...prev,
+                  imagePreviewUrl: undefined,
+                  imageUrl: undefined,
+                  imageMimeType: ''
+                }))
+              }}
+              color="secondary"
+              className="rounded-full "
+              size="small"
+            >
+              <CloseIcon className="text-white" />
+            </IconButton>
+          </div>
+        </div>
+      )}
+
+      {selectGif && (
+        <GifAndStickerSelector
+          onSelectGif={(url) => {
+            setImageAttachment({
+              imageMimeType: 'image/gif',
+              imagePreviewUrl: url,
+              imageUrl: url
+            })
+            setSelectGif(false)
+          }}
+          className="h-[400px]"
+        />
+      )}
+
+      {/* superchat component */}
       {superChat && (
         <div className="space-y-3 px-1 pb-2">
           {/* header */}
           <div className="between-row">
             <div className="start-center-row">
               <IconButton
-                onClick={() => setSuperChat(false)}
+                onClick={() => {
+                  setSuperChat(false)
+                  setInputMessage('')
+                }}
                 className="rounded-full"
                 size="small"
               >
@@ -536,68 +672,153 @@ const LiveChatInput = ({
       )}
       {!superChat && (
         <div className="w-full flex flex-row items-end gap-x-1.5">
-          {inputMessage.trim().length > 0 && (
-            <img
-              src={avatar}
-              alt="avatar"
-              className="w-7 h-7 rounded-full mb-1"
-            />
-          )}
-
-          <div
-            className={
-              'w-full flex flex-row items-end py-0.5 border-p-border outline-none bg-s-bg pl-2 pr-0.5 rounded-2xl border'
-            }
-          >
-            <TextareaAutosize
-              className="text-sm text-p-text resize-none mb-1 bg-s-bg   w-full font-normal font-sans leading-normal outline-none border-none"
-              aria-label="empty textarea"
-              placeholder="Chat..."
-              style={{
-                resize: 'none'
-              }}
-              maxRows={5}
-              onChange={handleInputChage}
-              value={inputMessage}
-              onKeyDown={(e) => {
-                if (
-                  e.key === 'Enter' &&
-                  !e.shiftKey &&
-                  inputMessage.trim().length > 0
-                ) {
-                  e.preventDefault()
-                  sendMessage()
-                }
-              }}
-            />
-            <div className="">
-              <IconButton
+          <AnimatePresence mode="wait">
+            {showAvatar ? (
+              <motion.img
+                key="avatar" // unique key for AnimatePresence to recognize the element
+                src={avatar}
+                alt="avatar"
+                className="w-7 h-7 rounded-full mb-1"
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={endIconVariants}
+              />
+            ) : (
+              <motion.div
+                key="icon" // unique key to help AnimatePresence handle switching elements
+                className="pb-0.5 -mr-1.5"
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
                 onClick={() => {
-                  sendMessage()
+                  setSelectGif(!selectGif)
                 }}
-                className=" rounded-full"
-                size="small"
-                disabled={inputMessage.trim().length === 0}
+                variants={startIconVariants}
               >
-                <SendIcon fontSize="small" />
-              </IconButton>
-            </div>
-          </div>
+                <IconButton
+                  onClick={() => {}}
+                  className="text-s-text rounded-full"
+                  size="small"
+                >
+                  <GifIcon />
+                </IconButton>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <div className="pb-0.5 -ml-1">
-            <IconButton
-              onClick={() => {
-                if (inputMessage.trim().length === 0) {
-                  setInputMessage('Super GM 🌟')
-                }
-                setSuperChat(true)
-              }}
-              className="rounded-full"
-              size="small"
-            >
-              <AttachMoneyIcon />
-            </IconButton>
-          </div>
+          <TextareaAutosize
+            className="text-base text-p-text resize-none mb-1.5 bg-s-bg  w-full font-normal font-sans leading-normal outline-none border-none"
+            aria-label="empty textarea"
+            placeholder="Chat..."
+            style={{
+              resize: 'none'
+            }}
+            maxRows={5}
+            onChange={handleInputChage}
+            value={inputMessage}
+            onKeyDown={(e) => {
+              if (
+                e.key === 'Enter' &&
+                !e.shiftKey &&
+                inputMessage.trim().length > 0 &&
+                (imageAttachment?.imageUrl ||
+                  (!imageAttachment?.imagePreviewUrl &&
+                    !imageAttachment?.imageUrl))
+              ) {
+                e.preventDefault()
+                sendMessage()
+              }
+            }}
+          />
+
+          <input
+            type="file"
+            ref={imageFileInputRef}
+            style={{ display: 'none' }} // Hide the file input
+            onChange={handleImageFileChange}
+            accept="image/*" // Optional: limit the file chooser to only image files
+          />
+
+          <AnimatePresence mode="wait">
+            {inputMessage.trim().length > 0 && (
+              <motion.div
+                key="send"
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={startIconVariants}
+                className="pb-0.5 -ml-1"
+              >
+                <IconButton
+                  onClick={() => {
+                    sendMessage()
+                  }}
+                  className=" rounded-full"
+                  size="small"
+                  disabled={
+                    inputMessage.trim().length === 0 ||
+                    (!!imageAttachment?.imagePreviewUrl &&
+                      !imageAttachment?.imageUrl)
+                  }
+                >
+                  <SendIcon />
+                </IconButton>
+              </motion.div>
+            )}
+
+            {!imageAttachment?.imagePreviewUrl &&
+              //  @ts-ignore
+              inputMessage.trim().length === 0 && (
+                <motion.div
+                  key="add"
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  variants={endIconVariants}
+                  className="pb-0.5 -ml-1"
+                >
+                  <IconButton
+                    onClick={() => {
+                      // Programmatically click the file input when the button is clicked
+                      if (!imageFileInputRef.current) return
+
+                      setSelectGif(false)
+                      // @ts-ignore
+                      imageFileInputRef.current.click()
+                    }}
+                    className="text-s-text rounded-full"
+                    size="small"
+                  >
+                    <AddPhotoAlternateIcon />
+                  </IconButton>
+                </motion.div>
+              )}
+
+            {inputMessage.trim().length === 0 && !selectGif && (
+              <motion.div
+                key="super"
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={endIconVariants}
+                className="pb-0.5 -ml-2"
+              >
+                <IconButton
+                  onClick={() => {
+                    if (inputMessage.trim().length === 0) {
+                      setInputMessage('Super GM 🌟')
+                    }
+                    setSuperChat(true)
+                  }}
+                  className="rounded-full"
+                  size="small"
+                >
+                  <AttachMoneyIcon />
+                </IconButton>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
     </div>

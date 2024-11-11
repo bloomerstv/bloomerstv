@@ -36,12 +36,15 @@ export type Chat = {
   __typename?: 'Chat'
   authorProfileId?: Maybe<Scalars['String']['output']>
   avatarUrl?: Maybe<Scalars['String']['output']>
+  clipPostId?: Maybe<Scalars['String']['output']>
   content?: Maybe<Scalars['String']['output']>
+  contentType?: Maybe<Scalars['String']['output']>
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   currencySymbol?: Maybe<Scalars['String']['output']>
   formattedAmount?: Maybe<Scalars['String']['output']>
   handle?: Maybe<Scalars['String']['output']>
   id?: Maybe<Scalars['String']['output']>
+  image?: Maybe<Scalars['String']['output']>
   profileId?: Maybe<Scalars['String']['output']>
   txHash?: Maybe<Scalars['String']['output']>
 }
@@ -511,6 +514,9 @@ export type StreamChatsQuery = {
     formattedAmount?: string | null
     currencySymbol?: string | null
     authorProfileId?: string | null
+    contentType?: string | null
+    clipPostId?: string | null
+    image?: string | null
   } | null> | null
 }
 
@@ -904,12 +910,17 @@ export function useGetMyRecordedStreamSessionsLazyQuery(
   >(GetMyRecordedStreamSessionsDocument, options)
 }
 export function useGetMyRecordedStreamSessionsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    GetMyRecordedStreamSessionsQuery,
-    GetMyRecordedStreamSessionsQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetMyRecordedStreamSessionsQuery,
+        GetMyRecordedStreamSessionsQueryVariables
+      >
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
     GetMyRecordedStreamSessionsQuery,
     GetMyRecordedStreamSessionsQueryVariables
@@ -982,12 +993,17 @@ export function useIsSubcribedNotificationForStreamerLazyQuery(
   >(IsSubcribedNotificationForStreamerDocument, options)
 }
 export function useIsSubcribedNotificationForStreamerSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    IsSubcribedNotificationForStreamerQuery,
-    IsSubcribedNotificationForStreamerQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        IsSubcribedNotificationForStreamerQuery,
+        IsSubcribedNotificationForStreamerQueryVariables
+      >
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
     IsSubcribedNotificationForStreamerQuery,
     IsSubcribedNotificationForStreamerQueryVariables
@@ -1055,12 +1071,14 @@ export function useIsVerifiedLazyQuery(
   )
 }
 export function useIsVerifiedSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    IsVerifiedQuery,
-    IsVerifiedQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<IsVerifiedQuery, IsVerifiedQueryVariables>
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<IsVerifiedQuery, IsVerifiedQueryVariables>(
     IsVerifiedDocument,
     options
@@ -1133,12 +1151,17 @@ export function useLiveStreamersLazyQuery(
   )
 }
 export function useLiveStreamersSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    LiveStreamersQuery,
-    LiveStreamersQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        LiveStreamersQuery,
+        LiveStreamersQueryVariables
+      >
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
     LiveStreamersQuery,
     LiveStreamersQueryVariables
@@ -1213,12 +1236,14 @@ export function useMyStreamLazyQuery(
   )
 }
 export function useMyStreamSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    MyStreamQuery,
-    MyStreamQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<MyStreamQuery, MyStreamQueryVariables>
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<MyStreamQuery, MyStreamQueryVariables>(
     MyStreamDocument,
     options
@@ -1286,12 +1311,17 @@ export function useOfflineStreamersLazyQuery(
   >(OfflineStreamersDocument, options)
 }
 export function useOfflineStreamersSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    OfflineStreamersQuery,
-    OfflineStreamersQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        OfflineStreamersQuery,
+        OfflineStreamersQueryVariables
+      >
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
     OfflineStreamersQuery,
     OfflineStreamersQueryVariables
@@ -1350,9 +1380,14 @@ export function useQueryLazyQuery(
   )
 }
 export function useQuerySuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<QueryQuery, QueryQueryVariables>
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<QueryQuery, QueryQueryVariables>
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<QueryQuery, QueryQueryVariables>(
     QueryDocument,
     options
@@ -1480,12 +1515,17 @@ export function useStreamReplayRecordingLazyQuery(
   >(StreamReplayRecordingDocument, options)
 }
 export function useStreamReplayRecordingSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    StreamReplayRecordingQuery,
-    StreamReplayRecordingQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        StreamReplayRecordingQuery,
+        StreamReplayRecordingQueryVariables
+      >
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
     StreamReplayRecordingQuery,
     StreamReplayRecordingQueryVariables
@@ -1550,12 +1590,17 @@ export function useShouldCreateNewPostLazyQuery(
   >(ShouldCreateNewPostDocument, options)
 }
 export function useShouldCreateNewPostSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    ShouldCreateNewPostQuery,
-    ShouldCreateNewPostQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        ShouldCreateNewPostQuery,
+        ShouldCreateNewPostQueryVariables
+      >
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
     ShouldCreateNewPostQuery,
     ShouldCreateNewPostQueryVariables
@@ -1587,6 +1632,10 @@ export const StreamChatsDocument = gql`
       formattedAmount
       currencySymbol
       authorProfileId
+      contentType
+      clipPostId
+      image
+      content
     }
   }
 `
@@ -1636,12 +1685,17 @@ export function useStreamChatsLazyQuery(
   )
 }
 export function useStreamChatsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    StreamChatsQuery,
-    StreamChatsQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        StreamChatsQuery,
+        StreamChatsQueryVariables
+      >
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<StreamChatsQuery, StreamChatsQueryVariables>(
     StreamChatsDocument,
     options
@@ -1718,12 +1772,17 @@ export function useStreamReplayPublicationsLazyQuery(
   >(StreamReplayPublicationsDocument, options)
 }
 export function useStreamReplayPublicationsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    StreamReplayPublicationsQuery,
-    StreamReplayPublicationsQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        StreamReplayPublicationsQuery,
+        StreamReplayPublicationsQueryVariables
+      >
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
     StreamReplayPublicationsQuery,
     StreamReplayPublicationsQueryVariables
@@ -1800,12 +1859,14 @@ export function useStreamerLazyQuery(
   )
 }
 export function useStreamerSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    StreamerQuery,
-    StreamerQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<StreamerQuery, StreamerQueryVariables>
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<StreamerQuery, StreamerQueryVariables>(
     StreamerDocument,
     options
@@ -1870,12 +1931,14 @@ export function useThumbnailLazyQuery(
   )
 }
 export function useThumbnailSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    ThumbnailQuery,
-    ThumbnailQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<ThumbnailQuery, ThumbnailQueryVariables>
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<ThumbnailQuery, ThumbnailQueryVariables>(
     ThumbnailDocument,
     options
@@ -1947,12 +2010,14 @@ export function useTokenPriceLazyQuery(
   )
 }
 export function useTokenPriceSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    TokenPriceQuery,
-    TokenPriceQueryVariables
-  >
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<TokenPriceQuery, TokenPriceQueryVariables>
 ) {
-  const options = { ...defaultOptions, ...baseOptions }
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<TokenPriceQuery, TokenPriceQueryVariables>(
     TokenPriceDocument,
     options

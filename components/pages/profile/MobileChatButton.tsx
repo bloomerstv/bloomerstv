@@ -1,7 +1,7 @@
 import { Button } from '@mui/material'
 import React, { useState } from 'react'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
-import LiveChat from '../dashboard/go-live/LiveChat'
+import LiveChat from '../../common/LiveChat/LiveChat'
 import ChatIcon from '@mui/icons-material/Chat'
 const MobileChatButton = ({ profileId }: { profileId: string }) => {
   const [open, setOpen] = useState(false)

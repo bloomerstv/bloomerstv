@@ -6,7 +6,7 @@ import {
   useSession
 } from '@lens-protocol/react-web'
 import React, { memo } from 'react'
-import LiveChat from '../dashboard/go-live/LiveChat'
+import LiveChat from '../../common/LiveChat/LiveChat'
 import {
   useCreateClipMutation,
   useStreamReplayRecordingQuery,
