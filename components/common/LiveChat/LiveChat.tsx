@@ -454,7 +454,7 @@ const LiveChat = ({
       {/* messages section */}
       <div
         style={{ minWidth: 0 }}
-        className="h-full flex-grow overflow-y-auto py-1"
+        className="h-full flex-grow overflow-y-auto overflow-x-hidden py-1"
       >
         {uniqueMessages.map((msg, index) => {
           // this mean its a message from the system
@@ -506,7 +506,15 @@ const LiveChat = ({
                       {`${msg.amount || parseFloat(msg.formattedAmount!)} ${msg.currencySymbol}`}
                     </div>
                   </div>
-                  <Markup className="break-words whitespace-pre-wrap">
+                  <Markup
+                    style={{
+                      whiteSpace: 'pre-wrap', // ensures that text wraps and preserves whitespace
+                      overflowWrap: 'break-word', // breaks long words if necessary
+                      wordWrap: 'break-word', // adds support for older browsers, same as overflowWrap
+                      wordBreak: 'break-word' // breaks words if they are too long to fit
+                    }}
+                    // className="break-words whitespace-pre-wrap"
+                  >
                     {msg.content}
                   </Markup>
                 </div>
@@ -517,7 +525,7 @@ const LiveChat = ({
           return (
             <div
               key={index}
-              className="flex group relative flex-row px-3 my-1.5"
+              className="flex group relative flex-row  w-full px-3 my-1.5"
             >
               <ChatOptionsButton
                 chatProfileId={profileId}
@@ -527,13 +535,16 @@ const LiveChat = ({
                 socket={socket}
                 className="bg-s-bg"
               />
+
+              {/* profile image */}
               <img
                 src={msg.avatarUrl}
                 alt="avatar"
                 className="w-7 h-7 rounded-full"
                 style={{ flexShrink: 0 }}
               />
-              <div>
+              <div className="w-full">
+                {/* handle */}
                 <div
                   className="pl-2.5 font-bold text-sm pt-1"
                   style={{ minWidth: 0, flexShrink: 1 }}
@@ -559,6 +570,7 @@ const LiveChat = ({
                   )}
                 </div>
 
+                {/* show comment */}
                 {msg?.contentType === ContentType.Comment && (
                   <>
                     {msg?.image && (
@@ -573,13 +585,14 @@ const LiveChat = ({
                   </>
                 )}
 
+                {/* show clip */}
                 {msg?.contentType === ContentType.Clip && (
                   <Link
                     target="_blank"
                     href={`${APP_LINK}/watch/${msg.clipPostId}`}
-                    className="group cursor-pointer box-border no-underline"
+                    className="w-full group flex cursor-pointer box-border  no-underline"
                   >
-                    <div className="px-1.5 py-2">
+                    <div className="px-1.5 py-2 w-full">
                       <div className="w-full gap-x-1.5 p-1.5 bg-p-hover start-center-row rounded-lg">
                         {/* poster */}
                         <div className="relative">
@@ -596,7 +609,7 @@ const LiveChat = ({
                         </div>
                         <div>
                           <div className="start-center-row">
-                            <Markup className="text-xs font-semibold text-s-text group-hover:text-p-text leading-tight">
+                            <Markup className="text-xs break-words whitespace-pre-wrap font-semibold text-s-text group-hover:text-p-text leading-tight">
                               {stringToLength('✂️ ' + msg.content, 100)}
                             </Markup>
                           </div>
