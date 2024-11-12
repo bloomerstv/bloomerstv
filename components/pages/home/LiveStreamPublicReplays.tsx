@@ -235,6 +235,8 @@ const HomePageCards = () => {
       {/* @ts-ignore */}
       <div className="flex flex-row flex-wrap w-full gap-y-6">
         {/* <ContributeDiv /> */}
+
+        {/* live streams */}
         {selectedCategory?.name === 'None' &&
           streamersWithProfiles?.map((streamer) => {
             if (hideProfilesIds.includes(streamer.profileId)) {
@@ -242,6 +244,8 @@ const HomePageCards = () => {
             }
             return <StreamCard key={streamer?.profileId} streamer={streamer} />
           })}
+
+        {/* live streams replay, clips and videos */}
         {!loading &&
         !profilesLoading &&
         streamReplayPublication?.streamReplayPublications

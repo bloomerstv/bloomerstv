@@ -12,7 +12,7 @@ import getPublicationData from '../../utils/lib/getPublicationData'
 import { secondsToTime, timeAgo } from '../../utils/helpers'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import Markup from './Lexical/Markup'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import clsx from 'clsx'
 import VerifiedBadge from '../ui/VerifiedBadge'
 import LoadingImage from '../ui/LoadingImage'
@@ -38,6 +38,7 @@ const HomeVideoCard = ({
   const pathname = usePathname()
   const asset = post ? getPublicationData(post?.metadata)?.asset : null
   const { data } = useSession()
+  const { push } = useRouter()
 
   if (!post && !session) return null
 
@@ -128,6 +129,7 @@ const HomeVideoCard = ({
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
+                push('/dashboard/content')
               }}
             >
               <IconButton
