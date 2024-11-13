@@ -284,12 +284,13 @@ const CollectButton = ({
               ) {
                 if (!isConnected) {
                   openConnectModal?.()
+                  return
                 } else if (
                   address?.toLowerCase() !== data?.address.toLowerCase()
                 ) {
                   openAccountModal?.()
+                  return
                 }
-                return
               }
 
               if (
