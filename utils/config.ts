@@ -1,5 +1,7 @@
 export const APP_NAME = 'BloomersTV'
-export const APP_LINK = 'https://bloomers.tv'
+export const APP_LINK = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : 'http://localhost:3000'
 export const APP_ID = 'bloomers.tv'
 export const STS_TOKEN_URL = process.env.NEXT_PUBLIC_STS_TOKEN_URL
 export const EVER_REGION = 'us-west-2'

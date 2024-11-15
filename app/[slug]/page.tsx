@@ -2,8 +2,9 @@ import React from 'react'
 import ProfilePage from '../../components/pages/profile/ProfilePage'
 import { getHandle } from '../../utils/lib/getHandle'
 import { Metadata } from 'next'
-import { NODE_GRAPHQL_URL } from '../../utils/config'
+import { APP_LINK, NODE_GRAPHQL_URL } from '../../utils/config'
 import { fetchMetadata } from 'frames.js/next'
+import { headers } from 'next/headers'
 
 type Props = {
   params: { slug: string }
@@ -13,36 +14,42 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const handle = getHandle(params.slug)
   let thumbnail = ''
 
-  try {
-    const data = await fetch(NODE_GRAPHQL_URL, {
-      next: { revalidate: 360 },
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json' // replace with your operation name
-      },
-      body: JSON.stringify({
-        query: `
+  const requestHeaders = headers()
+
+  // check the domain from which the request is coming from
+
+  // Extract domain from the Referer or Origin header
+  const referer = requestHeaders.get('referer') // Full URL of the referring page
+
+  const isFromFrontend = referer && referer.startsWith(APP_LINK)
+
+  if (!isFromFrontend) {
+    try {
+      const data = await fetch(NODE_GRAPHQL_URL, {
+        next: { revalidate: 360 },
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json' // replace with your operation name
+        },
+        body: JSON.stringify({
+          query: `
         query Thumbnail {
           thumbnail(
             handle: "${handle}"
           )
         }
       `
-      })
-    }).then((res) => res.json())
+        })
+      }).then((res) => res.json())
 
-    thumbnail = data?.data?.thumbnail
-  } catch (e) {
-    console.log(e)
+      thumbnail = data?.data?.thumbnail
+    } catch (e) {
+      console.log(e)
+    }
   }
 
-  const frameUrl = new URL(
-    '/frames',
-    process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000'
-  )
+  const frameUrl = new URL('/frames', APP_LINK)
 
   const urlParams = new URLSearchParams({
     handle: encodeURIComponent(handle),
@@ -75,7 +82,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         }
       ]
     },
-    other: await fetchMetadata(frameUrl)
+    other: !isFromFrontend ? await fetchMetadata(frameUrl) : undefined
   }
 }
 

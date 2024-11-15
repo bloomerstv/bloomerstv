@@ -455,6 +455,7 @@ const LiveChat = ({
       <div
         style={{ minWidth: 0 }}
         className="h-full flex-grow overflow-y-auto overflow-x-hidden py-1"
+        onTouchStart={(e) => e.stopPropagation()}
       >
         {uniqueMessages.map((msg, index) => {
           // this mean its a message from the system

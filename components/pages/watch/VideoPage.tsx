@@ -192,7 +192,7 @@ const VideoPage = ({
       </div>
 
       {!isMobile && post && (
-        <div className="border-t border-p-border mt-8 mb-4">
+        <div className="border-t border-p-border mt-8 mb-4 mx-8">
           <div className="text-xl font-semibold my-4">{`${post?.stats?.comments} Comment${post?.stats?.comments > 1 ? 's' : ''}`}</div>
           <CommentSection publication={post} />
         </div>
