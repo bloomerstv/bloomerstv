@@ -163,7 +163,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
                     <ListItemIcon>
                       <DashboardIcon fontSize="small" />
                     </ListItemIcon>
-                    Dashboard
+                    Content
                   </MenuItem>
                 </>
               )}
@@ -280,7 +280,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
                 <ListItemIcon>
                   <DashboardIcon fontSize="small" />
                 </ListItemIcon>
-                Dashboard
+                Content
               </MenuItem>
             </>
           )}

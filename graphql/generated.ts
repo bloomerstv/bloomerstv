@@ -109,7 +109,7 @@ export type MutationRemoveNotificationSubscriberFromStreamerArgs = {
 
 export type MutationUpdateLensStreamSessionArgs = {
   customThumbnail?: InputMaybe<Scalars['String']['input']>
-  publicationId: Scalars['String']['input']
+  sessionId: Scalars['String']['input']
   viewType?: InputMaybe<ViewType>
 }
 
@@ -588,7 +588,7 @@ export type TokenPriceQuery = {
 }
 
 export type UpdateLensStreamSessionMutationVariables = Exact<{
-  publicationId: Scalars['String']['input']
+  sessionId: Scalars['String']['input']
   viewType?: InputMaybe<ViewType>
   customThumbnail?: InputMaybe<Scalars['String']['input']>
 }>
@@ -2036,12 +2036,12 @@ export type TokenPriceQueryResult = Apollo.QueryResult<
 >
 export const UpdateLensStreamSessionDocument = gql`
   mutation UpdateLensStreamSession(
-    $publicationId: String!
+    $sessionId: String!
     $viewType: ViewType
     $customThumbnail: String
   ) {
     updateLensStreamSession(
-      publicationId: $publicationId
+      sessionId: $sessionId
       viewType: $viewType
       customThumbnail: $customThumbnail
     )
@@ -2065,7 +2065,7 @@ export type UpdateLensStreamSessionMutationFn = Apollo.MutationFunction<
  * @example
  * const [updateLensStreamSessionMutation, { data, loading, error }] = useUpdateLensStreamSessionMutation({
  *   variables: {
- *      publicationId: // value for 'publicationId'
+ *      sessionId: // value for 'sessionId'
  *      viewType: // value for 'viewType'
  *      customThumbnail: // value for 'customThumbnail'
  *   },

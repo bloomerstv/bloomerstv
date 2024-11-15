@@ -1,10 +1,10 @@
 mutation UpdateLensStreamSession(
-  $publicationId: String!
+  $sessionId: String!
   $viewType: ViewType
   $customThumbnail: String
 ) {
   updateLensStreamSession(
-    publicationId: $publicationId
+    sessionId: $sessionId
     viewType: $viewType
     customThumbnail: $customThumbnail
   )

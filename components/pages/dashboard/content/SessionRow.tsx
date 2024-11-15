@@ -52,7 +52,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
     React.useState<boolean>(false)
   const { data } = usePublication({
     // @ts-ignore
-    forId: session?.publicationId || newPublicationId
+    forId: newPublicationId || session?.publicationId
   })
 
   const [postAsVideoProps, setPostAsVideoProps] = React.useState<{
@@ -146,7 +146,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
     const res = await toast.promise(
       updateThumbnail({
         variables: {
-          publicationId: String(data?.id),
+          sessionId: String(session?.sessionId),
           customThumbnail: newThumbnailUrl
         }
       }),
@@ -236,6 +236,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
       {/* video */}
       <TableCell>
         <div className="flex flex-row items-start gap-x-4 w-[450px]">
+          {/* thumbnail */}
           <div className="relative">
             <LoadingImage
               src={
@@ -254,12 +255,13 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
               </div>
             )}
           </div>
+
           <div>
             <Link
               href={
                 data?.id
-                  ? `${APP_LINK}/watch/${data?.id}`
-                  : `${APP_LINK}/watch/session/${session?.sessionId}`
+                  ? `/watch/${data?.id}`
+                  : `/watch/session/${session?.sessionId}`
               }
               className="font-bold no-underline hover:underline text-p-text text-base"
             >
@@ -280,7 +282,12 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                     ),
                     120
                   )
-                : 'Untitled Stream'}
+                : 'Untitled Stream'}{' '}
+              {data?.isHidden && (
+                <span className="text-red-500">
+                  Post Deleted & hidden from homepage.
+                </span>
+              )}
             </div>
             {/* show only on hover of the row */}
             <div className="hidden -ml-3 group-hover:block start-center-row shrink-0">
@@ -309,8 +316,8 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                     // @ts-ignore
                     window.open(
                       data?.id
-                        ? `${APP_LINK}/watch/${data?.id}`
-                        : `${APP_LINK}/watch/session/${session?.sessionId}`,
+                        ? `/watch/${data?.id}`
+                        : `/watch/session/${session?.sessionId}`,
                       '_blank'
                     )
                   }}
@@ -357,7 +364,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                 </Tooltip>
               )}
 
-              {!data?.id && (
+              {(!data?.id || data?.isHidden) && (
                 <Tooltip title={'Create a post for this stream'}>
                   <IconButton
                     size="large"
@@ -413,10 +420,10 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
       </TableCell>
       {/* Visiblity */}
       <TableCell>
-        {session.viewType ? (
-          <ContentVisibiltyButton session={session} />
-        ) : (
+        {data?.id && data?.isHidden ? (
           <span className="text-2xl">-</span>
+        ) : (
+          <ContentVisibiltyButton session={session} />
         )}
       </TableCell>
 

@@ -38,11 +38,7 @@ const TopHeader = () => {
 
         {data?.type === SessionType.WithProfile && (
           <Tooltip title="Go Live">
-            <IconButton
-              onClick={() => {
-                push(`/dashboard/go-live`)
-              }}
-            >
+            <IconButton LinkComponent={Link} href="/dashboard/go-live">
               <VideoCallIcon />
             </IconButton>
           </Tooltip>

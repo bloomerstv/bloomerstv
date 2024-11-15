@@ -473,7 +473,7 @@ const PostStreamAsVideo = ({
         error: 'Error creating post'
       })
     } else {
-      if (publication?.id) {
+      if (publication?.id && !publication?.isHidden) {
         toast.error('Lens Post already created for this video')
       } else {
         setOpen(false)

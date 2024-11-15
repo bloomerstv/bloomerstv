@@ -9,7 +9,7 @@ import toast from 'react-hot-toast'
 
 const ContentVisibiltyButton = ({ session }: { session: RecordedSession }) => {
   const [visibility, setVisibility] = React.useState<ViewType>(
-    session?.viewType!
+    session?.viewType ?? ViewType.Public
   )
   const [setViewType] = useUpdateLensStreamSessionMutation()
   const handleVisibilityChange = async (e: any) => {
@@ -17,7 +17,7 @@ const ContentVisibiltyButton = ({ session }: { session: RecordedSession }) => {
     try {
       const res = await setViewType({
         variables: {
-          publicationId: session?.publicationId!,
+          sessionId: session?.sessionId!,
           viewType: e.target.value
         }
       })
