@@ -16,7 +16,7 @@ import { timeAgo } from '../../../utils/helpers'
 import toast from 'react-hot-toast'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import { useStreamReplayRecordingQuery } from '../../../graphql/generated'
-import Player from '../../common/Player'
+import Player from '../../common/Player/Player'
 import { getCategoryForTag } from '../../../utils/categories'
 import Link from 'next/link'
 const VideoPage = ({

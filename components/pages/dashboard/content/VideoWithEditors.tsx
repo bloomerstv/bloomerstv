@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react'
-import Player from '../../../common/Player'
+import Player from '../../../common/Player/Player'
 
 const VideoWithEditors = ({ recordingUrl }: { recordingUrl: string }) => {
   const videoClipperRef = React.useRef<HTMLDivElement | null>(null)

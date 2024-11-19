@@ -11,7 +11,6 @@ import {
   Profile,
   SessionType,
   useCreatePost,
-  usePublications,
   useSession
 } from '@lens-protocol/react-web'
 import {

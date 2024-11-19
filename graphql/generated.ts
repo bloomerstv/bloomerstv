@@ -132,6 +132,7 @@ export type MyStream = Stream & {
   isHealthy?: Maybe<Scalars['Boolean']['output']>
   issues?: Maybe<Array<Maybe<Scalars['String']['output']>>>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
+  latestSessionId?: Maybe<Scalars['String']['output']>
   latestStreamPublicationId?: Maybe<Scalars['String']['output']>
   nextStreamTime?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
@@ -437,6 +438,7 @@ export type MyStreamQuery = {
     streamKey?: string | null
     isActive?: boolean | null
     latestStreamPublicationId?: string | null
+    latestSessionId?: string | null
     premium?: boolean | null
     isHealthy?: boolean | null
     issues?: Array<string | null> | null
@@ -1191,6 +1193,7 @@ export const MyStreamDocument = gql`
       streamKey
       isActive
       latestStreamPublicationId
+      latestSessionId
       premium
       isHealthy
       issues

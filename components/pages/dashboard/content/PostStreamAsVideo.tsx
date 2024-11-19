@@ -53,7 +53,7 @@ import {
 // import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
 import ContentCutIcon from '@mui/icons-material/ContentCut'
-import Player from '../../../common/Player'
+import Player from '../../../common/Player/Player'
 import clsx from 'clsx'
 import { useMyPreferences } from '../../../store/useMyPreferences'
 

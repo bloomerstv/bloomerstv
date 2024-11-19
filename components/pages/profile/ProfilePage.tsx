@@ -25,7 +25,7 @@ import toast from 'react-hot-toast'
 import LiveStreamPublicReplays from '../home/LiveStreamPublicReplays'
 import { timeAgo } from '../../../utils/helpers'
 import Markup from '../../common/Lexical/Markup'
-import Player from '../../common/Player'
+import Player from '../../common/Player/Player'
 import { getLiveStreamUrl } from '../../../utils/lib/getLiveStreamUrl'
 import {
   PlayerStreamingMode,

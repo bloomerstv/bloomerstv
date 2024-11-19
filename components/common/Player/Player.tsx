@@ -16,12 +16,12 @@ import { CheckIcon, ChevronDownIcon } from 'lucide-react'
 import React, { memo, useCallback } from 'react'
 import * as Select from '@radix-ui/react-select'
 import { ClipLength, Src } from '@livepeer/react'
-import cn from '../../utils/ui/cn'
-import VideoClipper from '../pages/dashboard/content/VideoClipper'
+import cn from '../../../utils/ui/cn'
+import VideoClipper from '../../pages/dashboard/content/VideoClipper'
 import {
   PlayerStreamingMode,
   useMyPreferences
-} from '../store/useMyPreferences'
+} from '../../store/useMyPreferences'
 
 const PlayerWithControls = ({
   src,

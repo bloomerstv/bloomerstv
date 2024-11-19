@@ -10,6 +10,7 @@ import { useApolloClient } from '@apollo/client'
 import {
   MyStream,
   ShouldCreateNewPostDocument,
+  useCreateClipMutation,
   useCreateMyLensStreamSessionMutation,
   useUploadDataToArMutation
 } from '../../../../graphql/generated'
@@ -25,6 +26,7 @@ import {
   UserRejectedError,
   WalletConnectionError,
   useCreatePost,
+  useProfile,
   useSession
 } from '@lens-protocol/react-web'
 import formatHandle from '../../../../utils/lib/formatHandle'
@@ -49,7 +51,7 @@ import {
 } from '../../../store/useMyPreferences'
 import { IconButton } from '@mui/material'
 import { BroadcastLive } from './Broadcast'
-import Player from '../../../common/Player'
+import Player from '../../../common/Player/Player'
 import CloseIcon from '@mui/icons-material/Close'
 import useCollectSettings from '../../../common/Collect/useCollectSettings'
 import {
@@ -59,6 +61,7 @@ import {
 // import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
 import { Src } from '@livepeer/react'
+import PostClipOnLens from '../../profile/PostClipOnLens'
 
 const LiveVideoComponent = ({
   myStream,
@@ -85,10 +88,20 @@ const LiveVideoComponent = ({
     referralFee,
     recipient
   } = useCollectSettings()
+  const [clipUrl, setClipUrl] = React.useState<string | null>(null)
+  const [open, setOpen] = React.useState(false)
+
   const { execute } = useCreatePost()
   const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation({
     fetchPolicy: 'no-cache'
   })
+  const [createClip] = useCreateClipMutation()
+
+  const { data } = useProfile({
+    // @ts-ignore
+    forProfileId: myStream.profileId
+  })
+
   const { category, streamReplayViewType, playerStreamingMode } =
     useMyPreferences((state) => {
       return {
@@ -117,32 +130,51 @@ const LiveVideoComponent = ({
     }
   }, [startedStreaming])
 
+  /**
+   * Creates a new post using the provided sessionId
+   * @param sessionId the session id to use when creating the post
+   * @returns the id of the newly created post, or undefined if an error occurred
+   */
   const createLensPost = async (
     sessionId: string
   ): Promise<string | undefined> => {
     if (session?.type !== SessionType.WithProfile) {
+      // If the user is not logged in, return undefined
       return
     }
+
+    // Get the m3u8 url for the live stream
     const m3u8Url = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=.m3u8`
+    // Get the mp4 url for the live stream
     const mp4Url = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=.mp4`
+    // Get the thumbnail url for the live stream
     const thumbnail = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=.png`
+    // Get the duration of the live stream in seconds
     const duration = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=seconds`
     // code logic here
     const streamName = myStream?.streamName ?? undefined
 
     if (!streamName) {
+      // If the stream name is not set, show an error
       toast.error('Please enter a stream name')
       throw new Error('No stream name')
     }
+
+    // Get the user's handle from their profile
     const streamerHandle = formatHandle(session?.profile)
+    // Get the profile link from the user's handle
     const profileLink = `${APP_LINK}/${streamerHandle}`
+    // Generate a uuid for the post
     const id = uuid()
+    // Get the user's locale
     const locale = getUserLocale()
 
+    // Create the content for the post
     const content = `${streamName}${
       myStream?.streamDescription ? `\n\n${myStream?.streamDescription}` : ''
     }${addLiveChatAt ? `\n\nLive Chat at ${profileLink}` : ''}`
 
+    // Get the tags for the post
     const tags = [
       ...getTagsForCategory(category),
       ...getTagsForSymbol(
@@ -150,6 +182,7 @@ const LiveVideoComponent = ({
       )
     ]
 
+    // Create the metadata for the post
     const metadata = liveStream({
       title: streamName,
       content: content,
@@ -183,6 +216,7 @@ const LiveVideoComponent = ({
       startsAt: new Date().toISOString()
     })
 
+    // Upload the metadata to Arweave
     const { data, errors } = await uploadDataToAR({
       variables: {
         data: JSON.stringify(metadata)
@@ -190,19 +224,23 @@ const LiveVideoComponent = ({
     })
 
     if (errors?.[0]) {
+      // If there is an error, show an error
       toast.error(errors[0].message)
       throw new Error('Error uploading metadata to Arweave')
     }
 
+    // Get the transaction id from the response
     const transactionId = data?.uploadDataToAR
 
     if (!transactionId) {
+      // If the transaction id is not set, throw an error
       throw new Error('Error uploading metadata to Arweave')
     }
 
     let actions: OpenActionConfig[] | undefined = []
 
     if (type) {
+      // If there is a type set, create the actions array
       actions = [
         // @ts-ignore
         {
@@ -226,6 +264,7 @@ const LiveVideoComponent = ({
       }
     }
 
+    // If on mainnet, add the tip action
     // if (isMainnet) {
     //   actions?.push({
     //     type: OpenActionType.UNKNOWN_OPEN_ACTION,
@@ -238,7 +277,8 @@ const LiveVideoComponent = ({
     //   })
     // }
 
-    const MAX_RETRIES = 3 // Maximum number of retries
+    // Set the maximum number of retries
+    const MAX_RETRIES = 3
     let retries = 0
     // @ts-ignore
     let result: Result<
@@ -250,8 +290,10 @@ const LiveVideoComponent = ({
       | WalletConnectionError
     > = null
 
+    // Loop until the post is created or the maximum number of retries is reached
     while (retries < MAX_RETRIES) {
       try {
+        // Execute the post creation
         result = await execute({
           metadata: `ar://${transactionId}`,
           sponsored: defaultSponsored,
@@ -266,6 +308,7 @@ const LiveVideoComponent = ({
           retries++
           if (retries === MAX_RETRIES) {
             if (result.isFailure()) {
+              // If the maximum number of retries is reached, show an error
               switch (result.error.name) {
                 case 'BroadcastingError':
                   console.log(
@@ -322,21 +365,22 @@ const LiveVideoComponent = ({
     }
 
     if (!result.isSuccess()) {
+      // If the post creation failed, show an error
       toast.error(result.error.message)
       // handle failure scenarios
       throw new Error('Error creating post')
     }
 
-    // this might take a while, depends on the type of tx (on-chain or Momoka)
-    // and the congestion of the network
+    // Wait for the post to be processed
     const completion = await result.value.waitForCompletion()
 
     if (completion.isFailure()) {
+      // If there is an error, show an error
       toast.error(completion.error.message)
       throw new Error('Error creating post during tx processing')
     }
 
-    // the post is now ready to be used
+    // The post is now ready to be used
     const post = completion.value
 
     return post?.id
@@ -422,6 +466,50 @@ const LiveVideoComponent = ({
     return <ConnectStream handleGoLiveFromBrowser={handleGoLiveFromBrowser} />
   }, [])
 
+  const handleClipClicked = async (
+    playbackId: string,
+    startTime: number,
+    endTime: number
+  ) => {
+    try {
+      // Use `playbackOffsetMsRef.current` instead of `playbackOffsetMs`
+      // const offsetMs = playbackOffsetMsRef.current
+
+      if (!playbackId || !startTime || !endTime) return
+      // we get the estimated time on the server that the user "clipped"
+      // by subtracting the offset from the recorded clip time
+      // const estimatedServerClipTime = Date.now() - (offsetMs ?? 0)
+
+      // const startTime = estimatedServerClipTime - 30 * 1000
+      // const endTime = estimatedServerClipTime
+
+      const result = await toast.promise(
+        createClip({
+          variables: {
+            playbackId: playbackId,
+            startTime,
+            endTime,
+            name: `Clip from ${formatHandle(data)}'s stream`
+          }
+        }),
+        {
+          error: 'Error processing clip',
+          loading: 'Processing clip... (this may take a few minutes)',
+          success: 'Clip processed! Can post on Lens now'
+        }
+      )
+
+      if (result?.data?.createClip?.downloadUrl) {
+        setClipUrl(result?.data?.createClip?.downloadUrl)
+        setOpen(true)
+      } else {
+        toast.error('Something went wrong creating clip')
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const videoComponent = React.useMemo(() => {
     const hlsUrl = getLiveStreamUrl(myStream?.playbackId)
     const webrtcUrl = getLiveStreamUrlWebRTC(myStream?.playbackId)
@@ -452,7 +540,8 @@ const LiveVideoComponent = ({
         onStreamStatusChange={(isLive) => {
           setStartedStreaming(isLive)
         }}
-        clipLength={30}
+        clipLength={session?.type === SessionType.WithProfile ? 30 : undefined}
+        createClip={handleClipClicked}
       />
     )
   }, [playerStreamingMode])
@@ -491,6 +580,15 @@ const LiveVideoComponent = ({
 
   return (
     <div className="w-[520px] shrink-0">
+      {clipUrl && data && session?.type === SessionType.WithProfile && (
+        <PostClipOnLens
+          open={open}
+          setOpen={setOpen}
+          url={clipUrl}
+          profile={data}
+          sessionId={myStream?.latestSessionId}
+        />
+      )}
       {streamFromBrowser ? broadcastComponent : videoComponent}
     </div>
   )
