@@ -181,8 +181,8 @@ const VideoPage = ({
               )}
             <span className="text-sm font-normal">
               Untitled streams are those stream that are not associated with any
-              lens post. They are not visible on other lens platform. These
-              streams are only accessible through direct link. This may happend
+              lens post. They are not visible on other lens platforms. These
+              streams are only accessible through direct link. This may happen
               if for some reason go-live page isn't successfully able to create
               a lens post while the stream was live.{' '}
             </span>
