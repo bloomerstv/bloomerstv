@@ -132,8 +132,8 @@ export type MyStream = Stream & {
   isHealthy?: Maybe<Scalars['Boolean']['output']>
   issues?: Maybe<Array<Maybe<Scalars['String']['output']>>>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
+  latestSessionCreatedAt?: Maybe<Scalars['BigNumber']['output']>
   latestSessionId?: Maybe<Scalars['String']['output']>
-  latestStreamPublicationId?: Maybe<Scalars['String']['output']>
   nextStreamTime?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
@@ -231,13 +231,13 @@ export type SingleStreamer = Stream & {
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   isActive?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
+  latestSessionCreatedAt?: Maybe<Scalars['BigNumber']['output']>
   latestSessionId?: Maybe<Scalars['String']['output']>
   latestStreamPublicationId?: Maybe<Scalars['String']['output']>
   nextStreamTime?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
   profileId: Scalars['String']['output']
-  startedStreaming?: Maybe<Scalars['String']['output']>
   streamDescription?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
   thumbnail?: Maybe<Scalars['String']['output']>
@@ -437,8 +437,8 @@ export type MyStreamQuery = {
     playbackId?: string | null
     streamKey?: string | null
     isActive?: boolean | null
-    latestStreamPublicationId?: string | null
     latestSessionId?: string | null
+    latestSessionCreatedAt?: any | null
     premium?: boolean | null
     isHealthy?: boolean | null
     issues?: Array<string | null> | null
@@ -563,7 +563,7 @@ export type StreamerQuery = {
     streamDescription?: string | null
     latestStreamPublicationId?: string | null
     latestSessionId?: string | null
-    startedStreaming?: string | null
+    latestSessionCreatedAt?: any | null
     nextStreamTime?: any | null
     premium?: boolean | null
   } | null
@@ -1192,8 +1192,8 @@ export const MyStreamDocument = gql`
       playbackId
       streamKey
       isActive
-      latestStreamPublicationId
       latestSessionId
+      latestSessionCreatedAt
       premium
       isHealthy
       issues
@@ -1816,7 +1816,7 @@ export const StreamerDocument = gql`
       streamDescription
       latestStreamPublicationId
       latestSessionId
-      startedStreaming
+      latestSessionCreatedAt
       nextStreamTime
       premium
     }

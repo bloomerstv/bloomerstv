@@ -247,11 +247,11 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         {/* @ts-ignore */}
         <ProfileInfoWithStream profile={data} streamer={streamer?.streamer} />
 
-        {(streamer?.streamer?.startedStreaming ||
+        {(streamer?.streamer?.latestSessionCreatedAt ||
           streamer?.streamer?.streamDescription) && (
           <div className="sm:mx-8 sm:mt-6 sm:mb-0 text-p-text font-semibold sm:text-base text-sm sm:p-6 m-2 p-3 gap-y-1 start-col  rounded-xl shadow-sm bg-p-hover lg:bg-s-bg">
             {/* // todo add total views count here */}
-            {streamer?.streamer?.startedStreaming && (
+            {streamer?.streamer?.latestSessionCreatedAt && (
               <div className="">
                 {`${
                   streamer?.streamer?.isActive
@@ -259,7 +259,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
                     : 'Streamed '
                 } ${
                   streamer?.streamer?.isActive
-                    ? timeAgo(streamer?.streamer?.startedStreaming)
+                    ? timeAgo(streamer?.streamer?.latestSessionCreatedAt)
                     : timeAgo(streamer?.streamer?.lastSeen)
                 }`}
               </div>
@@ -285,7 +285,6 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         <div className="w-[310px] 2xl:w-[350px] flex-none h-full">
           <LiveChat
             // @ts-ignore
-            // publicationId={streamer?.streamer?.latestStreamPublicationId}
             profileId={data?.id}
           />
         </div>

@@ -32,11 +32,11 @@ export const POST = frames(async (ctx) => {
       body: JSON.stringify({
         query: `
        query StreamerStats {
-  streamerStats(profileId: "${profileId}") {
-    totalStreams
-    startedStreaming
-  }
-}
+          streamerStats(profileId: "${profileId}") {
+            totalStreams
+            startedStreaming
+          }
+        }
         `
       })
     }).then((res) => res.json())

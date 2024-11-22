@@ -44,6 +44,7 @@ import { useModal } from '../../common/ModalContext'
 import LikeButton from './LikeButton'
 import MirrorButton from './MirrorButton'
 import { createClient } from 'graphql-ws'
+import Timer from '../../common/Timer'
 
 const client = createClient({
   url: wsLensGraphEndpoint
@@ -355,7 +356,17 @@ const ProfileBar = ({
               </div>
 
               {isMobile && (
-                <div className="centered-row">
+                <div className="centered-row gap-x-1">
+                  {streamer?.isActive && (
+                    <Timer
+                      targetDate={streamer?.latestSessionCreatedAt}
+                      renderer={({ hours, minutes, seconds }) => {
+                        return (
+                          <div className="text-brand text-sm">{`${hours ? `${hours}:` : ''}${minutes}:${String(seconds).padStart(2, '0')}`}</div>
+                        )
+                      }}
+                    />
+                  )}
                   {profile?.id && !post && (
                     <div className="-mr-2">
                       <LiveCount profileId={profile?.id} />
@@ -374,6 +385,16 @@ const ProfileBar = ({
 
         {!isMobile && (
           <div className="start-center-row gap-x-3 shrink-0">
+            {streamer?.isActive && (
+              <Timer
+                targetDate={streamer?.latestSessionCreatedAt}
+                renderer={({ hours, minutes, seconds }) => {
+                  return (
+                    <div className="text-brand text-base font-semibold">{`${hours ? `${hours}:` : ''}${minutes}:${String(seconds).padStart(2, '0')}`}</div>
+                  )
+                }}
+              />
+            )}
             {profile?.id && !post && streamer && (
               <LiveCount profileId={profile?.id} />
             )}

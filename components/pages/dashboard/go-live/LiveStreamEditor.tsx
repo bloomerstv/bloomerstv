@@ -20,10 +20,11 @@ import StreamHealth from './StreamHealth'
 import StreamKey from './StreamKey'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import dayjs, { Dayjs } from 'dayjs'
+import Timer from '../../../common/Timer'
 
 // import Link from 'next/link'
 const LiveStreamEditor = () => {
-  const [startedStreaming, setStartedStreaming] = React.useState(false)
+  const [startedStreaming, setStartedStreaming] = React.useState<boolean>(false)
   const [streamFromBrowser, setStreamFromBrowser] = React.useState(false)
 
   const [updateMyStream] = useUpdateMyStreamMutation()
@@ -106,15 +107,6 @@ const LiveStreamEditor = () => {
                 />
               </div>
 
-              {/* <div className="">
-                <div className="text-s-text font-bold text-md">Description</div>
-                <div className="text-p-text text-sm 2xl:text-base font-semibold ">
-                  <div className="whitespace-pre-wrap break-words ">
-                    {stringToLength(myStream?.streamDescription, 50) ||
-                      'No description provided'}
-                  </div>
-                </div>
-              </div> */}
               <div className="space-y-1">
                 <div className="text-s-text font-bold text-md">
                   Collect Preview
@@ -264,12 +256,27 @@ const LiveStreamEditor = () => {
             )}
           />
 
+          {myStream?.isActive &&
+            startedStreaming &&
+            myStream?.latestSessionCreatedAt && (
+              <div className="">
+                <Timer
+                  targetDate={myStream?.latestSessionCreatedAt}
+                  renderer={({ hours, minutes, seconds }) => {
+                    return (
+                      <div className="text-brand">{`${hours ? `${hours}:` : ''}${minutes}:${seconds}`}</div>
+                    )
+                  }}
+                />
+              </div>
+            )}
+
           <div className="font-semibold ">
             {startedStreaming
               ? `You're live! ${
                   streamFromBrowser
                     ? 'You can Stop streaming by pressing stop button.'
-                    : 'You can Stop streaming from your software.'
+                    : 'You can Stop streaming from your streaming software.'
                 }`
               : 'Stream is offline. Stay on this page for post creation after stream starts. Use software for best quality.'}
           </div>

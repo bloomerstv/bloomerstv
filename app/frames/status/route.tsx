@@ -13,7 +13,7 @@ export const POST = frames(async (ctx) => {
     nextStreamTime?: number
     lastSeen?: number
     isActive: Boolean
-    startedStreaming: string
+    latestSessionCreatedAt: number
   } | null = null
 
   try {
@@ -30,7 +30,7 @@ export const POST = frames(async (ctx) => {
     nextStreamTime
     lastSeen
     isActive
-    startedStreaming
+    latestSessionCreatedAt
   }
 }
         `
@@ -71,10 +71,10 @@ export const POST = frames(async (ctx) => {
             )}
 
             {streamTimings?.isActive &&
-              new Date(streamTimings?.startedStreaming) < new Date() && (
+              new Date(streamTimings?.latestSessionCreatedAt) < new Date() && (
                 <div tw="flex flex-col items-start justify-center mb-8">
                   <div tw="text-6xl font-bold text-black">
-                    {`${timeAgoShort(streamTimings?.startedStreaming)} ago`}
+                    {`${timeAgoShort(streamTimings?.latestSessionCreatedAt)} ago`}
                   </div>
                   <div tw="text-4xl text-gray-500">Started Streaming</div>
                 </div>

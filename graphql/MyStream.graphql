@@ -7,8 +7,8 @@ query MyStream {
     playbackId
     streamKey
     isActive
-    latestStreamPublicationId
     latestSessionId
+    latestSessionCreatedAt
     premium
     isHealthy
     issues

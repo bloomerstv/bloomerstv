@@ -9,7 +9,7 @@ query Streamer($profileId: String!) {
     streamDescription
     latestStreamPublicationId
     latestSessionId
-    startedStreaming
+    latestSessionCreatedAt
     nextStreamTime
     premium
   }
