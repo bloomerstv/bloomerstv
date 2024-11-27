@@ -73,9 +73,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
       new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
   )
 
-  console.log('pathname', pathname)
   const currentPostId = pathname?.split('/')[2]
-  console.log('currentPostId', currentPostId)
 
   if (!data) return null
   return (
