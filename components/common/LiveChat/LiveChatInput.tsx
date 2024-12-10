@@ -256,7 +256,7 @@ const LiveChatInput = ({
       const transaction =
         await viewPublicClientPolygon.waitForTransactionReceipt({
           hash: tx,
-          confirmations: 1
+          confirmations: 3
         })
       console.log('transaction', transaction)
 
