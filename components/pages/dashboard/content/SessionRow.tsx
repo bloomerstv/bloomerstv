@@ -23,7 +23,7 @@ import ContentVisibiltyButton from './ContentVisibilty'
 import { getSenitizedContent } from '../../../../utils/lib/getSenitizedContent'
 import { stringToLength } from '../../../../utils/stringToLength'
 import Link from 'next/link'
-import { APP_LINK, HEY_APP_LINK } from '../../../../utils/config'
+import { HEY_APP_LINK } from '../../../../utils/config'
 import { Button, IconButton, Tooltip } from '@mui/material'
 import DownloadIcon from '@mui/icons-material/Download'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
@@ -128,7 +128,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
       const isOk = await checkImageAspectRatio(file)
 
       if (!isOk) return
-    } catch (error) {
+    } catch {
       return
     }
 

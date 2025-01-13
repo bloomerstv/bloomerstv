@@ -7,14 +7,12 @@ import { useTheme } from '../../../wrappers/TailwindThemeProvider'
 import clsx from 'clsx'
 import { SessionType, useSession } from '@lens-protocol/react-web'
 import { IconButton, Tooltip } from '@mui/material'
-import { useRouter } from 'next/navigation'
 import VideoCallIcon from '@mui/icons-material/VideoCall'
 import CreatePostButton from './CreatePostButton'
 
 const TopHeader = () => {
   const { theme } = useTheme()
   const { data } = useSession()
-  const { push } = useRouter()
   return (
     <div
       className={clsx(

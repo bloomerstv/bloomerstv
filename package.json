@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write .",
     "codegen": "graphql-codegen"
   },
   "devDependencies": {
@@ -47,7 +48,7 @@
     "@lens-protocol/metadata": "^1.2.0",
     "@lens-protocol/react-web": "^2.3.2",
     "@lens-protocol/wagmi": "^4.1.5",
-    "@lexical/react": "^0.18.0",
+    "@lexical/react": "^0.23.1",
     "@livepeer/react": "^4.2.9",
     "@mui/icons-material": "^6.3.1",
     "@mui/lab": "^6.0.0-beta.22",
@@ -67,7 +68,7 @@
     "graphql-ws": "^5.16.2",
     "i": "^0.3.7",
     "interweave": "^13.1.0",
-    "lexical": "^0.18.0",
+    "lexical": "^0.23.1",
     "lucide-react": "^0.471.1",
     "npm": "^11.0.0",
     "plyr-react": "^5.3.0",

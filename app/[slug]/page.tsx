@@ -11,7 +11,7 @@ type Props = {
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const params = await props.params;
+  const params = await props.params
   const handle = getHandle(params.slug)
   let thumbnail = ''
 
@@ -88,7 +88,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 const page = async (props: Props) => {
-  const params = await props.params;
+  const params = await props.params
   return (
     <div className="h-full">
       <ProfilePage handle={getHandle(params.slug)} />

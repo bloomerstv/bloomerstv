@@ -74,7 +74,7 @@ const ContributeDiv = () => {
           <div className="w-full centered-col gap-y-1">
             <div className="text-xs text-white">
               <Countdown
-                renderer={({ days, hours, minutes, seconds, completed }) => {
+                renderer={({ days, hours, minutes, completed }) => {
                   if (completed) {
                     return null
                   } else if (days > 0) {
@@ -90,6 +90,7 @@ const ContributeDiv = () => {
             </div>
             <a
               href={GITCOIN_ROUND_LINK}
+              rel="noreferrer"
               target="_blank"
               className="centered-row mx-2 font-bold text-white no-underline bg-white/20 w-full p-2 backdrop-blur-md rounded-md hover:bg-white/50 duration-300 ease-in-out transition-all"
             >

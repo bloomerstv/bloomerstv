@@ -342,7 +342,7 @@ function Clip({
     try {
       setIsPending(true)
       await createClip(opts.playbackId, opts.startTime, opts.endTime)
-    } catch (e) {
+    } catch {
       console.log('Error creating clip')
     } finally {
       setIsPending(false)
