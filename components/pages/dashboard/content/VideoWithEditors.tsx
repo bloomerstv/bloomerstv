@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react'
 import Player from '../../../common/Player/Player'
 
 const VideoWithEditors = ({ recordingUrl }: { recordingUrl: string }) => {
-  const videoClipperRef = React.useRef<HTMLDivElement | null>(null)
+  const videoClipperRef = React.useRef<HTMLDivElement>(null!)
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
