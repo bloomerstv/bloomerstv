@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { ReactNode, useMemo, useState } from 'react'
 
 const HorizontalNavigation = ({
   navItems,
@@ -9,7 +9,7 @@ const HorizontalNavigation = ({
   navItems: {
     name: string
     component: string
-    render: () => JSX.Element
+    render: () => ReactNode
   }[]
   navClassName?: string
 }) => {
