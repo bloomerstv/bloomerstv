@@ -1,14 +1,15 @@
 'use client'
-import React from 'react'
+import React, { use } from 'react';
 import MasterWatchPage from '../../../components/pages/watch/MasterWatchPage'
 
-const page = ({
-  params
-}: {
-  params: {
-    id: string
+const page = (
+  props: {
+    params: Promise<{
+      id: string
+    }>
   }
-}) => {
+) => {
+  const params = use(props.params);
   return <MasterWatchPage postId={params.id} />
 }
 

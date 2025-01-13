@@ -7,10 +7,11 @@ import { fetchMetadata } from 'frames.js/next'
 import { headers } from 'next/headers'
 
 type Props = {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const handle = getHandle(params.slug)
   let thumbnail = ''
 
@@ -86,7 +87,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const page = ({ params }: Props) => {
+const page = async (props: Props) => {
+  const params = await props.params;
   return (
     <div className="h-full">
       <ProfilePage handle={getHandle(params.slug)} />

@@ -1,14 +1,15 @@
 'use client'
-import React from 'react'
+import React, { use } from 'react';
 import LiveChat from '../../../components/common/LiveChat/LiveChat'
 
-const page = ({
-  params
-}: {
-  params: {
-    profileId: string
+const page = (
+  props: {
+    params: Promise<{
+      profileId: string
+    }>
   }
-}) => {
+) => {
+  const params = use(props.params);
   // @ts-ignore
   const chatData = window?.chatData || [] // Get the chat data passed from the parent window
 
