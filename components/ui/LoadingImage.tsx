@@ -17,7 +17,7 @@ const LoadingImage: React.FC<LoadingImageProps> = ({
 }) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const imageRef = useRef<HTMLImageElement>(null)
-  const timeoutRef = useRef<NodeJS.Timeout>()
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     const image = imageRef.current
