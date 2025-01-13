@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const handle = getHandle(params.slug)
   let thumbnail = ''
 
-  const requestHeaders = headers()
+  const requestHeaders = await headers()
 
   // check the domain from which the request is coming from
 
