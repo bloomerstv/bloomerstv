@@ -33,7 +33,7 @@ const CommentSection = ({
         // @ts-ignore
         id: publication?.id,
         ranking: {
-          filter: CommentRankingFilterType.Relevant
+          filter: CommentRankingFilterType.All
         }
       }
     }
