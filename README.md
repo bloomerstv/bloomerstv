@@ -114,6 +114,15 @@ Feel free to customize the existing widgets or create your own to enhance your s
 
 For all major updates, follow us at [BloomersTV on Hey.xyz](https://hey.xyz/u/bloomerstv?type=media). Stay connected and be the first to know about our latest features and improvements!
 
+## Support BloomersTV
+
+If you’d like to support the development and maintenance of BloomersTV, please consider donating:
+
+- **Gitcoin**: [Gitcoin Explorer Page](https://explorer.gitcoin.co/#/projects/0x16429f74cbb2cef6f9f48481b6c8bc49fa12989d75c1f9d82462f8bb91f079eb)
+- **Giveth**: [BloomersTV on Giveth](https://giveth.io/project/bloomerstv)
+
+Your donations will help cover ongoing infrastructure costs, further development of new features, and community initiatives.
+
 ## License
 
 This project is licensed under the AGPL-3.0 license. See the [LICENSE](/LICENSE) file for more details.
