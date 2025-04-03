@@ -8,12 +8,11 @@ const GoLivePage = () => {
   const { data } = useSession()
 
   return (
-    <div className="flex flex-row h-full">
-      <div className="w-full overflow-auto h-full">
+    <div className="flex flex-row h-full w-full">
+      <div className="overflow-auto h-full min-w-0 flex-grow">
         <LiveStreamEditor />
       </div>
       <div className="w-[280px] 2xl:w-[350px] flex-none h-full shrink-0">
-        {/* {createdPublicationId ? ( */}
         {/* @ts-ignore */}
         {data?.profile?.id && (
           // @ts-ignore
@@ -38,3 +37,4 @@ const GoLivePage = () => {
 }
 
 export default GoLivePage
+ 

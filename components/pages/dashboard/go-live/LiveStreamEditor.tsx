@@ -81,8 +81,8 @@ const LiveStreamEditor = () => {
   }
 
   return (
-    <div className="p-4 2xl:p-6">
-      <div className="bg-s-bg shadow-sm rounded-xl overflow-hidden">
+    <div className="p-4 2xl:p-6 w-full flex flex-col">
+      <div className="bg-s-bg shadow-sm rounded-xl overflow-hidden flex flex-col w-full">
         <div className="flex flex-row">
           <LiveVideoComponent
             myStream={myStream}
@@ -283,13 +283,14 @@ const LiveStreamEditor = () => {
         </div>
       </div>
 
-      <div className="mt-4 2xl:mt-6 p-6 bg-s-bg lg:gap-x-12 2xl:gap-x-20 start-row shadow-sm rounded-xl">
-        <StreamKey myStream={myStream} />
-
-        <StreamHealth
-          isActive={startedStreaming && !!myStream.isActive}
-          myStream={myStream}
-        />
+      <div className="mt-4 2xl:mt-6 p-6 bg-s-bg shadow-sm rounded-xl w-full overflow-hidden">
+        <div className="flex flex-wrap gap-y-6 lg:flex-nowrap lg:gap-x-6 2xl:gap-x-12 w-full overflow-x-auto">
+          <StreamKey myStream={myStream} />
+          <StreamHealth
+            isActive={startedStreaming && !!myStream.isActive}
+            myStream={myStream}
+          />
+        </div>
       </div>
     </div>
   )

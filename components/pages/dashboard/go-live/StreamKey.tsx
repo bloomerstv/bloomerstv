@@ -13,7 +13,7 @@ const StreamKey = ({ myStream }: { myStream: MyStream }) => {
   const webrtcUrl = getLiveStreamUrlWebRTC(myStream?.playbackId)
 
   return (
-    <div className="space-y-6 w-[400px]">
+    <div className="space-y-6 flex-1 min-w-0 max-w-full">
       <div className="font-bold text-lg text-s-text">Stream Info</div>
 
       <TextInputWithCopy
