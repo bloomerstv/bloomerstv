@@ -9,6 +9,7 @@ import CircleIcon from '@mui/icons-material/Circle'
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary'
 import WidgetsIcon from '@mui/icons-material/Widgets'
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
 import { useMyStreamQuery } from '../../../graphql/generated'
 import VerifiedBadge from '../../ui/VerifiedBadge'
 const DashboardSidebar = () => {
@@ -48,6 +49,17 @@ const DashboardSidebar = () => {
         >
           <CircleIcon className="mr-2" />
           Go Live
+        </ListItemButton>
+        <ListItemButton
+          selected={pathname === '/dashboard/zora-coins'}
+          LinkComponent={Link}
+          href="/dashboard/zora-coins"
+          sx={{
+            padding: '10px 20px'
+          }}
+        >
+          <MonetizationOnIcon className="mr-2" />
+          Zora Coins
         </ListItemButton>
         <ListItemButton
           selected={pathname === '/dashboard/content'}

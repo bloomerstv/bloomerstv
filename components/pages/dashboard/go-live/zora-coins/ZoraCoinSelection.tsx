@@ -1,17 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import {
-  CreateCoinArgs,
-  createCoinCall,
-  getCoinCreateFromLogs,
-  getProfileBalances
-} from '@zoralabs/coins-sdk'
+import { getProfileBalances } from '@zoralabs/coins-sdk'
 import { Address } from 'viem'
-import {
-  useAccount,
-  useSimulateContract,
-  useWaitForTransactionReceipt,
-  useWriteContract
-} from 'wagmi'
+import { useAccount } from 'wagmi'
 import {
   Button,
   Card,
@@ -37,9 +27,8 @@ import Tooltip from '@mui/material/Tooltip'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import StarIcon from '@mui/icons-material/Star'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
-import { PROJECT_ADDRESS } from '../../../../utils/config'
-import useHandleWrongNetwork from '../../../../utils/hooks/useHandleWrongNetwork'
 import { base } from 'viem/chains'
+import CreateNewZoraCoinButton from './CreateNewZoraCoinButton'
 
 // Interface for coin balance data
 interface CoinBalance {
@@ -71,7 +60,6 @@ interface PaginationInfo {
 
 const ZoraCoinSelection = () => {
   const { address } = useAccount()
-  const handleWrongNetwork = useHandleWrongNetwork(base.id)
 
   // State for coin balances
   const [coinBalances, setCoinBalances] = useState<CoinBalance[]>([])
@@ -84,36 +72,6 @@ const ZoraCoinSelection = () => {
   const [page, setPage] = useState(1)
   const [featuredCoinId, setFeaturedCoinId] = useState<string | null>(null)
   const pageSize = 5
-
-  // Define coin parameters
-  const coinParams: CreateCoinArgs = {
-    name: 'My Awesome Coin',
-    symbol: 'MAC',
-    uri: 'ipfs://bafybeigoxzqzbnxsn35vq7lls3ljxdcwjafxvbvkivprsodzrptpiguysy',
-    payoutRecipient: address as Address,
-    platformReferrer: PROJECT_ADDRESS as Address,
-    owners: address ? [address as Address] : []
-  }
-
-  // Create configuration for wagmi
-  const contractCallParams = createCoinCall(coinParams)
-
-  const { data: writeConfig } = useSimulateContract({
-    ...contractCallParams
-  })
-
-  const {
-    writeContractAsync,
-    status,
-    data: txHash,
-    error: writeError
-  } = useWriteContract()
-
-  const { isLoading: isWaitingForTransaction, data: reciept } =
-    useWaitForTransactionReceipt({
-      hash: txHash,
-      query: { enabled: Boolean(txHash) }
-    })
 
   // Fetch user's coin balances
   const fetchCoinBalances = async (cursor?: string) => {
@@ -176,37 +134,16 @@ const ZoraCoinSelection = () => {
     setFeaturedCoinId(coinId === featuredCoinId ? null : coinId)
   }
 
-  const handleCreateNewCoin = async () => {
-    try {
-      if (!writeConfig) return
-      await handleWrongNetwork()
-      await writeContractAsync({
-        abi: contractCallParams?.abi,
-        address: contractCallParams?.address,
-        args: contractCallParams?.args,
-        functionName: contractCallParams?.functionName
-      })
-    } catch (error) {
-      console.error('Error creating coin:', error)
-    }
-  }
-
   useEffect(() => {
     if (address) {
       fetchCoinBalances()
     }
   }, [address])
 
-  useEffect(() => {
-    if (reciept) {
-      // Handle the transaction receipt as needed
-      const coinDeployment = getCoinCreateFromLogs(reciept)
-      console.log('Deployed coin address:', coinDeployment?.coin)
-
-      // Refresh coin balances after creating a new coin
-      fetchCoinBalances()
-    }
-  }, [reciept])
+  // Refetch balances when a new coin is created
+  const handleCoinCreated = () => {
+    fetchCoinBalances()
+  }
 
   // Calculate USD value if available
   const formatUsdValue = (valueUsd?: string) => {
@@ -231,33 +168,13 @@ const ZoraCoinSelection = () => {
 
   return (
     <div className="mt-4 2xl:mt-6 p-6 bg-s-bg lg:gap-x-12 2xl:gap-x-20 start-col shadow-sm rounded-xl">
-      <div className="font-bold text-lg text-s-text">Zora Coins</div>
+      <div className="font-bold text-lg text-p-text">Zora Coins</div>
       <div className="text-s-text text-sm font-semibold mb-4">
         Select one of your Zora coins to feature on your stream, or create a new
         one to showcase on your live page.
       </div>
 
-      <Button
-        variant="contained"
-        onClick={handleCreateNewCoin}
-        disabled={status === 'pending'}
-        sx={{
-          mb: 4,
-          bgcolor: '#6366F1',
-          '&:hover': { bgcolor: '#4F46E5' },
-          height: '44px',
-          borderRadius: '8px'
-        }}
-      >
-        {status === 'pending' ? (
-          <>
-            <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
-            Creating Coin...
-          </>
-        ) : (
-          'Create New Coin'
-        )}
-      </Button>
+      <CreateNewZoraCoinButton onCoinCreated={handleCoinCreated} />
 
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
         <Typography
