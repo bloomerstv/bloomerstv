@@ -76,16 +76,17 @@ Make sure you have the following installed:
 
 ```
    NEXT_PUBLIC_STS_TOKEN_URL=""
-   NEXT_PUBLIC_RAINBOW_KIT_PROJECT_ID="
+   NEXT_PUBLIC_RAINBOW_KIT_PROJECT_ID=""
    NEXT_PUBLIC_LENS_MODE="mainnet"
    NEXT_PUBLIC_NODE_API_MODE="production"
    NEXT_PUBLIC_DEFAULT_SPONSORED="true"
+   NEXT_PUBLIC_LOCAL_NODE_API_URL="http://localhost:8000"
 ```
 
-You need to set `NEXT_PUBLIC_STS_TOKEN_URL` and `NEXT_PUBLIC_RAINBOW_KIT_PROJECT_ID`.
+You need to set `NEXT_PUBLIC_STS_TOKEN_URL`, `NEXT_PUBLIC_RAINBOW_KIT_PROJECT_ID`, and `NEXT_PUBLIC_LOCAL_NODE_API_URL`.
 
+- **LOCAL_NODE_API_URL**: This is the base URL for the local API server. By default, it is set to `http://localhost:8000`.
 - **RAINBOW_KIT_PROJECT_ID**: To get your `NEXT_PUBLIC_RAINBOW_KIT_PROJECT_ID`, follow the instructions in [RainbowKit's migration guide](https://www.rainbowkit.com/docs/migration-guide#2-supply-a-walletconnect-cloud-projectid). You'll need to create a project on WalletConnect Cloud and obtain your project ID.
-
 - **STS Token URL**: The `NEXT_PUBLIC_STS_TOKEN_URL` is the 4everland STS token URL, used in [uploadToIPFS.ts](/utils/uploadToIPFS.ts) to upload files and get an IPFS hash. If you want to use a different IPFS provider, update the `uploadToIPFS` function in [uploadToIPFS.ts](/utils/uploadToIPFS.ts) to set the provider of your choice. If you want to use 4everland, create your own STS token URL using the instructions [here](https://docs.4everland.org/storage/bucket/4ever-security-token-service-api).
 
 4. Run the development server:
