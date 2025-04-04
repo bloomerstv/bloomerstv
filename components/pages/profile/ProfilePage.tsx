@@ -291,7 +291,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       </div>
       {data?.id && !isMobile && (
         <div className="w-[310px] relative 2xl:w-[350px] flex-none h-full">
-          <div className="absolute w-[310px] 2xl:w-[350px] top-14 p-2 left-0 to-transparent z-10">
+          <div className="absolute w-[310px] 2xl:w-[350px] top-14 p-2 left-0 to-transparent z-50">
             <ZoraFeaturedCoin />
           </div>
           <LiveChat
