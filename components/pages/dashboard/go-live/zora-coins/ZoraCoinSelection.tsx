@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { getProfileBalances } from '@zoralabs/coins-sdk'
-import { Address } from 'viem'
-import { useAccount } from 'wagmi'
 import {
   Button,
-  Card,
-  CardContent,
   Typography,
   Box,
-  Grid,
   CircularProgress,
   Table,
   TableBody,
@@ -21,19 +16,18 @@ import {
   Pagination,
   Alert
 } from '@mui/material'
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import Tooltip from '@mui/material/Tooltip'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import StarIcon from '@mui/icons-material/Star'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
-import { base } from 'viem/chains'
 import CreateNewZoraCoinButton from './CreateNewZoraCoinButton'
+import { useSession } from '@lens-protocol/react-web'
 
-// Interface for coin balance data
+// Updated interface for coin data structure based on API response
 interface CoinBalance {
   id: string
-  token: {
+  balance: string
+  coin: {
     id: string
     name: string
     symbol: string
@@ -41,12 +35,17 @@ interface CoinBalance {
     totalSupply?: string
     marketCap?: string
     volume24h?: string
-    media?: {
-      previewImage?: string
-      medium?: string
+    mediaContent?: {
+      mimeType?: string
+      originalUri?: string
+      previewImage?: {
+        small?: string
+        medium?: string
+        blurhash?: string
+      }
     }
   }
-  amount: {
+  amount?: {
     amountRaw: string
     amountDecimal: number
   }
@@ -59,7 +58,7 @@ interface PaginationInfo {
 }
 
 const ZoraCoinSelection = () => {
-  const { address } = useAccount()
+  const { data: session } = useSession()
 
   // State for coin balances
   const [coinBalances, setCoinBalances] = useState<CoinBalance[]>([])
@@ -73,30 +72,52 @@ const ZoraCoinSelection = () => {
   const [featuredCoinId, setFeaturedCoinId] = useState<string | null>(null)
   const pageSize = 5
 
+  // Generate Zora coin URL
+  const getZoraCoinUrl = (coinAddress: string) => {
+    return `https://zora.co/coin/base:${coinAddress}?referrer=${session?.authenticated ? session?.address : ''}`
+  }
+
+  // Open coin URL in a new tab
+  const openCoinUrl = (coinAddress: string) => {
+    window.open(getZoraCoinUrl(coinAddress), '_blank', 'noopener,noreferrer')
+  }
+
   // Fetch user's coin balances
   const fetchCoinBalances = async (cursor?: string) => {
-    if (!address) return
+    if (!session?.authenticated) return
 
     setIsLoading(true)
     setError(null)
 
     try {
       const response = await getProfileBalances({
-        identifier: address,
+        identifier: session?.address,
         count: pageSize,
         after: cursor
       })
 
       const profile: any = response.data?.profile
 
-      console.log('profile', profile)
-
-      console.log('profile.coinBalances', profile?.coinBalances)
-
       if (profile && profile.coinBalances) {
-        const balances = profile.coinBalances.edges.map(
-          (edge: any) => edge.node
-        )
+        // Map the nodes from the edges to get the coin balances
+        const balances = profile.coinBalances.edges.map((edge: any) => {
+          const node = edge.node
+          // Add calculated amount for consistency with existing UI
+          return {
+            ...node,
+            amount: {
+              amountRaw: node.balance,
+              amountDecimal: parseInt(node.balance) / 1e20 // Approximate conversion
+            },
+            valueUsd: node.coin.marketCap
+              ? (
+                  (parseInt(node.balance) / 1e20) *
+                  (parseFloat(node.coin.marketCap) / 1e6)
+                ).toString()
+              : undefined
+          }
+        })
+
         setCoinBalances(balances)
 
         setPagination({
@@ -135,10 +156,10 @@ const ZoraCoinSelection = () => {
   }
 
   useEffect(() => {
-    if (address) {
+    if (session?.authenticated && session?.address) {
       fetchCoinBalances()
     }
-  }, [address])
+  }, [session?.authenticated])
 
   // Refetch balances when a new coin is created
   const handleCoinCreated = () => {
@@ -149,7 +170,10 @@ const ZoraCoinSelection = () => {
   const formatUsdValue = (valueUsd?: string) => {
     if (!valueUsd) return 'N/A'
     const value = parseFloat(valueUsd)
-    return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    return `$${value.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })}`
   }
 
   // Format large numbers with abbreviations
@@ -255,13 +279,15 @@ const ZoraCoinSelection = () => {
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              border: isFeatured ? '2px solid #6366F1' : 'none'
+                              border: isFeatured ? '2px solid #6366F1' : 'none',
+                              cursor: 'pointer'
                             }}
+                            onClick={() => openCoinUrl(coin.coin.address)}
                           >
-                            {coin.token.media?.previewImage ? (
+                            {coin.coin.mediaContent?.previewImage?.small ? (
                               <img
-                                src={coin.token.media.previewImage}
-                                alt={coin.token.symbol}
+                                src={coin.coin.mediaContent.previewImage.small}
+                                alt={coin.coin.symbol}
                                 style={{
                                   width: '100%',
                                   height: '100%',
@@ -272,15 +298,24 @@ const ZoraCoinSelection = () => {
                               <Typography
                                 sx={{ fontWeight: 'bold', color: '#6366F1' }}
                               >
-                                {coin.token.symbol.substring(0, 2)}
+                                {coin.coin.symbol.substring(0, 2)}
                               </Typography>
                             )}
                           </Box>
                           <Typography
                             variant="body1"
-                            sx={{ fontWeight: isFeatured ? 'bold' : 'normal' }}
+                            component="div"
+                            sx={{
+                              fontWeight: isFeatured ? 'bold' : 'normal',
+                              cursor: 'pointer',
+                              '&:hover': {
+                                textDecoration: 'underline',
+                                color: '#6366F1'
+                              }
+                            }}
+                            onClick={() => openCoinUrl(coin.coin.address)}
                           >
-                            {coin.token.name}
+                            {coin.coin.name}
                             {isFeatured && (
                               <Chip
                                 label="Featured"
@@ -292,17 +327,13 @@ const ZoraCoinSelection = () => {
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell>{coin.token.symbol}</TableCell>
+                      <TableCell>{coin.coin.symbol}</TableCell>
                       <TableCell>
-                        {coin.amount.amountDecimal.toLocaleString()}
+                        {coin.amount?.amountDecimal.toLocaleString() || 'N/A'}
                       </TableCell>
                       <TableCell>{formatUsdValue(coin.valueUsd)}</TableCell>
-                      <TableCell>
-                        {formatNumber(coin.token.volume24h)}
-                      </TableCell>
-                      <TableCell>
-                        {formatNumber(coin.token.marketCap)}
-                      </TableCell>
+                      <TableCell>{formatNumber(coin.coin.volume24h)}</TableCell>
+                      <TableCell>{formatNumber(coin.coin.marketCap)}</TableCell>
                       <TableCell>
                         <Button
                           variant={isFeatured ? 'contained' : 'outlined'}
@@ -390,13 +421,15 @@ const ZoraCoinSelection = () => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      border: '2px solid #6366F1'
+                      border: '2px solid #6366F1',
+                      cursor: 'pointer'
                     }}
+                    onClick={() => openCoinUrl(coin.coin.address)}
                   >
-                    {coin.token.media?.previewImage ? (
+                    {coin.coin.mediaContent?.previewImage?.small ? (
                       <img
-                        src={coin.token.media.previewImage}
-                        alt={coin.token.symbol}
+                        src={coin.coin.mediaContent.previewImage.small}
+                        alt={coin.coin.symbol}
                         style={{
                           width: '100%',
                           height: '100%',
@@ -411,19 +444,29 @@ const ZoraCoinSelection = () => {
                           fontSize: '1.2rem'
                         }}
                       >
-                        {coin.token.symbol.substring(0, 2)}
+                        {coin.coin.symbol.substring(0, 2)}
                       </Typography>
                     )}
                   </Box>
                   <Box>
                     <Typography
                       variant="h6"
-                      sx={{ fontWeight: 'bold', color: '#6366F1' }}
+                      component="div"
+                      sx={{
+                        fontWeight: 'bold',
+                        color: '#6366F1',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          textDecoration: 'underline'
+                        }
+                      }}
+                      onClick={() => openCoinUrl(coin.coin.address)}
                     >
-                      {coin.token.name} ({coin.token.symbol})
+                      {coin.coin.name} ({coin.coin.symbol})
                     </Typography>
                     <Typography variant="body1">
-                      Balance: {coin.amount.amountDecimal.toLocaleString()} •
+                      Balance:{' '}
+                      {coin.amount?.amountDecimal.toLocaleString() || 'N/A'} •
                       Value: {formatUsdValue(coin.valueUsd)}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">

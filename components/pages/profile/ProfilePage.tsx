@@ -33,6 +33,7 @@ import {
 } from '../../store/useMyPreferences'
 import { Src } from '@livepeer/react'
 import HorizontalNavigation from '../../ui/HorizontalNavigation'
+import ZoraFeaturedCoin from './ZoraFeaturedCoin'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
@@ -247,6 +248,13 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         {/* @ts-ignore */}
         <ProfileInfoWithStream profile={data} streamer={streamer?.streamer} />
 
+        {isMobile && (
+          <div className="m-2">
+            {' '}
+            <ZoraFeaturedCoin />{' '}
+          </div>
+        )}
+
         {(streamer?.streamer?.latestSessionCreatedAt ||
           streamer?.streamer?.streamDescription) && (
           <div className="sm:mx-8 sm:mt-6 sm:mb-0 text-p-text font-semibold sm:text-base text-sm sm:p-6 m-2 p-3 gap-y-1 start-col  rounded-xl shadow-sm bg-p-hover lg:bg-s-bg">
@@ -282,7 +290,10 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         </div>
       </div>
       {data?.id && !isMobile && (
-        <div className="w-[310px] 2xl:w-[350px] flex-none h-full">
+        <div className="w-[310px] relative 2xl:w-[350px] flex-none h-full">
+          <div className="absolute w-[310px] 2xl:w-[350px] top-14 p-2 left-0 to-transparent z-10">
+            <ZoraFeaturedCoin />
+          </div>
           <LiveChat
             // @ts-ignore
             profileId={data?.id}
