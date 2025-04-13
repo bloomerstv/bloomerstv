@@ -13,5 +13,10 @@ query MyStream {
     isHealthy
     issues
     nextStreamTime
+    featuredCoin {
+      type
+      coinAddress
+      chainId
+    }
   }
 }

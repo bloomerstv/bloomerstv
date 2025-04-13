@@ -1,13 +1,27 @@
 import React, { useEffect, useState } from 'react'
-import { getCoin } from '@zoralabs/coins-sdk'
-import { CircularProgress, Tooltip, Button } from '@mui/material'
+import { getCoin, tradeCoinCall, TradeParams } from '@zoralabs/coins-sdk'
+import {
+  CircularProgress,
+  Tooltip,
+  Button,
+  TextField,
+  InputAdornment
+} from '@mui/material'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TrendingDownIcon from '@mui/icons-material/TrendingDown'
 import LaunchIcon from '@mui/icons-material/Launch'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useAccount, useWriteContract } from 'wagmi'
+import useHandleWrongNetwork from '../../../utils/hooks/useHandleWrongNetwork'
+import { base } from 'viem/chains'
+import toast from 'react-hot-toast'
+import { Address, parseEther } from 'viem'
+import { PROJECT_ADDRESS } from '../../../utils/config'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 interface ZoraCoin {
   id: string
@@ -34,20 +48,88 @@ interface ZoraCoin {
 }
 
 interface ZoraFeaturedCoinProps {
-  coinAddress?: string
+  coinAddress: string
   className?: string
 }
 
-const DEFAULT_COIN_ADDRESS = '0xf331483ed4158d6d3b0d75264fe74cbe40402175'
-
 const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
-  coinAddress = DEFAULT_COIN_ADDRESS,
+  coinAddress,
   className = ''
 }) => {
   const [coin, setCoin] = useState<ZoraCoin | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [expanded, setExpanded] = useState(false)
+  const [buyMode, setBuyMode] = useState(false)
+  const [ethAmount, setEthAmount] = useState('0.01')
+
+  console.log('coin', coin)
+
+  const { address } = useAccount()
+  const { openConnectModal } = useConnectModal()
+
+  const handleWrongNetwork = useHandleWrongNetwork(base.id)
+
+  const { writeContractAsync, status } = useWriteContract()
+
+  const handleBuyCoin = async () => {
+    if (!coin?.address) return
+    if (!address) {
+      toast.error('Please connect your wallet')
+      openConnectModal?.()
+      return
+    }
+    try {
+      await handleWrongNetwork()
+
+      const tradeParams: TradeParams = {
+        direction: 'buy',
+        target: coin.address as Address,
+        args: {
+          orderSize: parseEther(ethAmount), // Use the input value
+          recipient: address as Address,
+          minAmountOut: 0n,
+          tradeReferrer: PROJECT_ADDRESS as Address
+        }
+      }
+
+      const contractCallParams = tradeCoinCall(tradeParams)
+
+      await writeContractAsync({
+        abi: contractCallParams?.abi,
+        address: contractCallParams?.address,
+        args: contractCallParams?.args,
+        functionName: contractCallParams?.functionName,
+        value: tradeParams.args.orderSize
+      })
+      toast.success('Transaction sent!')
+      // Reset UI after successful purchase
+      setBuyMode(false)
+      setExpanded(false)
+    } catch (error) {
+      toast.error('Transaction failed')
+    }
+  }
+
+  // Handle entering buy mode
+  const enterBuyMode = () => {
+    setBuyMode(true)
+  }
+
+  // Handle cancelling buy mode
+  const cancelBuyMode = () => {
+    setBuyMode(false)
+    setEthAmount('0.01') // Reset to default value
+  }
+
+  // Handle ETH amount change
+  const handleEthAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Allow only valid numeric input with decimal points
+    const value = e.target.value
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setEthAmount(value)
+    }
+  }
 
   // Format large numbers with abbreviations
   const formatNumber = (value?: string) => {
@@ -144,6 +226,27 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
     }
   }
 
+  const buyModeVariants = {
+    hidden: {
+      opacity: 0,
+      height: 0,
+      padding: 0,
+      transition: {
+        duration: 0.2,
+        ease: 'easeInOut'
+      }
+    },
+    visible: {
+      opacity: 1,
+      height: 'auto',
+      padding: '12px',
+      transition: {
+        duration: 0.3,
+        ease: 'easeInOut'
+      }
+    }
+  }
+
   const arrowVariants = {
     collapsed: { rotate: 0 },
     expanded: { rotate: 180 }
@@ -182,7 +285,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
       {/* Always visible section */}
       <div
         className="p-3 flex items-center justify-between cursor-pointer hover:bg-opacity-70 transition-colors"
-        onClick={() => setExpanded(!expanded)}
+        onClick={() => !buyMode && setExpanded(!expanded)}
       >
         <div className="flex items-center space-x-3">
           <motion.div
@@ -251,7 +354,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
 
       {/* Expandable section with AnimatePresence */}
       <AnimatePresence>
-        {expanded && (
+        {expanded && !buyMode && (
           <motion.div
             initial="collapsed"
             animate="expanded"
@@ -297,23 +400,152 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
               </div>
             </div>
 
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                variant="outlined"
-                size="small"
-                fullWidth
-                onClick={openCoinUrl}
-                endIcon={<LaunchIcon fontSize="small" />}
-                sx={{
-                  textTransform: 'none',
-                  borderRadius: '8px',
-                  fontSize: '0.75rem',
-                  mt: 1
-                }}
+            <div className="flex space-x-2">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1"
               >
-                View on Zora
-              </Button>
-            </motion.div>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  onClick={openCoinUrl}
+                  endIcon={<LaunchIcon fontSize="small" />}
+                  sx={{
+                    textTransform: 'none',
+                    borderRadius: '8px',
+                    fontSize: '0.75rem',
+                    mt: 1
+                  }}
+                >
+                  View on Zora
+                </Button>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1"
+              >
+                <Button
+                  variant="contained"
+                  size="small"
+                  fullWidth
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    enterBuyMode()
+                  }}
+                  endIcon={<ShoppingCartIcon fontSize="small" />}
+                  sx={{
+                    textTransform: 'none',
+                    borderRadius: '8px',
+                    fontSize: '0.75rem',
+                    mt: 1,
+                    bgcolor: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.dark'
+                    }
+                  }}
+                >
+                  Buy Tokens
+                </Button>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Buy Mode UI */}
+        {expanded && buyMode && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={buyModeVariants}
+            className="border-t border-gray-200 dark:border-gray-700 p-3"
+          >
+            <div className="mb-4">
+              <div className="text-p-text font-semibold mb-2">
+                Buy {coin?.symbol}
+              </div>
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Amount"
+                value={ethAmount}
+                onChange={handleEthAmountChange}
+                autoFocus
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <span className="text-s-text">ETH</span>
+                    </InputAdornment>
+                  ),
+                  sx: { borderRadius: '8px' }
+                }}
+                size="small"
+              />
+              <div className="text-xs text-s-text mt-1">
+                Enter the amount of ETH you want to spend
+              </div>
+            </div>
+
+            <div className="flex space-x-2">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1"
+              >
+                <Button
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    cancelBuyMode()
+                  }}
+                  sx={{
+                    textTransform: 'none',
+                    borderRadius: '8px',
+                    fontSize: '0.75rem'
+                  }}
+                >
+                  Cancel
+                </Button>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1"
+              >
+                <Button
+                  variant="contained"
+                  size="small"
+                  fullWidth
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleBuyCoin()
+                  }}
+                  disabled={status === 'pending'}
+                  sx={{
+                    textTransform: 'none',
+                    borderRadius: '8px',
+                    fontSize: '0.75rem',
+                    bgcolor: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.dark'
+                    }
+                  }}
+                >
+                  {status === 'pending' ? (
+                    <CircularProgress size={16} color="inherit" />
+                  ) : (
+                    'Confirm Purchase'
+                  )}
+                </Button>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -28,7 +28,7 @@ import {
   zerionWallet
 } from '@rainbow-me/rainbowkit/wallets'
 
-const defaultChains = isMainnet ? [polygon, base] : [polygonAmoy]
+const defaultChains = isMainnet ? [polygon, base] : [polygonAmoy, base]
 const defaultTransports = {
   [polygon.id]: http(),
   [polygonAmoy.id]: http(),

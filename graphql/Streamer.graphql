@@ -12,5 +12,10 @@ query Streamer($profileId: String!) {
     latestSessionCreatedAt
     nextStreamTime
     premium
+    featuredCoin {
+      type
+      coinAddress
+      chainId
+    }
   }
 }

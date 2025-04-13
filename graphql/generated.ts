@@ -56,6 +56,19 @@ export type ClipResult = {
   playbackUrl?: Maybe<Scalars['String']['output']>
 }
 
+export type FeaturedCoin = {
+  __typename?: 'FeaturedCoin'
+  chainId?: Maybe<Scalars['String']['output']>
+  coinAddress?: Maybe<Scalars['String']['output']>
+  type?: Maybe<Scalars['String']['output']>
+}
+
+export type FeaturedCoinInput = {
+  chainId?: InputMaybe<Scalars['String']['input']>
+  coinAddress?: InputMaybe<Scalars['String']['input']>
+  type?: InputMaybe<Scalars['String']['input']>
+}
+
 export type IpfsResult = {
   __typename?: 'IpfsResult'
   cid?: Maybe<Scalars['String']['output']>
@@ -128,6 +141,7 @@ export type MutationUploadDataToIpfsArgs = {
 export type MyStream = Stream & {
   __typename?: 'MyStream'
   createdAt?: Maybe<Scalars['BigNumber']['output']>
+  featuredCoin?: Maybe<FeaturedCoin>
   isActive?: Maybe<Scalars['Boolean']['output']>
   isHealthy?: Maybe<Scalars['Boolean']['output']>
   issues?: Maybe<Array<Maybe<Scalars['String']['output']>>>
@@ -229,6 +243,7 @@ export type RecordedSession = {
 export type SingleStreamer = Stream & {
   __typename?: 'SingleStreamer'
   createdAt?: Maybe<Scalars['BigNumber']['output']>
+  featuredCoin?: Maybe<FeaturedCoin>
   isActive?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   latestSessionCreatedAt?: Maybe<Scalars['BigNumber']['output']>
@@ -245,6 +260,7 @@ export type SingleStreamer = Stream & {
 
 export type Stream = {
   createdAt?: Maybe<Scalars['BigNumber']['output']>
+  featuredCoin?: Maybe<FeaturedCoin>
   isActive?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
@@ -290,6 +306,7 @@ export type StreamStats = {
 export type Streamer = Stream & {
   __typename?: 'Streamer'
   createdAt?: Maybe<Scalars['BigNumber']['output']>
+  featuredCoin?: Maybe<FeaturedCoin>
   isActive?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   liveCount?: Maybe<Scalars['Int']['output']>
@@ -303,6 +320,7 @@ export type Streamer = Stream & {
 }
 
 export type UpdateStreamRequest = {
+  featuredCoin?: InputMaybe<FeaturedCoinInput>
   nextStreamTime?: InputMaybe<Scalars['BigNumber']['input']>
   streamDescription?: InputMaybe<Scalars['String']['input']>
   streamName?: InputMaybe<Scalars['String']['input']>
@@ -443,6 +461,12 @@ export type MyStreamQuery = {
     isHealthy?: boolean | null
     issues?: Array<string | null> | null
     nextStreamTime?: any | null
+    featuredCoin?: {
+      __typename?: 'FeaturedCoin'
+      type?: string | null
+      coinAddress?: string | null
+      chainId?: string | null
+    } | null
   } | null
 }
 
@@ -566,6 +590,12 @@ export type StreamerQuery = {
     latestSessionCreatedAt?: any | null
     nextStreamTime?: any | null
     premium?: boolean | null
+    featuredCoin?: {
+      __typename?: 'FeaturedCoin'
+      type?: string | null
+      coinAddress?: string | null
+      chainId?: string | null
+    } | null
   } | null
 }
 
@@ -1198,6 +1228,11 @@ export const MyStreamDocument = gql`
       isHealthy
       issues
       nextStreamTime
+      featuredCoin {
+        type
+        coinAddress
+        chainId
+      }
     }
   }
 `
@@ -1819,6 +1854,11 @@ export const StreamerDocument = gql`
       latestSessionCreatedAt
       nextStreamTime
       premium
+      featuredCoin {
+        type
+        coinAddress
+        chainId
+      }
     }
   }
 `

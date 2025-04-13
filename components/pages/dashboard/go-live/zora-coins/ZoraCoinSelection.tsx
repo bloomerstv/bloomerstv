@@ -22,6 +22,12 @@ import StarIcon from '@mui/icons-material/Star'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import CreateNewZoraCoinButton from './CreateNewZoraCoinButton'
 import { useSession } from '@lens-protocol/react-web'
+import {
+  useMyStreamQuery,
+  useUpdateMyStreamMutation
+} from '../../../../../graphql/generated'
+import { base } from 'viem/chains'
+import toast from 'react-hot-toast'
 
 // Updated interface for coin data structure based on API response
 interface CoinBalance {
@@ -63,13 +69,14 @@ const ZoraCoinSelection = () => {
   // State for coin balances
   const [coinBalances, setCoinBalances] = useState<CoinBalance[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [pagination, setPagination] = useState<PaginationInfo>({
     cursor: undefined,
     hasNextPage: false
   })
   const [page, setPage] = useState(1)
-  const [featuredCoinId, setFeaturedCoinId] = useState<string | null>(null)
+  const { data: myStream, refetch: refetchMyStream } = useMyStreamQuery()
+  const [updateMyStream] = useUpdateMyStreamMutation()
+
   const pageSize = 5
 
   // Generate Zora coin URL
@@ -87,7 +94,6 @@ const ZoraCoinSelection = () => {
     if (!session?.authenticated) return
 
     setIsLoading(true)
-    setError(null)
 
     try {
       const response = await getProfileBalances({
@@ -129,7 +135,7 @@ const ZoraCoinSelection = () => {
       }
     } catch (err) {
       console.error('Error fetching coin balances:', err)
-      setError('Failed to fetch your coin balances. Please try again.')
+      toast.error('Failed to fetch your coin balances. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -151,8 +157,30 @@ const ZoraCoinSelection = () => {
   }
 
   // Handler for featuring a coin
-  const handleFeatureCoin = (coinId: string) => {
-    setFeaturedCoinId(coinId === featuredCoinId ? null : coinId)
+  const handleFeatureCoin = async (coinAddress: string) => {
+    try {
+      const { data } = await updateMyStream({
+        variables: {
+          request: {
+            featuredCoin: {
+              chainId: base.id.toString(),
+              coinAddress: coinAddress.toLowerCase(),
+              type: 'zora'
+            }
+          }
+        }
+      })
+
+      if (!data?.updateMyStream) {
+        toast.error('Failed to update featured coin. Please try again.')
+        return
+      }
+
+      refetchMyStream()
+    } catch (error) {
+      console.error('Error updating featured coin:', error)
+      toast.error(error ?? 'Failed to update featured coin. Please try again.')
+    }
   }
 
   useEffect(() => {
@@ -215,12 +243,6 @@ const ZoraCoinSelection = () => {
         </Tooltip>
       </Box>
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
-
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
@@ -249,7 +271,9 @@ const ZoraCoinSelection = () => {
               </TableHead>
               <TableBody>
                 {coinBalances.map((coin) => {
-                  const isFeatured = coin.id === featuredCoinId
+                  const isFeatured =
+                    coin.coin?.address.toLowerCase() ===
+                    myStream?.myStream?.featuredCoin?.coinAddress?.toLowerCase()
                   return (
                     <TableRow
                       key={coin.id}
@@ -339,7 +363,7 @@ const ZoraCoinSelection = () => {
                           variant={isFeatured ? 'contained' : 'outlined'}
                           size="small"
                           color="primary"
-                          onClick={() => handleFeatureCoin(coin.id)}
+                          onClick={() => handleFeatureCoin(coin.coin.address)}
                           startIcon={
                             isFeatured ? <StarIcon /> : <StarBorderIcon />
                           }
@@ -387,7 +411,7 @@ const ZoraCoinSelection = () => {
       )}
 
       {/* Display featured coin separately if needed */}
-      {featuredCoinId && (
+      {myStream?.myStream?.featuredCoin?.coinAddress && (
         <Box sx={{ mt: 4 }}>
           <Typography
             variant="subtitle1"
@@ -405,7 +429,11 @@ const ZoraCoinSelection = () => {
             }}
           >
             {coinBalances
-              .filter((coin) => coin.id === featuredCoinId)
+              .filter(
+                (coin) =>
+                  coin.coin?.address.toLowerCase() ===
+                  myStream?.myStream?.featuredCoin?.coinAddress?.toLowerCase()
+              )
               .map((coin) => (
                 <Box
                   key={coin.id}

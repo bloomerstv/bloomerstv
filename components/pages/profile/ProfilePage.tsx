@@ -248,10 +248,12 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         {/* @ts-ignore */}
         <ProfileInfoWithStream profile={data} streamer={streamer?.streamer} />
 
-        {isMobile && (
+        {isMobile && streamer?.streamer?.featuredCoin?.coinAddress && (
           <div className="m-2">
             {' '}
-            <ZoraFeaturedCoin />{' '}
+            <ZoraFeaturedCoin
+              coinAddress={streamer?.streamer?.featuredCoin?.coinAddress}
+            />{' '}
           </div>
         )}
 
@@ -291,9 +293,13 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       </div>
       {data?.id && !isMobile && (
         <div className="w-[310px] relative 2xl:w-[350px] flex-none h-full">
-          <div className="absolute w-[310px] 2xl:w-[350px] top-14 p-2 left-0 to-transparent z-50">
-            <ZoraFeaturedCoin />
-          </div>
+          {streamer?.streamer?.featuredCoin?.coinAddress && (
+            <div className="absolute w-[310px] 2xl:w-[350px] top-14 p-2 left-0 to-transparent z-50">
+              <ZoraFeaturedCoin
+                coinAddress={streamer?.streamer?.featuredCoin?.coinAddress}
+              />
+            </div>
+          )}
           <LiveChat
             // @ts-ignore
             profileId={data?.id}
