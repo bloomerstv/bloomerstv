@@ -5,6 +5,8 @@ export const STS_TOKEN_URL = process.env.NEXT_PUBLIC_STS_TOKEN_URL
 export const EVER_REGION = 'us-west-2'
 
 export const useOnlyPWAOnMobile = false
+export const CREATOR_EMAIL = 'devenrathodrd@gmail.com'
+
 export const isMainnet = process.env.NEXT_PUBLIC_LENS_MODE
   ? process.env.NEXT_PUBLIC_LENS_MODE === 'mainnet'
   : true
