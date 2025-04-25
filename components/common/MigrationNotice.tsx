@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import ConstructionIcon from '@mui/icons-material/Construction'
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
 import UpdateIcon from '@mui/icons-material/Update'
@@ -152,6 +152,7 @@ const MigrationNotice: React.FC = () => {
               <a
                 href={`mailto:${CREATOR_EMAIL}`}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-p-accent/20 border border-p-accent/30 text-p-accent hover:bg-p-accent/30 transition-colors"
               >
                 <EmailIcon fontSize="small" />
