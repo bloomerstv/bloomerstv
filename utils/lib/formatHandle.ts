@@ -1,19 +1,13 @@
-import { Profile } from '@lens-protocol/react-web'
+import { Account } from '@lens-protocol/react'
 
-/**
- *
- * @param handle - Complete handle
- * @param keepSuffix - Keep .lens or .test suffix
- * @returns formatted handle without .lens or .test suffix
- */
-const formatHandle = (profile?: Profile, keepSuffix = false): string => {
-  const handleInfo = profile?.handle
+const formatHandle = (account?: Account, keepSuffix = false): string => {
+  const handleInfo = account?.username
 
   if (!handleInfo) {
-    return profile?.id || ''
+    return account?.address || ''
   }
   if (keepSuffix) {
-    return handleInfo?.fullHandle
+    return handleInfo?.localName
   }
 
   return handleInfo?.localName

@@ -11,6 +11,10 @@ export const isMainnet = process.env.NEXT_PUBLIC_LENS_MODE
   ? process.env.NEXT_PUBLIC_LENS_MODE === 'mainnet'
   : true
 
+export const APP_ADDRESS = isMainnet
+  ? '0x8A5Cc31180c37078e1EbA2A23c861Acf351a97cE'
+  : '0xC75A89145d765c396fd75CbD16380Eb184Bd2ca7'
+
 export const AVATAR = 'tr:w-120,h-120'
 
 export const NODE_API_MODE =

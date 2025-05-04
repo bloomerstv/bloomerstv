@@ -11,7 +11,7 @@ const page = () => {
     <div className="w-full overflow-x-hidden">
       {isMobile && <MobileTopHeader />}
 
-      <StreamerSidebar />
+      {/* <StreamerSidebar /> */}
     </div>
   )
 }

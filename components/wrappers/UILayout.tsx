@@ -35,7 +35,7 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
   const [isPWA, setIsPWA] = useState<boolean>(false)
 
   // Show migration notice instead of regular content
-  const showMigrationNotice = true // You can set this to false later when migration is complete
+  const showMigrationNotice = false // You can set this to false later when migration is complete
 
   const chromeAndroidInstructions = (
     <div>
@@ -256,14 +256,14 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
             <div className="w-full absolute left-0 right-0 top-0 ">
               <TopHeader />
             </div>
-            <div className="start-center-row h-dvh pt-[50px] overflow-hidden">
+            {/* <div className="start-center-row h-dvh pt-[50px] overflow-hidden">
               {pathname.startsWith('/dashboard') ? (
                 <DashboardSidebar />
               ) : (
                 <>{pathname === '/' && <StreamerSidebar />}</>
               )}
               <div className="h-full w-full">{children}</div>
-            </div>
+            </div> */}
           </div>
         </div>
       )}
@@ -272,9 +272,9 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
 }
 
 const GlobalHooks = () => {
-  useStreamReplayPublications({})
-  useLiveStreamerProfiles()
-  useNotifictionSubscriptions()
+  // useStreamReplayPublications({})
+  // useLiveStreamerProfiles()
+  // useNotifictionSubscriptions()
 
   return <></>
 }

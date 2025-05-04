@@ -1,9 +1,10 @@
 import React from 'react'
 import StartLoadingPage from '../pages/loading/StartLoadingPage'
 import { useSession } from '@lens-protocol/react-web'
+import { useSessionClient } from '@lens-protocol/react'
 
 const ShowLoadingWrapper = ({ children }: { children: React.ReactNode }) => {
-  const { data, loading } = useSession()
+  const { loading, data } = useSessionClient()
 
   if (loading && !data) {
     return (

@@ -7,18 +7,14 @@ import {
   darkTheme,
   getDefaultConfig
 } from '@rainbow-me/rainbowkit'
+import { chains } from '@lens-chain/sdk/viem'
 import { polygon, polygonAmoy } from 'wagmi/chains'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { APP_NAME, isMainnet } from '@/utils/config'
-import { WagmiProvider, http } from 'wagmi'
+import { WagmiProvider, http, createConfig, injected } from 'wagmi'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
-import {
-  LensConfig,
-  LensProvider,
-  development,
-  production
-} from '@lens-protocol/react-web'
-import { bindings } from '@lens-protocol/wagmi'
+import { PublicClient, testnet, mainnet } from '@lens-protocol/react'
+import { LensProvider } from '@lens-protocol/react'
 import {
   coinbaseWallet,
   injectedWallet,
@@ -28,10 +24,13 @@ import {
   zerionWallet
 } from '@rainbow-me/rainbowkit/wallets'
 
-const defaultChains = isMainnet ? [polygon] : [polygonAmoy]
+const defaultChains = isMainnet ? [chains.mainnet] : [chains.testnet]
+
 const defaultTransports = {
   [polygon.id]: http(),
-  [polygonAmoy.id]: http()
+  [polygonAmoy.id]: http(),
+  [chains.mainnet.id]: http(),
+  [chains.testnet.id]: http()
 }
 
 const config = getDefaultConfig({
@@ -59,14 +58,24 @@ const config = getDefaultConfig({
   ssr: true
 })
 
-const lensConfig: LensConfig = {
-  environment: isMainnet ? production : development,
-  bindings: bindings(config)
-}
-
 const queryClient = new QueryClient()
 
 const RainbowKitWrapper = ({ children }: { children: React.ReactNode }) => {
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const client = PublicClient.create({
+    environment: isMainnet ? mainnet : testnet,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined
+  })
+
+  // Return null or a loading state on server-side
+  if (!mounted) {
+    return null // Or a loading spinner
+  }
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
@@ -77,7 +86,7 @@ const RainbowKitWrapper = ({ children }: { children: React.ReactNode }) => {
           modalSize="compact"
           theme={darkTheme()}
         >
-          <LensProvider config={lensConfig}>{children}</LensProvider>
+          <LensProvider client={client}>{children}</LensProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

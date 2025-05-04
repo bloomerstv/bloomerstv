@@ -1,15 +1,8 @@
-import {
-  SessionType,
-  useLogin,
-  useProfilesManaged,
-  useSession,
-  useUpdateProfileManagers
-} from '@lens-protocol/react-web'
 import { CircularProgress } from '@mui/material'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import clsx from 'clsx'
 import React, { useEffect } from 'react'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useAccount, useDisconnect, useWalletClient } from 'wagmi'
 import getAvatar from '../../utils/lib/getAvatar'
 import formatHandle from '../../utils/lib/formatHandle'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -21,6 +14,17 @@ import useEns from '../../utils/hooks/useEns'
 import getStampFyiURL from '../../utils/getStampFyiURL'
 import { getShortAddress } from '../../utils/lib/getShortAddress'
 import LoadingImage from '../ui/LoadingImage'
+import {
+  Role,
+  useAccountsAvailable,
+  useAuthenticatedUser,
+  useLogin
+} from '@lens-protocol/react'
+import { signMessageWith } from '@lens-protocol/react/viem'
+import useSession from '../../utils/hooks/useSession'
+import { APP_ADDRESS } from '../../utils/config'
+import useEnableSignless from '../../utils/hooks/useEnableSignless'
+
 const LoginComponent = ({
   open,
   onClose
@@ -28,38 +32,33 @@ const LoginComponent = ({
   open?: boolean
   onClose?: () => void
 }) => {
-  const { data } = useSession()
-
+  const { data: walletClient } = useWalletClient()
   const { disconnectAsync } = useDisconnect()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
   const { openConnectModal } = useConnectModal()
-  const [selectedProfileId, setSelectedProfileId] = React.useState<string>()
-  const { data: profiles, loading: loadingProfiles } = useProfilesManaged({
-    // @ts-ignore
-    for: address,
-    includeOwned: true
+  const [selectedAccountAddress, setSelectedAccountAddress] =
+    React.useState<string>()
+  const { data: profiles, loading: loadingProfiles } = useAccountsAvailable({
+    managedBy: address
   })
+  const { isAuthenticated, authenticatedUser } = useSession()
+
+  authenticatedUser?.authenticationId
 
   const { ensAvatar, ensName } = useEns({
-    address: profiles?.length === 0 ? address : null
+    address: profiles?.items?.length === 0 ? address : null
   })
-  const { execute, loading: logging } = useLogin()
-  const {
-    execute: enableProfileManager,
-    loading,
-    error
-  } = useUpdateProfileManagers()
 
-  useEffect(() => {
-    if (
-      open &&
-      !isConnected &&
-      openConnectModal &&
-      data?.type !== SessionType.WithProfile
-    ) {
-      openConnectModal()
-    }
-  }, [open, isConnected, data?.type])
+  const { execute, loading: logging, data } = useLogin()
+
+  // todo use enableSignless from lens in v3 instead of this
+  const { enableSignless, loading, error } = useEnableSignless()
+
+  // const {
+  //   execute: enableProfileManager,
+  //   loading,
+  //   error
+  // } = useUpdateProfileManagers()
 
   useEffect(() => {
     if (error) {
@@ -67,11 +66,17 @@ const LoginComponent = ({
     }
   }, [error])
 
+  useEffect(() => {
+    if (open && !isConnected && openConnectModal && !isAuthenticated) {
+      openConnectModal()
+    }
+  }, [open, isConnected, isAuthenticated])
+
   return (
     <div className="p-4 sm:p-0">
       {isConnected ? (
         <>
-          {data?.type !== SessionType.WithProfile ? (
+          {!isAuthenticated ? (
             <>
               <div className="text-2xl font-bold">
                 Login with your Lens Profile
@@ -84,43 +89,50 @@ const LoginComponent = ({
                   </div>
                 )}
 
-                {profiles?.map((profile, i) => (
+                {profiles?.items?.map((profile, i) => (
                   <div
                     className={clsx(
                       'between-row w-full p-4',
-                      i < profiles.length - 1 && 'border-b border-p-border '
+                      i < profiles?.items.length - 1 &&
+                        'border-b border-p-border '
                     )}
-                    key={profile?.id}
+                    key={profile?.account?.address}
                   >
                     <div className="centered-row space-x-4">
                       <img
-                        src={getAvatar(profile)}
+                        src={getAvatar(profile?.account)}
                         alt="avatar"
                         className="w-8 h-8 rounded-full"
                       />
                       <div className="text-s-text font-bold text-lg">
-                        {formatHandle(profile)}
+                        {formatHandle(profile?.account)}
                       </div>
                     </div>
                     <div className="centered-row">
                       <LoadingButton
                         variant="contained"
                         onClick={async () => {
-                          setSelectedProfileId(profile.id)
+                          setSelectedAccountAddress(profile?.account.address)
                           const data = await execute({
-                            // @ts-ignore
-                            address: address,
-                            profileId: profile.id
+                            accountOwner: {
+                              account: profile.account.address,
+                              owner: profile.account.owner,
+                              app: APP_ADDRESS
+                            },
+                            signMessage: signMessageWith(walletClient!)
                           })
 
-                          if (data?.isSuccess() && data?.value?.signless) {
+                          if (data?.isOk() && data?.value.sponsored) {
                             onClose?.()
                             window.location.reload()
-                          } else if (!data?.isSuccess()) {
+                          } else if (!data?.isOk() || data?.isErr()) {
                             toast.error('Error logging in')
                           }
                         }}
-                        loading={logging && selectedProfileId === profile.id}
+                        loading={
+                          logging &&
+                          selectedAccountAddress === profile?.account.address
+                        }
                         loadingPosition="start"
                         startIcon={
                           <img
@@ -139,9 +151,10 @@ const LoginComponent = ({
                   </div>
                 ))}
 
-                {profiles?.length === 0 &&
+                {profiles?.items.length === 0 &&
                   !loadingProfiles &&
-                  data?.type !== SessionType.JustWallet && (
+                  (!authenticatedUser ||
+                    authenticatedUser?.role !== Role.OnboardingUser) && (
                     <div className="centered-row w-full text-s-text p-4 text-sm">
                       You don’t have any lens profiles linked to this wallet
                       address. However, You can log in with your wallet and chat
@@ -149,9 +162,9 @@ const LoginComponent = ({
                     </div>
                   )}
 
-                {profiles?.length === 0 &&
+                {profiles?.items.length === 0 &&
                   !loadingProfiles &&
-                  data?.type === SessionType.JustWallet && (
+                  authenticatedUser?.role === Role.OnboardingUser && (
                     <div className="p-4 space-y-4">
                       <div className="centered-row w-full text-s-text text-sm">
                         You don’t have any lens profiles linked to this wallet
@@ -163,9 +176,10 @@ const LoginComponent = ({
                     </div>
                   )}
 
-                {profiles?.length === 0 &&
+                {profiles?.items.length === 0 &&
                   !loadingProfiles &&
-                  data?.type !== SessionType.JustWallet && (
+                  (!authenticatedUser ||
+                    authenticatedUser?.role !== Role.OnboardingUser) && (
                     <div className="px-4 pb-4 space-y-4">
                       <div className="start-center-row gap-x-3">
                         <LoadingImage
@@ -186,11 +200,14 @@ const LoginComponent = ({
                         startIcon={<WalletIcon />}
                         onClick={async () => {
                           const data = await execute({
-                            // @ts-ignore
-                            address: address
+                            signMessage: signMessageWith(walletClient!),
+                            onboardingUser: {
+                              wallet: String(address),
+                              app: APP_ADDRESS
+                            }
                           })
 
-                          if (data?.isSuccess()) {
+                          if (data?.isOk()) {
                             onClose?.()
                           } else {
                             toast.error('Failed to login')
@@ -230,7 +247,7 @@ const LoginComponent = ({
             </>
           ) : (
             <>
-              {!data?.profile?.signless && (
+              {!authenticatedUser?.sponsored && (
                 <>
                   <div className="text-2xl font-bold ">
                     Enable signless transactions
@@ -240,6 +257,16 @@ const LoginComponent = ({
                     required.
                   </div>
 
+                  {/* // todo enable sponsored action */}
+
+                  <div className="p-4 mb-4 rounded-lg bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-200">
+                    <div className="font-medium">Coming Soon!</div>
+                    <div className="text-sm">
+                      Sponsored transactions will be available soon. Some
+                      features may be limited until then.
+                    </div>
+                  </div>
+
                   <LoadingButton
                     variant="contained"
                     loading={loading}
@@ -247,10 +274,8 @@ const LoginComponent = ({
                     startIcon={<AutoAwesomeIcon />}
                     onClick={async () => {
                       try {
-                        const { isSuccess } = await enableProfileManager({
-                          approveSignless: true
-                        })
-                        if (isSuccess()) {
+                        const { isOk } = await enableSignless()
+                        if (isOk()) {
                           onClose?.()
                         }
                       } catch (e) {
@@ -261,7 +286,7 @@ const LoginComponent = ({
                     sx={{
                       borderRadius: '2rem'
                     }}
-                    disabled={loading || data?.profile?.signless}
+                    disabled={loading || data?.sponsored}
                   >
                     Approve signless
                   </LoadingButton>

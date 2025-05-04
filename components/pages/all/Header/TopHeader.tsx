@@ -5,14 +5,15 @@ import HeaderSearch from './HeaderSearch'
 import Link from 'next/link'
 import { useTheme } from '../../../wrappers/TailwindThemeProvider'
 import clsx from 'clsx'
-import { SessionType, useSession } from '@lens-protocol/react-web'
 import { IconButton, Tooltip } from '@mui/material'
 import VideoCallIcon from '@mui/icons-material/VideoCall'
 import CreatePostButton from './CreatePostButton'
+import useSession from '../../../../utils/hooks/useSession'
+import { Role } from '@lens-protocol/react'
 
 const TopHeader = () => {
   const { theme } = useTheme()
-  const { data } = useSession()
+  const { isAuthenticated } = useSession()
   return (
     <div
       className={clsx(
@@ -30,11 +31,11 @@ const TopHeader = () => {
           {APP_NAME}
         </div>
       </Link>
-      <HeaderSearch />
+      {/* <HeaderSearch /> */}
       <div className="centered-row gap-x-1">
-        {data?.type === SessionType.WithProfile && <CreatePostButton />}
+        {/* {isAuthenticated && <CreatePostButton />} */}
 
-        {data?.type === SessionType.WithProfile && (
+        {isAuthenticated && (
           <Tooltip title="Go Live">
             <IconButton LinkComponent={Link} href="/dashboard/go-live">
               <VideoCallIcon />
