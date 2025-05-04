@@ -1,6 +1,7 @@
 export enum ContentType {
   Comment = 'Comment',
-  Clip = 'Clip'
+  Clip = 'Clip',
+  Trade = 'Trade'
 }
 
 export enum MessageType {
@@ -44,7 +45,19 @@ interface ProfileClipMessage extends ProfileMessageBase {
   image: string
 }
 
-export type ProfileMessage = ProfileCommentMessage | ProfileClipMessage
+interface ProfileTradeMessage extends ProfileMessageBase {
+  contentType: ContentType.Trade
+  txHash: string
+  amount?: number
+  formattedBuyAmountEth: string
+  currencySymbol: string
+  image: string
+}
+
+export type ProfileMessage =
+  | ProfileCommentMessage
+  | ProfileClipMessage
+  | ProfileTradeMessage
 
 export type Message = SystemMessage | ProfileMessage
 
@@ -66,4 +79,16 @@ export interface SendMessageClipTyep extends SendMessageBaseType {
   image: string
 }
 
-export type SendMessageType = SendMessageCommentType | SendMessageClipTyep
+export interface SendMessageTradeType extends SendMessageBaseType {
+  type: ContentType.Trade
+  txHash: string
+  amount?: number
+  formattedBuyAmountEth: string
+  currencySymbol: string
+  image: string
+}
+
+export type SendMessageType =
+  | SendMessageCommentType
+  | SendMessageClipTyep
+  | SendMessageTradeType

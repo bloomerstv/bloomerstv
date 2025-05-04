@@ -22,7 +22,12 @@ import toast from 'react-hot-toast'
 import { Address, parseEther } from 'viem'
 import { PROJECT_ADDRESS } from '../../../utils/config'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-
+import {
+  ContentType,
+  SendMessageTradeType
+} from '../../common/LiveChat/LiveChatType'
+import { v4 as uuid } from 'uuid'
+import { useChatInteractions } from '../../store/useChatInteractions'
 interface ZoraCoin {
   id: string
   name: string
@@ -63,14 +68,15 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
   const [buyMode, setBuyMode] = useState(false)
   const [ethAmount, setEthAmount] = useState('0.01')
 
-  console.log('coin', coin)
-
   const { address } = useAccount()
   const { openConnectModal } = useConnectModal()
 
   const handleWrongNetwork = useHandleWrongNetwork(base.id)
 
   const { writeContractAsync, status } = useWriteContract()
+  const sendMessagePayload = useChatInteractions(
+    (state) => state.sendMessagePayload
+  )
 
   const handleBuyCoin = async () => {
     if (!coin?.address) return
@@ -95,14 +101,29 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
 
       const contractCallParams = tradeCoinCall(tradeParams)
 
-      await writeContractAsync({
+      const tx = await writeContractAsync({
         abi: contractCallParams?.abi,
         address: contractCallParams?.address,
         args: contractCallParams?.args,
         functionName: contractCallParams?.functionName,
         value: tradeParams.args.orderSize
       })
+
       toast.success('Transaction sent!')
+
+      const messagePayload: SendMessageTradeType = {
+        id: uuid(),
+        content: `Bought ${coin.symbol} for ${ethAmount} ETH 🎉`,
+        type: ContentType.Trade,
+        image: coin.mediaContent?.previewImage?.medium!,
+        txHash: tx,
+        currencySymbol: coin.symbol,
+        formattedBuyAmountEth: ethAmount
+      }
+
+      if (sendMessagePayload) {
+        sendMessagePayload(messagePayload)
+      }
       // Reset UI after successful purchase
       setBuyMode(false)
       setExpanded(false)

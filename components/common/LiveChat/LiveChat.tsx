@@ -50,6 +50,7 @@ import sanitizeDStorageUrl from '../../../utils/lib/sanitizeDStorageUrl'
 import { usePublicationsStore } from '../../store/usePublications'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import Link from 'next/link'
+import { useChatInteractions } from '../../store/useChatInteractions'
 export type SendMessageInput = {
   txHash?: string
   clip?: {
@@ -315,6 +316,27 @@ const LiveChat = ({
     }
   }
 
+  const sendMessagePayload = useCallback(
+    (message: SendMessageType) => {
+      if (!socket) return
+      socket.emit('send-message', message)
+    },
+    [socket]
+  )
+
+  // Add this effect to register the function with our store
+  const setSendMessagePayload = useChatInteractions(
+    (state) => state.setSendMessagePayload
+  )
+
+  useEffect(() => {
+    setSendMessagePayload(sendMessagePayload)
+
+    return () => {
+      setSendMessagePayload(null)
+    }
+  }, [sendMessagePayload, setSendMessagePayload])
+
   const createComment = async (
     inputMessage: string,
     imageUrl?: string,
@@ -562,7 +584,8 @@ const LiveChat = ({
                   </span>
 
                   {(!msg?.contentType ||
-                    msg.contentType !== ContentType.Clip) && (
+                    (msg.contentType !== ContentType.Clip &&
+                      msg.contentType !== ContentType.Trade)) && (
                     <span>
                       <Markup className="break-words whitespace-pre-wrap">
                         {msg.content}
@@ -618,6 +641,47 @@ const LiveChat = ({
                       </div>
                     </div>
                   </Link>
+                )}
+
+                {msg?.contentType === ContentType.Trade && (
+                  <div className="px-1.5 py-2 w-full">
+                    <div className="w-full p-1.5 bg-p-hover rounded-lg">
+                      {/* Currency and amount info */}
+                      <div className="flex items-center gap-x-2 mb-1.5">
+                        {msg.image && (
+                          <LoadingImage
+                            src={msg.image}
+                            className="w-6 h-6 rounded-full"
+                            alt="currency"
+                          />
+                        )}
+                        <div className="font-semibold text-s-text">
+                          {msg.currencySymbol}
+                        </div>
+                      </div>
+
+                      {/* Trade content */}
+                      <div className="text-sm break-words whitespace-pre-wrap">
+                        <Markup className="text-xs break-words whitespace-pre-wrap text-s-text">
+                          {msg.content}
+                        </Markup>
+                      </div>
+
+                      {/* Transaction link */}
+                      {/* {msg.txHash && (
+                        <div className="mt-1.5">
+                          <Link
+                            href={`https://etherscan.io/tx/${msg.txHash}`}
+                            target="_blank"
+                            className="text-xs text-brand hover:underline flex items-center gap-x-1"
+                          >
+                            View Transaction
+                            <ArrowOutwardIcon fontSize="inherit" />
+                          </Link>
+                        </div>
+                      )} */}
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
