@@ -12,9 +12,13 @@ import sanitizeDStorageUrl from './sanitizeDStorageUrl'
  * @param namedTransform The named transform to use.
  * @returns The avatar image URL.
  */
-const getAvatar = (account: Account, namedTransform = AVATAR): string => {
-  console.log('account', account)
-
+const getAvatar = (
+  account?: Account | null,
+  namedTransform = AVATAR
+): string => {
+  if (!account) {
+    return getStampFyiURL(ZERO_ADDRESS)
+  }
   const avatarUrl =
     account?.metadata?.picture ?? getStampFyiURL(account?.owner ?? ZERO_ADDRESS)
 

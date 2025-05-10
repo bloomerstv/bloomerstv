@@ -1,12 +1,4 @@
 import {
-  OpenActionConfig,
-  OpenActionType,
-  SessionType,
-  useCreatePost,
-  useCreateQuote,
-  useSession
-} from '@lens-protocol/react-web'
-import {
   Button,
   IconButton,
   MenuItem,
@@ -30,18 +22,11 @@ import {
 } from '../../../../utils/categories'
 import { APP_ID, APP_LINK, defaultSponsored } from '../../../../utils/config'
 import uploadToIPFS from '../../../../utils/uploadToIPFS'
-import {
-  MediaImageMimeType,
-  MediaVideoMimeType,
-  image,
-  textOnly,
-  video
-} from '@lens-protocol/metadata'
 import { useUploadDataToArMutation } from '../../../../graphql/generated'
 import toast from 'react-hot-toast'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
 import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
-import useCollectSettings from '../../../common/Collect/useCollectSettings'
+// import useCollectSettings from '../../../common/Collect/useCollectSettings'
 import VideocamIcon from '@mui/icons-material/Videocam'
 import { generateVideoThumbnails } from '../../../../utils/generateThumbnail'
 import clsx from 'clsx'
@@ -51,6 +36,23 @@ import { getFileFromDataURL } from '../../../../utils/getImageFileFromDataURL'
 import { stringToLength } from '../../../../utils/stringToLength'
 import EditIcon from '@mui/icons-material/Edit'
 import { useMyPreferences } from '../../../store/useMyPreferences'
+import useSession from '../../../../utils/hooks/useSession'
+import {
+  MediaImageType,
+  MediaVideoType,
+  MetadataLicenseType,
+  PostAction,
+  useCreatePost,
+  VideoMetadata
+} from '@lens-protocol/react'
+import { handleOperationWith } from '@lens-protocol/react/viem'
+import { useWalletClient } from 'wagmi'
+import {
+  image,
+  MediaVideoMimeType,
+  textOnly,
+  video
+} from '@lens-protocol/metadata'
 
 interface previewFileType {
   url: string
@@ -71,7 +73,7 @@ const CreatePostPopUp = ({
   quotingTitle?: string
   quotingOnProfileHandle?: string
 }) => {
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
   const [content, setContent] = React.useState('')
   const imageFileInputRef = React.useRef(null)
   const videoFileInputRef = React.useRef(null)
@@ -97,24 +99,26 @@ const CreatePostPopUp = ({
       setCategory: state.setCategory
     }
   })
+  const { data: walletClient } = useWalletClient()
   const [uploadDataToAR] = useUploadDataToArMutation()
-  const { execute: createPost } = useCreatePost()
-  const { execute: createQuote } = useCreateQuote()
+  const { execute: createPost } = useCreatePost(
+    handleOperationWith(walletClient)
+  )
   const [loading, setLoading] = React.useState(false)
   const isMobile = useIsMobile()
-  const {
-    type,
-    amount,
-    collectLimit,
-    endsAt,
-    followerOnly,
-    recipients,
-    referralFee,
-    recipient
-  } = useCollectSettings()
+  // const {
+  //   type,
+  //   amount,
+  //   collectLimit,
+  //   endsAt,
+  //   followerOnly,
+  //   // recipients,
+  //   referralFee,
+  //   recipient
+  // } = useCollectSettings()
 
-  const mediaImageMimeTypes = Object.values(MediaImageMimeType)
-  const mediaVideoMimeTypes = Object.values(MediaVideoMimeType)
+  const mediaImageMimeTypes = Object.values(MediaImageType)
+  const mediaVideoMimeTypes = Object.values(MediaVideoType)
 
   const handleImageFileChange = async (event) => {
     const files = event.target.files
@@ -190,7 +194,6 @@ const CreatePostPopUp = ({
       title: videoTitle ? videoTitle : content.slice(0, 100),
       content: videoTitle ? `${videoTitle}\n${content}` : content,
       tags: tags,
-      appId: APP_ID,
       id: id,
       locale: locale
     }
@@ -210,7 +213,7 @@ const CreatePostPopUp = ({
           generatedThumbnails[selectedThumbnailIndex],
           'thumbnail.jpeg'
         )
-        imageMimeType = MediaImageMimeType.JPEG
+        imageMimeType = MediaImageType.Jpeg
       }
     }
 
@@ -231,20 +234,15 @@ const CreatePostPopUp = ({
     const metadata = isVideo
       ? video({
           ...commonMetadata,
-          marketplace: {
-            name: videoTitle,
-            description: videoTitle + '\n' + content,
-            external_url: APP_LINK,
-            animation_url: previewVideoFile.url,
-            image: ipfsImage?.url!
-          },
           video: {
             item: ipfsVideo?.url!,
+            type: previewVideoFile.file.type as MediaVideoMimeType,
             cover: ipfsImage?.url,
             duration: duration,
-            // @ts-ignore
-            type: previewVideoFile.file.type
-          }
+            altTag: content.slice(0, 100)
+          },
+          title: videoTitle,
+          tags: [...tags]
         })
       : isImage
         ? image({
@@ -252,13 +250,8 @@ const CreatePostPopUp = ({
             image: {
               item: ipfsImage?.url!,
               // @ts-ignore
-              type: imageMimeType,
+              type: imageMimeType as MediaImageType,
               altTag: content.slice(0, 100)
-            },
-            marketplace: {
-              name: content.slice(0, 100),
-              description: content,
-              image: ipfsImage?.url!
             }
           })
         : textOnly({
@@ -273,51 +266,53 @@ const CreatePostPopUp = ({
 
     const transactionID = arResult?.uploadDataToAR
 
-    let actions: OpenActionConfig[] | undefined = undefined
+    // let actions: PostAction[] | undefined = undefined
 
-    if (type) {
-      actions = [
-        // @ts-ignore
-        {
-          type,
-          amount,
-          collectLimit,
-          endsAt,
-          followerOnly,
-          referralFee: amount ? referralFee : undefined
-        }
-      ]
+    // if (type) {
+    //   actions = [
+    //     // @ts-ignore
+    //     {
+    //       type,
+    //       amount,
+    //       __typename: 'SimpleCollectAction',
+    //       payToCollect: true,
 
-      if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
-        // @ts-ignore
-        actions[0]['recipients'] = recipients
-      }
+    //       collectLimit,
+    //       endsAt,
+    //       followerOnly,
+    //       referralFee: amount ? referralFee : undefined
+    //     }
+    //   ]
 
-      if (type === OpenActionType.SIMPLE_COLLECT) {
-        // @ts-ignore
-        actions[0]['recipient'] = recipient
-      }
-    }
+    //   if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
+    //     // @ts-ignore
+    //     actions[0]['recipients'] = recipients
+    //   }
+
+    //   if (type === OpenActionType.SIMPLE_COLLECT) {
+    //     // @ts-ignore
+    //     actions[0]['recipient'] = recipient
+    //   }
+    // }
 
     if (!transactionID) {
       throw new Error('Error uploading metadata to IPFS')
     }
 
     const result = quoteOn
-      ? await createQuote({
-          metadata: `ar://${transactionID}`,
-          // @ts-ignore
-          quoteOn: quoteOn,
-          sponsored: defaultSponsored,
-          actions: actions
+      ? await createPost({
+          contentUri: `ar://${transactionID}`,
+          quoteOf: {
+            post: quoteOn
+          }
+          // actions: actions
         })
       : await createPost({
-          metadata: `ar://${transactionID}`,
-          sponsored: defaultSponsored,
-          actions: actions
+          contentUri: `ar://${transactionID}`
+          // actions: actions
         })
 
-    if (!result.isSuccess()) {
+    if (result.isErr()) {
       toast.error(result.error.message)
       // handle failure scenarios
       throw new Error('Error creating post')
@@ -335,7 +330,7 @@ const CreatePostPopUp = ({
     }
   }
 
-  if (data?.type !== SessionType.WithProfile) return null
+  if (!isAuthenticated) return null
   return (
     <>
       <ModalWrapper
@@ -386,11 +381,11 @@ const CreatePostPopUp = ({
         <div className="flex flex-col gap-y-3 px-3 sm:px-0">
           <div className="start-center-row gap-x-3">
             <img
-              src={getAvatar(data?.profile)}
+              src={getAvatar(account)}
               alt="avatar"
               className="w-8 h-8 rounded-full"
             />
-            <div className="font-bold">{formatHandle(data?.profile)}</div>
+            <div className="font-bold">{formatHandle(account)}</div>
           </div>
           {previewVideoFile && (
             <TextField
@@ -488,7 +483,7 @@ const CreatePostPopUp = ({
                         />
                         {selectedThumbnailIndex === -1 && (
                           <div
-                            className="absolute shadow-inner z-30 top-0 right-0 left-0 right-0 h-[90px] w-full rounded-xl"
+                            className="absolute shadow-inner z-30 top-0 right-0 left-0 h-[90px] w-full rounded-xl"
                             style={{
                               border: '4px solid #1976d2'
                             }}
@@ -508,7 +503,7 @@ const CreatePostPopUp = ({
                         />
                         {selectedThumbnailIndex === index && (
                           <div
-                            className="absolute shadow-inner z-30 top-0 right-0 left-0 right-0 h-[90px] w-full rounded-xl"
+                            className="absolute shadow-inner z-30 top-0 right-0 left-0 h-[90px] w-full rounded-xl"
                             style={{
                               border: '4px solid #1976d2'
                             }}
@@ -609,12 +604,12 @@ const CreatePostPopUp = ({
           )}
 
           <div className="start-row gap-x-4 sm:gap-x-10 w-full overflow-auto no-scrollbar">
-            <div className="start-col gap-y-1 w-fit shrink-0">
+            {/* <div className="start-col gap-y-1 w-fit shrink-0">
               <div className="text-s-text font-semibold text-sm">
                 Collect Preview
               </div>
               <CollectSettingButton disabled={loading} />
-            </div>
+            </div> */}
 
             <div className="start-col gap-y-1 w-fit">
               <div className="text-s-text font-semibold text-sm">Category</div>

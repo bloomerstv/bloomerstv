@@ -1,6 +1,6 @@
-query IsVerified($profileIds: [String]) {
-  isVerified(profileIds: $profileIds) {
+query IsVerified($accountAddresses: [String]) {
+  isVerified(accountAddresses: $accountAddresses) {
     isVerified
-    profileId
+    accountAddress
   }
 }

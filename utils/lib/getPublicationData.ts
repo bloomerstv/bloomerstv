@@ -1,4 +1,4 @@
-import { PublicationMetadata } from '@lens-protocol/react-web'
+import { FullPostMetadata } from '@lens-protocol/react'
 import getAttachmentsData from './getAttachmentsData'
 
 export interface MetadataAsset {
@@ -11,7 +11,7 @@ export interface MetadataAsset {
 }
 
 const getPublicationData = (
-  metadata: PublicationMetadata
+  metadata: FullPostMetadata
 ): {
   content?: string
   asset?: MetadataAsset
@@ -22,44 +22,44 @@ const getPublicationData = (
 } | null => {
   if (!metadata) return null
   switch (metadata.__typename) {
-    case 'ArticleMetadataV3':
+    case 'ArticleMetadata':
       return {
         content: metadata.content,
         attachments: getAttachmentsData(metadata.attachments)
       }
-    case 'TextOnlyMetadataV3':
-    case 'LinkMetadataV3':
+    case 'TextOnlyMetadata':
+    case 'LinkMetadata':
       return {
-        content: metadata.content
+        content: 'content' in metadata ? metadata.content : undefined
       }
-    case 'ImageMetadataV3':
+    case 'ImageMetadata':
       return {
         content: metadata.content,
         asset: {
-          uri: metadata.asset.image.optimized?.uri,
+          uri: metadata.image.item,
           type: 'Image'
         },
         attachments: getAttachmentsData(metadata.attachments)
       }
-    case 'AudioMetadataV3':
+    case 'AudioMetadata':
       const audioAttachments = getAttachmentsData(metadata.attachments)[0]
 
       return {
         content: metadata.content,
         asset: {
-          uri: metadata.asset.audio.optimized?.uri || audioAttachments?.uri,
+          uri: metadata.audio.item || audioAttachments?.uri,
           cover:
-            metadata.asset.cover?.optimized?.uri || audioAttachments?.coverUri,
-          artist: metadata.asset.artist || audioAttachments?.artist,
-          title: metadata.title,
+            metadata.attachments.find(
+              (attachment) => attachment.__typename === 'MediaImage'
+            )?.item || audioAttachments?.coverUri,
+          title: metadata.title!,
           type: 'Audio'
         }
       }
-    case 'VideoMetadataV3':
+    case 'VideoMetadata':
       const videoAttachments = getAttachmentsData(metadata.attachments)[0]
 
-      let videoUri =
-        metadata.asset.video.optimized?.uri || videoAttachments?.uri
+      let videoUri = metadata.video.item || videoAttachments?.uri
 
       const videoFormats = [
         '.mp4',
@@ -101,22 +101,24 @@ const getPublicationData = (
         asset: {
           uri: videoUri,
           cover:
-            metadata.asset.cover?.optimized?.uri || videoAttachments?.coverUri,
+            metadata.attachments.find(
+              (attachment) => attachment.__typename === 'MediaImage'
+            )?.item || videoAttachments?.coverUri,
           type: 'Video',
-          duration: metadata?.asset?.duration
+          duration: metadata?.video?.duration
         }
       }
-    case 'MintMetadataV3':
+    case 'MintMetadata':
       return {
         content: metadata.content,
         attachments: getAttachmentsData(metadata.attachments)
       }
-    case 'EmbedMetadataV3':
+    case 'EmbedMetadata':
       return {
         content: metadata.content,
         attachments: getAttachmentsData(metadata.attachments)
       }
-    case 'LiveStreamMetadataV3':
+    case 'LivestreamMetadata':
       return {
         content: metadata.content,
         attachments: getAttachmentsData(metadata.attachments)

@@ -3,7 +3,7 @@ import {
   RecordedSession,
   useUpdateLensStreamSessionMutation
 } from '../../../../graphql/generated'
-import { useHidePublication, usePublication } from '@lens-protocol/react-web'
+
 import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'
 import {
   localDate,
@@ -38,21 +38,20 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import { MediaImageMimeType } from '@lens-protocol/metadata'
 import uploadToIPFS from '../../../../utils/uploadToIPFS'
 import getIPFSLink from '../../../../utils/getIPFSLink'
+import { usePost } from '@lens-protocol/react'
+import useDeletePost from '../../../../utils/hooks/lens/useDeletePost'
 // import Player from '../../../common/Player'
 
 const SessionRow = ({ session }: { session: RecordedSession }) => {
-  const [newPublicationId, setNewPublicationId] = React.useState<string | null>(
-    null
-  )
+  const [newPostId, setNewPostId] = React.useState<string | null>(null)
   const imageFileInputRef = React.useRef<HTMLInputElement>(null)
   const [thumbnail, setThumbnail] = React.useState<string | null>(null)
   const [updateThumbnail] = useUpdateLensStreamSessionMutation()
 
   const [openDeleteConfirmation, setOpenDeleteConfirmation] =
     React.useState<boolean>(false)
-  const { data } = usePublication({
-    // @ts-ignore
-    forId: newPublicationId || session?.publicationId
+  const { data } = usePost({
+    post: newPostId || session?.postId
   })
 
   const [postAsVideoProps, setPostAsVideoProps] = React.useState<{
@@ -67,18 +66,18 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
     defaultMode: 'Clip'
   })
 
-  const { execute } = useHidePublication()
+  const { execute } = useDeletePost()
 
   const handleDeletePost = async () => {
     if (!data?.id) return
     const res = await execute({
-      publication: data
+      post: data?.id
     })
 
-    if (res.isSuccess()) {
+    if (res.isOk()) {
       toast.success('Post deleted')
-    } else {
-      toast.error('Error deleting post : ', res.error)
+    } else if (res.isErr()) {
+      toast.error(`Error deleting post: ${res.error.message}`)
     }
   }
 
@@ -192,7 +191,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
     <TableRow className="hover:bg-p-hover group">
       {/* delete confirmation */}
 
-      {data?.id && !data?.isHidden && (
+      {data?.id && !data?.isDeleted && (
         <ModalWrapper
           onClose={() => setOpenDeleteConfirmation(false)}
           open={openDeleteConfirmation}
@@ -225,12 +224,12 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
 
       <PostStreamAsVideo
         session={session}
-        publication={data}
+        post={data}
         Icon={<CreateIcon />}
         modalTitle={postAsVideoProps.modalTitle ?? undefined}
         open={postAsVideoProps.open}
         defaultMode={postAsVideoProps.defaultMode}
-        setNewPublicationId={setNewPublicationId}
+        setNewPostId={setNewPostId}
         setOpen={(open) => setPostAsVideoProps((prev) => ({ ...prev, open }))}
       />
       {/* video */}
@@ -283,7 +282,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                     120
                   )
                 : 'Untitled Stream'}{' '}
-              {data?.isHidden && (
+              {data?.isDeleted && (
                 <span className="text-red-500">
                   Post Deleted & hidden from homepage.
                 </span>
@@ -364,7 +363,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                 </Tooltip>
               )}
 
-              {(!data?.id || data?.isHidden) && (
+              {(!data?.id || data?.isDeleted) && (
                 <Tooltip title={'Create a post for this stream'}>
                   <IconButton
                     size="large"
@@ -402,7 +401,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                 </IconButton>
               </Tooltip>
 
-              {data?.id && !data?.isHidden && (
+              {data?.id && !data?.isDeleted && (
                 <Tooltip title="Delete the post">
                   <IconButton
                     size="large"
@@ -420,7 +419,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
       </TableCell>
       {/* Visiblity */}
       <TableCell>
-        {data?.id && data?.isHidden ? (
+        {data?.id && data?.isDeleted ? (
           <span className="text-2xl">-</span>
         ) : (
           <ContentVisibiltyButton session={session} />
@@ -440,9 +439,9 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
         {data?.stats?.comments ?? <span className="text-2xl">-</span>}
       </TableCell>
 
-      {/* mirrors */}
+      {/* reposts */}
       <TableCell>
-        {typeof data?.stats?.mirrors === 'number' ? (
+        {typeof data?.stats?.reposts === 'number' ? (
           totalMirrors
         ) : (
           <span className="text-2xl">-</span>

@@ -1,8 +1,13 @@
 query OfflineStreamers {
   offlineStreamers {
-    profileId
+    accountAddress
     lastSeen
     premium
     nextStreamTime
+    streamName
+    streamDescription
+    isActive
+    createdAt
+    playbackId
   }
 }

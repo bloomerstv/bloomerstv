@@ -1,48 +1,42 @@
-import {
-  AnyPublication,
-  Comment,
-  CommentRankingFilterType,
-  Profile,
-  usePublications
-} from '@lens-protocol/react-web'
 import React, { useState } from 'react'
 import CommentRow from './CommentRow'
 import CreateCommentRow from './CreateCommentRow'
 import clsx from 'clsx'
+import {
+  Account,
+  AnyPost,
+  Post,
+  PostReferenceType,
+  usePostReferences
+} from '@lens-protocol/react'
 
 export interface NewComment {
-  by: Profile
+  author: Account
   metadata: {
     content: string
   }
 }
 
 const CommentSection = ({
-  publication,
+  post,
   className,
   level = 0
 }: {
-  publication: AnyPublication
+  post: AnyPost
   className?: string
   level?: number
 }) => {
   const [newCommments, setNewComments] = useState<NewComment[]>([])
-  const { data } = usePublications({
-    where: {
-      commentOn: {
-        // @ts-ignore
-        id: publication?.id,
-        ranking: {
-          filter: CommentRankingFilterType.All
-        }
-      }
-    }
+
+  const { data } = usePostReferences({
+    referencedPost: post?.id,
+    referenceTypes: [PostReferenceType.CommentOn]
   })
 
   return (
     <div className={clsx('h-full w-full', className)}>
       <CreateCommentRow
-        commentOn={publication?.id}
+        commentOn={post?.id}
         onCommentCreated={(comment) => {
           setNewComments([comment, ...newCommments])
         }}
@@ -53,16 +47,16 @@ const CommentSection = ({
         return (
           <CommentRow
             className={clsx(level === 0 && 'pl-0')}
-            comment={comment as Comment}
+            comment={comment as Post}
             key={index}
             level={level}
           />
         )
       })}
-      {data?.map((comment) => {
+      {data?.items.map((comment) => {
         return (
           <CommentRow
-            comment={comment as Comment}
+            comment={comment as Post}
             key={comment?.id}
             level={level}
             className={clsx(level === 0 && 'pl-0')}

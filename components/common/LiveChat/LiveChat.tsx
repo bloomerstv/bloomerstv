@@ -8,11 +8,11 @@ import {
 } from '../../../utils/config'
 import io from 'socket.io-client'
 import {
-  PublicationId,
-  SessionType,
-  useCreateComment,
-  useSession
-} from '@lens-protocol/react-web'
+  image,
+  textOnly,
+  MediaImageMimeType,
+  MetadataLicenseType
+} from '@lens-protocol/metadata'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import LoginComponent from '../LoginComponent'
 import LoginIcon from '@mui/icons-material/Login'
@@ -29,17 +29,16 @@ import {
 } from '../../../graphql/generated'
 import LiveCount from '../../pages/profile/LiveCount'
 import getUserLocale from '../../../utils/getUserLocale'
-import { textOnly, image } from '@lens-protocol/metadata'
 import { v4 as uuid } from 'uuid'
-import { getLastStreamPublicationId } from '../../../utils/lib/lensApi'
+import { getLastStreamPostId } from '../../../utils/lib/lensApi'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
-import { getAccessTokenAsync } from '../../../utils/lib/getIdentityTokenAsync'
+import { getIdentityTokenAsync } from '../../../utils/lib/getIdentityTokenAsync'
 import {
   ContentType,
   Message,
-  ProfileMessage,
-  SendMessageClipTyep,
+  AccountMessage,
+  SendMessageClipType,
   SendMessageType
 } from './LiveChatType'
 import ChatOptionsButton from './ChatOptionsButton'
@@ -47,9 +46,20 @@ import LiveChatInput from './LiveChatInput'
 import LoadingImage from '../../ui/LoadingImage'
 import { stringToLength } from '../../../utils/stringToLength'
 import sanitizeDStorageUrl from '../../../utils/lib/sanitizeDStorageUrl'
-import { usePublicationsStore } from '../../store/usePublications'
+import { usePostsStore } from '../../store/usePosts'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import Link from 'next/link'
+import useSession from '../../../utils/hooks/useSession'
+import {
+  FullPostMetadata,
+  ImageMetadata,
+  TextOnlyMetadata,
+  useCreatePost,
+  usePost,
+  useSessionClient
+} from '@lens-protocol/react'
+import { useWalletClient } from 'wagmi'
+import { handleOperationWith } from '@lens-protocol/react/viem'
 export type SendMessageInput = {
   txHash?: string
   clip?: {
@@ -62,25 +72,25 @@ export type SendMessageInput = {
 export type ImageAttachment = {
   imageUrl?: string
   imagePreviewUrl?: string
-  imageMimeType?: string
+  imageMimeType?: MediaImageMimeType
 }
 
 const LiveChat = ({
-  profileId,
+  accountAddress,
   title = 'Live Chat',
   onClose,
   showPopOutChat = false,
   preMessages = [],
   showLiveCount = false
 }: {
-  profileId: string
+  accountAddress: string
   title?: string
   onClose?: () => void
   showPopOutChat?: boolean
-  preMessages?: ProfileMessage[]
+  preMessages?: AccountMessage[]
   showLiveCount?: boolean
 }) => {
-  const { clipPost, setClipPost } = usePublicationsStore((state) => ({
+  const { clipPost, setClipPost } = usePostsStore((state) => ({
     clipPost: state.clipPost,
     setClipPost: state.setClipPost
   }))
@@ -98,17 +108,20 @@ const LiveChat = ({
   const [inputMessage, setInputMessage] = useState('')
   const [socket, setSocket] = useState<any>(null)
   // const [isSocketWithAuthToken, setIsSocketWithAuthToken] = useState(false)
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
   const [open, setOpen] = React.useState(false)
   const [popedOut, setPopedOut] = React.useState(false)
   const isMobile = useIsMobile()
   const [uploadDataToAR] = useUploadDataToArMutation()
-  const { execute } = useCreateComment()
+  const { data: wallet } = useWalletClient()
+  const { execute } = useCreatePost(handleOperationWith(wallet))
   const [verifiedToSend, setVerifiedToSend] = useState(false)
+
+  const { data: sessionClient } = useSessionClient()
 
   const { data: chats } = useStreamChatsQuery({
     variables: {
-      profileId: profileId
+      accountAddress
     },
     fetchPolicy: 'no-cache'
   })
@@ -116,7 +129,7 @@ const LiveChat = ({
   useEffect(() => {
     if (chats && !preMessages.length && messages.length === 0) {
       // @ts-ignore
-      const chatsFromDB: ProfileMessage[] = chats.streamChats
+      const chatsFromDB: AccountMessage[] = chats.streamChats
       setMessages((prev) => {
         return [...chatsFromDB, ...prev]
       })
@@ -145,14 +158,14 @@ const LiveChat = ({
   }
 
   useEffect(() => {
-    if (data?.type === SessionType.WithProfile) {
+    if (isAuthenticated) {
       setOpen(false)
     }
-  }, [data?.type])
+  }, [isAuthenticated])
 
   const joinChatWithProfile = useCallback(async () => {
-    if (data?.type === SessionType.Anonymous || !socket) return
-    const accessToken = await getAccessTokenAsync()
+    if (!isAuthenticated || !socket) return
+    const idToken = await getIdentityTokenAsync()
 
     socket.on('verified-to-send', () => {
       setVerifiedToSend(true)
@@ -165,22 +178,28 @@ const LiveChat = ({
       }
     })
     // emit joined chat room
-    socket.emit('joined-chat', accessToken)
-  }, [socket, data?.type])
+    socket.emit('joined-chat', idToken)
+  }, [socket, isAuthenticated])
 
   useEffect(() => {
     joinChatWithProfile()
-  }, [socket, data?.type])
+  }, [socket, account?.address])
 
   useEffect(() => {
     if (!socket || !clipPost) return
     const id = uuid()
-    const sendMessage: SendMessageClipTyep = {
+    if (clipPost?.metadata?.__typename !== 'VideoMetadata') {
+      toast.error('Clip post is not valid')
+      return
+    }
+    const sendMessage: SendMessageClipType = {
       id,
       clipPostId: clipPost?.id,
-      content: clipPost?.metadata?.marketplace?.name!,
+      content: clipPost?.metadata?.content,
       image: sanitizeDStorageUrl(
-        clipPost?.metadata?.marketplace?.image?.optimized?.uri!
+        clipPost?.metadata?.attachments.find(
+          (att) => att.__typename === 'MediaImage'
+        )?.item!
       ),
       type: ContentType.Clip
     }
@@ -213,7 +232,7 @@ const LiveChat = ({
     })
 
     newSocket.on('connect', () => {
-      newSocket.emit('join', profileId)
+      newSocket.emit('join', accountAddress)
       setSocket(newSocket)
 
       // setTimeout(() => {
@@ -240,12 +259,12 @@ const LiveChat = ({
       setMessages((prev: Message[]) => [...prev, receivedMessage as Message])
     })
 
-    newSocket.on('remove-messages', (profileId: string) => {
+    newSocket.on('remove-messages', (accountAddress: string) => {
       setMessages((prev) =>
         prev.filter((msg) => {
           if (msg.type === 'System') return true
 
-          return msg.authorProfileId !== profileId
+          return msg.authorAccountAddress !== accountAddress
         })
       )
     })
@@ -265,7 +284,7 @@ const LiveChat = ({
   }, [])
 
   const sendMessage = async (messageInput?: SendMessageInput) => {
-    if (data?.type === SessionType.Anonymous) {
+    if (!isAuthenticated) {
       return
     }
 
@@ -298,7 +317,7 @@ const LiveChat = ({
       // so just need to send the message content from here
       socket.emit('send-message', sendMessagePayload)
 
-      if (data?.type === SessionType.WithProfile) {
+      if (isAuthenticated) {
         createComment(
           inputMessage,
           imageAttachment?.imageUrl,
@@ -310,7 +329,7 @@ const LiveChat = ({
       setImageAttachment({
         imagePreviewUrl: undefined,
         imageUrl: undefined,
-        imageMimeType: ''
+        imageMimeType: undefined
       })
     }
   }
@@ -318,15 +337,19 @@ const LiveChat = ({
   const createComment = async (
     inputMessage: string,
     imageUrl?: string,
-    imageMimeType?: string
+    imageMimeType?: MediaImageMimeType
   ) => {
     try {
       // create a comment under live stream publication
       console.time('createComment')
-      const lastStreamPublicationId =
-        await getLastStreamPublicationId(profileId)
+      // @ts-ignore
+      const lastStreamPostId = await getLastStreamPostId(
+        accountAddress,
+        // @ts-ignore
+        sessionClient
+      )
 
-      if (!lastStreamPublicationId) return
+      if (!lastStreamPostId) return
       const id = uuid()
       const locale = getUserLocale()
 
@@ -335,26 +358,21 @@ const LiveChat = ({
       const metadata = imageUrl
         ? image({
             content: inputMessage,
-            marketplace: {
-              name: inputMessage,
-              image: imageUrl
-            },
             image: {
               item: imageUrl,
-              // @ts-ignore
-              type: imageMimeType,
-              altTag: inputMessage
+              type: imageMimeType || MediaImageMimeType.JPEG,
+              altTag: inputMessage,
+              license: MetadataLicenseType.CCO
             },
-            appId: APP_ID,
             id: id,
-            locale: locale
+            locale: locale,
+            attachments: [],
+            attributes: [],
+            tags: [],
+            title: ''
           })
         : textOnly({
             content: inputMessage,
-            marketplace: {
-              name: inputMessage
-            },
-            appId: APP_ID,
             id: id,
             locale: locale
           })
@@ -372,9 +390,10 @@ const LiveChat = ({
       }
       // invoke the `execute` function to create the post
       await execute({
-        metadata: `ar://${txId}`,
-        sponsored: defaultSponsored,
-        commentOn: lastStreamPublicationId as PublicationId
+        contentUri: `ar://${txId}`,
+        commentOn: {
+          post: lastStreamPostId
+        }
       })
       // if (!data?.isSuccess()) return
 
@@ -389,7 +408,7 @@ const LiveChat = ({
   const popOutChat = () => {
     setPopedOut(true)
     const chatWindow = window.open(
-      `/live-chat/${profileId}`,
+      `/live-chat/${accountAddress}`,
       '_blank',
       'width=400,height=600,menubar=no,toolbar=no,location=no'
     )
@@ -437,7 +456,9 @@ const LiveChat = ({
             {liveChatPopUpSound ? <VolumeUpIcon /> : <VolumeOffIcon />}
           </IconButton>
 
-          {showLiveCount && profileId && <LiveCount profileId={profileId} />}
+          {showLiveCount && accountAddress && (
+            <LiveCount accountAddress={accountAddress} />
+          )}
         </div>
         {isMobile && onClose && (
           <IconButton onClick={onClose}>
@@ -480,8 +501,8 @@ const LiveChat = ({
                 className="bg-brand group relative shadow-md m-1.5 text-white rounded-xl p-2 flex flex-row items-start gap-x-2.5"
               >
                 <ChatOptionsButton
-                  chatProfileId={profileId}
-                  profileId={msg.authorProfileId}
+                  chatAccountAddress={accountAddress}
+                  accountAddress={msg.authorAccountAddress}
                   handle={msg.handle}
                   avatarUrl={msg.avatarUrl!}
                   socket={socket}
@@ -529,8 +550,8 @@ const LiveChat = ({
               className="flex group relative flex-row  w-full px-3 my-1.5"
             >
               <ChatOptionsButton
-                chatProfileId={profileId}
-                profileId={msg.authorProfileId}
+                chatAccountAddress={accountAddress}
+                accountAddress={msg.authorAccountAddress}
                 handle={msg.handle}
                 avatarUrl={msg.avatarUrl!}
                 socket={socket}
@@ -553,8 +574,8 @@ const LiveChat = ({
                   <span
                     className={clsx(
                       'text-s-text mr-1',
-                      msg?.authorProfileId &&
-                        msg.profileId === msg?.authorProfileId &&
+                      msg?.authorAccountAddress &&
+                        msg.accountAddress === msg?.authorAccountAddress &&
                         'bg-brand text-white rounded-md px-1.5 py-0.5'
                     )}
                   >
@@ -629,7 +650,7 @@ const LiveChat = ({
 
       {/* input section */}
       <div className="w-full py-1.5 px-1.5 border-t border-p-border">
-        {data?.type === SessionType.Anonymous || !socket ? (
+        {!isAuthenticated || !socket ? (
           <Button
             variant="contained"
             onClick={() => setOpen(true)}
@@ -667,7 +688,7 @@ const LiveChat = ({
           </Button>
         ) : (
           <LiveChatInput
-            liveChatProfileId={profileId}
+            liveChatAccountAddress={accountAddress}
             inputMessage={inputMessage}
             sendMessage={sendMessage}
             setInputMessage={setInputMessage}

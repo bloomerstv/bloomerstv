@@ -1,15 +1,15 @@
-query StreamChats($profileId: String!) {
-  streamChats(profileId: $profileId) {
+query StreamChats($accountAddress: String!, $limit: Int) {
+  streamChats(accountAddress: $accountAddress, limit: $limit) {
     content
     handle
     avatarUrl
-    profileId
+    accountAddress
     id
     createdAt
     txHash
     formattedAmount
     currencySymbol
-    authorProfileId
+    authorAccountAddress
     contentType
     clipPostId
     image

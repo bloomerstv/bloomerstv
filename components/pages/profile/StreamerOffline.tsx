@@ -1,15 +1,9 @@
-import {
-  Profile,
-  SessionType,
-  usePublication,
-  useSession
-} from '@lens-protocol/react-web'
 import React from 'react'
 import {
   StreamReplayRecording,
   Streamer,
   useAddNotificationSubscriberToStreamerMutation,
-  useIsSubcribedNotificationForStreamerQuery
+  useIsSubscribedNotificationForStreamerQuery
 } from '../../../graphql/generated'
 import { getBanner } from '../../../utils/lib/getBannner'
 import { timeAgo } from '../../../utils/helpers'
@@ -31,42 +25,44 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import Countdown from 'react-countdown'
+import { Account, usePost } from '@lens-protocol/react'
+import useSession from '../../../utils/hooks/useSession'
 
 const StreamerOffline = ({
-  profile,
+  account,
   streamReplayRecording,
   streamer
 }: {
-  profile: Profile
+  account: Account
   streamer?: Streamer
   streamReplayRecording?: StreamReplayRecording
 }) => {
-  const banner = getBanner(profile)
-  const { data } = usePublication({
-    // @ts-ignore
-    forId: streamReplayRecording?.publicationId
+  const banner = getBanner(account)
+  const { data } = usePost({
+    post: streamReplayRecording?.postId
   })
+
   const isMobile = useIsMobile()
-  const { data: mySession } = useSession()
+  const { isAuthenticated, account: sessionAccount } = useSession()
   const { websiteLink, twitterLink, instagramLink, githubLink, linkedInLink } =
-    getWebsiteLinksFromProfile(profile)
+    getWebsiteLinksFromProfile(account)
 
   const { data: isSubscribed, refetch } =
-    useIsSubcribedNotificationForStreamerQuery({
+    useIsSubscribedNotificationForStreamerQuery({
       variables: {
-        profileId: profile.id
+        accountAddress: account.address
       },
-      skip: mySession?.type !== SessionType.WithProfile || !profile.id
+      skip: !isAuthenticated || !account.address
     })
 
   const [addSubscriber] = useAddNotificationSubscriberToStreamerMutation({
     variables: {
-      profileId: profile.id
+      accountAddress: account.address
     },
     onCompleted: async () => {
       await refetch()
       toast.success(
-        `You will recieve notification when ${formatHandle(profile)} goes live!`
+        `You will receive notification when ${formatHandle(account)} goes live!`
       )
     }
   })
@@ -82,12 +78,12 @@ const StreamerOffline = ({
         >
           <div className="flex shrink-0 w-[300px]  flex-row sm:items-start items-center sm:space-y-4 sm:space-x-0 space-x-2 sm:flex-col pb-1">
             <img
-              src={getAvatar(profile)}
+              src={getAvatar(account)}
               className="sm:w-16 sm:h-16 w-4 h-4 rounded-full hidden sm:block"
             />
 
             <div className="text-xs sm:text-2xl font-bold text-p-text text-left">
-              {`${formatHandle(profile)} is offline.`}
+              {`${formatHandle(account)} is offline.`}
             </div>
 
             {(!isMobile ||
@@ -113,7 +109,7 @@ const StreamerOffline = ({
                     }) => {
                       if (completed) {
                         return (
-                          <div>{`Waiting for ${formatHandle(profile)}`} </div>
+                          <div>{`Waiting for ${formatHandle(account)} `}</div>
                         )
                       } else {
                         return (
@@ -170,14 +166,14 @@ const StreamerOffline = ({
                     className="pl-2 -ml-2"
                   />
                 )}
-                {mySession?.type === SessionType.WithProfile &&
-                  mySession?.profile?.id !== profile?.id && (
+                {isAuthenticated &&
+                  sessionAccount?.address !== account?.address && (
                     <>
-                      {isSubscribed?.isSubcribedNotificationForStreamer ? (
-                        <div className="flex flex-row gap-x-1 py-1.5 -ml-0.5 text-p-text text-s-text">
+                      {isSubscribed?.isSubscribedNotificationForStreamer ? (
+                        <div className="flex flex-row gap-x-1 py-1.5 -ml-0.5 text-s-text">
                           <NotificationsIcon fontSize="medium" />
                           <div className="text-left">
-                            You will be notified when {formatHandle(profile)}{' '}
+                            You will be notified when {formatHandle(account)}{' '}
                             goes live.
                           </div>
                         </div>
@@ -216,9 +212,8 @@ const StreamerOffline = ({
                 )}
                 // @ts-ignore
                 title={
-                  data?.__typename === 'Post'
-                    ? data?.metadata?.marketplace?.name
-                    : undefined
+                  // @ts-ignore
+                  data?.metadata?.title ?? 'Untitled'
                 }
               />
             </div>
@@ -226,7 +221,7 @@ const StreamerOffline = ({
         </div>
       </div>
 
-      <div className="absolute bottom-0 right-0 bg-black left-0 right-0 h-full w-full">
+      <div className="absolute bottom-0 right-0 bg-black left-0 h-full w-full">
         {banner ? (
           <>
             <img

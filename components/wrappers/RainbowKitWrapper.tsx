@@ -23,6 +23,7 @@ import {
   walletConnectWallet,
   zerionWallet
 } from '@rainbow-me/rainbowkit/wallets'
+import { cookieStorage } from '../../utils/lib/lens/storage'
 
 const defaultChains = isMainnet ? [chains.mainnet] : [chains.testnet]
 
@@ -69,7 +70,7 @@ const RainbowKitWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const client = PublicClient.create({
     environment: isMainnet ? mainnet : testnet,
-    storage: typeof window !== 'undefined' ? window.localStorage : undefined
+    storage: typeof window !== 'undefined' ? localStorage : cookieStorage
   })
 
   // Return null or a loading state on server-side

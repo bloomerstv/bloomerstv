@@ -1,4 +1,3 @@
-import { SessionType, useSession } from '@lens-protocol/react-web'
 import { ListItemButton } from '@mui/material'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -11,27 +10,28 @@ import WidgetsIcon from '@mui/icons-material/Widgets'
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
 import { useMyStreamQuery } from '../../../graphql/generated'
 import VerifiedBadge from '../../ui/VerifiedBadge'
+import useSession from '../../../utils/hooks/useSession'
 const DashboardSidebar = () => {
   const pathname = usePathname()
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
   const { data: myStream } = useMyStreamQuery({
-    skip: data?.type !== SessionType.WithProfile
+    skip: !isAuthenticated
   })
   return (
     <div className="min-w-[250px] max-w-[300px] h-full bg-s-bg overflow-auto">
-      {data?.type === SessionType.WithProfile && (
+      {isAuthenticated && (
         <Link
-          href={`/${formatHandle(data?.profile)}`}
+          href={`/${formatHandle(account)}`}
           className="text-p-text no-underline"
         >
           <div className="flex flex-col items-center justify-center my-4">
             <img
               className="w-20 h-20 rounded-full my-2"
-              src={getAvatar(data?.profile)}
+              src={getAvatar(account)}
               alt="avatar"
             />
             <div className="text-sm font-bold text-s-text start-center-row gap-x-1">
-              <div>{formatHandle(data?.profile)}</div>
+              <div>{formatHandle(account)}</div>
               {myStream?.myStream?.premium && <VerifiedBadge />}
             </div>
           </div>

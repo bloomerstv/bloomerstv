@@ -14,12 +14,7 @@ import useEns from '../../utils/hooks/useEns'
 import getStampFyiURL from '../../utils/getStampFyiURL'
 import { getShortAddress } from '../../utils/lib/getShortAddress'
 import LoadingImage from '../ui/LoadingImage'
-import {
-  Role,
-  useAccountsAvailable,
-  useAuthenticatedUser,
-  useLogin
-} from '@lens-protocol/react'
+import { Role, useAccountsAvailable, useLogin } from '@lens-protocol/react'
 import { signMessageWith } from '@lens-protocol/react/viem'
 import useSession from '../../utils/hooks/useSession'
 import { APP_ADDRESS } from '../../utils/config'

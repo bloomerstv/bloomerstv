@@ -1,6 +1,5 @@
 import React from 'react'
 import SearchIcon from '@mui/icons-material/Search'
-import { LimitType, useSearchProfiles } from '@lens-protocol/react-web'
 import {
   ClickAwayListener,
   IconButton,
@@ -10,17 +9,22 @@ import {
 } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import formatHandle from '../../../../utils/lib/formatHandle'
-import MobileProfileList from '../../../ui/profile/MobileProfileList'
+import MobileProfileList from '../../../ui/account/MobileProfileList'
 import CloseIcon from '@mui/icons-material/Close'
 import clsx from 'clsx'
+import { useAccounts } from '@lens-protocol/react'
 const HeaderSearch = () => {
   const { push } = useRouter()
 
   const [search, setSearch] = React.useState('')
 
-  const { data } = useSearchProfiles({
-    query: search,
-    limit: LimitType.Ten
+  const { data } = useAccounts({
+    filter: {
+      searchBy: {
+        localNameQuery: search
+      }
+    },
+    pageSize: 10
   })
 
   // @ts-ignore
@@ -37,7 +41,7 @@ const HeaderSearch = () => {
           <SearchIcon className="text-s-text" />
           <input
             type="text"
-            className="w-full rounded-xl border-0 text-sm px-6 text-lg font-semibold bg-s-bg outline-none text-p-text"
+            className="w-full rounded-xl border-0 text-sm px-6 font-semibold bg-s-bg outline-none text-p-text"
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -62,16 +66,19 @@ const HeaderSearch = () => {
             )}
           >
             <List>
-              {data?.map((profile) => (
-                <ListItem disablePadding key={profile?.id}>
+              {data?.items.map((account) => (
+                <ListItem disablePadding key={account?.address}>
                   <ListItemButton
                     onClick={() => {
                       closeSearch()
-                      push(`/${formatHandle(profile)}`)
+                      push(`/${formatHandle(account)}`)
                     }}
-                    key={profile?.id}
+                    key={account?.address}
                   >
-                    <MobileProfileList profile={profile} key={profile?.id} />
+                    <MobileProfileList
+                      account={account}
+                      key={account?.address}
+                    />
                   </ListItemButton>
                 </ListItem>
               ))}

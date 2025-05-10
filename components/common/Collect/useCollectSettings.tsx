@@ -1,27 +1,22 @@
-import {
-  Erc20Amount,
-  OpenActionType,
-  RecipientWithSplit,
-  SessionType,
-  useSession
-} from '@lens-protocol/react-web'
+import { Erc20Amount, PostActionType } from '@lens-protocol/react'
 import { useCollectPreferences } from '../../store/useCollectPreferences'
+import useSession from '../../../utils/hooks/useSession'
 type CollectSettingsResponse = {
-  type?: OpenActionType.MULTIRECIPIENT_COLLECT | OpenActionType.SIMPLE_COLLECT
+  type?: PostActionType.SimpleCollectAction
   amount?: Erc20Amount
   collectLimit?: number
   endsAt?: Date
   followerOnly: boolean
   recipient?: string
   referralFee?: number
-  recipients?: RecipientWithSplit[]
+  // recipients?: RecipientWithSplit[]
 }
 
 const useCollectSettings = (): CollectSettingsResponse => {
-  const { data } = useSession()
+  const { account, isAuthenticated } = useSession()
   const {
     amount,
-    recipients,
+    // recipients,
     disableCollect,
     collectLimit,
     referalFee,
@@ -29,7 +24,7 @@ const useCollectSettings = (): CollectSettingsResponse => {
     followerOnly
   } = useCollectPreferences((state) => state)
 
-  if (data?.type !== SessionType.WithProfile || disableCollect) {
+  if (!isAuthenticated || disableCollect) {
     return {
       type: undefined,
       amount: undefined,
@@ -40,10 +35,10 @@ const useCollectSettings = (): CollectSettingsResponse => {
   }
 
   return {
-    type:
-      amount && recipients && recipients?.length > 1
-        ? OpenActionType.MULTIRECIPIENT_COLLECT
-        : OpenActionType.SIMPLE_COLLECT,
+    type: PostActionType.SimpleCollectAction,
+    // amount && recipients && recipients?.length > 1
+    //   ? OpenActionType.MULTIRECIPIENT_COLLECT
+    //   : OpenActionType.SIMPLE_COLLECT,
     amount,
     collectLimit,
     endsAt: numberOfDays
@@ -51,10 +46,10 @@ const useCollectSettings = (): CollectSettingsResponse => {
       : undefined,
     referralFee:
       referalFee && referalFee > 0 && referalFee < 100 ? referalFee : undefined,
-    recipients:
-      amount && recipients && recipients?.length > 0 ? recipients : undefined,
+    // recipients:
+    //   amount && recipients && recipients?.length > 0 ? recipients : undefined,
     followerOnly: followerOnly,
-    recipient: data?.address
+    recipient: account?.owner
   }
 }
 

@@ -12,7 +12,8 @@ export const isMainnet = process.env.NEXT_PUBLIC_LENS_MODE
   : true
 
 export const APP_ADDRESS = isMainnet
-  ? '0x8A5Cc31180c37078e1EbA2A23c861Acf351a97cE'
+  ? // bloomers.tv
+    '0x5eD76435f79E025Ca5c534e17184FEC29b681DB5'
   : '0xC75A89145d765c396fd75CbD16380Eb184Bd2ca7'
 
 export const AVATAR = 'tr:w-120,h-120'
@@ -60,10 +61,10 @@ export const NODE_GRAPHQL_URL = `${NODE_API_URL}/graphql`
 export const LIVE_PEER_RTMP_URL = 'rtmp://rtmp.livepeer.com/live'
 
 export const localStorageCredKey = isMainnet
-  ? 'lens.production.credentials'
-  : 'lens.development.credentials'
-export const lensTestnetUrl = 'https://api-v2-amoy.lens.dev'
-export const lensMainnetUrl = 'https://api-v2.lens.dev'
+  ? 'lens.mainnet.credentials'
+  : 'lens.testnet.credentials'
+export const lensTestnetUrl = 'https://api.testnet.lens.dev/graphql'
+export const lensMainnetUrl = 'https://api.lens.xyz/graphql'
 export const wsLensGraphEndpoint = isMainnet
   ? 'wss://api-v2.lens.dev'
   : 'wss://api-v2-amoy.lens.dev'
@@ -230,7 +231,7 @@ export const SuperFluidInfo = {
 }
 
 // todo, move this to api to add / remove profiles from this list on the backend
-export const hideProfilesIds: string[] = []
+export const hideAccountAddresses: string[] = []
 
 export const NEXT_PUBLIC_VAPID_KEY =
   'BDv44ZwY7G3E1fgEuHeiw74cda-LG9gOFwTLFaD2ArveOdd3meLf37noJbztWUeS8GFSR59SjRpYToF3oZrG1dE'

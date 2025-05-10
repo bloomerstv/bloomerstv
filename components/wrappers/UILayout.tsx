@@ -9,13 +9,13 @@ import LoginPage from '../pages/home/LoginPage'
 import StreamerSidebar from '../common/StreamerSidebar'
 import { usePathname } from 'next/navigation'
 import DashboardSidebar from '../pages/dashboard/DashboardSidebar'
-import { useStreamReplayPublications } from '../../utils/hooks/useStreamReplayPublications'
 import useLiveStreamerProfiles from '../../utils/hooks/useLiveStreamerProfiles'
 import useNotifictionSubscriptions from '../../utils/hooks/useNotifictionSubscriptions'
 import { ModalRoot } from '../common/ModalRoot'
 import ModalWrapper from '../ui/Modal/ModalWrapper'
 import InstallMobileIcon from '@mui/icons-material/InstallMobile'
 import MigrationNotice from '../common/MigrationNotice'
+import { useStreamReplayPosts } from '../../utils/hooks/useStreamReplayPosts'
 
 interface Props {
   // Define any props that the component will accept
@@ -256,14 +256,14 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
             <div className="w-full absolute left-0 right-0 top-0 ">
               <TopHeader />
             </div>
-            {/* <div className="start-center-row h-dvh pt-[50px] overflow-hidden">
+            <div className="start-center-row h-dvh pt-[50px] overflow-hidden">
               {pathname.startsWith('/dashboard') ? (
                 <DashboardSidebar />
               ) : (
                 <>{pathname === '/' && <StreamerSidebar />}</>
               )}
               <div className="h-full w-full">{children}</div>
-            </div> */}
+            </div>
           </div>
         </div>
       )}
@@ -272,9 +272,9 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
 }
 
 const GlobalHooks = () => {
-  // useStreamReplayPublications({})
-  // useLiveStreamerProfiles()
-  // useNotifictionSubscriptions()
+  useStreamReplayPosts({})
+  useLiveStreamerProfiles()
+  useNotifictionSubscriptions()
 
   return <></>
 }

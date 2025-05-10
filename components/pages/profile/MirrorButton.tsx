@@ -3,34 +3,32 @@ import React, { useEffect } from 'react'
 import { defaultSponsored } from '../../../utils/config'
 import toast from 'react-hot-toast'
 import AutorenewIcon from '@mui/icons-material/Autorenew'
-import {
-  AnyPublication,
-  SessionType,
-  useCreateMirror,
-  useSession
-} from '@lens-protocol/react-web'
+
 import { useModal } from '../../common/ModalContext'
 import clsx from 'clsx'
 import { AnimatedCounter } from 'react-animated-counter'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
+import { AnyPost } from '@lens-protocol/react'
+import useSession from '../../../utils/hooks/useSession'
+import useRepost from '../../../utils/hooks/lens/useRepost'
 
 const MirrorButton = ({
-  publication,
-  mirrorsCount
+  post,
+  repostsCount
 }: {
-  publication: AnyPublication
-  mirrorsCount: number
+  post: AnyPost
+  repostsCount: number
 }) => {
   const { theme } = useTheme()
-  const { data: mySession } = useSession()
+  const { isAuthenticated, account } = useSession()
   const { openModal } = useModal()
   const [isMirrored, setIsMirrored] = React.useState(false)
-  const [newMirrorsCount, setNewMirrorsCount] = React.useState(mirrorsCount)
+  const [newMirrorsCount, setNewMirrorsCount] = React.useState(repostsCount)
 
-  const { execute: createMirror } = useCreateMirror()
+  const { execute: createRepost } = useRepost()
 
   const mustLogin = (infoMsg: string = 'Must Login'): Boolean => {
-    if (mySession?.type !== SessionType.WithProfile) {
+    if (!isAuthenticated) {
       openModal('login')
       toast.error(infoMsg)
       return false
@@ -44,13 +42,11 @@ const MirrorButton = ({
       if (isMirrored) return
       setNewMirrorsCount(newMirrorsCount + 1)
       setIsMirrored(true)
-      const result = await createMirror({
-        // @ts-ignore
-        mirrorOn: publication?.id,
-        sponsored: defaultSponsored
+      const result = await createRepost({
+        post: post?.id
       })
 
-      if (result.isFailure()) {
+      if (result.isErr()) {
         toast.error(result?.error?.message)
       }
     } catch (error) {
@@ -61,13 +57,14 @@ const MirrorButton = ({
   }
 
   useEffect(() => {
-    setNewMirrorsCount(mirrorsCount)
-  }, [mirrorsCount])
+    setNewMirrorsCount(repostsCount)
+  }, [repostsCount])
 
   useEffect(() => {
-    if (publication?.__typename === 'Mirror') return
-    setIsMirrored(publication?.operations?.hasMirrored)
-  }, [publication?.id])
+    if (post?.__typename === 'Repost') return
+    setIsMirrored(!!post?.operations?.hasReposted)
+  }, [post?.id])
+
   return (
     <Tooltip title="Mirror" arrow>
       <Button

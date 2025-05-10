@@ -1,6 +1,9 @@
 import { Account } from '@lens-protocol/react'
 
-const formatHandle = (account?: Account, keepSuffix = false): string => {
+const formatHandle = (account?: Account | null, keepSuffix = false): string => {
+  if (!account) {
+    return ''
+  }
   const handleInfo = account?.username
 
   if (!handleInfo) {

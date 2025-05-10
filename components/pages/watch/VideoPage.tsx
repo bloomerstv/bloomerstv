@@ -1,9 +1,3 @@
-import {
-  Post,
-  SessionType,
-  useProfile,
-  useSession
-} from '@lens-protocol/react-web'
 import React, { memo, useEffect } from 'react'
 import getPublicationData from '../../../utils/lib/getPublicationData'
 import ProfileInfoWithStream from '../profile/ProfileInfoWithStream'
@@ -19,6 +13,8 @@ import { useStreamReplayRecordingQuery } from '../../../graphql/generated'
 import Player from '../../common/Player/Player'
 import { getCategoryForTag } from '../../../utils/categories'
 import Link from 'next/link'
+import { Post, useAccount } from '@lens-protocol/react'
+import useSession from '../../../utils/hooks/useSession'
 const VideoPage = ({
   post,
   sessionId
@@ -27,23 +23,24 @@ const VideoPage = ({
   sessionId?: string
 }) => {
   const isMobile = useIsMobile()
-  const { data: session } = useSession()
+  const { isAuthenticated, account: sessionAccount } = useSession()
 
   const asset = post ? getPublicationData(post?.metadata)?.asset : null
 
   const { data, error } = useStreamReplayRecordingQuery({
     variables: {
-      publicationId: post?.id,
+      postId: post?.id,
       sessionId: sessionId
     },
     skip:
-      (post && post?.metadata?.__typename !== 'LiveStreamMetadataV3') ||
+      (post &&
+        post?.__typename === 'Post' &&
+        post?.metadata?.__typename !== 'LivestreamMetadata') ||
       (!post?.id && !sessionId)
   })
 
-  const { data: profile } = useProfile({
-    // @ts-ignore
-    forProfileId: data?.streamReplayRecording?.profileId
+  const { data: account } = useAccount({
+    address: data?.streamReplayRecording?.accountAddress
   })
 
   useEffect(() => {
@@ -82,8 +79,8 @@ const VideoPage = ({
 
   if (
     post &&
-    post?.metadata?.__typename !== 'VideoMetadataV3' &&
-    post?.metadata?.__typename !== 'LiveStreamMetadataV3'
+    post?.metadata?.__typename !== 'VideoMetadata' &&
+    post?.metadata?.__typename !== 'LivestreamMetadata'
   ) {
     return (
       <div className="centered">
@@ -97,7 +94,7 @@ const VideoPage = ({
       {/* @ts-ignore */}
 
       <div className="sm:rounded-xl  overflow-hidden ">
-        {post?.metadata?.__typename === 'LiveStreamMetadataV3' ||
+        {post?.metadata?.__typename === 'LivestreamMetadata' ||
         data?.streamReplayRecording?.recordingUrl ? (
           <>
             {/* //todo here check if there is a recording is allowd to  from api, fetch it and show it here instead of liveUrl  */}
@@ -131,15 +128,18 @@ const VideoPage = ({
 
           <div className="">
             {`${
-              post?.metadata?.__typename === 'LiveStreamMetadataV3' ||
+              post?.metadata?.__typename === 'LivestreamMetadata' ||
               (!post && sessionId)
                 ? 'Streamed'
                 : 'Posted'
-            } ${timeAgo(post?.createdAt || data?.streamReplayRecording?.createdAt)}`}{' '}
+            } ${timeAgo(post?.timestamp || data?.streamReplayRecording?.createdAt)}`}{' '}
           </div>
+          {/* @ts-ignore */}
           {post?.metadata?.tags?.[0] &&
+            // @ts-ignore
             getCategoryForTag(post?.metadata?.tags?.[0]) && (
               <div className="text-p-text bg-p-bg sm:bg-p-hover rounded-lg px-2 sm:px-3 py-0.5 sm:py-1 text-xs">
+                {/* @ts-ignore */}
                 {getCategoryForTag(post?.metadata?.tags?.[0])}
               </div>
             )}
@@ -166,8 +166,8 @@ const VideoPage = ({
           </Markup>
         ) : (
           <div>
-            {session?.type === SessionType.WithProfile &&
-              session?.profile?.id === profile?.id && (
+            {isAuthenticated &&
+              sessionAccount?.address === account?.address && (
                 <span className="text-2xl">
                   You can create a lens post for your untitled streams from{' '}
                   <span>
@@ -194,7 +194,7 @@ const VideoPage = ({
       {!isMobile && post && (
         <div className="border-t border-p-border mt-8 mb-4 mx-8">
           <div className="text-xl font-semibold my-4">{`${post?.stats?.comments} Comment${post?.stats?.comments > 1 ? 's' : ''}`}</div>
-          <CommentSection publication={post} />
+          <CommentSection post={post} />
         </div>
       )}
       {isMobile && <OtherVideosRecommendations className="py-4" />}

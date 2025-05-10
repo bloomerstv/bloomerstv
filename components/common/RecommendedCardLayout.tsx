@@ -2,16 +2,16 @@ import Link from 'next/link'
 import React from 'react'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import formatHandle from '../../utils/lib/formatHandle'
-import { Profile, PublicationStats } from '@lens-protocol/react-web'
 import { timeAgo } from '../../utils/helpers'
 import { stringToLength } from '../../utils/stringToLength'
 import Markup from './Lexical/Markup'
 import LoadingImage from '../ui/LoadingImage'
+import { Account, PostStats } from '@lens-protocol/react'
 
 const RecommendedCardLayout = ({
   postLink,
   coverUrl,
-  profile,
+  account,
   stats,
   createdAt,
   title
@@ -19,8 +19,8 @@ const RecommendedCardLayout = ({
   title: string
   postLink: string
   coverUrl?: string
-  profile: Profile
-  stats: PublicationStats
+  account: Account
+  stats: PostStats
   createdAt: string
 }) => {
   return (
@@ -46,9 +46,9 @@ const RecommendedCardLayout = ({
           <Link
             prefetch
             className="no-underline text-p-text w-full text-sm"
-            href={`/${formatHandle(profile)}`}
+            href={`/${formatHandle(account)}`}
           >
-            <div className="text-s-text">{formatHandle(profile)}</div>
+            <div className="text-s-text">{formatHandle(account)}</div>
           </Link>
           <div className="text-xs text-s-text">
             {stats.upvotes} likes &middot; {timeAgo(createdAt)}

@@ -1,11 +1,11 @@
 import React from 'react'
 import { APP_NAME } from '../../../../utils/config'
 import LoginButton from './LoginButton'
-import { SessionType, useSession } from '@lens-protocol/react-web'
 import CreatePostButton from './CreatePostButton'
+import useSession from '../../../../utils/hooks/useSession'
 
 const MobileTopHeader = () => {
-  const { data } = useSession()
+  const { isAuthenticated } = useSession()
 
   return (
     <>
@@ -20,7 +20,7 @@ const MobileTopHeader = () => {
         </div>
 
         <div className="centered-row gap-x-1">
-          {data?.type === SessionType.WithProfile && <CreatePostButton />}
+          {isAuthenticated && <CreatePostButton />}
 
           <LoginButton />
         </div>

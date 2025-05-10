@@ -2,29 +2,27 @@ import React from 'react'
 import { Button, ListItemIcon, Menu, MenuItem, MenuList } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import BlockIcon from '@mui/icons-material/Block'
-import {
-  SessionType,
-  useBlockProfiles,
-  useProfile,
-  useSession
-} from '@lens-protocol/react-web'
+
 import toast from 'react-hot-toast'
 import LoadingButton from '@mui/lab/LoadingButton'
-import { defaultSponsored, HEY_APP_LINK } from '../../../utils/config'
+import { HEY_APP_LINK } from '../../../utils/config'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
+import useSession from '../../../utils/hooks/useSession'
+import { useAccount } from '@lens-protocol/react'
+import useBlockAccount from '../../../utils/hooks/lens/useBlockAccount'
 
 const ChatOptions = ({
   handle,
   avatarUrl,
-  profileId,
-  chatProfileId,
+  accountAddress,
+  chatAccountAddress,
   socket,
   anchorEl,
   setAnchorEl,
   onClose
 }: {
-  chatProfileId?: string
-  profileId?: string
+  chatAccountAddress?: string
+  accountAddress?: string
   handle: string
   avatarUrl: string
   socket: any
@@ -32,48 +30,47 @@ const ChatOptions = ({
   setAnchorEl: (anchorEl: any) => void
   onClose: () => void
 }) => {
+  const { execute } = useBlockAccount()
   const [isPopUpOpen, setIsPopUpOpen] = React.useState(false)
 
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
   const handleClose = () => {
     setAnchorEl(null)
     onClose?.()
   }
 
-  const { data: profile, loading: profileLoading } = useProfile({
-    // @ts-ignore
-    forProfileId: profileId
+  const { data: optionAccount, loading: optionAccountLoading } = useAccount({
+    address: accountAddress
   })
+
   const { push } = useRouter()
-  const { execute: blockProfiles, loading } = useBlockProfiles()
+  const [loading, setLoading] = React.useState(false)
 
   const handleBanAndBlock = async () => {
-    if (!profileId || profileLoading) return
+    if (!accountAddress || optionAccountLoading) return
 
-    if (profile) {
+    if (optionAccount) {
       try {
         // send block request on lens
 
-        const { isFailure } = await blockProfiles({
-          profiles: [profile],
-          sponsored: defaultSponsored
+        const result = await execute({
+          account: optionAccount?.address
         })
 
-        if (isFailure()) {
-          toast.error(
-            'Failed to block profile on lens. But message will be removed from chat.'
-          )
+        if (result?.isErr()) {
+          toast.error(result.error.message)
+          return
         }
 
         // send block request on ws, after confirmation from ws, user with profileId will be blocked in real time from chatting
-        socket.emit('block-profile', profile?.id)
+        socket.emit('block-profile', accountAddress)
 
         setIsPopUpOpen(false)
       } catch (error) {
         toast.error(String(error))
       }
     } else {
-      socket.emit('block-profile', profileId)
+      socket.emit('block-profile', accountAddress)
 
       setIsPopUpOpen(false)
     }
@@ -85,7 +82,8 @@ const ChatOptions = ({
 
   const open = Boolean(anchorEl)
 
-  const isWalletMsg = profileId && profileId?.length > 20
+  // const isWalletMsg = profileId && profileId?.length > 20
+  const isWalletMsg = false
 
   return (
     <div>
@@ -120,14 +118,14 @@ const ChatOptions = ({
             {handle}?
           </div>
 
-          {profile && (
+          {optionAccount && (
             <div className="text-sm text-s-text font-semibold">
               This actions is also a lens block, so you won't be able to see{' '}
               {handle}'s posts from other lens clients.
             </div>
           )}
 
-          {profile && (
+          {optionAccount && (
             <div className="text-sm text-s-text font-semibold">
               Chat Messages are removed just from this bloomerstv chat and
               corresponding Lens Comments can't be removed.
@@ -190,9 +188,9 @@ const ChatOptions = ({
           )}
 
           {socket &&
-            data?.type === SessionType.WithProfile &&
-            profile?.id !== data?.profile?.id &&
-            chatProfileId === data?.profile?.id && (
+            isAuthenticated &&
+            optionAccount?.address !== account?.address &&
+            chatAccountAddress === optionAccount?.address && (
               <MenuItem onClick={openBanAndBlockPopup}>
                 <ListItemIcon>
                   <BlockIcon fontSize="small" />

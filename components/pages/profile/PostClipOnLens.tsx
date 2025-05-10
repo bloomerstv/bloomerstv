@@ -6,14 +6,6 @@ import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../utils/getUserLocale'
 import { MediaVideoMimeType, shortVideo } from '@lens-protocol/metadata'
 import {
-  OpenActionConfig,
-  OpenActionType,
-  Profile,
-  SessionType,
-  useCreatePost,
-  useSession
-} from '@lens-protocol/react-web'
-import {
   APP_ID,
   APP_LINK,
   defaultSponsored
@@ -22,14 +14,18 @@ import {
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
 import { useUploadDataToArMutation } from '../../../graphql/generated'
-import useCollectSettings from '../../common/Collect/useCollectSettings'
+// import useCollectSettings from '../../common/Collect/useCollectSettings'
 import CollectSettingButton from '../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
 // import uploadToIPFS from '../../../utils/uploadToIPFS'
 // import { getThumbnailFromVideoUrl } from '../../../utils/generateThumbnail'
 import { useMyPreferences } from '../../store/useMyPreferences'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
-import { usePublicationsStore } from '../../store/usePublications'
+import { usePostsStore } from '../../store/usePosts'
+import { Account, useCreatePost } from '@lens-protocol/react'
+import useSession from '../../../utils/hooks/useSession'
+import { handleOperationWith } from '@lens-protocol/react/viem'
+import { useWalletClient } from 'wagmi'
 // import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
 
@@ -37,27 +33,27 @@ const PostClipOnLens = ({
   open,
   setOpen,
   url,
-  profile,
+  account,
   sessionId
 }: {
   open: boolean
   setOpen: (open: boolean) => void
   url: string
-  profile?: Profile
+  account?: Account
   sessionId?: string | null
 }) => {
-  const {
-    type,
-    amount,
-    collectLimit,
-    endsAt,
-    followerOnly,
-    recipients,
-    referralFee,
-    recipient
-  } = useCollectSettings()
-  const setClipPost = usePublicationsStore((state) => state.setClipPost)
-  const { data } = useSession()
+  // const {
+  //   type,
+  //   amount,
+  //   collectLimit,
+  //   endsAt,
+  //   followerOnly,
+  //   recipients,
+  //   referralFee,
+  //   recipient
+  // } = useCollectSettings()
+  const setClipPost = usePostsStore((state) => state.setClipPost)
+  const { isAuthenticated } = useSession()
   const { category, setCategory } = useMyPreferences((state) => {
     return {
       category: state.category,
@@ -65,9 +61,10 @@ const PostClipOnLens = ({
     }
   })
   const [title, setTitle] = React.useState(
-    `Clip from @${profile?.handle?.fullHandle} 's stream`
+    `Clip from @${account?.username?.value} 's stream`
   )
-  const { execute } = useCreatePost()
+  const { data: walletClient } = useWalletClient()
+  const { execute } = useCreatePost(handleOperationWith(walletClient))
 
   const [uploadDataToAR] = useUploadDataToArMutation()
 
@@ -78,7 +75,7 @@ const PostClipOnLens = ({
       return
     }
 
-    if (data?.type !== SessionType.WithProfile) {
+    if (!isAuthenticated) {
       toast.error('Please login to create a post')
       return
     }
@@ -89,7 +86,7 @@ const PostClipOnLens = ({
     // generate thumbnail from video
 
     const tags = [
-      `clip-${formatHandle(profile)}`,
+      `clip-${formatHandle(account)}`,
       ...getTagsForCategory(category)
     ]
     if (sessionId) {
@@ -110,13 +107,6 @@ const PostClipOnLens = ({
     const metadata = shortVideo({
       title: title,
       content: title,
-      marketplace: {
-        name: title,
-        description: title,
-        external_url: APP_LINK,
-        animation_url: url,
-        image: coverImageUrl
-      },
       video: {
         item: url,
         cover: coverImageUrl,
@@ -125,7 +115,6 @@ const PostClipOnLens = ({
         altTag: title
       },
       tags: tags,
-      appId: APP_ID,
       id,
       locale
     })
@@ -142,32 +131,32 @@ const PostClipOnLens = ({
       throw new Error('Error uploading metadata to AR')
     }
 
-    let actions: OpenActionConfig[] | undefined = undefined
+    // let actions: OpenActionConfig[] | undefined = undefined
 
-    if (type) {
-      actions = [
-        // @ts-ignore
-        {
-          type,
-          // @ts-ignore
-          amount,
-          collectLimit,
-          endsAt,
-          followerOnly,
-          referralFee: amount ? referralFee : undefined
-        }
-      ]
+    // if (type) {
+    //   actions = [
+    //     // @ts-ignore
+    //     {
+    //       type,
+    //       // @ts-ignore
+    //       amount,
+    //       collectLimit,
+    //       endsAt,
+    //       followerOnly,
+    //       referralFee: amount ? referralFee : undefined
+    //     }
+    //   ]
 
-      if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
-        // @ts-ignore
-        actions[0]['recipients'] = recipients
-      }
+    //   if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
+    //     // @ts-ignore
+    //     actions[0]['recipients'] = recipients
+    //   }
 
-      if (type === OpenActionType.SIMPLE_COLLECT) {
-        // @ts-ignore
-        actions[0]['recipient'] = recipient
-      }
-    }
+    //   if (type === OpenActionType.SIMPLE_COLLECT) {
+    //     // @ts-ignore
+    //     actions[0]['recipient'] = recipient
+    //   }
+    // }
 
     // if (isMainnet) {
     //   actions?.push({
@@ -183,21 +172,18 @@ const PostClipOnLens = ({
 
     // invoke the `execute` function to create the post
     const result = await execute({
-      metadata: `ar://${transactionId}`,
-      sponsored: defaultSponsored,
-      actions: actions
+      contentUri: `ar://${transactionId}`
+      // actions: actions
     })
 
-    if (!result.isSuccess()) {
+    if (result.isErr()) {
       toast.error(result.error.message)
       // handle failure scenarios
       throw new Error('Error creating post')
     }
 
-    const post = await result?.value?.waitForCompletion()
-
-    if (post?.isSuccess()) {
-      setClipPost(post?.value)
+    if (result?.isOk()) {
+      setClipPost(result?.value)
     }
   }
 
@@ -252,12 +238,12 @@ const PostClipOnLens = ({
             helperText={`${100 - title.length} / 100 characters remaining`}
           />
 
-          <div className="space-y-1">
+          {/* <div className="space-y-1">
             <div className="text-sm font-semibold text-s-text">
               Collect Settings
             </div>
             <CollectSettingButton />
-          </div>
+          </div> */}
 
           <div className="space-y-1">
             <div className="text-s-text font-bold text-md">Category</div>

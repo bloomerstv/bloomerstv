@@ -1,5 +1,5 @@
 import React from 'react'
-import { StreamerWithProfile } from '../../store/useStreamersWithProfiles'
+import { StreamerWithProfile } from '../../store/useStreamersWithAccounts'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
 import Link from 'next/link'

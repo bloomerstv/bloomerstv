@@ -1,9 +1,9 @@
-import { Post } from '@lens-protocol/react-web'
 import React from 'react'
 import useIsMobile from '../../utils/hooks/useIsMobile'
 import HomeVideoCard from './HomeVideoCard'
 import getPublicationData from '../../utils/lib/getPublicationData'
 import RecommendedCardLayout from './RecommendedCardLayout'
+import { Post } from '@lens-protocol/react'
 
 const RecommendedVideoCard = ({ post }: { post: Post }) => {
   const isMobile = useIsMobile()
@@ -20,9 +20,9 @@ const RecommendedVideoCard = ({ post }: { post: Post }) => {
       title={post?.metadata?.title}
       postLink={`/watch/${post?.id}`}
       coverUrl={asset?.cover}
-      profile={post?.by}
+      account={post?.author}
       stats={post?.stats}
-      createdAt={post?.createdAt}
+      createdAt={post?.timestamp}
     />
   )
 }

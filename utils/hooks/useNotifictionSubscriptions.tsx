@@ -1,14 +1,14 @@
-import { SessionType, useSession } from '@lens-protocol/react-web'
 import { useEffect } from 'react'
 import { subscribeUserToPush } from '../lib/notification'
 import { useAddSubscriptionMutation } from '../../graphql/generated'
+import useSession from './useSession'
 
 const useNotifictionSubscriptions = () => {
-  const { data } = useSession()
+  const { isAuthenticated } = useSession()
   const [addSubscription] = useAddSubscriptionMutation()
 
   useEffect(() => {
-    if (data?.type !== SessionType.WithProfile) return
+    if (!isAuthenticated) return
     subscribeUserToPush(async (subscription) => {
       await addSubscription({
         variables: {
@@ -16,7 +16,7 @@ const useNotifictionSubscriptions = () => {
         }
       })
     })
-  }, [data?.type])
+  }, [isAuthenticated])
 }
 
 export default useNotifictionSubscriptions

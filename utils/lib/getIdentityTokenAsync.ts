@@ -21,8 +21,15 @@ export const getIdentityTokenAsync = async (): Promise<null | string> => {
             refresh(request: {
                 refreshToken: "${refreshToken}"
             }) {
-                refreshToken
-                identityToken
+                 ... on AuthenticationTokens {
+                    accessToken
+                    refreshToken
+                    idToken
+                  }
+
+                  ... on ForbiddenError {
+                    reason
+                  }
             }
         }
       `
@@ -33,7 +40,7 @@ export const getIdentityTokenAsync = async (): Promise<null | string> => {
 
     const json = await res.json()
 
-    const identityToken = json?.data?.refresh?.identityToken
+    const identityToken = json?.data?.refresh?.idToken
 
     if (!identityToken) return null
 
@@ -80,8 +87,15 @@ export const getAccessTokenAsync = async (): Promise<null | string> => {
             refresh(request: {
                 refreshToken: "${refreshToken}"
             }) {
-                refreshToken
-                accessToken
+                 ... on AuthenticationTokens {
+                    accessToken
+                    refreshToken
+                    idToken
+                  }
+
+                  ... on ForbiddenError {
+                    reason
+                  }
             }
         }
       `

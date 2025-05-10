@@ -1,33 +1,29 @@
-import {
-  Post,
-  PublicationMetadataMainFocusType,
-  PublicationType,
-  usePublications
-} from '@lens-protocol/react-web'
 import React, { useCallback } from 'react'
-import { APP_ID, hideProfilesIds } from '../../../utils/config'
+import { APP_ADDRESS, APP_ID, hideProfilesIds } from '../../../utils/config'
 import clsx from 'clsx'
 import RecommendedVideoCard from '../../common/RecommendedVideoCard'
-import { usePublicationsStore } from '../../store/usePublications'
+import { usePublicationsStore } from '../../store/usePosts'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import RecommendedCardLayout from '../../common/RecommendedCardLayout'
 import { usePathname } from 'next/navigation'
+import {
+  MainContentFocus,
+  Post,
+  PostType,
+  usePosts
+} from '@lens-protocol/react'
 
 const OtherVideosRecommendations = ({ className }: { className?: string }) => {
   const isMobile = useIsMobile()
   const pathname = usePathname()
-  const { data } = usePublications({
-    where: {
-      publicationTypes: [PublicationType.Post],
+  const { data } = usePosts({
+    filter: {
+      postTypes: [PostType.Root],
       metadata: {
-        mainContentFocus: [
-          PublicationMetadataMainFocusType.Video,
-          PublicationMetadataMainFocusType.ShortVideo
-        ],
-        // @ts-ignore
-        publishedOn: [APP_ID]
-      }
+        mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo]
+      },
+      apps: [APP_ADDRESS]
     }
   })
 
@@ -52,7 +48,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
 
   // add type streamClips to data
   const streamClips =
-    data?.map((post) => {
+    data?.items.map((post) => {
       return {
         ...post,
         type: 'streamClips'
@@ -108,9 +104,9 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
                 // @ts-ignore
                 coverUrl={getStreamReplay(post?.id)?.thumbnail}
                 postLink={`/watch/${post?.id}`}
-                profile={post?.by}
+                account={post?.author}
                 // @ts-ignore
-                stats={post?.stats}
+                stats={post?.stats as PostStats}
                 // @ts-ignore
                 title={post?.metadata?.title}
                 key={post?.id}

@@ -1,30 +1,28 @@
-import { PublicationMetadataMedia } from '@lens-protocol/react-web'
 import { Maybe } from '../../graphql/generated'
+import { AnyMedia } from '@lens-protocol/react'
 
-const getAttachmentsData = (
-  attachments?: Maybe<PublicationMetadataMedia[]>
-): any => {
+const getAttachmentsData = (attachments?: Maybe<AnyMedia[]>): any => {
   if (!attachments) {
     return []
   }
 
   return attachments.map((attachment) => {
     switch (attachment.__typename) {
-      case 'PublicationMetadataMediaImage':
+      case 'MediaImage':
         return {
-          uri: attachment.image.optimized?.uri,
+          uri: attachment.item,
           type: 'Image'
         }
-      case 'PublicationMetadataMediaVideo':
+      case 'MediaVideo':
         return {
-          uri: attachment.video.optimized?.uri,
-          coverUri: attachment.cover?.optimized?.uri,
+          uri: attachment.item,
+          coverUri: attachment.cover,
           type: 'Video'
         }
-      case 'PublicationMetadataMediaAudio':
+      case 'MediaAudio':
         return {
-          uri: attachment.audio.optimized?.uri,
-          coverUri: attachment.cover?.optimized?.uri,
+          uri: attachment.item,
+          coverUri: attachment.cover,
           artist: attachment.artist,
           type: 'Audio'
         }

@@ -3,8 +3,9 @@ import React, { useState } from 'react'
 import CommentIcon from '@mui/icons-material/Comment'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import CommentSection from './CommentSection'
-import { AnyPublication } from '@lens-protocol/react-web'
-const MobileCommentButton = ({ post }: { post: AnyPublication }) => {
+import { AnyPost } from '@lens-protocol/react'
+
+const MobileCommentButton = ({ post }: { post: AnyPost }) => {
   const [open, setOpen] = useState(false)
   const [heightOfChat, setHeightOfChat] = useState<string>('500')
 
@@ -23,7 +24,7 @@ const MobileCommentButton = ({ post }: { post: AnyPublication }) => {
     setHeightOfChat(getHeightOfChat())
   }, [])
 
-  if (post.__typename === 'Mirror') return null
+  if (post.__typename === 'Repost') return null
 
   return (
     <>
@@ -54,7 +55,7 @@ const MobileCommentButton = ({ post }: { post: AnyPublication }) => {
           <div className="text-lg font-semibold px-3 py-1 border-b border-p-border">
             {`${post?.stats?.comments} Comment${post?.stats?.comments > 1 ? 's' : ''}`}
           </div>
-          <CommentSection publication={post} />
+          <CommentSection post={post} />
         </div>
       </ModalWrapper>
     </>

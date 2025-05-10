@@ -1,15 +1,8 @@
-import {
-  SessionType,
-  useLogin,
-  useProfilesManaged,
-  useSession,
-  useUpdateProfileManagers
-} from '@lens-protocol/react-web'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { Button, CircularProgress } from '@mui/material'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import React, { useEffect } from 'react'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useAccount, useDisconnect, useWalletClient } from 'wagmi'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import PermIdentityIcon from '@mui/icons-material/PermIdentity'
 import formatHandle from '../../../utils/lib/formatHandle'
@@ -24,29 +17,33 @@ import { getShortAddress } from '../../../utils/lib/getShortAddress'
 import useEns from '../../../utils/hooks/useEns'
 import getStampFyiURL from '../../../utils/getStampFyiURL'
 import LoadingImage from '../../ui/LoadingImage'
+import useSession from '../../../utils/hooks/useSession'
+import { useAccountsAvailable, useLogin } from '@lens-protocol/react'
+import useEnableSignless from '../../../utils/hooks/useEnableSignless'
+import { APP_ADDRESS } from '../../../utils/config'
+import { signMessageWith } from '@lens-protocol/react/viem'
 
 const LoginPage = () => {
+  const { data: walletClient } = useWalletClient()
+
   const [loginAsGuest, setLoginAsGuest] = React.useState(false)
   const path = usePathname()
-  const { data, loading } = useSession()
+  const { isAuthenticated, authenticatedUser } = useSession()
   const { disconnectAsync } = useDisconnect()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
   const { openConnectModal } = useConnectModal()
-  const [selectedProfileId, setSelectedProfileId] = React.useState<string>()
-  const { data: profiles, loading: loadingProfiles } = useProfilesManaged({
+  const [selectedAccountAddress, setSelectedAccountAddress] =
+    React.useState<string>()
+  const { data: profiles, loading: loadingProfiles } = useAccountsAvailable({
     // @ts-ignore
     for: address,
     includeOwned: true
   })
 
   const { ensAvatar, ensName } = useEns({
-    address: profiles?.length === 0 ? address : null
+    address: profiles?.items.length === 0 ? address : null
   })
-  const {
-    execute: enableProfileManager,
-    loading: loadingEnableProfileManager,
-    error
-  } = useUpdateProfileManagers()
+  const { enableSignless, loading, error } = useEnableSignless()
 
   const { theme } = useTheme()
 
@@ -56,22 +53,16 @@ const LoginPage = () => {
     }
   }, [error])
 
-  const { execute, loading: logging } = useLogin()
+  const { execute, loading: logging, data } = useLogin()
 
-  if (
-    loginAsGuest ||
-    loading ||
-    (data?.type === SessionType.WithProfile && data?.profile?.signless) ||
-    data?.type === SessionType.JustWallet ||
-    path !== '/'
-  ) {
+  if (loginAsGuest || loading || isAuthenticated || path !== '/') {
     return null
   }
   return (
     <div className="absolute z-[60] top-0 bottom-0 left-0 right-0 w-full h-dvh bg-p-bg p-8 overflow-auto no-scrollbar">
       {isConnected ? (
         <>
-          {data?.type !== SessionType.WithProfile ? (
+          {!isAuthenticated ? (
             // login page
             <div className="between-col h-full">
               <div className="font-bold text-5xl mt-4 mb-8">
@@ -89,42 +80,49 @@ const LoginPage = () => {
                     </div>
                   )}
 
-                  {profiles?.map((profile, i) => (
+                  {profiles?.items?.map((profile, i) => (
                     <div
                       className={clsx(
                         'between-row w-full p-4',
-                        i < profiles.length - 1 && 'border-b border-p-border '
+                        i < profiles?.items.length - 1 &&
+                          'border-b border-p-border '
                       )}
-                      key={profile?.id}
+                      key={profile?.account?.address}
                     >
                       <div className="start-row space-x-4">
                         <img
-                          src={getAvatar(profile)}
+                          src={getAvatar(profile?.account)}
                           alt="avatar"
                           className="w-8 h-8 rounded-full"
                         />
                         <div className="text-s-text font-bold text-lg">
-                          {formatHandle(profile)}
+                          {formatHandle(profile?.account)}
                         </div>
                       </div>
                       <div className="centered-row">
                         <LoadingButton
                           variant="contained"
                           onClick={async () => {
-                            setSelectedProfileId(profile.id)
+                            setSelectedAccountAddress(profile.account.address)
                             const data = await execute({
-                              // @ts-ignore
-                              address: address,
-                              profileId: profile.id
+                              accountOwner: {
+                                account: profile.account.address,
+                                owner: profile.account.owner,
+                                app: APP_ADDRESS
+                              },
+                              signMessage: signMessageWith(walletClient!)
                             })
 
-                            if (data?.isSuccess() && data?.value?.signless) {
+                            if (data?.isOk() && data?.value.sponsored) {
                               window?.location.reload()
                             } else {
                               toast.error('Failed to login')
                             }
                           }}
-                          loading={logging && selectedProfileId === profile.id}
+                          loading={
+                            logging &&
+                            selectedAccountAddress === profile.account.address
+                          }
                           loadingPosition="start"
                           startIcon={
                             <img
@@ -143,7 +141,7 @@ const LoginPage = () => {
                     </div>
                   ))}
 
-                  {profiles?.length === 0 && !loadingProfiles && (
+                  {profiles?.items.length === 0 && !loadingProfiles && (
                     <div className="centered-row w-full text-s-text p-4 text-sm">
                       You don’t have any lens profiles linked to this wallet
                       address. However, You can log in with your wallet and chat
@@ -151,7 +149,7 @@ const LoginPage = () => {
                     </div>
                   )}
 
-                  {profiles?.length === 0 && !loadingProfiles && (
+                  {profiles?.items.length === 0 && !loadingProfiles && (
                     <div className="px-4 pb-4 space-y-4">
                       <div className="start-center-row gap-x-3">
                         <LoadingImage
@@ -171,11 +169,14 @@ const LoginPage = () => {
                         startIcon={<WalletIcon />}
                         onClick={async () => {
                           const data = await execute({
-                            // @ts-ignore
-                            address: address
+                            signMessage: signMessageWith(walletClient!),
+                            onboardingUser: {
+                              wallet: String(address),
+                              app: APP_ADDRESS
+                            }
                           })
 
-                          if (!data?.isSuccess()) {
+                          if (!data?.isOk()) {
                             toast.error('Failed to login')
                           }
                         }}
@@ -234,7 +235,7 @@ const LoginPage = () => {
             </div>
           ) : (
             <>
-              {!data?.profile?.signless && (
+              {!authenticatedUser?.sponsored && (
                 <div className="between-col h-full">
                   <div>
                     <div className="font-bold text-5xl mt-16 mb-8">
@@ -252,9 +253,7 @@ const LoginPage = () => {
                       startIcon={<AutoAwesomeIcon />}
                       onClick={async () => {
                         try {
-                          await enableProfileManager({
-                            approveSignless: true
-                          })
+                          await enableSignless()
                         } catch (e) {
                           // @ts-ignore
                           toast.error(e.message)
@@ -270,7 +269,7 @@ const LoginPage = () => {
                         padding: '1rem 0'
                       }}
                       loadingPosition="start"
-                      loading={loadingEnableProfileManager}
+                      loading={loading || data?.sponsored}
                     >
                       Approve signless
                     </LoadingButton>

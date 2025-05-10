@@ -1,13 +1,13 @@
-query Streamer($profileId: String!) {
-  streamer(profileId: $profileId) {
-    profileId
+query Streamer($accountAddress: String!) {
+  streamer(accountAddress: $accountAddress) {
+    accountAddress
     lastSeen
     isActive
     createdAt
     playbackId
     streamName
     streamDescription
-    latestStreamPublicationId
+    latestStreamPostId
     latestSessionId
     latestSessionCreatedAt
     nextStreamTime

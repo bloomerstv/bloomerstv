@@ -1,9 +1,3 @@
-import {
-  Post,
-  Profile,
-  SessionType,
-  useSession
-} from '@lens-protocol/react-web'
 import Link from 'next/link'
 import React from 'react'
 import getAvatar from '../../utils/lib/getAvatar'
@@ -18,6 +12,8 @@ import VerifiedBadge from '../ui/VerifiedBadge'
 import LoadingImage from '../ui/LoadingImage'
 import { IconButton, Tooltip } from '@mui/material'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
+import useSession from '../../utils/hooks/useSession'
+import { Account, Post } from '@lens-protocol/react'
 const HomeVideoCard = ({
   post,
   cover,
@@ -32,12 +28,12 @@ const HomeVideoCard = ({
   session?: {
     sessionId: string
     createdAt: string
-    profile: Profile
+    account: Account
   }
 }) => {
   const pathname = usePathname()
   const asset = post ? getPublicationData(post?.metadata)?.asset : null
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
   const { push } = useRouter()
 
   if (!post && !session) return null
@@ -77,11 +73,11 @@ const HomeVideoCard = ({
       <div className="sm:px-0 px-4 w-full start-row space-x-3">
         <Link
           prefetch
-          className="no-underline text-p-text group font-semibold text-s-text"
-          href={formatHandle(post?.by ?? session?.profile)}
+          className="no-underline text-s-text group font-semibold"
+          href={formatHandle(post?.author ?? session?.account)}
         >
           <img
-            src={getAvatar(post?.by ?? session?.profile)}
+            src={getAvatar(post?.author ?? session?.account)}
             className="w-10 h-10 rounded-full"
             alt="avatar"
           />
@@ -97,10 +93,10 @@ const HomeVideoCard = ({
               <Link
                 prefetch
                 className="no-underline group text-s-text font-semibold"
-                href={formatHandle(post?.by ?? session?.profile)}
+                href={formatHandle(post?.author ?? session?.account)}
               >
                 <div className="">
-                  {formatHandle(post?.by ?? session?.profile)}
+                  {formatHandle(post?.author ?? session?.account)}
                 </div>
               </Link>
               {premium && <VerifiedBadge />}
@@ -114,15 +110,15 @@ const HomeVideoCard = ({
             </div>
             <div className="">&middot;</div>
             <div className="">
-              {timeAgo(post?.createdAt ?? session?.createdAt)}
+              {timeAgo(post?.timestamp ?? session?.createdAt)}
             </div>
           </div>
         </div>
 
         {/* @ts-ignore */}
         {!post?.metadata?.title &&
-          data?.type === SessionType.WithProfile &&
-          data?.profile?.id === session?.profile?.id && (
+          isAuthenticated &&
+          account?.address === session?.account?.address && (
             <Tooltip
               title="You can create a lens post for your untitled streams from content page"
               arrow

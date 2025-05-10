@@ -4,18 +4,21 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import CloseIcon from '@mui/icons-material/Close'
 import { IconButton, List, ListItem, ListItemButton } from '@mui/material'
 import { useRouter } from 'next/navigation'
-import { LimitType, useSearchProfiles } from '@lens-protocol/react-web'
 import formatHandle from '../../utils/lib/formatHandle'
-import MobileProfileList from '../../components/ui/profile/MobileProfileList'
+import MobileAccountList from '../../components/ui/account/MobileProfileList'
+import { useAccounts } from '@lens-protocol/react'
 const SearchPage = () => {
   const { back, push } = useRouter()
   const [search, setSearch] = React.useState('')
 
-  const { data } = useSearchProfiles({
-    query: search,
-    limit: LimitType.Ten
+  const { data } = useAccounts({
+    filter: {
+      searchBy: {
+        localNameQuery: search
+      }
+    },
+    pageSize: 10
   })
-
   return (
     <div>
       <div className="centered-row w-full p-3 sticky top-0 z-10">
@@ -56,15 +59,15 @@ const SearchPage = () => {
         {/* @ts-ignore */}
         {data?.length > 0 && (
           <List>
-            {data?.map((profile) => (
-              <ListItem disablePadding key={profile?.id}>
+            {data?.items.map((account) => (
+              <ListItem disablePadding key={account?.address}>
                 <ListItemButton
                   onClick={() => {
-                    push(`/${formatHandle(profile)}`)
+                    push(`/${formatHandle(account)}`)
                   }}
-                  key={profile?.id}
+                  key={account?.address}
                 >
-                  <MobileProfileList profile={profile} key={profile?.id} />
+                  <MobileAccountList account={account} key={account?.address} />
                 </ListItemButton>
               </ListItem>
             ))}

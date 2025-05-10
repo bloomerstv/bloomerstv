@@ -1,39 +1,34 @@
-import {
-  PublicationMetadataMainFocusType,
-  PublicationType,
-  usePublications
-} from '@lens-protocol/react-web'
 import React, { useRef } from 'react'
-import { APP_ID } from '../../../utils/config'
+import { APP_ADDRESS } from '../../../utils/config'
 import { useIsVerifiedQuery } from '../../../graphql/generated'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import { IconButton } from '@mui/material'
 import TextAndImagePostCard from './TextAndImagePostCard'
+import { MainContentFocus, PostType, usePosts } from '@lens-protocol/react'
 
 const TextAndImagePosts = () => {
-  const { data, loading } = usePublications({
-    where: {
-      publicationTypes: [PublicationType.Post, PublicationType.Quote],
+  const { data, loading } = usePosts({
+    filter: {
+      postTypes: [PostType.Root, PostType.Quote],
       metadata: {
-        mainContentFocus: [
-          PublicationMetadataMainFocusType.TextOnly,
-          PublicationMetadataMainFocusType.Image
-        ],
-        // @ts-ignore
-        publishedOn: [APP_ID]
-      }
+        mainContentFocus: [MainContentFocus.TextOnly, MainContentFocus.Image]
+      },
+      apps: [APP_ADDRESS]
     }
   })
 
   const { data: isVerified } = useIsVerifiedQuery({
     variables: {
-      profileIds: data?.map((p) => p.by?.id)
+      accountAddresses: data?.items.map((p) => p.author?.address)
     }
   })
 
   const verifiedMap = new Map(
-    isVerified?.isVerified?.map((v) => [v?.profileId, v?.isVerified ?? false])
+    isVerified?.isVerified?.map((v) => [
+      v?.accountAddress,
+      v?.isVerified ?? false
+    ])
   )
 
   const scrollContainerRef = useRef(null)
@@ -46,7 +41,7 @@ const TextAndImagePosts = () => {
     })
   }
 
-  if (!loading && data?.length === 0) {
+  if (!loading && data?.items.length === 0) {
     return null
   }
 
@@ -68,12 +63,12 @@ const TextAndImagePosts = () => {
         className="start-row gap-x-3 w-full sm:w-[calc(100vw-300px)] overflow-x-auto no-scrollbar pb-3"
         style={{ scrollBehavior: 'smooth' }} // Added inline style for smooth scrolling
       >
-        {data?.map((post) => {
+        {data?.items.map((post) => {
           return (
             <div key={post?.id}>
               <TextAndImagePostCard
-                publication={post}
-                premium={verifiedMap.get(post?.by?.id)}
+                post={post}
+                premium={verifiedMap.get(post?.author?.address)}
               />
             </div>
           )

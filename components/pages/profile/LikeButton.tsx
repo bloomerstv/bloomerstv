@@ -1,10 +1,3 @@
-import {
-  AnyPublication,
-  PublicationReactionType,
-  SessionType,
-  useReactionToggle,
-  useSession
-} from '@lens-protocol/react-web'
 import { Button, Tooltip } from '@mui/material'
 import React, { useEffect } from 'react'
 import { useModal } from '../../common/ModalContext'
@@ -13,49 +6,45 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import { AnimatedCounter } from 'react-animated-counter'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
+import { AnyPost, PostReactionType } from '@lens-protocol/react'
+import useSession from '../../../utils/hooks/useSession'
+import useAddReaction from '../../../utils/hooks/lens/useAddReaction'
+import useUndoReaction from '../../../utils/hooks/lens/useUndoReaction'
 
 const LikeButton = ({
-  publication,
+  post,
   likeCount
 }: {
-  publication: AnyPublication
+  post: AnyPost
   likeCount: number
 }) => {
   const { theme } = useTheme()
   const [liked, setLiked] = React.useState(false)
-  const { data: mySession } = useSession()
+  const { isAuthenticated, account } = useSession()
   const { openModal } = useModal()
   const [newLikeCount, setNewLikeCount] = React.useState(likeCount)
 
-  const { execute: toggleReaction } = useReactionToggle()
+  const { execute: addReaction } = useAddReaction()
+  const { execute: undoReaction } = useUndoReaction()
 
   const handleLike = async () => {
     try {
       if (!mustLogin('Must Login to like')) return
+
+      if (liked) {
+        await undoReaction({
+          post: post?.id,
+          reaction: PostReactionType.Upvote
+        })
+      } else {
+        await addReaction({
+          post: post?.id,
+          reaction: PostReactionType.Upvote
+        })
+      }
+
       setNewLikeCount(liked ? newLikeCount - 1 : newLikeCount + 1)
       setLiked(!liked)
-      const result = await toggleReaction({
-        // @ts-ignore
-        publication:
-          publication?.__typename === 'Mirror'
-            ? null
-            : {
-                ...publication,
-                stats: {
-                  ...publication.stats,
-                  upvotes: likeCount
-                },
-                operations: {
-                  ...publication.operations,
-                  hasUpvoted: liked
-                }
-              },
-        reaction: PublicationReactionType.Upvote
-      })
-
-      if (result.isFailure()) {
-        toast.error(result.error)
-      }
     } catch (error) {
       console.log(error)
       // @ts-ignore
@@ -68,13 +57,13 @@ const LikeButton = ({
   }, [likeCount])
 
   useEffect(() => {
-    if (publication?.__typename !== 'Mirror') {
-      setLiked(publication?.operations?.hasUpvoted)
+    if (post?.__typename !== 'Repost') {
+      setLiked(!!post?.operations?.hasUpvoted)
     }
-  }, [publication?.__typename !== 'Mirror' && publication])
+  }, [post?.__typename !== 'Repost' && post])
 
   const mustLogin = (infoMsg: string = 'Must Login'): Boolean => {
-    if (mySession?.type !== SessionType.WithProfile) {
+    if (!isAuthenticated) {
       openModal('login')
       toast.error(infoMsg)
       return false

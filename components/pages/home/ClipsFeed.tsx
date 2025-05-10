@@ -1,44 +1,63 @@
 'use client'
-
-import {
-  Post,
-  PublicationMetadataMainFocusType,
-  PublicationType,
-  usePublications
-} from '@lens-protocol/react-web'
-import React, { useEffect, useRef } from 'react'
-import { APP_ID } from '../../../utils/config'
+import React, { useEffect, useRef, useState } from 'react'
+import { APP_ADDRESS, APP_ID } from '../../../utils/config'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
 import { useIsVerifiedQuery } from '../../../graphql/generated'
+import {
+  MainContentFocus,
+  Post,
+  PostType,
+  useFeed,
+  usePosts
+} from '@lens-protocol/react'
 
 const ClipsFeed = ({ handle }: { handle?: string }) => {
-  const { data, loading, hasMore, next } = usePublications({
-    where: {
-      publicationTypes: [PublicationType.Post, PublicationType.Quote],
+  const [cursor, setCursor] = React.useState<string | undefined>()
+  const [allPosts, setAllPosts] = useState<Post[]>([])
+  const [allVerifiedMap, setAllVerifiedMap] = useState<Map<string, boolean>>(
+    new Map()
+  )
+
+  const { data, loading } = usePosts({
+    filter: {
+      postTypes: [PostType.Root, PostType.Quote],
+
       metadata: {
-        mainContentFocus: [
-          PublicationMetadataMainFocusType.ShortVideo,
-          PublicationMetadataMainFocusType.Video
-        ],
-        // @ts-ignore
-        publishedOn: [APP_ID],
+        mainContentFocus: [MainContentFocus.ShortVideo, MainContentFocus.Video],
         tags: handle
           ? {
               oneOf: [`clip-${handle}`]
             }
           : undefined
-      }
-    }
+      },
+      apps: [APP_ADDRESS]
+    },
+    cursor
   })
+
+  useEffect(() => {
+    if (data?.items && data.items.length > 0) {
+      setAllPosts((prevPosts) => {
+        // Combine previous posts with new posts, avoiding duplicates
+        const newPosts = [...prevPosts]
+        data.items.forEach((post) => {
+          if (!newPosts.some((p) => p.id === post.id)) {
+            newPosts.push(post as Post)
+          }
+        })
+        return newPosts
+      })
+    }
+  }, [data?.items])
 
   const loadMoreRef = useRef(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
-          next()
+        if (entries[0].isIntersecting && data?.pageInfo?.next && !loading) {
+          setCursor(data?.pageInfo?.next)
         }
       },
       { threshold: 1.0 }
@@ -53,19 +72,29 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
         observer.unobserve(loadMoreRef.current)
       }
     }
-  }, [hasMore, loading, next])
+  }, [data?.pageInfo?.next, loading])
 
   const { data: isVerified } = useIsVerifiedQuery({
     variables: {
-      profileIds: data?.map((p) => p.by?.id)
+      accountAddresses: data?.items.map((p) => p.author?.address)
     }
   })
 
-  const verifiedMap = new Map(
-    isVerified?.isVerified?.map((v) => [v?.profileId, v?.isVerified ?? false])
-  )
+  useEffect(() => {
+    if (isVerified?.isVerified && isVerified?.isVerified?.length > 0) {
+      setAllVerifiedMap((prevMap) => {
+        const newMap = new Map(prevMap)
+        isVerified?.isVerified?.forEach((v) => {
+          if (v?.accountAddress) {
+            newMap.set(v.accountAddress, v?.isVerified ?? false)
+          }
+        })
+        return newMap
+      })
+    }
+  }, [isVerified])
 
-  if (!loading && data?.length === 0) {
+  if (!loading && allPosts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center w-full h-full">
         <p className="text-lg font-bold">No clips available</p>
@@ -76,10 +105,10 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
     <div className="w-full">
       {/* @ts-ignore */}
       <div className="flex flex-row flex-wrap w-full gap-y-6">
-        {data?.map((post) => {
+        {allPosts.map((post) => {
           return (
             <HomeVideoCard
-              premium={verifiedMap.get(post?.by?.id)}
+              premium={allVerifiedMap.get(post?.author?.address)}
               key={post?.id}
               post={post as Post}
             />
@@ -87,7 +116,7 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
         })}
 
         {/* // show loadingVideocard 6 times  */}
-        {(hasMore || (!data?.length && loading)) &&
+        {(allPosts.length !== 0 || (allPosts.length === 0 && loading)) &&
           Array.from({ length: 3 }, (_, i) => <LoadingVideoCard key={i} />)}
       </div>
 

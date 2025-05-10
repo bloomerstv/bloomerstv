@@ -7,9 +7,9 @@ import {
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
 import { useMyStreamInfo } from '../../../store/useMyStreamInfo'
-import { SessionType, useSession } from '@lens-protocol/react-web'
 import { APP_LINK } from '../../../../utils/config'
 import formatHandle from '../../../../utils/lib/formatHandle'
+import useSession from '../../../../utils/hooks/useSession'
 
 const MyStreamEditButton = ({
   refreshStreamInfo,
@@ -18,7 +18,7 @@ const MyStreamEditButton = ({
   refreshStreamInfo: () => void
   myStream: MyStream
 }) => {
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
   const [updateMyStream] = useUpdateMyStreamMutation()
   const [open, setOpen] = useState(false)
   const [streamName, setStreamName] = useState(myStream?.streamName || '')
@@ -114,8 +114,7 @@ const MyStreamEditButton = ({
               onChange={() => setAddLiveChatAt(!addLiveChatAt)}
             />
             <div className="text-p-text">{`Add "Live Chat on ${
-              data?.type === SessionType.WithProfile &&
-              `${APP_LINK}/${formatHandle(data?.profile)}`
+              isAuthenticated && `${APP_LINK}/${formatHandle(account)}`
             }" at the end of content`}</div>
           </div>
         </div>

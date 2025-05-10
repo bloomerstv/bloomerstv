@@ -1,13 +1,14 @@
-import { useCreateProfile, useValidateHandle } from '@lens-protocol/react-web'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
+import { useAccount as useFetchAccount } from '@lens-protocol/react'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import { TextField } from '@mui/material'
 import toast from 'react-hot-toast'
 import { useTheme } from '../wrappers/TailwindThemeProvider'
 import { stringToLength } from '../../utils/stringToLength'
+import useCreateAccount from '../../utils/hooks/lens/useCreateAccount'
 
 const SignupComponent = ({
   setOpen,
@@ -21,40 +22,36 @@ const SignupComponent = ({
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
   const { openConnectModal } = useConnectModal()
   const [localName, setLocalName] = useState('')
-  const {
-    execute: validateHandle,
-    loading: verifying,
-    error
-  } = useValidateHandle()
-  const { execute: createProfile, loading: creating } = useCreateProfile()
+  const { data, loading } = useFetchAccount({
+    username: {
+      localName
+    }
+  })
+
+  const { execute: createAccount, loading: creating } = useCreateAccount()
+
   const { theme } = useTheme()
 
   const onHandleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalName(e.target.value)
     if (!e.target.value) return
-    // @ts-ignore
-    await validateHandle({
-      localName: e.target.value
-    })
+    setLocalName(e.target.value)
   }
 
   const handleCreateHandle = async () => {
     try {
-      const result = await validateHandle({
-        localName: localName
-      })
-
-      if (result.isFailure()) {
-        toast.error(result.error.message)
+      if (!loading && !data?.address) {
+        toast.error('Handle already exists')
         return
       }
 
-      const createProfileResult = await createProfile({
-        localName: localName,
-        to: address as `0x${string}`
+      const createProfileResult = await createAccount({
+        username: {
+          localName: localName
+        },
+        metadataUri: ''
       })
 
-      if (createProfileResult.isFailure()) {
+      if (createProfileResult.isErr()) {
         toast.error(createProfileResult.error.message)
         return
       }
@@ -93,9 +90,9 @@ const SignupComponent = ({
             size="medium"
             focused={true}
           />
-          {error && (
+          {localName && !data && !loading && (
             <div className="text-red-500 text-xs font-semibold mt-1">
-              {error?.message}
+              {'Username not available!'}
             </div>
           )}
           <div className="text-s-text text-xs mt-1 mb-4">
@@ -108,14 +105,14 @@ const SignupComponent = ({
         <LoadingButton
           variant="contained"
           onClick={handleCreateHandle}
-          loading={verifying || creating || isConnecting || isReconnecting}
+          loading={loading || creating || isConnecting || isReconnecting}
           loadingPosition="start"
           className="w-full"
           sx={{
             borderRadius: '24px',
             padding: '12px 0'
           }}
-          disabled={verifying || creating || !localName || Boolean(error)}
+          disabled={loading || creating || !localName}
           startIcon={
             <img
               src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
@@ -130,7 +127,6 @@ const SignupComponent = ({
           <LoadingButton
             variant="contained"
             onClick={openConnectModal}
-            loading={isConnecting || isReconnecting}
             loadingPosition="start"
             className="w-full"
             sx={{

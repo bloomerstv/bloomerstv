@@ -1,8 +1,8 @@
-import { Profile } from '@lens-protocol/react-web'
+import { Account } from '@lens-protocol/react'
 
 // returns an object with website link, twitter link and instagram link from the profile object
 export const getWebsiteLinksFromProfile = (
-  profile: Profile
+  account: Account
 ): {
   websiteLink: string | null
   twitterLink: string | null
@@ -10,7 +10,7 @@ export const getWebsiteLinksFromProfile = (
   githubLink: string | null
   linkedInLink: string | null
 } => {
-  if (!profile)
+  if (!account)
     return {
       websiteLink: null,
       twitterLink: null,
@@ -18,7 +18,7 @@ export const getWebsiteLinksFromProfile = (
       githubLink: null,
       linkedInLink: null
     }
-  const attributes = profile?.metadata?.attributes
+  const attributes = account?.metadata?.attributes
   if (!attributes)
     return {
       websiteLink: null,

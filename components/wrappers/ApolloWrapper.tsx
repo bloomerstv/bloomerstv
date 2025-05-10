@@ -8,9 +8,7 @@ import {
   createHttpLink
 } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
-import { Result, useSessionClient } from '@lens-protocol/react'
-import useSession from '../../utils/hooks/useSession'
-// import { useIdentityToken } from '@lens-protocol/react-web'
+import { useSessionClient } from '@lens-protocol/react'
 
 const httpLink = createHttpLink({
   uri: NODE_GRAPHQL_URL
@@ -19,11 +17,8 @@ const httpLink = createHttpLink({
 const cache = new InMemoryCache()
 
 const ApolloWrapper = ({ children }: { children: React.ReactNode }) => {
-  // const identityToken = useIdentityToken()
-  const { authenticatedUser } = useSession()
-  console.log('authenticatedUser', authenticatedUser)
-
   const { data: sessionClient } = useSessionClient()
+
   const idToken = sessionClient?.getCredentials().match(
     (result) => result?.idToken,
     (error) => {

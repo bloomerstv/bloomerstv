@@ -3,15 +3,15 @@ import React from 'react'
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
 import Link from 'next/link'
 import { useMyStreamQuery } from '../../../../graphql/generated'
-import { SessionType, useSession } from '@lens-protocol/react-web'
 import { SuperFluidInfo } from '../../../../utils/config'
+import useSession from '../../../../utils/hooks/useSession'
 const GoSuperButton = () => {
-  const { data } = useSession()
+  const { account, isAuthenticated } = useSession()
   const { data: myStream, loading } = useMyStreamQuery({
-    skip: data?.type !== SessionType.WithProfile
+    skip: !isAuthenticated
   })
 
-  if (data?.type !== SessionType.WithProfile || loading) {
+  if (!isAuthenticated || loading) {
     return null
   }
   return (
@@ -22,7 +22,7 @@ const GoSuperButton = () => {
       href={
         !myStream?.myStream?.premium
           ? SuperFluidInfo.checkoutLink
-          : SuperFluidInfo.getCancleLink(data?.address)
+          : SuperFluidInfo.getCancleLink(account?.owner)
       }
       sx={{
         borderRadius: '12px',

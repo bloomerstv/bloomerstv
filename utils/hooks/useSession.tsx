@@ -1,5 +1,6 @@
 import {
   Account,
+  authenticatedUser,
   AuthenticatedUser,
   useAccount,
   useAuthenticatedUser,
@@ -33,6 +34,7 @@ interface SessionData {
  */
 const useSession = (): SessionData => {
   const { data, error, loading } = useAuthenticatedUser()
+
   const {
     data: account,
     error: accountError,

@@ -1,17 +1,19 @@
 import React from 'react'
-import { useStreamersWithProfiles } from '../../store/useStreamersWithProfiles'
 import StreamCard from './StreamCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
+import { useStreamersWithAccounts } from '../../store/useStreamersWithAccounts'
 
 const LiveStreamerFeed = () => {
-  const streamersWithProfiles = useStreamersWithProfiles(
-    (state) => state.streamersWithProfiles
+  const { streamerWithAccounts, loading } = useStreamersWithAccounts(
+    (state) => ({
+      streamerWithAccounts: state.streamersWithAccounts,
+      loading: state.loading
+    })
   )
-  const loading = useStreamersWithProfiles((state) => state.loading)
   const isMobile = useIsMobile()
 
-  if (!loading && streamersWithProfiles && streamersWithProfiles?.length === 0)
+  if (!loading && streamerWithAccounts && streamerWithAccounts?.length === 0)
     return <div className="-mb-4" />
 
   return (
@@ -22,10 +24,12 @@ const LiveStreamerFeed = () => {
         </div>
       )}
 
-      {streamersWithProfiles?.length > 0 ? (
+      {streamerWithAccounts?.length > 0 ? (
         <div className="flex flex-row flex-wrap w-full gap-y-4 sm:gap-y-8">
-          {streamersWithProfiles?.map((streamer) => {
-            return <StreamCard key={streamer?.profileId} streamer={streamer} />
+          {streamerWithAccounts?.map((streamer) => {
+            return (
+              <StreamCard key={streamer?.accountAddress} streamer={streamer} />
+            )
           })}
         </div>
       ) : (

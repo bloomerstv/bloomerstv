@@ -1,10 +1,5 @@
 'use client'
-import {
-  ProfileId,
-  SessionType,
-  useProfile,
-  useSession
-} from '@lens-protocol/react-web'
+
 import React, { memo } from 'react'
 import LiveChat from '../../common/LiveChat/LiveChat'
 import {
@@ -33,6 +28,8 @@ import {
 } from '../../store/useMyPreferences'
 import { Src } from '@livepeer/react'
 import HorizontalNavigation from '../../ui/HorizontalNavigation'
+import { useAccount } from '@lens-protocol/react'
+import useSession from '../../../utils/hooks/useSession'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
@@ -42,16 +39,19 @@ const ProfilePage = ({ handle }: { handle: string }) => {
   )
 
   const isMobile = useIsMobile()
+
   const {
-    data,
-    loading: profileLoading,
-    error
-  } = useProfile({
-    forHandle: handle
+    data: account,
+    error,
+    loading: accountLoading
+  } = useAccount({
+    username: {
+      localName: handle.split('/')?.[1]
+    }
   })
 
   const [createClip] = useCreateClipMutation()
-  const { data: sessionData } = useSession()
+  const { isAuthenticated, account: sessionAccount } = useSession()
 
   const {
     data: streamer,
@@ -59,22 +59,22 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     loading: streamerLoading
   } = useStreamerQuery({
     variables: {
-      profileId: data?.id as ProfileId
+      accountAddress: sessionAccount?.address
     },
-    skip: !data?.id
+    skip: !sessionAccount?.address
   })
 
   const { data: replayRecording } = useStreamReplayRecordingQuery({
     variables: {
-      profileId: data?.id
+      accountAddress: sessionAccount?.address
     },
-    skip: !data?.id || Boolean(streamer?.streamer?.isActive)
+    skip: !sessionAccount?.address || Boolean(streamer?.streamer?.isActive)
   })
 
   const hasPlaybackId = Boolean(streamer?.streamer?.playbackId)
 
   if (error) {
-    toast.error(error.message)
+    toast.error(error)
   }
 
   const handleClipClicked = async (
@@ -100,7 +100,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
             playbackId: playbackId,
             startTime,
             endTime,
-            name: `Clip from ${formatHandle(data)}'s stream`
+            name: `Clip from ${formatHandle(account)}'s stream`
           }
         }),
         {
@@ -148,9 +148,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
             streamer={streamer?.streamer}
           />
         }
-        clipLength={
-          sessionData?.type === SessionType.WithProfile ? 30 : undefined
-        }
+        clipLength={isAuthenticated ? 30 : undefined}
         createClip={handleClipClicked}
         src={
           playerStreamingMode === PlayerStreamingMode.Quality
@@ -175,16 +173,16 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     )
   }, [
     streamer?.streamer?.playbackId,
-    sessionData?.type,
+    sessionAccount?.address,
     replayRecording?.streamReplayRecording?.recordingUrl,
     playerStreamingMode
   ])
 
-  if (profileLoading || (streamerLoading && !streamer?.streamer)) {
+  if (accountLoading || (streamerLoading && !streamer?.streamer)) {
     return <StartLoadingPage />
   }
 
-  if (!data) {
+  if (!account) {
     return <div>Profile not found</div>
   }
 
@@ -194,7 +192,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       component: 'AboutProfile',
       render: () => (
         <div className="pb-[80vh]">
-          <AboutProfile profile={data} />{' '}
+          <AboutProfile account={account} />{' '}
         </div>
       )
     },
@@ -203,7 +201,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       component: 'ClipsFeed',
       render: () => (
         <div className="pb-[80vh]">
-          <ClipsFeed handle={formatHandle(data)} />
+          <ClipsFeed handle={formatHandle(account)} />
         </div>
       )
     },
@@ -212,7 +210,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       component: 'LiveStreamPublicReplays',
       render: () => (
         <div className="pb-[80vh]">
-          <LiveStreamPublicReplays profileId={data?.id} />
+          <LiveStreamPublicReplays accountAddress={account?.address} />
         </div>
       )
     }
@@ -220,12 +218,12 @@ const ProfilePage = ({ handle }: { handle: string }) => {
 
   return (
     <div className="flex flex-row h-full w-full">
-      {clipUrl && data && sessionData?.type === SessionType.WithProfile && (
+      {clipUrl && account && isAuthenticated && (
         <PostClipOnLens
           open={open}
           setOpen={setOpen}
           url={clipUrl}
-          profile={data}
+          account={account}
           sessionId={streamer?.streamer?.latestSessionId}
         />
       )}
@@ -237,15 +235,18 @@ const ProfilePage = ({ handle }: { handle: string }) => {
             <StreamerOffline
               // @ts-ignore
               streamReplayRecording={replayRecording?.streamReplayRecording}
-              profile={data}
+              account={account}
               // @ts-ignore
               streamer={streamer?.streamer}
             />
           </div>
         )}
 
-        {/* @ts-ignore */}
-        <ProfileInfoWithStream profile={data} streamer={streamer?.streamer} />
+        <ProfileInfoWithStream
+          account={account}
+          // @ts-ignore
+          streamer={streamer?.streamer}
+        />
 
         {(streamer?.streamer?.latestSessionCreatedAt ||
           streamer?.streamer?.streamDescription) && (
@@ -281,11 +282,11 @@ const ProfilePage = ({ handle }: { handle: string }) => {
           />
         </div>
       </div>
-      {data?.id && !isMobile && (
+      {account?.address && !isMobile && (
         <div className="w-[310px] 2xl:w-[350px] flex-none h-full">
           <LiveChat
             // @ts-ignore
-            profileId={data?.id}
+            accountAddress={account?.address}
           />
         </div>
       )}

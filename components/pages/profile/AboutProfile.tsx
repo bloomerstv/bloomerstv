@@ -1,4 +1,3 @@
-import { Profile } from '@lens-protocol/react-web'
 import React from 'react'
 import formatHandle from '../../../utils/lib/formatHandle'
 import Markup from '../../common/Lexical/Markup'
@@ -10,6 +9,7 @@ import GitHubIcon from '@mui/icons-material/GitHub'
 import InstagramIcon from '@mui/icons-material/Instagram'
 import LinkedInIcon from '@mui/icons-material/LinkedIn'
 import clsx from 'clsx'
+import { Account } from '@lens-protocol/react'
 
 export const ProfileLink = ({
   link,
@@ -36,17 +36,17 @@ export const ProfileLink = ({
   </a>
 )
 
-const AboutProfile = ({ profile }: { profile: Profile }) => {
+const AboutProfile = ({ account }: { account: Account }) => {
   const { websiteLink, twitterLink, instagramLink, githubLink, linkedInLink } =
-    getWebsiteLinksFromProfile(profile)
+    getWebsiteLinksFromProfile(account)
 
   return (
     <div className="sm:my-6 mx-2 sm:mx-0 sm:p-6 p-3 rounded-xl shadow-sm bg-p-hover sm:bg-s-bg">
       <div className="text-2xl font-bold mb-4">
-        About {formatHandle(profile)}
+        About {formatHandle(account)}
       </div>
-      {profile?.metadata?.bio && (
-        <Markup className="mt-4">{String(profile?.metadata?.bio)}</Markup>
+      {account?.metadata?.bio && (
+        <Markup className="mt-4">{String(account?.metadata?.bio)}</Markup>
       )}
       {/* links */}
       <div className="flex flex-row gap-x-4 mt-2 flex-wrap break-words w-full">

@@ -1,8 +1,3 @@
-import {
-  SessionType,
-  useCreateComment,
-  useSession
-} from '@lens-protocol/react-web'
 import React from 'react'
 import getAvatar from '../../../utils/lib/getAvatar'
 import { IconButton } from '@mui/material'
@@ -15,6 +10,10 @@ import { NewComment } from './CommentSection'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
 import { useUploadDataToArMutation } from '../../../graphql/generated'
+import useSession from '../../../utils/hooks/useSession'
+import { useCreatePost } from '@lens-protocol/react'
+import { handleOperationWith } from '@lens-protocol/react/viem'
+import { useWalletClient } from 'wagmi'
 
 const CreateCommentRow = ({
   commentOn,
@@ -25,9 +24,10 @@ const CreateCommentRow = ({
   onCommentCreated: (comment: NewComment) => void
   className?: string
 }) => {
-  const { data: session } = useSession()
+  const { isAuthenticated, account: sessionAccount } = useSession()
   const [content, setContent] = React.useState('')
-  const { execute } = useCreateComment()
+  const { data: walletClient } = useWalletClient()
+  const { execute } = useCreatePost(handleOperationWith(walletClient))
   const [uploadDataToAR] = useUploadDataToArMutation()
 
   const [creating, setCreating] = React.useState(false)
@@ -40,10 +40,6 @@ const CreateCommentRow = ({
 
       const metadata = textOnly({
         content: content,
-        marketplace: {
-          name: content
-        },
-        appId: APP_ID,
         id: id,
         locale: locale
       })
@@ -61,20 +57,18 @@ const CreateCommentRow = ({
       }
       // invoke the `execute` function to create the post
       const result = await execute({
-        metadata: `ar://${txId}`,
-        sponsored: defaultSponsored,
+        contentUri: `ar://${txId}`,
         commentOn: commentOn
       })
 
-      if (!result.isSuccess()) {
+      if (!result.isOk()) {
         toast.error(result.error.message)
         // handle failure scenarios
         throw new Error('Error creating post')
       }
 
       onCommentCreated({
-        // @ts-ignore
-        by: session?.profile,
+        author: sessionAccount!,
         metadata: {
           content: content
         }
@@ -87,7 +81,7 @@ const CreateCommentRow = ({
     }
   }
 
-  if (session?.type !== SessionType.WithProfile) {
+  if (!isAuthenticated) {
     return null
   }
   return (
@@ -97,7 +91,7 @@ const CreateCommentRow = ({
         className
       )}
     >
-      <img src={getAvatar(session.profile)} className="w-8 h-8 rounded-full" />
+      <img src={getAvatar(sessionAccount)} className="w-8 h-8 rounded-full" />
       <div className="border border-p-border rounded-lg overflow-hidden w-full">
         <input
           className={clsx(
