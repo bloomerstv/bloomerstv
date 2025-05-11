@@ -50,10 +50,10 @@ import GifIcon from '@mui/icons-material/Gif'
 import { AnimatePresence, motion } from 'framer-motion'
 import GifAndStickerSelector from './GifAndStickerSelector'
 import {
-  useSessionClient,
   useAccount as useProfileAccount,
   useAccounts,
-  Account
+  Account,
+  usePublicClient
 } from '@lens-protocol/react'
 import useSession from '../../../utils/hooks/useSession'
 
@@ -72,7 +72,7 @@ const LiveChatInput = ({
   imageAttachment: ImageAttachment
   setImageAttachment: (value: ImageAttachment) => void
 }) => {
-  const { data: sessionClient } = useSessionClient()
+  const { currentSession } = usePublicClient()
   const imageFileInputRef = React.useRef(null)
   const [selectGif, setSelectGif] = React.useState<boolean>(false)
 
@@ -241,9 +241,10 @@ const LiveChatInput = ({
 
       setIsTipping(true)
 
-      const lastStreamPostId =
-        // @ts-ignore
-        await getLastStreamPostId(liveChatAccountAddress, sessionClient)
+      const lastStreamPostId = await getLastStreamPostId(
+        liveChatAccountAddress,
+        currentSession
+      )
 
       const tx = await writeContractAsync({
         abi: tippingContractAbi,
@@ -444,7 +445,7 @@ const LiveChatInput = ({
         <GifAndStickerSelector
           onSelectGif={(url) => {
             setImageAttachment({
-              imageMimeType: 'image/gif',
+              imageMimeType: MediaImageMimeType.GIF,
               imagePreviewUrl: url,
               imageUrl: url
             })

@@ -22,8 +22,6 @@ const getAvatar = (
   const avatarUrl =
     account?.metadata?.picture ?? getStampFyiURL(account?.owner ?? ZERO_ADDRESS)
 
-  console.log('avatarUrl', avatarUrl)
-
   return imageKit(sanitizeDStorageUrl(avatarUrl), namedTransform)
 }
 

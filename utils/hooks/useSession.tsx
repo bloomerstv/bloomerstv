@@ -1,16 +1,12 @@
+import { fetchAccount } from '@lens-protocol/client/actions'
 import {
   Account,
-  authenticatedUser,
   AuthenticatedUser,
-  useAccount,
   useAuthenticatedUser,
-  useSessionClient
+  usePublicClient
 } from '@lens-protocol/react'
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 
-/**
- * Interface defining the return type of the useSession hook
- */
 interface SessionData {
   /** The authenticated user data from Lens Protocol */
   authenticatedUser: AuthenticatedUser | null | undefined
@@ -34,14 +30,48 @@ interface SessionData {
  */
 const useSession = (): SessionData => {
   const { data, error, loading } = useAuthenticatedUser()
+  const { currentSession } = usePublicClient()
 
-  const {
-    data: account,
-    error: accountError,
-    loading: accountLoading
-  } = useAccount({
-    address: data?.address
-  })
+  // Store actual account data in state
+  const [account, setAccount] = useState<Account | null | undefined>(undefined)
+  const [accountError, setAccountError] = useState<Error | null>(null)
+  const [accountLoading, setAccountLoading] = useState<boolean>(false)
+
+  // Fetch account in an effect, not during render
+  useEffect(() => {
+    if (!data?.address) {
+      setAccount(undefined)
+      return
+    }
+
+    setAccountLoading(true)
+
+    // Simulate fetching account - this could be an API call or whatever method
+    // the Lens Protocol provides for getting account data outside of hooks
+    const getAccountData = async () => {
+      try {
+        // @ts-ignore
+        const accountResult = await fetchAccount(currentSession, {
+          address: data.address
+        })
+
+        if (accountResult.isErr()) {
+          setAccountError(accountResult.error)
+          return
+        }
+        const accountData = accountResult.value
+        console.log('Account data:', accountData)
+        setAccount(accountData)
+        setAccountError(null)
+      } catch (err) {
+        setAccountError(err instanceof Error ? err : new Error(String(err)))
+      } finally {
+        setAccountLoading(false)
+      }
+    }
+
+    getAccountData()
+  }, [data?.address])
 
   return useMemo(
     () => ({

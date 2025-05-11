@@ -56,7 +56,7 @@ import {
   TextOnlyMetadata,
   useCreatePost,
   usePost,
-  useSessionClient
+  usePublicClient
 } from '@lens-protocol/react'
 import { useWalletClient } from 'wagmi'
 import { handleOperationWith } from '@lens-protocol/react/viem'
@@ -117,7 +117,7 @@ const LiveChat = ({
   const { execute } = useCreatePost(handleOperationWith(wallet))
   const [verifiedToSend, setVerifiedToSend] = useState(false)
 
-  const { data: sessionClient } = useSessionClient()
+  const { currentSession } = usePublicClient()
 
   const { data: chats } = useStreamChatsQuery({
     variables: {
@@ -342,11 +342,9 @@ const LiveChat = ({
     try {
       // create a comment under live stream publication
       console.time('createComment')
-      // @ts-ignore
       const lastStreamPostId = await getLastStreamPostId(
         accountAddress,
-        // @ts-ignore
-        sessionClient
+        currentSession
       )
 
       if (!lastStreamPostId) return

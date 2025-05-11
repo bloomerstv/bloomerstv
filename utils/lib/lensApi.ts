@@ -1,14 +1,19 @@
-import { MainContentFocus, PostType, SessionClient } from '@lens-protocol/react'
+import {
+  AnyClient,
+  MainContentFocus,
+  PostType,
+  SessionClient
+} from '@lens-protocol/react'
 import { APP_ADDRESS, APP_ID, lensUrl } from '../config'
 import { fetchPosts } from '@lens-protocol/client/actions'
 
 export const getLastStreamPostId = async (
   accountAddress: string,
-  sessionClient: SessionClient
+  anyClient: AnyClient
 ): Promise<string | null> => {
   if (!accountAddress) return null
   // @ts-ignore
-  const result = await fetchPosts(sessionClient, {
+  const result = await fetchPosts(anyClient, {
     pageSize: 1,
     filter: {
       authors: [accountAddress],

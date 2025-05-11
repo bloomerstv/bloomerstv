@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import {
-  useSessionClient,
   UnexpectedError,
   AccountStats,
-  AccountStatsRequest
+  AccountStatsRequest,
+  usePublicClient
 } from '@lens-protocol/react'
 import { fetchAccountStats } from '@lens-protocol/client/actions'
 
@@ -16,28 +16,42 @@ interface UseAccountStatsReturn {
 const useAccountStats = (
   request: AccountStatsRequest
 ): UseAccountStatsReturn => {
-  const { data: sessionClient } = useSessionClient()
+  const { currentSession } = usePublicClient()
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<AccountStats | null>(null)
   const [error, setError] = useState<UnexpectedError | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true)
-
-      // @ts-ignore - Handle potential type issues with sessionClient
-      const result = await fetchAccountStats(sessionClient, request)
-
-      if (result?.isOk()) {
-        setData(result.value)
-      } else if (result?.isErr()) {
-        setError(result.error)
+      if (!currentSession) {
+        return // Don't proceed if currentSession is not available
       }
-      setLoading(false)
+
+      setLoading(true)
+      try {
+        // @ts-ignore
+        const result = await fetchAccountStats(currentSession, request)
+
+        console.log('Account Stats:', result)
+
+        if (result?.isOk()) {
+          setData(result.value)
+        } else if (result?.isErr()) {
+          setError(result.error)
+        }
+      } catch (err) {
+        setError(
+          err instanceof UnexpectedError
+            ? err
+            : new UnexpectedError(String(err))
+        )
+      } finally {
+        setLoading(false)
+      }
     }
 
     fetchData()
-  }, [request])
+  }, [currentSession, request]) // Add currentSession to the dependency array
 
   return {
     loading,

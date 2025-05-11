@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react'
-import { APP_ADDRESS, APP_ID, hideProfilesIds } from '../../../utils/config'
+import { APP_ADDRESS } from '../../../utils/config'
 import clsx from 'clsx'
 import RecommendedVideoCard from '../../common/RecommendedVideoCard'
-import { usePublicationsStore } from '../../store/usePosts'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import RecommendedCardLayout from '../../common/RecommendedCardLayout'
@@ -13,6 +12,7 @@ import {
   PostType,
   usePosts
 } from '@lens-protocol/react'
+import { usePostsStore } from '../../store/usePosts'
 
 const OtherVideosRecommendations = ({ className }: { className?: string }) => {
   const isMobile = useIsMobile()
@@ -27,23 +27,23 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
     }
   })
 
-  const publications = usePublicationsStore((state) => state.publications)
-  const streamReplayPublication = usePublicationsStore(
-    (state) => state.streamReplayPublication
-  )
+  const { posts, streamReplayPosts } = usePostsStore((state) => ({
+    posts: state.posts,
+    streamReplayPosts: state.streamReplayPosts
+  }))
 
   const getStreamReplay = useCallback(
-    (publicationId: string) => {
+    (postId: string) => {
       const streamReplay =
-        streamReplayPublication?.streamReplayPublications?.streamReplayPublications?.find(
-          (p) => p?.publicationId === publicationId
+        streamReplayPosts?.streamReplayPosts?.streamReplayPosts?.find(
+          (p) => p?.postId === postId
         )
       return {
         thumbnail: streamReplay?.thumbnail,
         duration: streamReplay?.sourceSegmentsDuration
       }
     },
-    [streamReplayPublication]
+    [streamReplayPosts?.streamReplayPosts]
   )
 
   // add type streamClips to data
@@ -55,9 +55,9 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
       }
     }) ?? []
 
-  // add type streamReplays to publications
+  // add type streamReplays to posts
   const streamReplays =
-    publications?.map((post) => {
+    posts?.map((post) => {
       return {
         ...post,
         type: 'streamReplays'
@@ -66,7 +66,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
 
   const combinedData = [...streamClips, ...streamReplays].sort(
     (a, b) =>
-      new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+      new Date(b?.timestamp).getTime() - new Date(a?.timestamp).getTime()
   )
 
   const currentPostId = pathname?.split('/')[2]
@@ -100,15 +100,16 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
           } else {
             return (
               <RecommendedCardLayout
-                createdAt={post?.createdAt}
-                // @ts-ignore
-                coverUrl={getStreamReplay(post?.id)?.thumbnail}
+                createdAt={post?.timestamp}
+                coverUrl={getStreamReplay(post?.id)?.thumbnail ?? undefined}
                 postLink={`/watch/${post?.id}`}
                 account={post?.author}
                 // @ts-ignore
                 stats={post?.stats as PostStats}
-                // @ts-ignore
-                title={post?.metadata?.title}
+                title={
+                  // @ts-ignore
+                  post?.metadata?.title ?? post?.metadata?.content?.slice(0, 50)
+                }
                 key={post?.id}
               />
             )

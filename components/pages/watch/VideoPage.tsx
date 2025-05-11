@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import getPublicationData from '../../../utils/lib/getPublicationData'
 import ProfileInfoWithStream from '../profile/ProfileInfoWithStream'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
@@ -24,6 +24,9 @@ const VideoPage = ({
 }) => {
   const isMobile = useIsMobile()
   const { isAuthenticated, account: sessionAccount } = useSession()
+  const [recordingAccountAddress, setRecordingAccountAddress] = useState<
+    string | undefined
+  >(undefined)
 
   const asset = post ? getPublicationData(post?.metadata)?.asset : null
 
@@ -39,8 +42,16 @@ const VideoPage = ({
       (!post?.id && !sessionId)
   })
 
+  // Update address in an effect to avoid render-time state updates
+  useEffect(() => {
+    if (data?.streamReplayRecording?.accountAddress) {
+      setRecordingAccountAddress(data.streamReplayRecording.accountAddress)
+    }
+  }, [data?.streamReplayRecording?.accountAddress])
+
+  // Only use useAccount when recordingAccountAddress is stable
   const { data: account } = useAccount({
-    address: data?.streamReplayRecording?.accountAddress
+    address: recordingAccountAddress
   })
 
   useEffect(() => {
@@ -53,7 +64,6 @@ const VideoPage = ({
 
     return (
       <Player
-        // @ts-ignore
         src={data?.streamReplayRecording?.recordingUrl}
         className="w-full"
         muted={false}
@@ -68,7 +78,6 @@ const VideoPage = ({
     if (!asset?.uri) return null
     return (
       <Player
-        // @ts-ignore
         src={asset?.uri}
         className="w-full"
         muted={false}
@@ -91,8 +100,6 @@ const VideoPage = ({
 
   return (
     <div className="h-full w-full">
-      {/* @ts-ignore */}
-
       <div className="sm:rounded-xl  overflow-hidden ">
         {post?.metadata?.__typename === 'LivestreamMetadata' ||
         data?.streamReplayRecording?.recordingUrl ? (
@@ -116,8 +123,7 @@ const VideoPage = ({
         )}
       </div>
       <ProfileInfoWithStream
-        // @ts-ignore
-        profile={post?.by ?? profile}
+        account={post?.author || account!}
         post={post}
         premium={data?.streamReplayRecording?.premium}
       />
