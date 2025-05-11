@@ -26,8 +26,6 @@ const ApolloWrapper = ({ children }: { children: React.ReactNode }) => {
     }
   )
 
-  console.log('idToken', idToken)
-
   const authLink = setContext(async () => {
     return {
       headers: {

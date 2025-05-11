@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   UnexpectedError,
   AccountStats,
@@ -6,6 +6,7 @@ import {
   usePublicClient
 } from '@lens-protocol/react'
 import { fetchAccountStats } from '@lens-protocol/client/actions'
+import createStableHook from '../createStableHook'
 
 interface UseAccountStatsReturn {
   loading: boolean
@@ -32,8 +33,6 @@ const useAccountStats = (
         // @ts-ignore
         const result = await fetchAccountStats(currentSession, request)
 
-        console.log('Account Stats:', result)
-
         if (result?.isOk()) {
           setData(result.value)
         } else if (result?.isErr()) {
@@ -51,7 +50,7 @@ const useAccountStats = (
     }
 
     fetchData()
-  }, [currentSession, request]) // Add currentSession to the dependency array
+  }, [request]) // Add request to the dependency array
 
   return {
     loading,
@@ -60,4 +59,4 @@ const useAccountStats = (
   }
 }
 
-export default useAccountStats
+export default createStableHook(useAccountStats)

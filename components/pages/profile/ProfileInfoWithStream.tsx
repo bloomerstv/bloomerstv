@@ -22,6 +22,7 @@ const ProfileInfoWithStream = ({
   })
 
   if (!account) return null
+
   return (
     <div className="w-full">
       <ProfileBar

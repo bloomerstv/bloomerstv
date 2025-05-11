@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { APP_ADDRESS } from '../../../utils/config'
+import { APP_ADDRESS, hideAccountAddresses } from '../../../utils/config'
 import clsx from 'clsx'
 import RecommendedVideoCard from '../../common/RecommendedVideoCard'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
@@ -8,6 +8,7 @@ import RecommendedCardLayout from '../../common/RecommendedCardLayout'
 import { usePathname } from 'next/navigation'
 import {
   MainContentFocus,
+  PageSize,
   Post,
   PostType,
   usePosts
@@ -22,15 +23,19 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
       postTypes: [PostType.Root],
       metadata: {
         mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo]
-      },
-      apps: [APP_ADDRESS]
-    }
+      }
+      // apps: [APP_ADDRESS]
+    },
+    pageSize: PageSize.Fifty
   })
 
   const { posts, streamReplayPosts } = usePostsStore((state) => ({
     posts: state.posts,
     streamReplayPosts: state.streamReplayPosts
   }))
+
+  console.log('posts', posts)
+  console.log('streamReplayPosts', streamReplayPosts)
 
   const getStreamReplay = useCallback(
     (postId: string) => {
@@ -76,8 +81,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
     <div className={clsx('flex flex-col w-full h-full gap-y-4', className)}>
       {combinedData?.map((post) => {
         if (
-          // @ts-ignore
-          hideProfilesIds.includes(post?.by?.id) ||
+          hideAccountAddresses.includes(post?.author?.address) ||
           currentPostId === post?.id
         ) {
           return null

@@ -21,7 +21,7 @@ export const AVATAR = 'tr:w-120,h-120'
 export const NODE_API_MODE =
   process.env.NEXT_PUBLIC_NODE_API_MODE ?? 'production'
 
-export const LOCAL_NODE_API_URL = 'http://localhost:8000'
+export const LOCAL_NODE_API_URL = process.env.NEXT_PUBLIC_LOCAL_NODE_API_URL
 export const PRODUCTION_NODE_API_URL = 'https://api.bloomers.tv'
 // export const PRODUCTION_NODE_API_URL = 'https://bloomerstv-api.onrender.com'
 export const DEVELOPMENT_NODE_API_URL =

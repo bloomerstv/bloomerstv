@@ -33,7 +33,7 @@ import QuoteButton from './QuoteButton'
 import { useModal } from '../../common/ModalContext'
 import LikeButton from './LikeButton'
 import MirrorButton from './MirrorButton'
-import { createClient } from 'graphql-ws'
+// import { createClient } from 'graphql-ws'
 import Timer from '../../common/Timer'
 import { Account, Post, usePost } from '@lens-protocol/react'
 import useFollow from '../../../utils/hooks/lens/useFollow'
@@ -41,26 +41,26 @@ import useUnFollow from '../../../utils/hooks/lens/useUnFollow'
 import useSession from '../../../utils/hooks/useSession'
 import useAccountStats from '../../../utils/hooks/lens/useAccountStats'
 
-const client = createClient({
-  url: wsLensGraphEndpoint
-})
+// const client = createClient({
+//   url: wsLensGraphEndpoint
+// })
 
-const NEW_PUBLICATION_STATS = `
-  subscription NewPublicationStats(
-    $for: PublicationId!,
-    $request: PublicationStatsCountOpenActionArgs,
-    $reactionsRequest: PublicationStatsReactionArgs
-  ) {
-    newPublicationStats(for: $for) {
-      id
-      comments
-      mirrors
-      quotes
-      reactions(request: $reactionsRequest)
-      countOpenActions(request: $request)
-    }
-  }
-`
+// const NEW_PUBLICATION_STATS = `
+//   subscription NewPublicationStats(
+//     $for: PublicationId!,
+//     $request: PublicationStatsCountOpenActionArgs,
+//     $reactionsRequest: PublicationStatsReactionArgs
+//   ) {
+//     newPublicationStats(for: $for) {
+//       id
+//       comments
+//       mirrors
+//       quotes
+//       reactions(request: $reactionsRequest)
+//       countOpenActions(request: $request)
+//     }
+//   }
+// `
 export interface NewPublicationStatsType {
   comments: number
   countOpenActions: number
@@ -89,7 +89,7 @@ const ProfileBar = ({
   const { execute, loading: followLoading } = useFollow()
   const { execute: unFollow, loading: unFollowing } = useUnFollow()
 
-  const { isAuthenticated, account: sessionAccount } = useSession()
+  const { isAuthenticated } = useSession()
 
   const { data: accountStats } = useAccountStats({
     account: account?.address
