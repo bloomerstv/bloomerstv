@@ -31,6 +31,7 @@ import {
   usePosts
 } from '@lens-protocol/react'
 import { useStreamReplayPosts } from '../../../utils/hooks/useStreamReplayPosts'
+import useFetchPosts from '../../../utils/hooks/lens/useFetchPosts'
 const HomePageCards = () => {
   const [showShowMoreButton, setShowShowMoreButton] = useState(true)
   const [showAll, setShowAll] = React.useState(false)
@@ -86,10 +87,10 @@ const HomePageCards = () => {
   // for clips
   const { data, loading } = usePosts({
     filter: {
-      postTypes: [PostType.Root, PostType.Quote],
+      postTypes: [PostType.Root],
       apps: [APP_ADDRESS],
       metadata: {
-        mainContentFocus: [MainContentFocus.ShortVideo, MainContentFocus.Video],
+        // mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo],
         tags:
           selectedCategory?.tags?.length > 0
             ? {
@@ -97,13 +98,16 @@ const HomePageCards = () => {
               }
             : undefined
       }
-    },
-    pageSize: 25
+    }
   })
+
+  const filteredPostsClips = data?.items?.filter(
+    (p) => p.__typename === 'Post' && p.metadata?.__typename === 'VideoMetadata'
+  )
 
   const { data: isVerified } = useIsVerifiedQuery({
     variables: {
-      accountAddresses: data?.items.map((p) => p.author?.address)
+      accountAddresses: filteredPostsClips?.map((p) => p.author?.address)
     }
   })
 
@@ -116,7 +120,7 @@ const HomePageCards = () => {
 
   // add type streamClips to data
   const streamClips =
-    data?.items?.map((post) => {
+    filteredPostsClips?.map((post) => {
       return {
         ...post,
         type: 'streamClips'
@@ -283,34 +287,34 @@ const HomePageCards = () => {
                     ? postsMap.get(post?.postId as PostId)
                     : null
                 if (
-                  hideAccountAddresses.includes(
-                    post?.__typename === 'Post' ? post?.author?.address : ''
-                  )
+                  post?.__typename === 'Post' &&
+                  post?.author?.address &&
+                  hideAccountAddresses.includes(post?.author?.address)
                 ) {
                   return null
                 }
                 return (
                   <HomeVideoCard
                     // @ts-ignore
-                    cover={streamReplayPost?.thumbnail}
+                    cover={post?.thumbnail}
                     // @ts-ignore
-                    duration={streamReplayPost?.sourceSegmentsDuration}
+                    duration={post?.sourceSegmentsDuration}
                     // @ts-ignore
-                    premium={!!streamReplayPost?.premium}
+                    premium={!!post?.premium}
                     // @ts-ignore
-                    key={post?.id ?? streamReplayPost?.sessionId}
-                    post={post as Post}
+                    key={post?.id ?? post?.sessionId}
+                    post={streamReplayPost as Post}
                     // @ts-ignore
                     session={
-                      post
+                      streamReplayPost
                         ? undefined
                         : {
-                            createdAt: streamReplayPost?.timestamp!,
+                            createdAt: post?.timestamp!,
                             // @ts-ignore
-                            sessionId: streamReplayPost?.sessionId!,
+                            sessionId: post?.sessionId!,
                             account: accountsMap.get(
                               // @ts-ignore
-                              streamReplayPost?.author?.address
+                              post?.accountAddress
                             )
                           }
                     }

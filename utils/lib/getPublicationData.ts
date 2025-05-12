@@ -101,9 +101,11 @@ const getPublicationData = (
         asset: {
           uri: videoUri,
           cover:
+            metadata.video.cover ||
             metadata.attachments.find(
               (attachment) => attachment.__typename === 'MediaImage'
-            )?.item || videoAttachments?.coverUri,
+            )?.item ||
+            videoAttachments?.coverUri,
           type: 'Video',
           duration: metadata?.video?.duration
         }

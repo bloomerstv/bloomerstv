@@ -131,8 +131,7 @@ const CommentRow = ({
 
         {showComments && (
           <CommentSection
-            // @ts-ignore
-            publication={comment}
+            post={comment}
             className="ml-[-10px]"
             level={level + 1}
           />

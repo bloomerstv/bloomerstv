@@ -35,8 +35,6 @@ export const useStreamReplayPosts = ({
     }
   })
 
-  console.log('streamReplayPosts', data?.streamReplayPosts)
-
   const { data: accountsWithoutPosts } = useAccountsBulk({
     addresses: Array.from(
       new Set(

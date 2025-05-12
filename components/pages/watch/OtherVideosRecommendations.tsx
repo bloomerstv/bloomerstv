@@ -10,32 +10,30 @@ import {
   MainContentFocus,
   PageSize,
   Post,
+  PostStats,
   PostType,
   usePosts
 } from '@lens-protocol/react'
 import { usePostsStore } from '../../store/usePosts'
+import LoadingVideoCard from '../../ui/LoadingVideoCard'
 
 const OtherVideosRecommendations = ({ className }: { className?: string }) => {
   const isMobile = useIsMobile()
   const pathname = usePathname()
-  const { data } = usePosts({
+  const { data, loading: postsLoading } = usePosts({
     filter: {
-      postTypes: [PostType.Root],
-      metadata: {
-        mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo]
-      }
-      // apps: [APP_ADDRESS]
-    },
-    pageSize: PageSize.Fifty
+      postTypes: [PostType.Root, PostType.Quote],
+      // metadata: {
+      //   mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo]
+      // },
+      apps: [APP_ADDRESS]
+    }
   })
 
   const { posts, streamReplayPosts } = usePostsStore((state) => ({
     posts: state.posts,
     streamReplayPosts: state.streamReplayPosts
   }))
-
-  console.log('posts', posts)
-  console.log('streamReplayPosts', streamReplayPosts)
 
   const getStreamReplay = useCallback(
     (postId: string) => {
@@ -51,9 +49,13 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
     [streamReplayPosts?.streamReplayPosts]
   )
 
+  const filteredPostsClips = data?.items?.filter(
+    (p) => p.__typename === 'Post' && p.metadata?.__typename === 'VideoMetadata'
+  )
+
   // add type streamClips to data
   const streamClips =
-    data?.items.map((post) => {
+    filteredPostsClips?.map((post) => {
       return {
         ...post,
         type: 'streamClips'
@@ -76,7 +78,20 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
 
   const currentPostId = pathname?.split('/')[2]
 
-  if (!data) return null
+  const isLoading = postsLoading
+
+  if (isLoading) {
+    return (
+      <div className={clsx('flex flex-col w-full h-full gap-y-4', className)}>
+        {Array(5)
+          .fill(null)
+          .map((_, i) => (
+            <LoadingVideoCard key={i} />
+          ))}
+      </div>
+    )
+  }
+
   return (
     <div className={clsx('flex flex-col w-full h-full gap-y-4', className)}>
       {combinedData?.map((post) => {
@@ -94,10 +109,8 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
             return (
               <HomeVideoCard
                 post={post as Post}
-                // @ts-ignore
-                cover={getStreamReplay(post?.id)?.thumbnail}
-                // @ts-ignore
-                duration={getStreamReplay(post?.id)?.duration}
+                cover={getStreamReplay(post?.id)?.thumbnail!}
+                duration={getStreamReplay(post?.id)?.duration!}
                 key={post?.id}
               />
             )
