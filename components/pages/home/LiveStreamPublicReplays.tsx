@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
@@ -100,9 +100,11 @@ const HomePageCards = () => {
     }
   })
 
-  const filteredPostsClips = data?.items?.filter(
-    (p) => p.__typename === 'Post' && p.metadata?.__typename === 'VideoMetadata'
-  )
+  const filteredPostsClips =
+    data?.items?.filter(
+      (p) =>
+        p.__typename === 'Post' && p.metadata?.__typename === 'VideoMetadata'
+    ) || []
 
   const { data: isVerified } = useIsVerifiedQuery({
     variables: {
@@ -118,27 +120,50 @@ const HomePageCards = () => {
   )
 
   // add type streamClips to data
-  const streamClips =
-    filteredPostsClips?.map((post) => {
-      return {
-        ...post,
-        type: 'streamClips'
-      }
-    }) ?? []
+  const streamClips = React.useMemo(() => {
+    return (
+      filteredPostsClips?.map((post) => {
+        return {
+          ...post,
+          type: 'streamClips'
+        }
+      }) ?? []
+    )
+  }, [filteredPostsClips])
 
-  const streamReplays =
-    filteredPosts?.map((post) => {
-      return {
-        ...post,
-        timestamp: post?.createdAt,
-        type: 'streamReplays'
-      }
-    }) ?? []
+  const streamReplays = React.useMemo(() => {
+    return (
+      filteredPosts?.map((post) => {
+        return {
+          ...post,
+          timestamp: post?.createdAt,
+          type: 'streamReplays'
+        }
+      }) ?? []
+    )
+  }, [filteredPosts])
 
-  const combinedData = [...streamReplays, ...streamClips].sort(
-    (a, b) =>
-      new Date(b?.timestamp).getTime() - new Date(a?.timestamp).getTime()
-  )
+  const combinedData = React.useMemo(() => {
+    if (!streamReplays.length && !streamClips.length) {
+      console.log('Both arrays empty, returning empty array')
+      return []
+    }
+
+    return [...streamReplays, ...streamClips].sort(
+      (a, b) =>
+        new Date(b?.timestamp || 0).getTime() -
+        new Date(a?.timestamp || 0).getTime()
+    )
+  }, [streamReplays, streamClips])
+
+  useEffect(() => {
+    console.log('CATEGORY CHANGED:', selectedCategory?.name)
+    console.log('filteredPosts', filteredPosts?.length || 0)
+    console.log('filteredPostsClips', filteredPostsClips?.length || 0)
+    console.log('streamReplays length:', streamReplays.length)
+    console.log('streamClips length:', streamClips.length)
+    console.log('combinedData length:', combinedData?.length || 0)
+  }, [filteredPosts, filteredPostsClips, combinedData, selectedCategory])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [isOverflowingLeft, setIsOverflowingLeft] = useState(false)
@@ -256,71 +281,73 @@ const HomePageCards = () => {
           })}
 
         {/* live streams replay, clips and videos */}
-        {!loading &&
-        !accountsLoading &&
-        streamReplayPosts?.streamReplayPosts?.streamReplayPosts &&
-        streamReplayPosts?.streamReplayPosts?.streamReplayPosts?.length > 0 &&
-        combinedData &&
-        combinedData?.length > 0
-          ? combinedData
-              ?.slice(0, showAll ? combinedData?.length : lengthToShow)
-              ?.map((post) => {
-                if (
-                  post?.type === 'streamClips' &&
-                  post?.__typename === 'Post'
-                ) {
-                  if (hideAccountAddresses.includes(post?.author?.address)) {
-                    return null
-                  }
-                  return (
-                    <HomeVideoCard
-                      premium={verifiedMap.get(post?.author?.address)}
-                      key={post?.id}
-                      post={post as Post}
-                    />
-                  )
-                }
 
-                const streamReplayPost =
-                  post?.__typename === 'StreamReplayPost'
-                    ? postsMap.get(post?.postId as PostId)
-                    : null
-                if (
-                  post?.__typename === 'Post' &&
-                  post?.author?.address &&
-                  hideAccountAddresses.includes(post?.author?.address)
-                ) {
+        {!loading &&
+          !accountsLoading &&
+          combinedData
+            ?.slice(0, showAll ? combinedData?.length : lengthToShow)
+            ?.map((post) => {
+              if (!post) return null
+
+              if (post?.type === 'streamClips' && post?.__typename === 'Post') {
+                if (hideAccountAddresses.includes(post?.author?.address)) {
                   return null
                 }
                 return (
                   <HomeVideoCard
-                    // @ts-ignore
-                    cover={post?.thumbnail}
-                    // @ts-ignore
-                    duration={post?.sourceSegmentsDuration}
-                    // @ts-ignore
-                    premium={!!post?.premium}
-                    // @ts-ignore
-                    key={post?.id ?? post?.sessionId}
-                    post={streamReplayPost as Post}
-                    // @ts-ignore
-                    session={
-                      streamReplayPost
-                        ? undefined
-                        : {
-                            createdAt: post?.timestamp!,
-                            // @ts-ignore
-                            sessionId: post?.sessionId!,
-                            account: accountsMap.get(
-                              // @ts-ignore
-                              post?.accountAddress
-                            )
-                          }
-                    }
+                    premium={verifiedMap.get(post?.author?.address)}
+                    key={post?.id}
+                    post={post as Post}
                   />
                 )
-              })
-          : renderLoadingCards()}
+              }
+
+              const streamReplayPost =
+                post?.__typename === 'StreamReplayPost'
+                  ? postsMap.get(post?.postId as PostId)
+                  : null
+              if (
+                post?.__typename === 'Post' &&
+                post?.author?.address &&
+                hideAccountAddresses.includes(post?.author?.address)
+              ) {
+                return null
+              }
+              return (
+                <HomeVideoCard
+                  // @ts-ignore
+                  cover={post?.thumbnail}
+                  // @ts-ignore
+                  duration={post?.sourceSegmentsDuration}
+                  // @ts-ignore
+                  premium={!!post?.premium}
+                  // @ts-ignore
+                  key={post?.id ?? post?.sessionId}
+                  post={streamReplayPost as Post}
+                  // @ts-ignore
+                  session={
+                    streamReplayPost
+                      ? undefined
+                      : {
+                          createdAt: post?.timestamp!,
+                          // @ts-ignore
+                          sessionId: post?.sessionId!,
+                          account: accountsMap.get(
+                            // @ts-ignore
+                            post?.accountAddress
+                          )
+                        }
+                  }
+                />
+              )
+            })}
+
+        {loading && accountsLoading && (
+          <>
+            {console.log('Rendering loading cards instead of content')}
+            {renderLoadingCards()}
+          </>
+        )}
 
         {!showAll && showShowMoreButton && (
           <div className="w-full centered-row -mt-4">
