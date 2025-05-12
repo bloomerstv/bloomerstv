@@ -31,7 +31,6 @@ import {
   usePosts
 } from '@lens-protocol/react'
 import { useStreamReplayPosts } from '../../../utils/hooks/useStreamReplayPosts'
-import useFetchPosts from '../../../utils/hooks/lens/useFetchPosts'
 const HomePageCards = () => {
   const [showShowMoreButton, setShowShowMoreButton] = useState(true)
   const [showAll, setShowAll] = React.useState(false)
