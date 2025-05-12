@@ -1,31 +1,60 @@
 /* eslint-disable react/jsx-key */
 import { Button } from 'frames.js/next'
 import { frames } from './frames'
-import { LensClient, production } from '@lens-protocol/client'
 import { humanReadableNumber } from '../../utils/helpers'
 import getAvatar from '../../utils/lib/getAvatar'
+import { mainnet, PublicClient } from '@lens-protocol/client'
+import { fetchAccount, fetchAccountStats } from '@lens-protocol/client/actions'
 
 const handleRequest = frames(async (ctx) => {
   const url = ctx.url
   const handle = decodeURIComponent(url.searchParams.get('handle') || '')
   const thumbnail = decodeURIComponent(url.searchParams.get('thumbnail') || '')
 
-  const lensClient = new LensClient({ environment: production })
+  const lensClient = PublicClient.create({
+    environment: mainnet,
+    origin: 'https://bloomers.tv'
+  })
 
-  const profile = await lensClient.profile.fetch({
-    forHandle: handle
+  const result = await fetchAccount(lensClient, {
+    username: {
+      localName: handle.split('/')[1]
+    }
+  })
+
+  if (result.isErr()) {
+    return {
+      image: (
+        <div tw="flex w-full h-full items-center justify-center bg-red-500">
+          <span tw="text-white text-4xl">Account not found</span>
+        </div>
+      ),
+      imageOptions: {
+        width: 1200,
+        height: 630
+      }
+    }
+  }
+
+  const account = result.value
+
+  const accountStatsResult = await fetchAccountStats(lensClient, {
+    account: account?.address
   })
 
   const finalThumbnail = thumbnail
     ? thumbnail
-    : (profile?.metadata?.coverPicture?.optimized?.uri ??
-      'https://bloomers.tv/banner.png')
+    : (account?.metadata?.coverPicture ?? 'https://bloomers.tv/banner.png')
+
+  const followersCount = accountStatsResult?.isOk()
+    ? (accountStatsResult?.value?.graphFollowStats?.followers ?? 0)
+    : 0
 
   const commonQueryParams = new URLSearchParams({
     handle: encodeURIComponent(handle),
-    followers: encodeURIComponent(profile?.stats?.followers!),
+    followers: encodeURIComponent(followersCount),
     thumbnail: encodeURIComponent(finalThumbnail),
-    profileId: encodeURIComponent(profile?.id!)
+    accountAddress: encodeURIComponent(account?.address!)
   }).toString()
 
   return {
@@ -40,7 +69,7 @@ const handleRequest = frames(async (ctx) => {
         />
 
         <img
-          src={getAvatar(profile)}
+          src={getAvatar(account)}
           width={150}
           height={150}
           style={{
@@ -78,7 +107,7 @@ const handleRequest = frames(async (ctx) => {
               paddingLeft: 5
             }}
           >
-            {` ${humanReadableNumber(profile?.stats?.followers)}`}
+            {` ${humanReadableNumber(followersCount)}`}
           </span>
         </div>
       </div>

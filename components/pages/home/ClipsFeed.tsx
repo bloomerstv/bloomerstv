@@ -22,9 +22,8 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
   const { data, loading } = usePosts({
     filter: {
       postTypes: [PostType.Root, PostType.Quote],
-
       metadata: {
-        mainContentFocus: [MainContentFocus.ShortVideo, MainContentFocus.Video],
+        // mainContentFocus: [MainContentFocus.ShortVideo, MainContentFocus.Video],
         tags: handle
           ? {
               oneOf: [`clip-${handle}`]
@@ -35,6 +34,8 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
     },
     cursor
   })
+
+  console.log('data', data)
 
   useEffect(() => {
     if (data?.items && data.items.length > 0) {

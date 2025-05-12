@@ -10,7 +10,7 @@ const formatHandle = (account?: Account | null, keepSuffix = false): string => {
     return account?.address || ''
   }
   if (keepSuffix) {
-    return handleInfo?.localName
+    return handleInfo?.value
   }
 
   return handleInfo?.localName

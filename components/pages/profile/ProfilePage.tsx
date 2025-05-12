@@ -59,16 +59,16 @@ const ProfilePage = ({ handle }: { handle: string }) => {
     loading: streamerLoading
   } = useStreamerQuery({
     variables: {
-      accountAddress: sessionAccount?.address
+      accountAddress: account?.address
     },
-    skip: !sessionAccount?.address
+    skip: !account?.address
   })
 
   const { data: replayRecording } = useStreamReplayRecordingQuery({
     variables: {
-      accountAddress: sessionAccount?.address
+      accountAddress: account?.address
     },
-    skip: !sessionAccount?.address || Boolean(streamer?.streamer?.isActive)
+    skip: !account?.address || Boolean(streamer?.streamer?.isActive)
   })
 
   const hasPlaybackId = Boolean(streamer?.streamer?.playbackId)
@@ -140,10 +140,8 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         muted={false}
         streamOfflineErrorComponent={
           <StreamerOffline
-            // @ts-ignore
-            streamReplayRecording={replayRecording?.streamReplayRecording}
-            // @ts-ignore
-            profile={data}
+            streamReplayRecording={replayRecording?.streamReplayRecording!}
+            account={account!}
             // @ts-ignore
             streamer={streamer?.streamer}
           />
@@ -233,11 +231,10 @@ const ProfilePage = ({ handle }: { handle: string }) => {
         ) : (
           <div className="h-[230px] sm:h-[700px] w-full">
             <StreamerOffline
+              streamReplayRecording={replayRecording?.streamReplayRecording!}
+              account={account!}
               // @ts-ignore
-              streamReplayRecording={replayRecording?.streamReplayRecording}
-              account={account}
-              // @ts-ignore
-              streamer={streamer?.streamer}
+              streamer={streamer?.streamer!}
             />
           </div>
         )}
