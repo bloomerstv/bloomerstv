@@ -4,10 +4,12 @@ export const getIdentityTokenAsync = async (): Promise<null | string> => {
   try {
     // get json data from lens.development.credentials key from localhost
     const cred = localStorage.getItem(localStorageCredKey)
+
     if (!cred) return null
     const credJson = JSON.parse(cred)
     // get token from json data
     const refreshToken = credJson?.data?.refreshToken
+
     if (!refreshToken) return null
 
     const res = await fetch(lensUrl, {

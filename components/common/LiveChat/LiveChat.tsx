@@ -348,8 +348,6 @@ const LiveChat = ({
       const id = uuid()
       const locale = getUserLocale()
 
-      console.log('imageUrl', imageUrl)
-
       const metadata = imageUrl
         ? image({
             content: inputMessage,

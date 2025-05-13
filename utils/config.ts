@@ -14,7 +14,7 @@ export const isMainnet = process.env.NEXT_PUBLIC_LENS_MODE
 export const APP_ADDRESS = isMainnet
   ? // bloomers.tv
     '0x5eD76435f79E025Ca5c534e17184FEC29b681DB5'
-  : '0xF852339E6a3c1E7D4BF608FAFC35F84185527751'
+  : '0x0f6c48a220ddC674662D53340FE1fF0653CC7e4f'
 
 export const AVATAR = 'tr:w-120,h-120'
 
@@ -63,7 +63,7 @@ export const LIVE_PEER_RTMP_URL = 'rtmp://rtmp.livepeer.com/live'
 export const localStorageCredKey = isMainnet
   ? 'lens.mainnet.credentials'
   : 'lens.testnet.credentials'
-export const lensTestnetUrl = 'https://api.testnet.lens.dev/graphql'
+export const lensTestnetUrl = 'https://api.testnet.lens.xyz/graphql'
 export const lensMainnetUrl = 'https://api.lens.xyz/graphql'
 export const wsLensGraphEndpoint = isMainnet
   ? 'wss://api-v2.lens.dev'
