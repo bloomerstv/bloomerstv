@@ -179,21 +179,21 @@ const StreamerSidebar = () => {
                     )
                   })}
 
-                  {offlineFollowingStreamers?.slice(0, 10)?.map((profile) => {
+                  {offlineFollowingStreamers?.slice(0, 10)?.map((account) => {
                     return (
                       // @ts-ignore
                       <StreamerBar
-                        key={profile?.address}
+                        key={account?.address}
                         streamer={{
-                          profile,
-                          accountAddress: profile?.address,
-                          lastSeen: offlineStreamersMap.get(profile?.address)
+                          account,
+                          accountAddress: account?.address,
+                          lastSeen: offlineStreamersMap.get(account?.address)
                             ?.lastSeen,
                           nextStreamTime: offlineStreamersMap.get(
-                            profile?.address
+                            account?.address
                           )?.nextStreamTime,
                           premium:
-                            offlineStreamersMap.get(profile?.address)
+                            offlineStreamersMap.get(account?.address)
                               ?.premium ?? false
                         }}
                       />
@@ -240,21 +240,21 @@ const StreamerSidebar = () => {
                   )
                 })}
 
-                {offlineRecommendedStreamers?.slice(0, 10)?.map((profile) => {
+                {offlineRecommendedStreamers?.slice(0, 10)?.map((account) => {
                   return (
                     // @ts-ignore
                     <StreamerBar
-                      key={profile?.address}
+                      key={account?.address}
                       streamer={{
-                        profile,
-                        accountAddress: profile?.address,
-                        lastSeen: offlineStreamersMap.get(profile?.address)
+                        account: account,
+                        accountAddress: account?.address,
+                        lastSeen: offlineStreamersMap.get(account?.address)
                           ?.lastSeen,
                         premium:
-                          offlineStreamersMap.get(profile?.address)?.premium ??
+                          offlineStreamersMap.get(account?.address)?.premium ??
                           false,
                         nextStreamTime: offlineStreamersMap.get(
-                          profile?.address
+                          account?.address
                         )?.nextStreamTime
                       }}
                     />
@@ -267,9 +267,9 @@ const StreamerSidebar = () => {
 
         {/* subscribe to super bloomers */}
 
-        {!isVerified?.isVerified?.[0]?.isVerified && (
+        {/* {!isVerified?.isVerified?.[0]?.isVerified && (
           <SubscribeToSuperBloomers />
-        )}
+        )} */}
 
         {!isMobile && (
           <>
