@@ -47,7 +47,7 @@ const LoginComponent = ({
   const { execute, loading: logging, data } = useLogin()
 
   // todo use enableSignless from lens in v3 instead of this
-  const { enableSignless, loading, error } = useEnableSignless()
+  const { execute: enableSignless, loading, error } = useEnableSignless()
 
   // const {
   //   execute: enableProfileManager,
@@ -117,7 +117,8 @@ const LoginComponent = ({
                             signMessage: signMessageWith(walletClient!)
                           })
 
-                          if (data?.isOk() && data?.value.sponsored) {
+                          // if (data?.isOk() && data?.value.sponsored) {
+                          if (data?.isOk()) {
                             onClose?.()
                             window.location.reload()
                           } else if (!data?.isOk() || data?.isErr()) {
@@ -241,53 +242,54 @@ const LoginComponent = ({
               </div>
             </>
           ) : (
-            <>
-              {!authenticatedUser?.sponsored && (
-                <>
-                  <div className="text-2xl font-bold ">
-                    Enable signless transactions
-                  </div>
-                  <div className="text-s-text font-semibold text-sm mb-4">
-                    This will allow you to post onchain without signing. No fees
-                    required.
-                  </div>
+            <></>
+            // <>
+            //   {!authenticatedUser?.sponsored && (
+            //     <>
+            //       <div className="text-2xl font-bold ">
+            //         Enable signless transactions
+            //       </div>
+            //       <div className="text-s-text font-semibold text-sm mb-4">
+            //         This will allow you to post onchain without signing. No fees
+            //         required.
+            //       </div>
 
-                  {/* // todo enable sponsored action */}
+            //       {/* // todo enable sponsored action */}
 
-                  <div className="p-4 mb-4 rounded-lg bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-200">
-                    <div className="font-medium">Coming Soon!</div>
-                    <div className="text-sm">
-                      Sponsored transactions will be available soon. Some
-                      features may be limited until then.
-                    </div>
-                  </div>
+            //       <div className="p-4 mb-4 rounded-lg bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-200">
+            //         <div className="font-medium">Coming Soon!</div>
+            //         <div className="text-sm">
+            //           Sponsored transactions will be available soon. Some
+            //           features may be limited until then.
+            //         </div>
+            //       </div>
 
-                  <LoadingButton
-                    variant="contained"
-                    loading={loading}
-                    loadingPosition="start"
-                    startIcon={<AutoAwesomeIcon />}
-                    onClick={async () => {
-                      try {
-                        const { isOk } = await enableSignless()
-                        if (isOk()) {
-                          onClose?.()
-                        }
-                      } catch (e) {
-                        // @ts-ignore
-                        toast.error(e.message)
-                      }
-                    }}
-                    sx={{
-                      borderRadius: '2rem'
-                    }}
-                    disabled={loading || data?.sponsored}
-                  >
-                    Approve signless
-                  </LoadingButton>
-                </>
-              )}
-            </>
+            //       <LoadingButton
+            //         variant="contained"
+            //         loading={loading}
+            //         loadingPosition="start"
+            //         startIcon={<AutoAwesomeIcon />}
+            //         onClick={async () => {
+            //           try {
+            //             const { isOk } = await enableSignless()
+            //             if (isOk()) {
+            //               onClose?.()
+            //             }
+            //           } catch (e) {
+            //             // @ts-ignore
+            //             toast.error(e.message)
+            //           }
+            //         }}
+            //         sx={{
+            //           borderRadius: '2rem'
+            //         }}
+            //         disabled={loading || data?.sponsored}
+            //       >
+            //         Approve signless
+            //       </LoadingButton>
+            //     </>
+            //   )}
+            // </>
           )}
         </>
       ) : (

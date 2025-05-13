@@ -14,7 +14,7 @@ export const isMainnet = process.env.NEXT_PUBLIC_LENS_MODE
 export const APP_ADDRESS = isMainnet
   ? // bloomers.tv
     '0x5eD76435f79E025Ca5c534e17184FEC29b681DB5'
-  : '0xC75A89145d765c396fd75CbD16380Eb184Bd2ca7'
+  : '0xF852339E6a3c1E7D4BF608FAFC35F84185527751'
 
 export const AVATAR = 'tr:w-120,h-120'
 

@@ -1,55 +1,58 @@
 import { useState } from 'react'
 import {
   CreateAccountWithUsernameRequest,
-  CreateAccountWithUsernameResult,
-  ResultAsync,
-  UnauthenticatedError,
-  UnexpectedError,
+  never,
   useSessionClient
 } from '@lens-protocol/react'
-import { createAccountWithUsername } from '@lens-protocol/client/actions'
+import {
+  createAccountWithUsername,
+  fetchAccount
+} from '@lens-protocol/client/actions'
+import { handleOperationWith } from '@lens-protocol/react/viem'
+import { useWalletClient } from 'wagmi'
 
 interface UseCreateAccountReturn {
-  execute: (
-    request: CreateAccountWithUsernameRequest
-  ) => Promise<
-    ResultAsync<
-      CreateAccountWithUsernameResult,
-      UnexpectedError | UnauthenticatedError
-    >
-  >
+  execute: (request: CreateAccountWithUsernameRequest) => Promise<void>
   loading: boolean
-  data: CreateAccountWithUsernameResult | null
 }
 
 const useCreateAccount = (): UseCreateAccountReturn => {
   const { data: sessionClient } = useSessionClient()
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState<CreateAccountWithUsernameResult | null>(null)
+  const { data: walletClient } = useWalletClient()
 
   const execute = async (
     request: CreateAccountWithUsernameRequest
-  ): Promise<
-    ResultAsync<
-      CreateAccountWithUsernameResult,
-      UnexpectedError | UnauthenticatedError
-    >
-  > => {
+  ): Promise<void> => {
+    if (!sessionClient) {
+      throw new Error('Session client is not available')
+    }
     setLoading(true)
 
     // @ts-ignore - Handle potential type issues with sessionClient
     const result = await createAccountWithUsername(sessionClient, request)
+      .andThen(handleOperationWith(walletClient))
+      .andThen(sessionClient.waitForTransaction)
+      // @ts-ignore
+      .andThen((txHash) => fetchAccount(sessionClient, { txHash }))
+      .andThen((account) =>
+        sessionClient.switchAccount({
+          account: account?.address ?? never('Account not found')
+        })
+      )
 
-    setData(result?.isOk() ? result.value : null)
+    if (result.isErr()) {
+      throw new Error(result.error.message)
+    }
+
     setLoading(false)
 
-    return result
+    return
   }
 
   return {
     execute,
-    loading,
-    data
+    loading
   }
 }
 

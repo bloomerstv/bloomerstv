@@ -2,6 +2,7 @@ import { fetchAccount } from '@lens-protocol/client/actions'
 import {
   Account,
   AuthenticatedUser,
+  Role,
   useAuthenticatedUser,
   usePublicClient
 } from '@lens-protocol/react'
@@ -39,7 +40,7 @@ const useSession = (): SessionData => {
 
   // Fetch account in an effect, not during render
   useEffect(() => {
-    if (!data?.address) {
+    if (!data?.address || data?.role === Role.OnboardingUser) {
       setAccount(undefined)
       return
     }
@@ -76,7 +77,7 @@ const useSession = (): SessionData => {
     () => ({
       authenticatedUser: data,
       account,
-      isAuthenticated: Boolean(data),
+      isAuthenticated: Boolean(data && data.role !== Role.OnboardingUser),
       error: error || accountError || null,
       isLoading: loading || accountLoading,
       isError: Boolean(error || accountError)

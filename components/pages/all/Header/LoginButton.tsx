@@ -47,23 +47,22 @@ const LoginButton = () => {
       {(!isAuthenticated ||
         (isAuthenticated && !authenticatedUser?.sponsored)) && (
         <div className="centered-row gap-x-2 sm:gap-x-4">
-          {!authenticatedUser && (
-            <Button
-              variant="outlined"
-              onClick={() => setOpenSignup(true)}
-              size="small"
-              startIcon={
-                <div className="sm:w-7 sm:h-7 h-6 w-6">
-                  <PersonAddIcon fontSize="inherit" />
-                </div>
-              }
-              sx={{
-                borderRadius: '12px'
-              }}
-            >
-              Signup
-            </Button>
-          )}
+          <Button
+            variant="outlined"
+            onClick={() => setOpenSignup(true)}
+            size="small"
+            startIcon={
+              <div className="sm:w-7 sm:h-7 h-6 w-6">
+                <PersonAddIcon fontSize="inherit" />
+              </div>
+            }
+            sx={{
+              borderRadius: '12px'
+            }}
+          >
+            Signup
+          </Button>
+
           {/* {isMobile ? (
             <IconButton onClick={handleOpen}>
               <img
@@ -96,7 +95,6 @@ const LoginButton = () => {
           {/* )} */}
         </div>
       )}
-      {/* @ts-ignore */}
       <AvatarWithOptions handleOpen={handleOpen} />
     </div>
   )
