@@ -800,7 +800,7 @@ const LiveChatInput = ({
                 </motion.div>
               )}
 
-            {inputMessage.trim().length === 0 && !selectGif && (
+            {/* {inputMessage.trim().length === 0 && !selectGif && (
               <motion.div
                 key="super"
                 initial="hidden"
@@ -822,7 +822,7 @@ const LiveChatInput = ({
                   <AttachMoneyIcon />
                 </IconButton>
               </motion.div>
-            )}
+            )} */}
           </AnimatePresence>
         </div>
       )}
