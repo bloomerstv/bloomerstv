@@ -23,7 +23,7 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
     filter: {
       postTypes: [PostType.Root, PostType.Quote],
       metadata: {
-        // mainContentFocus: [MainContentFocus.ShortVideo, MainContentFocus.Video],
+        mainContentFocus: [MainContentFocus.ShortVideo, MainContentFocus.Video],
         tags: handle
           ? {
               oneOf: [`clip-${handle}`]

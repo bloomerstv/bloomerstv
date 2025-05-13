@@ -89,7 +89,7 @@ const HomePageCards = () => {
       postTypes: [PostType.Root],
       apps: [APP_ADDRESS],
       metadata: {
-        // mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo],
+        mainContentFocus: [MainContentFocus.Video],
         tags:
           selectedCategory?.tags?.length > 0
             ? {
@@ -99,6 +99,8 @@ const HomePageCards = () => {
       }
     }
   })
+
+  console.log('data', data)
 
   const filteredPostsClips =
     data?.items?.filter(

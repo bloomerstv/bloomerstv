@@ -35,6 +35,9 @@ importers:
       '@lens-chain/sdk':
         specifier: latest
         version: 1.0.3(ethers@6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))(viem@2.22.8(bufferutil@4.0.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1))
+      '@lens-chain/storage-client':
+        specifier: ^1.0.4
+        version: 1.0.4
       '@lens-protocol/client':
         specifier: 0.0.0-canary-20250509094551
         version: 0.0.0-canary-20250509094551(ethers@6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))(typescript@5.7.3)(viem@2.22.8(bufferutil@4.0.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1))
@@ -1837,6 +1840,9 @@ packages:
         optional: true
       zksync-ethers:
         optional: true
+
+  '@lens-chain/storage-client@1.0.4':
+    resolution: {integrity: sha512-dORCTVwSWP7MWoJ257oriH7EV8g6YU3Pxgligy28XOglLEO0PBb/D4b6fuSSqWZjvfOjr4KCC4UgqU1z66VckQ==}
 
   '@lens-protocol/api-bindings@0.12.3':
     resolution: {integrity: sha512-lHkdQjU/iD2U6bBsk8SB4N30EWzyxufibkJn6ZXWVzcFBKV7gcQzNEBK9R0OhWc8VSu6mwM11X59Xc10DbcliA==}
@@ -10809,6 +10815,8 @@ snapshots:
     optionalDependencies:
       ethers: 6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       viem: 2.22.8(bufferutil@4.0.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+
+  '@lens-chain/storage-client@1.0.4': {}
 
   '@lens-protocol/api-bindings@0.12.3(@apollo/client@3.12.5(@types/react@19.0.6)(graphql-ws@5.16.2(graphql@16.9.0))(graphql@16.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)':
     dependencies:

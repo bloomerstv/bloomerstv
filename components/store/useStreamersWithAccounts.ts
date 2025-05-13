@@ -22,16 +22,25 @@ interface StreamerWithAccountStore {
 export const useStreamersWithAccounts = create<StreamerWithAccountStore>(
   (set) => ({
     streamersWithAccounts: [],
-    setStreamersWithAccounts: (streamersWithAccounts) =>
-      set(() => ({ streamersWithAccounts })),
-    resetStreamersWithAccounts: () =>
-      set(() => ({ streamersWithAccounts: [] })),
+    setStreamersWithAccounts: (newStreamers) =>
+      set({ streamersWithAccounts: newStreamers }),
+    resetStreamersWithAccounts: () => set({ streamersWithAccounts: [] }),
     accountsFromPublicReplays: [],
-    setAccountsFromPublicReplays: (accountsFromPublicReplays) =>
-      set(() => ({ accountsFromPublicReplays })),
+    setAccountsFromPublicReplays: (newAccounts) =>
+      set((state) => {
+        // Only update if the accounts have actually changed
+        // Compare by checking length and addresses
+        const hasChanged =
+          state.accountsFromPublicReplays.length !== newAccounts.length ||
+          !state.accountsFromPublicReplays.every(
+            (account, index) => account.address === newAccounts[index]?.address
+          )
+
+        return hasChanged ? { accountsFromPublicReplays: newAccounts } : state
+      }),
     resetAccountsFromPublicReplays: () =>
-      set(() => ({ accountsFromPublicReplays: [] })),
+      set({ accountsFromPublicReplays: [] }),
     loading: true,
-    setLoading: (loading) => set(() => ({ loading }))
+    setLoading: (loading) => set({ loading })
   })
 )

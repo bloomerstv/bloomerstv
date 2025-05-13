@@ -5,20 +5,11 @@ import { Button, MenuItem, Select, TextField } from '@mui/material'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../utils/getUserLocale'
 import { MediaVideoMimeType, shortVideo } from '@lens-protocol/metadata'
-import {
-  APP_ID,
-  APP_LINK,
-  defaultSponsored
-  // isMainnet
-} from '../../../utils/config'
+import { APP_ID, APP_LINK, defaultSponsored } from '../../../utils/config'
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
-import { useUploadDataToArMutation } from '../../../graphql/generated'
-// import useCollectSettings from '../../common/Collect/useCollectSettings'
 import CollectSettingButton from '../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
-// import uploadToIPFS from '../../../utils/uploadToIPFS'
-// import { getThumbnailFromVideoUrl } from '../../../utils/generateThumbnail'
 import { useMyPreferences } from '../../store/useMyPreferences'
 import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import { usePostsStore } from '../../store/usePosts'
@@ -26,8 +17,7 @@ import { Account, useCreatePost } from '@lens-protocol/react'
 import useSession from '../../../utils/hooks/useSession'
 import { handleOperationWith } from '@lens-protocol/react/viem'
 import { useWalletClient } from 'wagmi'
-// import { VerifiedOpenActionModules } from '../../../utils/verified-openaction-modules'
-// import { encodeAbiParameters, type Address } from 'viem'
+import { acl, storageClient } from '../../../utils/lib/lens/storageClient'
 
 const PostClipOnLens = ({
   open,
@@ -65,8 +55,6 @@ const PostClipOnLens = ({
   )
   const { data: walletClient } = useWalletClient()
   const { execute } = useCreatePost(handleOperationWith(walletClient))
-
-  const [uploadDataToAR] = useUploadDataToArMutation()
 
   const createLensPost = async () => {
     // @ts-ignore
@@ -119,15 +107,12 @@ const PostClipOnLens = ({
       locale
     })
 
-    const { data: resultIpfs } = await uploadDataToAR({
-      variables: {
-        data: JSON.stringify(metadata)
-      }
+    const response = await storageClient.uploadAsJson(metadata, {
+      acl: acl,
+      name: `clip-${formatHandle(account)}-${id}`
     })
 
-    const transactionId = resultIpfs?.uploadDataToAR
-
-    if (!transactionId) {
+    if (!response?.uri) {
       throw new Error('Error uploading metadata to AR')
     }
 
@@ -172,7 +157,7 @@ const PostClipOnLens = ({
 
     // invoke the `execute` function to create the post
     const result = await execute({
-      contentUri: `ar://${transactionId}`
+      contentUri: response.uri
       // actions: actions
     })
 

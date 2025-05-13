@@ -9,11 +9,11 @@ import { APP_ID, defaultSponsored } from '../../../utils/config'
 import { NewComment } from './CommentSection'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
-import { useUploadDataToArMutation } from '../../../graphql/generated'
 import useSession from '../../../utils/hooks/useSession'
 import { useCreatePost } from '@lens-protocol/react'
 import { handleOperationWith } from '@lens-protocol/react/viem'
 import { useWalletClient } from 'wagmi'
+import { acl, storageClient } from '../../../utils/lib/lens/storageClient'
 
 const CreateCommentRow = ({
   commentOn,
@@ -28,8 +28,6 @@ const CreateCommentRow = ({
   const [content, setContent] = React.useState('')
   const { data: walletClient } = useWalletClient()
   const { execute } = useCreatePost(handleOperationWith(walletClient))
-  const [uploadDataToAR] = useUploadDataToArMutation()
-
   const [creating, setCreating] = React.useState(false)
 
   const sendComment = async () => {
@@ -44,21 +42,23 @@ const CreateCommentRow = ({
         locale: locale
       })
 
-      const { data } = await uploadDataToAR({
-        variables: {
-          data: JSON.stringify(metadata)
-        }
+      const response = await storageClient.uploadAsJson(metadata, {
+        acl: acl,
+        name: `comment-${id}`
       })
 
-      const txId = data?.uploadDataToAR
+      console.log('response', response)
 
-      if (!txId) {
-        throw new Error('Error uploading metadata to IPFS')
+      if (!response?.uri) {
+        throw new Error('Error uploading metadata to Grove')
       }
+
       // invoke the `execute` function to create the post
       const result = await execute({
-        contentUri: `ar://${txId}`,
-        commentOn: commentOn
+        contentUri: response.uri,
+        commentOn: {
+          post: commentOn
+        }
       })
 
       if (!result.isOk()) {

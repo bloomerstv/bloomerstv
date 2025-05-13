@@ -76,7 +76,7 @@ export const useStreamReplayPosts = ({
         ...(accountsWithoutPosts ?? [])
       ])
 
-      setStreamReplayPosts(data)
+      setStreamReplayPosts(data ?? null)
 
       setPosts(posts?.items as AnyPost[])
     }

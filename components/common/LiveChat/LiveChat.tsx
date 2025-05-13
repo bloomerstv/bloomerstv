@@ -23,10 +23,7 @@ import { useMyPreferences } from '../../store/useMyPreferences'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import VolumeOffIcon from '@mui/icons-material/VolumeOff'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
-import {
-  useStreamChatsQuery,
-  useUploadDataToArMutation
-} from '../../../graphql/generated'
+import { useStreamChatsQuery } from '../../../graphql/generated'
 import LiveCount from '../../pages/profile/LiveCount'
 import getUserLocale from '../../../utils/getUserLocale'
 import { v4 as uuid } from 'uuid'
@@ -60,6 +57,7 @@ import {
 } from '@lens-protocol/react'
 import { useWalletClient } from 'wagmi'
 import { handleOperationWith } from '@lens-protocol/react/viem'
+import { acl, storageClient } from '../../../utils/lib/lens/storageClient'
 export type SendMessageInput = {
   txHash?: string
   clip?: {
@@ -112,7 +110,6 @@ const LiveChat = ({
   const [open, setOpen] = React.useState(false)
   const [popedOut, setPopedOut] = React.useState(false)
   const isMobile = useIsMobile()
-  const [uploadDataToAR] = useUploadDataToArMutation()
   const { data: wallet } = useWalletClient()
   const { execute } = useCreatePost(handleOperationWith(wallet))
   const [verifiedToSend, setVerifiedToSend] = useState(false)
@@ -375,20 +372,17 @@ const LiveChat = ({
             locale: locale
           })
 
-      const { data: txData } = await uploadDataToAR({
-        variables: {
-          data: JSON.stringify(metadata)
-        }
+      const response = await storageClient.uploadAsJson(metadata, {
+        acl: acl,
+        name: `live-chat-${accountAddress}-${id}`
       })
 
-      const txId = txData?.uploadDataToAR
-
-      if (!txId) {
-        throw new Error('Error uploading metadata to IPFS')
+      if (!response?.uri) {
+        throw new Error('Error uploading metadata to Grove')
       }
       // invoke the `execute` function to create the post
       await execute({
-        contentUri: `ar://${txId}`,
+        contentUri: response?.uri,
         commentOn: {
           post: lastStreamPostId
         }

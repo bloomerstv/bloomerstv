@@ -60,7 +60,6 @@ const useSession = (): SessionData => {
           return
         }
         const accountData = accountResult.value
-        console.log('Account data:', accountData)
         setAccount(accountData)
         setAccountError(null)
       } catch (err) {

@@ -11,8 +11,7 @@ import {
   MyStream,
   ShouldCreateNewPostDocument,
   useCreateClipMutation,
-  useCreateMyLensStreamSessionMutation,
-  useUploadDataToArMutation
+  useCreateMyLensStreamSessionMutation
 } from '../../../../graphql/generated'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import {
@@ -61,6 +60,7 @@ import {
 import { useWalletClient } from 'wagmi'
 import { handleOperationWith } from '@lens-protocol/react/viem'
 import useSession from '../../../../utils/hooks/useSession'
+import { acl, storageClient } from '../../../../utils/lib/lens/storageClient'
 
 const LiveVideoComponent = ({
   myStream,
@@ -110,9 +110,7 @@ const LiveVideoComponent = ({
       }
     })
   const addLiveChatAt = useMyStreamInfo((state) => state.addLiveChatAt)
-  const [uploadDataToAR] = useUploadDataToArMutation({
-    fetchPolicy: 'no-cache'
-  })
+
   const { isAuthenticated, account } = useSession()
   const client = useApolloClient()
   // const shouldCreateNewPost = async () => {
@@ -209,23 +207,13 @@ const LiveVideoComponent = ({
     })
 
     // Upload the metadata to Arweave
-    const { data, errors } = await uploadDataToAR({
-      variables: {
-        data: JSON.stringify(metadata)
-      }
+    const response = await storageClient.uploadAsJson(metadata, {
+      acl: acl,
+      name: `livestream-${formatHandle(account)}-${id}`
     })
 
-    if (errors?.[0]) {
-      // If there is an error, show an error
-      toast.error(errors[0].message)
-      throw new Error('Error uploading metadata to Arweave')
-    }
-
-    // Get the transaction id from the response
-    const transactionId = data?.uploadDataToAR
-
-    if (!transactionId) {
-      // If the transaction id is not set, throw an error
+    if (!response?.uri) {
+      toast.error('Error uploading metadata to Arweave')
       throw new Error('Error uploading metadata to Arweave')
     }
 
@@ -289,7 +277,7 @@ const LiveVideoComponent = ({
       try {
         // Execute the post creation
         result = await execute({
-          contentUri: `ar://${transactionId}`
+          contentUri: response.uri
           // actions: actions
         })
 

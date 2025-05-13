@@ -44,19 +44,23 @@ const CommentRow = ({
     try {
       if (!isAuthenticated) return
 
+      console.log('liked', liked)
+
       if (liked) {
-        await addReaction({
-          post: comment?.id,
-          reaction: PostReactionType.Upvote
-        })
-      } else {
+        setLiked(false)
+        setLikeCount(likesCount - 1)
         await undoReaction({
           post: comment?.id,
           reaction: PostReactionType.Upvote
         })
+      } else {
+        setLikeCount(likesCount + 1)
+        setLiked(true)
+        await addReaction({
+          post: comment?.id,
+          reaction: PostReactionType.Upvote
+        })
       }
-
-      setLiked(!liked)
     } catch (e) {
       console.log(e)
     }

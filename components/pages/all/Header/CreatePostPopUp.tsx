@@ -20,12 +20,10 @@ import {
   CATEGORIES_LIST,
   getTagsForCategory
 } from '../../../../utils/categories'
-import { APP_ID, APP_LINK, defaultSponsored } from '../../../../utils/config'
 import uploadToIPFS from '../../../../utils/uploadToIPFS'
-import { useUploadDataToArMutation } from '../../../../graphql/generated'
 import toast from 'react-hot-toast'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
-import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
+// import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
 // import useCollectSettings from '../../../common/Collect/useCollectSettings'
 import VideocamIcon from '@mui/icons-material/Videocam'
 import { generateVideoThumbnails } from '../../../../utils/generateThumbnail'
@@ -53,6 +51,7 @@ import {
   textOnly,
   video
 } from '@lens-protocol/metadata'
+import { acl, storageClient } from '../../../../utils/lib/lens/storageClient'
 
 interface previewFileType {
   url: string
@@ -100,7 +99,6 @@ const CreatePostPopUp = ({
     }
   })
   const { data: walletClient } = useWalletClient()
-  const [uploadDataToAR] = useUploadDataToArMutation()
   const { execute: createPost } = useCreatePost(
     handleOperationWith(walletClient)
   )
@@ -258,58 +256,24 @@ const CreatePostPopUp = ({
             ...commonMetadata
           })
 
-    const { data: arResult } = await uploadDataToAR({
-      variables: {
-        data: JSON.stringify(metadata)
-      }
+    const response = await storageClient.uploadAsJson(metadata, {
+      acl: acl,
+      name: `post-${formatHandle(account)}-${id}`
     })
 
-    const transactionID = arResult?.uploadDataToAR
-
-    // let actions: PostAction[] | undefined = undefined
-
-    // if (type) {
-    //   actions = [
-    //     // @ts-ignore
-    //     {
-    //       type,
-    //       amount,
-    //       __typename: 'SimpleCollectAction',
-    //       payToCollect: true,
-
-    //       collectLimit,
-    //       endsAt,
-    //       followerOnly,
-    //       referralFee: amount ? referralFee : undefined
-    //     }
-    //   ]
-
-    //   if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
-    //     // @ts-ignore
-    //     actions[0]['recipients'] = recipients
-    //   }
-
-    //   if (type === OpenActionType.SIMPLE_COLLECT) {
-    //     // @ts-ignore
-    //     actions[0]['recipient'] = recipient
-    //   }
-    // }
-
-    if (!transactionID) {
-      throw new Error('Error uploading metadata to IPFS')
+    if (!response?.uri) {
+      throw new Error('Error uploading metadata to Grove')
     }
 
     const result = quoteOn
       ? await createPost({
-          contentUri: `ar://${transactionID}`,
+          contentUri: response.uri,
           quoteOf: {
             post: quoteOn
           }
-          // actions: actions
         })
       : await createPost({
-          contentUri: `ar://${transactionID}`
-          // actions: actions
+          contentUri: response.uri
         })
 
     if (result.isErr()) {

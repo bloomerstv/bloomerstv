@@ -62,7 +62,7 @@ const MirrorButton = ({
 
   useEffect(() => {
     if (post?.__typename === 'Repost') return
-    setIsMirrored(!!post?.operations?.hasReposted)
+    setIsMirrored(!!post?.operations?.hasReposted?.optimistic)
   }, [post?.id])
 
   return (

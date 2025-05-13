@@ -4,16 +4,19 @@ import { Button, Tooltip } from '@mui/material'
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote'
 import { AnimatedCounter } from 'react-animated-counter'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
+import clsx from 'clsx'
 const QuoteButton = ({
   quoteOn,
   quotingTitle,
   quotingOnProfileHandle,
-  numberOfQuotes
+  numberOfQuotes,
+  hasQuoted
 }: {
   quoteOn: string
   quotingTitle: string
   quotingOnProfileHandle: string
   numberOfQuotes: number
+  hasQuoted: boolean
 }) => {
   const { theme } = useTheme()
   const [open, setOpen] = React.useState(false)
@@ -30,7 +33,9 @@ const QuoteButton = ({
           color="secondary"
           variant="contained"
           onClick={() => setOpen(true)}
-          startIcon={<FormatQuoteIcon />}
+          startIcon={
+            <FormatQuoteIcon className={clsx(hasQuoted && 'text-brand')} />
+          }
           sx={{
             boxShadow: 'none',
             borderRadius: '20px',

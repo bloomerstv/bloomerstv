@@ -32,19 +32,20 @@ const LikeButton = ({
       if (!mustLogin('Must Login to like')) return
 
       if (liked) {
+        setNewLikeCount(newLikeCount - 1)
+        setLiked(false)
         await undoReaction({
           post: post?.id,
           reaction: PostReactionType.Upvote
         })
       } else {
+        setNewLikeCount(newLikeCount + 1)
+        setLiked(true)
         await addReaction({
           post: post?.id,
           reaction: PostReactionType.Upvote
         })
       }
-
-      setNewLikeCount(liked ? newLikeCount - 1 : newLikeCount + 1)
-      setLiked(!liked)
     } catch (error) {
       console.log(error)
       // @ts-ignore

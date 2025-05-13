@@ -102,6 +102,7 @@ const ProfileBar = ({
   // const lensApolloClient = useApolloClient<UnfollowResult>()
 
   const [publication, setPublication] = useState<Post | null | undefined>(post)
+
   const isMobile = useIsMobile()
   const { openModal } = useModal()
 
@@ -434,6 +435,9 @@ const ProfileBar = ({
                 numberOfQuotes={
                   newPublicationStats?.quotes ?? publication?.stats?.quotes
                 }
+                hasQuoted={
+                  publication?.operations?.hasQuoted?.optimistic ?? false
+                }
               />
             )}
 
@@ -500,6 +504,9 @@ const ProfileBar = ({
                 }
                 numberOfQuotes={
                   newPublicationStats?.quotes ?? publication?.stats?.quotes
+                }
+                hasQuoted={
+                  publication?.operations?.hasQuoted?.optimistic ?? false
                 }
               />
             )}

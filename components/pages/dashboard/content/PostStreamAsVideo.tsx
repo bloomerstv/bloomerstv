@@ -10,8 +10,7 @@ import React, { useEffect, useState } from 'react'
 import {
   RecordedSession,
   useCreateClipMutation,
-  useCreateMyLensStreamSessionMutation,
-  useUploadDataToArMutation
+  useCreateMyLensStreamSessionMutation
 } from '../../../../graphql/generated'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
@@ -53,6 +52,7 @@ import { Post, useCreatePost } from '@lens-protocol/react'
 import useSession from '../../../../utils/hooks/useSession'
 import { handleOperationWith } from '@lens-protocol/react/viem'
 import { useWalletClient } from 'wagmi'
+import { acl, storageClient } from '../../../../utils/lib/lens/storageClient'
 
 const PostStreamAsVideo = ({
   post,
@@ -114,8 +114,6 @@ const PostStreamAsVideo = ({
   const { data: walletClient } = useWalletClient()
 
   const { execute, error } = useCreatePost(handleOperationWith(walletClient))
-
-  const [uploadDataToAR] = useUploadDataToArMutation()
 
   const [showVideoDescription, setShowVideoDescription] = useState(false)
 
@@ -224,60 +222,18 @@ const PostStreamAsVideo = ({
       locale: locale
     })
 
-    const { data: resultAR } = await uploadDataToAR({
-      variables: {
-        data: JSON.stringify(metadata)
-      }
+    const response = await storageClient.uploadAsJson(metadata, {
+      acl: acl,
+      name: `clip-video-${formatHandle(account)}-${id}`
     })
 
-    const transactionID = resultAR?.uploadDataToAR
-
-    if (!transactionID) {
-      throw new Error('Error uploading metadata to IPFS')
+    if (!response?.uri) {
+      throw new Error('Error uploading metadata to Grove')
     }
-
-    // let actions: OpenActionConfig[] | undefined = undefined
-
-    // if (type) {
-    //   actions = [
-    //     // @ts-ignore
-    //     {
-    //       type,
-    //       amount,
-    //       collectLimit,
-    //       endsAt,
-    //       followerOnly,
-    //       referralFee: amount ? referralFee : undefined
-    //     }
-    //   ]
-
-    //   if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
-    //     // @ts-ignore
-    //     actions[0]['recipients'] = recipients
-    //   }
-
-    //   if (type === OpenActionType.SIMPLE_COLLECT) {
-    //     // @ts-ignore
-    //     actions[0]['recipient'] = recipient
-    //   }
-    // }
-
-    // if (isMainnet) {
-    //   actions?.push({
-    //     type: OpenActionType.UNKNOWN_OPEN_ACTION,
-    //     address: VerifiedOpenActionModules.Tip,
-    //     // @ts-ignore
-    //     data: encodeAbiParameters(
-    //       [{ name: 'tipReceiver', type: 'address' }],
-    //       [profile?.profile?.handle?.ownedBy as Address]
-    //     )
-    //   })
-    // }
 
     // invoke the `execute` function to create the post
     const result = await execute({
-      contentUri: `ar://${transactionID}`
-      // actions: actions
+      contentUri: response.uri
     })
 
     if (result.isErr()) {
@@ -343,20 +299,13 @@ const PostStreamAsVideo = ({
         startsAt: new Date(session?.createdAt).toISOString()
       })
 
-      const { data, errors } = await uploadDataToAR({
-        variables: {
-          data: JSON.stringify(metadata)
-        }
+      const response = await storageClient.uploadAsJson(metadata, {
+        acl: acl,
+        name: `livestream-video-${formatHandle(account)}-${id}`
       })
 
-      if (errors?.[0]) {
-        toast.error(errors[0].message)
-        throw new Error('Error uploading metadata to Arweave')
-      }
-
-      const transactionId = data?.uploadDataToAR
-
-      if (!transactionId) {
+      if (!response?.uri) {
+        toast.error('Error uploading metadata to Arweave')
         throw new Error('Error uploading metadata to Arweave')
       }
 
@@ -387,8 +336,7 @@ const PostStreamAsVideo = ({
       // }
 
       const result = await execute({
-        contentUri: `ar://${transactionId}`
-        // actions: actions
+        contentUri: response.uri
       })
 
       if (result.isErr()) {
@@ -414,7 +362,10 @@ const PostStreamAsVideo = ({
           fetchPolicy: 'no-cache'
         })
 
-      if (errors?.[0] && !lensStreamSessionResult?.createMyLensStreamSession) {
+      if (
+        lensStreamSessionErrors?.[0] &&
+        !lensStreamSessionResult?.createMyLensStreamSession
+      ) {
         toast.error(
           lensStreamSessionErrors?.[0]?.message || 'Error attaching post'
         )
