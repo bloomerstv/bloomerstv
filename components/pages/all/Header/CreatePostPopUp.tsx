@@ -35,18 +35,12 @@ import { stringToLength } from '../../../../utils/stringToLength'
 import EditIcon from '@mui/icons-material/Edit'
 import { useMyPreferences } from '../../../store/useMyPreferences'
 import useSession from '../../../../utils/hooks/useSession'
-import {
-  MediaImageType,
-  MediaVideoType,
-  MetadataLicenseType,
-  PostAction,
-  useCreatePost,
-  VideoMetadata
-} from '@lens-protocol/react'
+import { useCreatePost } from '@lens-protocol/react'
 import { handleOperationWith } from '@lens-protocol/react/viem'
 import { useWalletClient } from 'wagmi'
 import {
   image,
+  MediaImageMimeType,
   MediaVideoMimeType,
   textOnly,
   video
@@ -115,17 +109,14 @@ const CreatePostPopUp = ({
   //   recipient
   // } = useCollectSettings()
 
-  const mediaImageMimeTypes = Object.values(MediaImageType)
-  const mediaVideoMimeTypes = Object.values(MediaVideoType)
-
   const handleImageFileChange = async (event) => {
     const files = event.target.files
     if (!files?.length) return
 
     const file = files[0]
 
-    // check if file type is in mediaImageMimeTypes
-    if (!mediaImageMimeTypes.includes(file.type)) {
+    // Check if file type is a valid image MIME type
+    if (!Object.values(MediaImageMimeType).includes(file.type)) {
       toast.error('Invalid image file type. Please upload a valid image file')
       return
     }
@@ -156,8 +147,9 @@ const CreatePostPopUp = ({
 
     const file = files[0]
 
-    // check if file type is in mediaVideoMimeTypes
-    if (!mediaVideoMimeTypes.includes(file.type)) {
+    // Check if file type is a valid video MIME type
+    const validVideoMimeTypes = Object.values(MediaVideoMimeType)
+    if (!validVideoMimeTypes.includes(file.type)) {
       toast.error('Invalid video file type. Please upload a valid video file')
       return
     }
@@ -211,7 +203,7 @@ const CreatePostPopUp = ({
           generatedThumbnails[selectedThumbnailIndex],
           'thumbnail.jpeg'
         )
-        imageMimeType = MediaImageType.Jpeg
+        imageMimeType = MediaImageMimeType.JPEG
       }
     }
 
@@ -223,6 +215,8 @@ const CreatePostPopUp = ({
           setVideoProgress(progress)
         })
       : null
+
+    console.log('ipfsImage: ', ipfsImage)
     const duration = isVideo
       ? await getVideoDuration(previewVideoFile.url).then((num) =>
           Math.round(num)
@@ -237,7 +231,7 @@ const CreatePostPopUp = ({
             type: previewVideoFile.file.type as MediaVideoMimeType,
             cover: ipfsImage?.url,
             duration: duration,
-            altTag: content.slice(0, 100)
+            altTag: videoTitle ? `${videoTitle}\n${content}` : content
           },
           title: videoTitle,
           tags: [...tags]
@@ -248,8 +242,8 @@ const CreatePostPopUp = ({
             image: {
               item: ipfsImage?.url!,
               // @ts-ignore
-              type: imageMimeType as MediaImageType,
-              altTag: content.slice(0, 100)
+              type: imageMimeType as MediaImageMimeType,
+              altTag: videoTitle ? `${videoTitle}\n${content}` : content
             }
           })
         : textOnly({

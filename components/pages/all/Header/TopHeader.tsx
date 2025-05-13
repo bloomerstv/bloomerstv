@@ -9,7 +9,6 @@ import { IconButton, Tooltip } from '@mui/material'
 import VideoCallIcon from '@mui/icons-material/VideoCall'
 import CreatePostButton from './CreatePostButton'
 import useSession from '../../../../utils/hooks/useSession'
-import { Role } from '@lens-protocol/react'
 
 const TopHeader = () => {
   const { theme } = useTheme()
@@ -31,9 +30,9 @@ const TopHeader = () => {
           {APP_NAME}
         </div>
       </Link>
-      {/* <HeaderSearch /> */}
+      <HeaderSearch />
       <div className="centered-row gap-x-1">
-        {/* {isAuthenticated && <CreatePostButton />} */}
+        {isAuthenticated && <CreatePostButton />}
 
         {isAuthenticated && (
           <Tooltip title="Go Live">

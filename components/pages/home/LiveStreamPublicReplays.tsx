@@ -25,6 +25,7 @@ import { usePostsStore } from '../../store/usePosts'
 import {
   AnyPost,
   MainContentFocus,
+  PageSize,
   Post,
   PostId,
   PostType,
@@ -97,10 +98,9 @@ const HomePageCards = () => {
               }
             : undefined
       }
-    }
+    },
+    pageSize: PageSize.Ten
   })
-
-  console.log('data', data)
 
   const filteredPostsClips =
     data?.items?.filter(
@@ -147,7 +147,6 @@ const HomePageCards = () => {
 
   const combinedData = React.useMemo(() => {
     if (!streamReplays.length && !streamClips.length) {
-      console.log('Both arrays empty, returning empty array')
       return []
     }
 
@@ -157,15 +156,6 @@ const HomePageCards = () => {
         new Date(a?.timestamp || 0).getTime()
     )
   }, [streamReplays, streamClips])
-
-  useEffect(() => {
-    console.log('CATEGORY CHANGED:', selectedCategory?.name)
-    console.log('filteredPosts', filteredPosts?.length || 0)
-    console.log('filteredPostsClips', filteredPostsClips?.length || 0)
-    console.log('streamReplays length:', streamReplays.length)
-    console.log('streamClips length:', streamClips.length)
-    console.log('combinedData length:', combinedData?.length || 0)
-  }, [filteredPosts, filteredPostsClips, combinedData, selectedCategory])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [isOverflowingLeft, setIsOverflowingLeft] = useState(false)
@@ -344,12 +334,7 @@ const HomePageCards = () => {
               )
             })}
 
-        {loading && accountsLoading && (
-          <>
-            {console.log('Rendering loading cards instead of content')}
-            {renderLoadingCards()}
-          </>
-        )}
+        {(loading || accountsLoading) && <>{renderLoadingCards()}</>}
 
         {!showAll && showShowMoreButton && (
           <div className="w-full centered-row -mt-4">
