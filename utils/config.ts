@@ -16,6 +16,10 @@ export const APP_ADDRESS = isMainnet
     '0x5eD76435f79E025Ca5c534e17184FEC29b681DB5'
   : '0x0f6c48a220ddC674662D53340FE1fF0653CC7e4f'
 
+export const LENS_JWKS_URL = isMainnet
+  ? 'https://api.lens.xyz/.well-known/jwks.json'
+  : 'https://api.testnet.lens.xyz/.well-known/jwks.json'
+
 export const AVATAR = 'tr:w-120,h-120'
 
 export const NODE_API_MODE =

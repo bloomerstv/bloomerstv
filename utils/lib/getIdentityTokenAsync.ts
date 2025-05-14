@@ -1,4 +1,5 @@
 import { lensUrl, localStorageCredKey } from '../config'
+import { lensJWTVerifyIDToken } from '../hooks/lens/lensJWTVerify'
 
 export const getIdentityTokenAsync = async (): Promise<null | string> => {
   try {
@@ -7,10 +8,24 @@ export const getIdentityTokenAsync = async (): Promise<null | string> => {
 
     if (!cred) return null
     const credJson = JSON.parse(cred)
+
     // get token from json data
     const refreshToken = credJson?.data?.refreshToken
 
     if (!refreshToken) return null
+
+    let isVerifiedToken = false
+
+    try {
+      await lensJWTVerifyIDToken(credJson?.data?.idToken)
+      isVerifiedToken = true
+    } catch (e) {
+      console.log('Error verifying token', e)
+    }
+
+    if (isVerifiedToken) {
+      return credJson?.data?.idToken
+    }
 
     const res = await fetch(lensUrl, {
       method: 'POST',
@@ -56,7 +71,7 @@ export const getIdentityTokenAsync = async (): Promise<null | string> => {
       ...credJson,
       data: {
         ...credJson.data,
-        refreshToken: newRefreshToken
+        ...json?.data?.refresh
       }
     }
 
