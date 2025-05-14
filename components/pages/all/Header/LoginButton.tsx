@@ -10,7 +10,7 @@ import SignupComponent from '../../../common/SignupComponent'
 import useSession from '../../../../utils/hooks/useSession'
 
 const LoginButton = () => {
-  const { isAuthenticated, authenticatedUser } = useSession()
+  const { isAuthenticated } = useSession()
 
   const [open, setOpen] = React.useState(false)
   const [openSignup, setOpenSignup] = React.useState(false)

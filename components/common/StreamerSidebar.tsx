@@ -16,11 +16,11 @@ import {
 } from '../../graphql/generated'
 import useIsMobile from '../../utils/hooks/useIsMobile'
 import StreamerBarLoading from './StreamerSidebar/StreamerBarLoading'
-import SubscribeToSuperBloomers from './SubscribeToSuperBloomers'
 import AppLinksRow from './AppLinksRow'
 import useSession from '../../utils/hooks/useSession'
 import { Account, useAccountsBulk } from '@lens-protocol/react'
 import { useStreamersWithAccounts } from '../store/useStreamersWithAccounts'
+import SubscribeToSuperBloomers from './SubscribeToSuperBloomers'
 
 const StreamerSidebar = () => {
   const { isAuthenticated, account } = useSession()
@@ -289,9 +289,9 @@ const StreamerSidebar = () => {
 
         {/* subscribe to super bloomers */}
 
-        {/* {!isVerified?.isVerified?.[0]?.isVerified && (
+        {!isVerified?.isVerified?.[0]?.isVerified && (
           <SubscribeToSuperBloomers />
-        )} */}
+        )}
 
         {!isMobile && (
           <>

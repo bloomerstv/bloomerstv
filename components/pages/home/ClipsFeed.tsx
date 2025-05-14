@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
-import { APP_ADDRESS, APP_ID } from '../../../utils/config'
+import { APP_ADDRESS } from '../../../utils/config'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
 import { useIsVerifiedQuery } from '../../../graphql/generated'
@@ -8,7 +8,6 @@ import {
   MainContentFocus,
   Post,
   PostType,
-  useFeed,
   usePosts
 } from '@lens-protocol/react'
 

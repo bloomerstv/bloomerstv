@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import useIsMobile from '../../utils/hooks/useIsMobile'
 import HomeVideoCard from './HomeVideoCard'
 import getPublicationData from '../../utils/lib/getPublicationData'

@@ -1,8 +1,6 @@
 import React from 'react'
 import LiveDiv from '../../ui/LiveDiv'
 import LoadingImage from '../../ui/LoadingImage'
-
-import { defaultSponsored } from '../../../utils/config'
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
 import getAvatar from '../../../utils/lib/getAvatar'
@@ -22,7 +20,7 @@ const SingleHorizontalStreamerDiv = ({
   live?: boolean
   premium?: boolean
 }) => {
-  const { isAuthenticated, authenticatedUser } = useSession()
+  const { isAuthenticated } = useSession()
 
   const { execute, loading: followLoading } = useFollow()
 

@@ -20,7 +20,7 @@ const LikeButton = ({
 }) => {
   const { theme } = useTheme()
   const [liked, setLiked] = React.useState(false)
-  const { isAuthenticated, account } = useSession()
+  const { isAuthenticated } = useSession()
   const { openModal } = useModal()
   const [newLikeCount, setNewLikeCount] = React.useState(likeCount)
 

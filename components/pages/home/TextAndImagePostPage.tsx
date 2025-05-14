@@ -1,13 +1,13 @@
 import React from 'react'
 import TextAndImagePostCard from './TextAndImagePostCard'
 // import CollectButton from '../profile/CollectButton'
-import toast from 'react-hot-toast'
-import formatHandle from '../../../utils/lib/formatHandle'
+// import toast from 'react-hot-toast'
+// import formatHandle from '../../../utils/lib/formatHandle'
 import CommentSection from '../watch/CommentSection'
 import { useIsVerifiedQuery } from '../../../graphql/generated'
-import { AnyPost, Post } from '@lens-protocol/react'
-import useSession from '../../../utils/hooks/useSession'
-import useFollow from '../../../utils/hooks/lens/useFollow'
+import { AnyPost } from '@lens-protocol/react'
+// import useSession from '../../../utils/hooks/useSession'
+// import useFollow from '../../../utils/hooks/lens/useFollow'
 
 const TextAndImagePostPage = ({
   post,
@@ -17,12 +17,12 @@ const TextAndImagePostPage = ({
   premium?: boolean
   className?: string
 }) => {
-  const { isAuthenticated, account } = useSession()
+  // const { isAuthenticated } = useSession()
 
-  const { execute, loading: followLoading } = useFollow()
-  const [isFollowing, setIsFollowing] = React.useState<boolean>(
-    !!post?.author?.operations?.isFollowedByMe
-  )
+  // const { execute } = useFollow()
+  // const [isFollowing, setIsFollowing] = React.useState<boolean>(
+  //   !!post?.author?.operations?.isFollowedByMe
+  // )
 
   const { data: isVerifiedResult } = useIsVerifiedQuery({
     variables: {
@@ -31,24 +31,24 @@ const TextAndImagePostPage = ({
     skip: !post?.author?.address
   })
 
-  const handleFollow = async () => {
-    if (!isAuthenticated) return
-    try {
-      const result = await execute({
-        account: post?.author?.address
-      })
+  // const handleFollow = async () => {
+  //   if (!isAuthenticated) return
+  //   try {
+  //     const result = await execute({
+  //       account: post?.author?.address
+  //     })
 
-      if (result.isOk()) {
-        setIsFollowing(true)
-        toast.success(`Following ${formatHandle(post?.author?.address)}`)
-      } else if (result.isErr()) {
-        toast.error(result.error.message)
-      }
-    } catch (e) {
-      console.log(e)
-      toast.error(String(e))
-    }
-  }
+  //     if (result.isOk()) {
+  //       // setIsFollowing(true)
+  //       toast.success(`Following ${formatHandle(post?.author?.address)}`)
+  //     } else if (result.isErr()) {
+  //       toast.error(result.error.message)
+  //     }
+  //   } catch (e) {
+  //     console.log(e)
+  //     toast.error(String(e))
+  //   }
+  // }
 
   if (
     (post?.__typename === 'Post' && post?.commentOn) ||

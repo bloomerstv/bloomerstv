@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
@@ -12,7 +12,6 @@ import {
 } from '../../../graphql/generated'
 import {
   APP_ADDRESS,
-  APP_ID,
   hideAccountAddresses
 } from '../../../utils/config'
 import { CATEGORIES } from '../../../utils/categories'

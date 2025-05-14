@@ -1,6 +1,5 @@
 import { Button, Tooltip } from '@mui/material'
 import React, { useEffect } from 'react'
-import { defaultSponsored } from '../../../utils/config'
 import toast from 'react-hot-toast'
 import AutorenewIcon from '@mui/icons-material/Autorenew'
 
@@ -20,7 +19,7 @@ const MirrorButton = ({
   repostsCount: number
 }) => {
   const { theme } = useTheme()
-  const { isAuthenticated, account } = useSession()
+  const { isAuthenticated } = useSession()
   const { openModal } = useModal()
   const [isMirrored, setIsMirrored] = React.useState(false)
   const [newMirrorsCount, setNewMirrorsCount] = React.useState(repostsCount)

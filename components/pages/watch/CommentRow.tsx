@@ -24,7 +24,7 @@ const CommentRow = ({
   level: number
   className?: string
 }) => {
-  const { isAuthenticated, account } = useSession()
+  const { isAuthenticated } = useSession()
   const [showComments, setShowComments] = useState(false)
   const [liked, setLiked] = useState<Boolean>(false)
   const [likesCount, setLikeCount] = useState<number>(comment?.stats?.upvotes)

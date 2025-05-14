@@ -51,6 +51,6 @@ export const frames = createFrames({
 */
 
 // Placeholder export to maintain the module structure
-export const frames = (handler: any) => {
+export const frames = () => {
   return async () => new Response('Frames functionality temporarily disabled')
 }

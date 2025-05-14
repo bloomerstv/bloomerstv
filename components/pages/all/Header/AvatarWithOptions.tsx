@@ -21,7 +21,6 @@ import useIsMobile from '../../../../utils/hooks/useIsMobile'
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import getStampFyiURL from '../../../../utils/getStampFyiURL'
-import { getShortAddress } from '../../../../utils/lib/getShortAddress'
 import useEns from '../../../../utils/hooks/useEns'
 import LoadingImage from '../../../ui/LoadingImage'
 import AppLinksRow from '../../../common/AppLinksRow'
@@ -33,8 +32,8 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
 
-  const { isAuthenticated, authenticatedUser, account } = useSession()
-  const { ensAvatar, ensName } = useEns({
+  const { isAuthenticated, account } = useSession()
+  const { ensAvatar } = useEns({
     address: isAuthenticated && !account?.username ? account?.owner : null
   })
 

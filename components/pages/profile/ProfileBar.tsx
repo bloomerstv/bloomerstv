@@ -12,9 +12,7 @@ import {
 } from '@mui/material'
 import {
   APP_LINK,
-  APP_NAME,
-  defaultSponsored,
-  wsLensGraphEndpoint
+  APP_NAME
 } from '../../../utils/config'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import MobileChatButton from './MobileChatButton'
@@ -81,8 +79,8 @@ const ProfileBar = ({
   post?: Post
   premium?: boolean
 }) => {
-  const [newPublicationStats, setNewPublicationStats] =
-    useState<NewPublicationStatsType | null>(null)
+  // const [newPublicationStats, setNewPublicationStats] =
+  //   useState<NewPublicationStatsType | null>(null)
   const [isFollowing, setIsFollowing] = React.useState<boolean>(
     !!account?.operations?.isFollowedByMe
   )
@@ -404,7 +402,7 @@ const ProfileBar = ({
               <LikeButton
                 post={publication}
                 likeCount={
-                  newPublicationStats?.reactions ?? publication?.stats?.upvotes
+                  publication?.stats?.upvotes
                 }
               />
             )}
@@ -414,7 +412,7 @@ const ProfileBar = ({
             {publication?.id && (
               <MirrorButton
                 repostsCount={
-                  newPublicationStats?.reposts ?? publication?.stats?.reposts
+                  publication?.stats?.reposts
                 }
                 post={publication}
               />
@@ -433,7 +431,7 @@ const ProfileBar = ({
                       publication?.metadata?.content)
                 }
                 numberOfQuotes={
-                  newPublicationStats?.quotes ?? publication?.stats?.quotes
+                  publication?.stats?.quotes
                 }
                 hasQuoted={
                   publication?.operations?.hasQuoted?.optimistic ?? false
@@ -474,7 +472,7 @@ const ProfileBar = ({
             {publication?.id && (
               <LikeButton
                 likeCount={
-                  newPublicationStats?.reactions ?? publication?.stats?.upvotes
+                   publication?.stats?.upvotes
                 }
                 post={publication}
               />
@@ -484,7 +482,7 @@ const ProfileBar = ({
             {publication?.id && (
               <MirrorButton
                 repostsCount={
-                  newPublicationStats?.reposts ?? publication?.stats?.reposts
+                  publication?.stats?.reposts
                 }
                 post={publication}
               />
@@ -503,7 +501,7 @@ const ProfileBar = ({
                       publication?.metadata?.content)
                 }
                 numberOfQuotes={
-                  newPublicationStats?.quotes ?? publication?.stats?.quotes
+                   publication?.stats?.quotes
                 }
                 hasQuoted={
                   publication?.operations?.hasQuoted?.optimistic ?? false

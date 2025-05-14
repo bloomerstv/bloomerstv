@@ -15,11 +15,8 @@ import {
 } from '../../../../graphql/generated'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import {
-  APP_ID,
   APP_LINK,
-  REDIRECTOR_URL,
-  defaultSponsored
-  // isMainnet
+  REDIRECTOR_URL
 } from '../../../../utils/config'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
@@ -37,10 +34,8 @@ import { IconButton } from '@mui/material'
 import { BroadcastLive } from './Broadcast'
 import Player from '../../../common/Player/Player'
 import CloseIcon from '@mui/icons-material/Close'
-import useCollectSettings from '../../../common/Collect/useCollectSettings'
 import {
-  getTagsForCategory,
-  getTagsForSymbol
+  getTagsForCategory
 } from '../../../../utils/categories'
 // import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'

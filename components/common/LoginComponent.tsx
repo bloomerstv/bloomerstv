@@ -7,7 +7,6 @@ import getAvatar from '../../utils/lib/getAvatar'
 import formatHandle from '../../utils/lib/formatHandle'
 import LoadingButton from '@mui/lab/LoadingButton'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import toast from 'react-hot-toast'
 import WalletIcon from '@mui/icons-material/Wallet'
 import useEns from '../../utils/hooks/useEns'
@@ -38,16 +37,14 @@ const LoginComponent = ({
   })
   const { isAuthenticated, authenticatedUser } = useSession()
 
-  authenticatedUser?.authenticationId
-
   const { ensAvatar, ensName } = useEns({
     address: profiles?.items?.length === 0 ? address : null
   })
 
-  const { execute, loading: logging, data } = useLogin()
+  const { execute, loading: logging } = useLogin()
 
   // todo use enableSignless from lens in v3 instead of this
-  const { execute: enableSignless, loading, error } = useEnableSignless()
+  // const { execute: enableSignless, loading, error } = useEnableSignless()
 
   // const {
   //   execute: enableProfileManager,
@@ -55,11 +52,11 @@ const LoginComponent = ({
   //   error
   // } = useUpdateProfileManagers()
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message)
-    }
-  }, [error])
+  // useEffect(() => {
+  //   if (error) {
+  //     toast.error(error.message)
+  //   }
+  // }, [error])
 
   useEffect(() => {
     if (open && !isConnected && openConnectModal && !isAuthenticated) {

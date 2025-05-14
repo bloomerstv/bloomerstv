@@ -1,6 +1,6 @@
 import React from 'react'
 import HomeVideoCard from '../../common/HomeVideoCard'
-import { APP_ADDRESS, APP_ID } from '../../../utils/config'
+import { APP_ADDRESS } from '../../../utils/config'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
 import {
   MainContentFocus,

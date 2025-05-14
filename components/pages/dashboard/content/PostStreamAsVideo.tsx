@@ -21,11 +21,8 @@ import {
   video
 } from '@lens-protocol/metadata'
 import {
-  APP_ID,
   APP_LINK,
-  REDIRECTOR_URL,
-  defaultSponsored
-  // isMainnet
+  REDIRECTOR_URL
 } from '../../../../utils/config'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import formatHandle from '../../../../utils/lib/formatHandle'
@@ -37,8 +34,7 @@ import { useStreamAsVideo } from '../../../store/useStreamAsVideo'
 // import useCollectSettings from '../../../common/Collect/useCollectSettings'
 import {
   CATEGORIES_LIST,
-  getTagsForCategory,
-  getTagsForSymbol
+  getTagsForCategory
 } from '../../../../utils/categories'
 // import { getThumbnailFromVideoUrl } from '../../../../utils/generateThumbnail'
 // import uploadToIPFS from '../../../../utils/uploadToIPFS'
@@ -258,8 +254,8 @@ const PostStreamAsVideo = ({
       const thumbnail = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=.png`
       const duration = `${REDIRECTOR_URL}/livestream?sessionId=${sessionId}&format=seconds`
 
-      const streamerHandle = formatHandle(account)
-      const profileLink = `${APP_LINK}/${streamerHandle}`
+      // const streamerHandle = formatHandle(account)
+      // const profileLink = `${APP_LINK}/${streamerHandle}`
       const id = uuid()
       const locale = getUserLocale()
 

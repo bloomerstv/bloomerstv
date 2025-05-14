@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { SettingRecipientType } from '../common/Collect/CollectSettingPopUp'
+// import { SettingRecipientType } from '../common/Collect/CollectSettingPopUp'
 import { Erc20Amount } from '@lens-protocol/react'
 
 interface CollectPreferencesStore {

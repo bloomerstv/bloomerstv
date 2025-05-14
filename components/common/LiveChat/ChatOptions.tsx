@@ -44,7 +44,7 @@ const ChatOptions = ({
   })
 
   const { push } = useRouter()
-  const [loading, setLoading] = React.useState(false)
+  // const [loading, setLoading] = React.useState(false)
 
   const handleBanAndBlock = async () => {
     if (!accountAddress || optionAccountLoading) return
@@ -101,9 +101,9 @@ const ChatOptions = ({
             </Button>
 
             <LoadingButton
-              loading={loading}
+              // loading={loading}
               loadingPosition="start"
-              disabled={loading}
+              // disabled={loading}
               variant="contained"
               onClick={handleBanAndBlock}
             >

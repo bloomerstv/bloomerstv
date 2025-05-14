@@ -7,8 +7,8 @@ import StarBorderIcon from '@mui/icons-material/StarBorder'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange'
 import {
-  Button,
-  IconButton,
+  // Button,
+  // IconButton,
   MenuItem,
   Select,
   Slider,
@@ -17,13 +17,13 @@ import {
 import GroupsIcon from '@mui/icons-material/Groups'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 
-import { CURRENCIES, PROJECT_ADDRESS } from '../../../utils/config'
-import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1'
-import clsx from 'clsx'
-import WalletAddressTextField from './WalletAddressTextField'
+import { CURRENCIES } from '../../../utils/config'
+// import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1'
+// import clsx from 'clsx'
+// import WalletAddressTextField from './WalletAddressTextField'
 import { useIsVerifiedQuery } from '../../../graphql/generated'
 import useSession from '../../../utils/hooks/useSession'
-import { Erc20, Erc20Amount } from '@lens-protocol/react'
+import { Erc20Amount } from '@lens-protocol/react'
 
 export interface SettingRecipientType {
   recipient?: string
