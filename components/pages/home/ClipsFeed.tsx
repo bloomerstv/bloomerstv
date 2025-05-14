@@ -117,7 +117,7 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
         })}
 
         {/* // show loadingVideocard 6 times  */}
-        {(allPosts.length !== 0 || (allPosts.length === 0 && loading)) &&
+        {loading &&
           Array.from({ length: 3 }, (_, i) => <LoadingVideoCard key={i} />)}
       </div>
 
