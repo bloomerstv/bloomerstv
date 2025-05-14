@@ -4,7 +4,7 @@ import LiveChat from '../../../components/common/LiveChat/LiveChat'
 
 const page = (props: {
   params: Promise<{
-    profileId: string
+    accountAddress: string
   }>
 }) => {
   const params = use(props.params)
@@ -14,7 +14,7 @@ const page = (props: {
   return (
     <div className="h-full w-full">
       <LiveChat
-        profileId={params.profileId}
+        accountAddress={params.accountAddress}
         preMessages={chatData}
         showLiveCount
       />
