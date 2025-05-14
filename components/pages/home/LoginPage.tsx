@@ -112,7 +112,8 @@ const LoginPage = () => {
                                 ? {
                                     accountManager: {
                                       account: profile.account.address,
-                                      manager: address
+                                      manager: address,
+                                      app: APP_ADDRESS
                                     },
                                     signMessage: signMessageWith(walletClient!)
                                   }
