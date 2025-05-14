@@ -18,7 +18,7 @@ const RecommendedVideoCard = ({ post }: { post: Post }) => {
     <RecommendedCardLayout
       // @ts-ignore
       title={post?.metadata?.title}
-      postLink={`/watch/${post?.id}`}
+      postLink={`/watch/${post?.slug}`}
       coverUrl={asset?.cover}
       account={post?.author}
       stats={post?.stats}

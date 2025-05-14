@@ -82,8 +82,9 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
   }
 
   const totalMirrors =
-    // @ts-ignore
-    Number(data?.stats?.mirrors ?? 0) + Number(data?.stats?.quotes ?? 0)
+    data?.__typename === 'Post'
+      ? Number(data.stats?.reposts ?? 0) + Number(data.stats?.quotes ?? 0)
+      : 0
 
   const checkImageAspectRatio = (file) => {
     return new Promise<boolean>((resolve, reject) => {
@@ -259,7 +260,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
             <Link
               href={
                 data?.id
-                  ? `/watch/${data?.id}`
+                  ? `/watch/${data?.slug}`
                   : `/watch/session/${session?.sessionId}`
               }
               className="font-bold no-underline hover:underline text-p-text text-base"
@@ -296,7 +297,10 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                     size="large"
                     onClick={() => {
                       // @ts-ignore
-                      window.open(`${HEY_APP_LINK}/posts/${data?.id}`, '_blank')
+                      window.open(
+                        `${HEY_APP_LINK}/posts/${data?.slug}`,
+                        '_blank'
+                      )
                     }}
                   >
                     <img
@@ -315,7 +319,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                     // @ts-ignore
                     window.open(
                       data?.id
-                        ? `/watch/${data?.id}`
+                        ? `/watch/${data?.slug}`
                         : `/watch/session/${session?.sessionId}`,
                       '_blank'
                     )
@@ -430,13 +434,8 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
       <TableCell>{localDate(session?.createdAt)}</TableCell>
 
       {/* likes */}
-      <TableCell>
+      <TableCell className="">
         {data?.stats?.upvotes ?? <span className="text-2xl">-</span>}
-      </TableCell>
-
-      {/* comments */}
-      <TableCell>
-        {data?.stats?.comments ?? <span className="text-2xl">-</span>}
       </TableCell>
 
       {/* reposts */}
@@ -446,6 +445,11 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
         ) : (
           <span className="text-2xl">-</span>
         )}
+      </TableCell>
+
+      {/* comments */}
+      <TableCell>
+        {data?.stats?.comments ?? <span className="text-2xl">-</span>}
       </TableCell>
     </TableRow>
   )

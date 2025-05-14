@@ -79,8 +79,8 @@ const ContentPage = () => {
                   <TableCell>Visiblity</TableCell>
                   <TableCell>Date</TableCell>
                   <TableCell>Likes</TableCell>
+                  <TableCell>Reposts</TableCell>
                   <TableCell>Comments</TableCell>
-                  <TableCell>Mirror</TableCell>
                   {/* Add more TableCell components as needed */}
                 </TableRow>
               </TableHead>

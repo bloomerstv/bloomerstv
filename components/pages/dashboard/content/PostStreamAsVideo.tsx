@@ -92,22 +92,20 @@ const PostStreamAsVideo = ({
       setCategory: state.setCategory
     }
   })
-  // @ts-ignore
   const [content, setContent] = React.useState('')
 
   const [title, setTitle] = React.useState(
     // @ts-ignore
-    publication?.metadata?.title ?? 'Untitled Video'
+    post?.metadata?.title ?? 'Untitled Video'
   )
 
   useEffect(() => {
-    // @ts-ignore
     setTitle(
       // @ts-ignore
-      publication?.metadata?.title ?? 'Untitled Video'
+      post?.metadata?.title ?? 'Untitled Video'
     )
     // @ts-ignore
-  }, [publication?.metadata?.title])
+  }, [post?.metadata?.title])
 
   const { account, isAuthenticated } = useSession()
 

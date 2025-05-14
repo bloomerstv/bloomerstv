@@ -119,7 +119,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
               <RecommendedCardLayout
                 createdAt={post?.timestamp}
                 coverUrl={getStreamReplay(post?.id)?.thumbnail ?? undefined}
-                postLink={`/watch/${post?.id}`}
+                postLink={`/watch/${post?.slug}`}
                 account={post?.author}
                 // @ts-ignore
                 stats={post?.stats as PostStats}

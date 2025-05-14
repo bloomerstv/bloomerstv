@@ -225,7 +225,7 @@ const ProfileBar = ({
             title: APP_NAME,
             // @ts-ignore
             text: publication?.metadata?.title,
-            url: `${APP_LINK}/watch/${publication?.id}`
+            url: `${APP_LINK}/watch/${publication?.slug}`
           })
           .catch((error) => console.log('Error sharing', error))
         return

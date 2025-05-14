@@ -7,6 +7,8 @@ import { AnyPost, useAccountsBulk, usePosts } from '@lens-protocol/react'
 import useSession from './useSession'
 import { useStreamersWithAccounts } from '../../components/store/useStreamersWithAccounts'
 import { usePostsStore } from '../../components/store/usePosts'
+import { connectorsForWallets } from '@rainbow-me/rainbowkit'
+import { getUniqueStringsIgnoreCase } from '../getUniqueElements'
 
 export const useStreamReplayPosts = ({
   accountAddress,
@@ -36,19 +38,20 @@ export const useStreamReplayPosts = ({
   })
 
   const { data: accountsWithoutPosts } = useAccountsBulk({
-    addresses: Array.from(
-      new Set(
-        data?.streamReplayPosts?.streamReplayPosts
-          ?.map((p) => {
-            if (!p?.postId && p?.accountAddress) {
-              return p?.accountAddress
-            }
-          })
-          .filter((p) => p)
-      )
+    addresses: getUniqueStringsIgnoreCase(
+      data?.streamReplayPosts?.streamReplayPosts
+        ?.map((p) => {
+          if (!p?.postId && p?.accountAddress) {
+            return p?.accountAddress
+          }
+          return undefined
+        })
+        .filter(
+          (accountAddress): accountAddress is string =>
+            accountAddress !== undefined
+        )
     )
   })
-
   const { data: posts, loading } = usePosts({
     filter: {
       posts: data?.streamReplayPosts?.streamReplayPosts
@@ -57,36 +60,39 @@ export const useStreamReplayPosts = ({
     }
   })
 
+  // Effect for processing accounts and setting accounts from public replays
+  useEffect(() => {
+    if (accountAddress) return
+
+    // get unique accountAddresses from posts
+    const uniqueAccounts = Array.from(
+      new Set(posts?.items?.map((p) => p?.author))
+    ).filter((account) => {
+      return (
+        account?.address !== authenticatedUser?.address &&
+        !accountsWithoutPosts?.map((p) => p?.address).includes(account?.address)
+      )
+    })
+
+    setAccountsFromPublicReplays([
+      ...uniqueAccounts,
+      ...(accountsWithoutPosts ?? [])
+    ])
+  }, [posts, accountAddress, authenticatedUser, accountsWithoutPosts])
+
+  // Effect for setting stream replay posts in the store
+  useEffect(() => {
+    if (data) {
+      setStreamReplayPosts(data ?? null)
+    }
+  }, [data, accountAddress])
+
+  // Effect for setting posts in the store
   useEffect(() => {
     if (posts && posts?.items.length > 0 && !accountAddress) {
-      // get unique accountAddresses from posts
-      const uniqueAccounts = Array.from(
-        new Set(posts?.items?.map((p) => p?.author))
-      ).filter((account) => {
-        return (
-          account?.address !== authenticatedUser?.address &&
-          !accountsWithoutPosts
-            ?.map((p) => p?.address)
-            .includes(account?.address)
-        )
-      })
-
-      setAccountsFromPublicReplays([
-        ...uniqueAccounts,
-        ...(accountsWithoutPosts ?? [])
-      ])
-
-      setStreamReplayPosts(data ?? null)
-
       setPosts(posts?.items as AnyPost[])
     }
-  }, [
-    posts,
-    accountAddress,
-    authenticatedUser,
-    accountsWithoutPosts,
-    data?.streamReplayPosts
-  ])
+  }, [posts, accountAddress, setPosts])
 
   return {
     streamReplayPosts: data,

@@ -26,24 +26,7 @@ export const usePostsStore = create<PostsStore>((set) => ({
       return hasChanged ? { posts } : state
     }),
   setStreamReplayPosts: (streamReplayPosts) =>
-    set((state) => {
-      // Only update if streamReplayPosts has actually changed
-      // Use simple comparison of postIds to check for changes
-      const currentPostIds =
-        state.streamReplayPosts?.streamReplayPosts?.streamReplayPosts
-          ?.map((p) => p?.postId)
-          .filter(Boolean) || []
-      const newPostIds =
-        streamReplayPosts?.streamReplayPosts?.streamReplayPosts
-          ?.map((p) => p?.postId)
-          .filter(Boolean) || []
-
-      const hasChanged =
-        currentPostIds.length !== newPostIds.length ||
-        !currentPostIds.every((id, index) => id === newPostIds[index])
-
-      return hasChanged ? { streamReplayPosts } : state
-    }),
+    set(() => ({ streamReplayPosts })),
   clipPost: null,
   setClipPost: (clipPost) =>
     set((state) => {

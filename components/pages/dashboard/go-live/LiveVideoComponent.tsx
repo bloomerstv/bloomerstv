@@ -353,6 +353,7 @@ const LiveVideoComponent = ({
         error: null
       })
 
+      console.log('Latest session ID:', latestSessionId)
       refreshMyStream()
 
       if (!latestSessionId) {
@@ -365,6 +366,8 @@ const LiveVideoComponent = ({
         success: 'Post created!',
         error: 'Error creating post'
       })
+
+      console.log('Post ID:', postId)
 
       if (!postId) {
         return
@@ -387,6 +390,8 @@ const LiveVideoComponent = ({
           error: 'Error sending notification to your followers...'
         }
       )
+
+      console.log('data', data)
 
       if (errors?.[0] && !data?.createMyLensStreamSession) {
         toast.error(errors[0].message)

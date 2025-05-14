@@ -47,8 +47,6 @@ const CreateCommentRow = ({
         name: `comment-${id}`
       })
 
-      console.log('response', response)
-
       if (!response?.uri) {
         throw new Error('Error uploading metadata to Grove')
       }

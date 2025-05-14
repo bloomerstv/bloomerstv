@@ -46,7 +46,7 @@ const HomeVideoCard = ({
         pathname === '/' ? 'lg:w-1/3 2xl:w-1/4' : 'lg:w-1/3'
       )}
       href={
-        post ? `/watch/${post?.id}` : `/watch/session/${session?.sessionId}`
+        post ? `/watch/${post?.slug}` : `/watch/session/${session?.sessionId}`
       }
     >
       <div className="w-full aspect-video relative mb-2 overflow-hidden sm:rounded-xl">

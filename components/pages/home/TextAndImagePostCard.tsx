@@ -116,7 +116,7 @@ const TextAndImagePostCard = ({
           {post?.quoteOf?.metadata?.__typename === 'VideoMetadata' ||
           post?.quoteOf?.metadata?.__typename === 'LivestreamMetadata' ? (
             <Link
-              href={`/watch/${post?.quoteOf?.id}`}
+              href={`/watch/${post?.quoteOf?.slug}`}
               className="text-p-text no-underline shrink-0 w-fit"
             >
               <div
