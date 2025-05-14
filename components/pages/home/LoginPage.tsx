@@ -9,7 +9,7 @@ import formatHandle from '../../../utils/lib/formatHandle'
 import getAvatar from '../../../utils/lib/getAvatar'
 import clsx from 'clsx'
 import { usePathname } from 'next/navigation'
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
+// import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import toast from 'react-hot-toast'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
 import WalletIcon from '@mui/icons-material/Wallet'
@@ -19,7 +19,7 @@ import getStampFyiURL from '../../../utils/getStampFyiURL'
 import LoadingImage from '../../ui/LoadingImage'
 import useSession from '../../../utils/hooks/useSession'
 import { useAccountsAvailable, useLogin } from '@lens-protocol/react'
-import useEnableSignless from '../../../utils/hooks/useEnableSignless'
+// import useEnableSignless from '../../../utils/hooks/useEnableSignless'
 import { APP_ADDRESS } from '../../../utils/config'
 import { signMessageWith } from '@lens-protocol/react/viem'
 
@@ -43,19 +43,19 @@ const LoginPage = () => {
   const { ensAvatar, ensName } = useEns({
     address: profiles?.items.length === 0 ? address : null
   })
-  const { enableSignless, loading, error } = useEnableSignless()
+  // const { execute: enableSignless, loading, error } = useEnableSignless()
 
   const { theme } = useTheme()
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message)
-    }
-  }, [error])
+  // useEffect(() => {
+  //   if (error) {
+  //     toast.error(error.message)
+  //   }
+  // }, [error])
 
-  const { execute, loading: logging, data } = useLogin()
+  const { execute, loading: logging } = useLogin()
 
-  if (loginAsGuest || loading || isAuthenticated || path !== '/') {
+  if (loginAsGuest || isAuthenticated || path !== '/') {
     return null
   }
   return (
@@ -113,7 +113,7 @@ const LoginPage = () => {
                               signMessage: signMessageWith(walletClient!)
                             })
 
-                            if (data?.isOk() && data?.value.sponsored) {
+                            if (data?.isOk()) {
                               window?.location.reload()
                             } else {
                               toast.error('Failed to login')
@@ -234,74 +234,75 @@ const LoginPage = () => {
               </div>
             </div>
           ) : (
-            <>
-              {!authenticatedUser?.sponsored && (
-                <div className="between-col h-full">
-                  <div>
-                    <div className="font-bold text-5xl mt-16 mb-8">
-                      Enable signless transactions
-                    </div>
-                    <div className="text-s-text font-semibold text-sm mb-4">
-                      This will allow you to post onchain without signing. No
-                      fees required.
-                    </div>
-                  </div>
+            // <>
+            //   {!authenticatedUser?.sponsored && (
+            //     <div className="between-col h-full">
+            //       <div>
+            //         <div className="font-bold text-5xl mt-16 mb-8">
+            //           Enable signless transactions
+            //         </div>
+            //         <div className="text-s-text font-semibold text-sm mb-4">
+            //           This will allow you to post onchain without signing. No
+            //           fees required.
+            //         </div>
+            //       </div>
 
-                  {/* continue as guest */}
-                  <div className="start-col space-y-6 w-full">
-                    <LoadingButton
-                      startIcon={<AutoAwesomeIcon />}
-                      onClick={async () => {
-                        try {
-                          await enableSignless()
-                        } catch (e) {
-                          // @ts-ignore
-                          toast.error(e.message)
-                        }
-                      }}
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      size="large"
-                      className="text-3xl"
-                      sx={{
-                        borderRadius: '2rem',
-                        padding: '1rem 0'
-                      }}
-                      loadingPosition="start"
-                      loading={loading || data?.sponsored}
-                    >
-                      Approve signless
-                    </LoadingButton>
-                    <Button
-                      startIcon={<PermIdentityIcon />}
-                      onClick={() => setLoginAsGuest(true)}
-                      variant="contained"
-                      color="secondary"
-                      fullWidth
-                      size="large"
-                      className="text-3xl"
-                      sx={{
-                        borderRadius: '2rem',
-                        padding: '1rem 0'
-                      }}
-                    >
-                      Continue as guest
-                    </Button>
+            //       {/* continue as guest */}
+            //       <div className="start-col space-y-6 w-full">
+            //         <LoadingButton
+            //           startIcon={<AutoAwesomeIcon />}
+            //           onClick={async () => {
+            //             try {
+            //               await enableSignless()
+            //             } catch (e) {
+            //               // @ts-ignore
+            //               toast.error(e.message)
+            //             }
+            //           }}
+            //           variant="contained"
+            //           color="primary"
+            //           fullWidth
+            //           size="large"
+            //           className="text-3xl"
+            //           sx={{
+            //             borderRadius: '2rem',
+            //             padding: '1rem 0'
+            //           }}
+            //           loadingPosition="start"
+            //           loading={loading || data?.sponsored}
+            //         >
+            //           Approve signless
+            //         </LoadingButton>
+            //         <Button
+            //           startIcon={<PermIdentityIcon />}
+            //           onClick={() => setLoginAsGuest(true)}
+            //           variant="contained"
+            //           color="secondary"
+            //           fullWidth
+            //           size="large"
+            //           className="text-3xl"
+            //           sx={{
+            //             borderRadius: '2rem',
+            //             padding: '1rem 0'
+            //           }}
+            //         >
+            //           Continue as guest
+            //         </Button>
 
-                    {/* // disconnect wallet */}
-                    <div
-                      onClick={async () => {
-                        await disconnectAsync()
-                      }}
-                      className="text-s-text font-bold text-sm"
-                    >
-                      Disconnect wallet
-                    </div>
-                  </div>
-                </div>
-              )}
-            </>
+            //         {/* // disconnect wallet */}
+            //         <div
+            //           onClick={async () => {
+            //             await disconnectAsync()
+            //           }}
+            //           className="text-s-text font-bold text-sm"
+            //         >
+            //           Disconnect wallet
+            //         </div>
+            //       </div>
+            //     </div>
+            //   )}
+            // </>
+            <></>
           )}
         </>
       ) : (
