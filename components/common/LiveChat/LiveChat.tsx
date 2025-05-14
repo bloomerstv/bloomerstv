@@ -191,13 +191,9 @@ const LiveChat = ({
     }
     const sendMessage: SendMessageClipType = {
       id,
-      clipPostId: clipPost?.id,
+      clipPostId: clipPost?.slug,
       content: clipPost?.metadata?.content,
-      image: sanitizeDStorageUrl(
-        clipPost?.metadata?.attachments.find(
-          (att) => att.__typename === 'MediaImage'
-        )?.item!
-      ),
+      image: clipPost?.metadata?.video?.cover,
       type: ContentType.Clip
     }
     socket.emit('send-message', sendMessage)
