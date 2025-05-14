@@ -33,7 +33,8 @@ const LoginComponent = ({
   const [selectedAccountAddress, setSelectedAccountAddress] =
     React.useState<string>()
   const { data: profiles, loading: loadingProfiles } = useAccountsAvailable({
-    managedBy: address
+    managedBy: address,
+    includeOwned: true
   })
   const { isAuthenticated, authenticatedUser } = useSession()
 

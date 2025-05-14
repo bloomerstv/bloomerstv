@@ -35,8 +35,7 @@ const LoginPage = () => {
   const [selectedAccountAddress, setSelectedAccountAddress] =
     React.useState<string>()
   const { data: profiles, loading: loadingProfiles } = useAccountsAvailable({
-    // @ts-ignore
-    for: address,
+    managedBy: address,
     includeOwned: true
   })
 
