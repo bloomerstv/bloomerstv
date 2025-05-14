@@ -239,17 +239,13 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
           {/* thumbnail */}
           <div className="relative">
             <LoadingImage
-              src={
-                // @ts-ignore
-                thumbnail ?? '/icons/placeholder.png'
-              }
-              className="w-[120px] h-[67.5px] rounded-sm"
+              src={thumbnail ?? '/icons/placeholder.png'}
+              className="w-[120px] h-[67.5px] rounded-sm z-0"
               loaderClassName="w-[120px] h-[67.5px]"
             />
             {session?.sourceSegmentsDuration && (
               <div className="absolute bottom-3 right-2 bg-black bg-opacity-80 px-1.5 rounded">
                 <div className="text-xs text-white">
-                  {/* @ts-ignore */}
                   {secondsToTime(session?.sourceSegmentsDuration)}
                 </div>
               </div>
