@@ -71,17 +71,19 @@ const HomeVideoCard = ({
         )}
       </div>
       <div className="sm:px-0 px-4 w-full start-row space-x-3">
-        <Link
-          prefetch
-          className="no-underline text-s-text group font-semibold"
-          href={formatHandle(post?.author ?? session?.account)}
+        <div
+          className="no-underline text-s-text group font-semibold cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation()
+            push(formatHandle(post?.author ?? session?.account))
+          }}
         >
           <img
             src={getAvatar(post?.author ?? session?.account)}
             className="w-10 h-10 rounded-full"
             alt="avatar"
           />
-        </Link>
+        </div>
 
         <div className="w-full start-between-row space-x-3">
           <div className="start-col">
@@ -92,15 +94,17 @@ const HomeVideoCard = ({
             </div>
             <div className="start-row flex-wrap text-sm lg:text-xs 2xl:text-sm font-normal text-s-text gap-x-1">
               <div className="flex flex-row items-center gap-x-1">
-                <Link
-                  prefetch
-                  className="no-underline group text-s-text font-semibold"
-                  href={formatHandle(post?.author ?? session?.account)}
+                <div
+                  className="no-underline group text-s-text font-semibold cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    push(formatHandle(post?.author ?? session?.account))
+                  }}
                 >
                   <div className="">
                     {formatHandle(post?.author ?? session?.account)}
                   </div>
-                </Link>
+                </div>
                 {premium && <VerifiedBadge />}
               </div>
               {/* dot */}
