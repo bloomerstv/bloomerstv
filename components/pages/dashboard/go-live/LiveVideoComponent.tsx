@@ -14,10 +14,7 @@ import {
   useCreateMyLensStreamSessionMutation
 } from '../../../../graphql/generated'
 import formatHandle from '../../../../utils/lib/formatHandle'
-import {
-  APP_LINK,
-  REDIRECTOR_URL
-} from '../../../../utils/config'
+import { APP_LINK, REDIRECTOR_URL } from '../../../../utils/config'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
 import { useMyStreamInfo } from '../../../store/useMyStreamInfo'
@@ -34,9 +31,7 @@ import { IconButton } from '@mui/material'
 import { BroadcastLive } from './Broadcast'
 import Player from '../../../common/Player/Player'
 import CloseIcon from '@mui/icons-material/Close'
-import {
-  getTagsForCategory
-} from '../../../../utils/categories'
+import { getTagsForCategory } from '../../../../utils/categories'
 // import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
 import { Src } from '@livepeer/react'
@@ -153,7 +148,7 @@ const LiveVideoComponent = ({
     }
 
     // Get the user's handle from their profile
-    const streamerHandle = formatHandle(account?.owner)
+    const streamerHandle = formatHandle(account)
     // Get the profile link from the user's handle
     const profileLink = `${APP_LINK}/${streamerHandle}`
     // Generate a uuid for the post

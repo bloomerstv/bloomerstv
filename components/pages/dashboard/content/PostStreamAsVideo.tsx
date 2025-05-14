@@ -20,10 +20,7 @@ import {
   liveStream,
   video
 } from '@lens-protocol/metadata'
-import {
-  APP_LINK,
-  REDIRECTOR_URL
-} from '../../../../utils/config'
+import { REDIRECTOR_URL } from '../../../../utils/config'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import { getThumbnailFromRecordingUrl } from '../../../../utils/lib/getThumbnailFromRecordingUrl'

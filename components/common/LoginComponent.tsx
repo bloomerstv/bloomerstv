@@ -17,7 +17,7 @@ import { Role, useAccountsAvailable, useLogin } from '@lens-protocol/react'
 import { signMessageWith } from '@lens-protocol/react/viem'
 import useSession from '../../utils/hooks/useSession'
 import { APP_ADDRESS } from '../../utils/config'
-import useEnableSignless from '../../utils/hooks/useEnableSignless'
+// import useEnableSignless from '../../utils/hooks/useEnableSignless'
 
 const LoginComponent = ({
   open,

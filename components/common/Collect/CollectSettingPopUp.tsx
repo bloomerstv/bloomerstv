@@ -80,14 +80,14 @@ const CollectSettingPopUp = () => {
     String | undefined
   >()
 
-  const [recipientError, setRecipientError] = React.useState<
-    | "Split doesn't add up to 100%"
-    | 'There is a recipient with invalid address'
-    | 'There is a recipient with empty address'
-    | 'There are duplicate recipient addresses'
-    | 'Split % can not be 0'
-    | undefined
-  >(undefined)
+  // const [recipientError, setRecipientError] = React.useState<
+  //   | "Split doesn't add up to 100%"
+  //   | 'There is a recipient with invalid address'
+  //   | 'There is a recipient with empty address'
+  //   | 'There are duplicate recipient addresses'
+  //   | 'Split % can not be 0'
+  //   | undefined
+  // >(undefined)
 
   const { isAuthenticated, account } = useSession()
 
@@ -614,11 +614,11 @@ const CollectSettingPopUp = () => {
                   )
                 })} */}
 
-                {recipientError && (
+                {/* {recipientError && (
                   <div className="text-xs font-semibold mt-2 text-red-500">
                     {recipientError}
                   </div>
-                )}
+                )} */}
 
                 {/* add recipient button */}
                 {/* {settingRecipients && settingRecipients.length < 5 && (

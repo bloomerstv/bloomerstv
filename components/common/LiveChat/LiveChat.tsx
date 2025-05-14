@@ -3,8 +3,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import {
   // APP_ID,
   APP_LINK,
-  LIVE_CHAT_WEB_SOCKET_URL,
-  // defaultSponsored
+  LIVE_CHAT_WEB_SOCKET_URL
 } from '../../../utils/config'
 import io from 'socket.io-client'
 import {
@@ -48,10 +47,7 @@ import { usePostsStore } from '../../store/usePosts'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import Link from 'next/link'
 import useSession from '../../../utils/hooks/useSession'
-import {
-  useCreatePost,
-  usePublicClient
-} from '@lens-protocol/react'
+import { useCreatePost, usePublicClient } from '@lens-protocol/react'
 import { useWalletClient } from 'wagmi'
 import { handleOperationWith } from '@lens-protocol/react/viem'
 import { acl, storageClient } from '../../../utils/lib/lens/storageClient'

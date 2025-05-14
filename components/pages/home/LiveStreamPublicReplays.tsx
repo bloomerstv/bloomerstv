@@ -10,10 +10,7 @@ import {
   StreamReplayPost,
   useIsVerifiedQuery
 } from '../../../graphql/generated'
-import {
-  APP_ADDRESS,
-  hideAccountAddresses
-} from '../../../utils/config'
+import { APP_ADDRESS, hideAccountAddresses } from '../../../utils/config'
 import { CATEGORIES } from '../../../utils/categories'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'

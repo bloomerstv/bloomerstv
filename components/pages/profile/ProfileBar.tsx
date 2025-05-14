@@ -10,10 +10,7 @@ import {
   MenuItem,
   MenuList
 } from '@mui/material'
-import {
-  APP_LINK,
-  APP_NAME
-} from '../../../utils/config'
+import { APP_LINK, APP_NAME } from '../../../utils/config'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import MobileChatButton from './MobileChatButton'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
@@ -401,9 +398,7 @@ const ProfileBar = ({
             {publication?.id && (
               <LikeButton
                 post={publication}
-                likeCount={
-                  publication?.stats?.upvotes
-                }
+                likeCount={publication?.stats?.upvotes}
               />
             )}
 
@@ -411,9 +406,7 @@ const ProfileBar = ({
 
             {publication?.id && (
               <MirrorButton
-                repostsCount={
-                  publication?.stats?.reposts
-                }
+                repostsCount={publication?.stats?.reposts}
                 post={publication}
               />
             )}
@@ -430,9 +423,7 @@ const ProfileBar = ({
                       (publication?.metadata?.title ?? // @ts-ignore
                       publication?.metadata?.content)
                 }
-                numberOfQuotes={
-                  publication?.stats?.quotes
-                }
+                numberOfQuotes={publication?.stats?.quotes}
                 hasQuoted={
                   publication?.operations?.hasQuoted?.optimistic ?? false
                 }
@@ -471,9 +462,7 @@ const ProfileBar = ({
             {/* like button */}
             {publication?.id && (
               <LikeButton
-                likeCount={
-                   publication?.stats?.upvotes
-                }
+                likeCount={publication?.stats?.upvotes}
                 post={publication}
               />
             )}
@@ -481,9 +470,7 @@ const ProfileBar = ({
 
             {publication?.id && (
               <MirrorButton
-                repostsCount={
-                  publication?.stats?.reposts
-                }
+                repostsCount={publication?.stats?.reposts}
                 post={publication}
               />
             )}
@@ -500,9 +487,7 @@ const ProfileBar = ({
                       (publication?.metadata?.title ?? // @ts-ignore
                       publication?.metadata?.content)
                 }
-                numberOfQuotes={
-                   publication?.stats?.quotes
-                }
+                numberOfQuotes={publication?.stats?.quotes}
                 hasQuoted={
                   publication?.operations?.hasQuoted?.optimistic ?? false
                 }

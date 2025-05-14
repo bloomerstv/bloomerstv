@@ -11,7 +11,7 @@ import {
 import React, { useEffect } from 'react'
 import SendIcon from '@mui/icons-material/Send'
 
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
+// import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import CloseIcon from '@mui/icons-material/Close'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import {
@@ -82,10 +82,10 @@ const LiveChatInput = ({
     address: isAuthenticated ? account?.owner : null
   })
 
-  const profileId = isAuthenticated
-    ? account?.address
-    : // @ts-ignore
-      (account?.owner ?? '')
+  // const accountAddress = isAuthenticated
+  //   ? account?.address
+  //   : // @ts-ignore
+  //     (account?.owner ?? '')
   const avatar = isAuthenticated
     ? getAvatar(account)
     : ensAvatar
