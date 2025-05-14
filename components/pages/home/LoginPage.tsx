@@ -1,7 +1,7 @@
 import LoadingButton from '@mui/lab/LoadingButton'
 import { Button, CircularProgress } from '@mui/material'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useAccount, useDisconnect, useWalletClient } from 'wagmi'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import PermIdentityIcon from '@mui/icons-material/PermIdentity'
@@ -28,7 +28,7 @@ const LoginPage = () => {
 
   const [loginAsGuest, setLoginAsGuest] = React.useState(false)
   const path = usePathname()
-  const { isAuthenticated, authenticatedUser } = useSession()
+  const { isAuthenticated } = useSession()
   const { disconnectAsync } = useDisconnect()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
   const { openConnectModal } = useConnectModal()
