@@ -12,7 +12,9 @@ import formatHandle from '../../../../utils/lib/formatHandle'
 import MobileProfileList from '../../../ui/account/MobileProfileList'
 import CloseIcon from '@mui/icons-material/Close'
 import clsx from 'clsx'
-import { useAccounts } from '@lens-protocol/react'
+import { PageSize, useAccounts } from '@lens-protocol/react'
+import { motion, AnimatePresence } from 'framer-motion'
+
 const HeaderSearch = () => {
   const { push } = useRouter()
 
@@ -24,7 +26,7 @@ const HeaderSearch = () => {
         localNameQuery: search
       }
     },
-    pageSize: 10
+    pageSize: PageSize.Ten
   })
 
   // @ts-ignore
@@ -58,33 +60,46 @@ const HeaderSearch = () => {
           </div>
         </div>
         {/* @ts-ignore */}
-        {data?.length > 0 && search.length > 0 && (
-          <div
-            className={clsx(
-              'absolute z-50 top-8 border-p-border rounded-b-lg border-l border-r border-b left-0 w-full bg-s-bg',
-              showSearch && 'shadow-xl'
-            )}
-          >
-            <List>
-              {data?.items.map((account) => (
-                <ListItem disablePadding key={account?.address}>
-                  <ListItemButton
-                    onClick={() => {
-                      closeSearch()
-                      push(`/${formatHandle(account)}`)
-                    }}
+        <AnimatePresence>
+          {data?.items && data?.items.length > 0 && search.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className={clsx(
+                'absolute z-50 top-8 border-p-border rounded-b-lg border-l border-r border-b left-0 w-full bg-s-bg',
+                showSearch && 'shadow-xl'
+              )}
+            >
+              <List>
+                {data?.items.map((account, index) => (
+                  <motion.div
                     key={account?.address}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.2,
+                      delay: index * 0.05,
+                      ease: 'easeOut'
+                    }}
                   >
-                    <MobileProfileList
-                      account={account}
-                      key={account?.address}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </div>
-        )}
+                    <ListItem disablePadding>
+                      <ListItemButton
+                        onClick={() => {
+                          closeSearch()
+                          push(`/${formatHandle(account)}`)
+                        }}
+                      >
+                        <MobileProfileList account={account} />
+                      </ListItemButton>
+                    </ListItem>
+                  </motion.div>
+                ))}
+              </List>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </ClickAwayListener>
   )

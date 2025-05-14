@@ -53,7 +53,8 @@ import {
   useAccount as useProfileAccount,
   useAccounts,
   Account,
-  usePublicClient
+  usePublicClient,
+  PageSize
 } from '@lens-protocol/react'
 import useSession from '../../../utils/hooks/useSession'
 
@@ -126,7 +127,7 @@ const LiveChatInput = ({
         localNameQuery: handle
       }
     },
-    pageSize: 10
+    pageSize: PageSize.Ten
   })
 
   const [amountValue, setAmountValue] = React.useState<number>(100)

@@ -3,7 +3,7 @@ import React from 'react'
 import formatHandle from '../../../utils/lib/formatHandle'
 import getAvatar from '../../../utils/lib/getAvatar'
 import { SettingRecipientType } from './CollectSettingPopUp'
-import { Account, useAccounts } from '@lens-protocol/react'
+import { Account, PageSize, useAccounts } from '@lens-protocol/react'
 
 const WalletAddressTextField = ({
   value,
@@ -24,7 +24,7 @@ const WalletAddressTextField = ({
         localNameQuery: value
       }
     },
-    pageSize: 10
+    pageSize: PageSize.Ten
   })
 
   const textRef = React.useRef(null)

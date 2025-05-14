@@ -82,63 +82,66 @@ const HomeVideoCard = ({
             alt="avatar"
           />
         </Link>
-        <div className="start-col">
-          {/* @ts-ignore */}
-          <div className="text-sm font-semibold">
-            {/* @ts-ignore */}
-            <Markup>{post?.metadata?.title ?? 'Untitled stream'}</Markup>
-          </div>
-          <div className="start-row flex-wrap text-sm lg:text-xs 2xl:text-sm font-normal text-s-text gap-x-1">
-            <div className="flex flex-row items-center gap-x-1">
-              <Link
-                prefetch
-                className="no-underline group text-s-text font-semibold"
-                href={formatHandle(post?.author ?? session?.account)}
-              >
-                <div className="">
-                  {formatHandle(post?.author ?? session?.account)}
-                </div>
-              </Link>
-              {premium && <VerifiedBadge />}
-            </div>
-            {/* dot */}
-            <div className={clsx(!post?.stats?.upvotes && 'hidden')}>
-              &middot;
-            </div>
-            <div className={clsx(!post?.stats?.upvotes && 'hidden')}>
-              {post?.stats?.upvotes} likes
-            </div>
-            <div className="">&middot;</div>
-            <div className="">
-              {timeAgo(post?.timestamp ?? session?.createdAt)}
-            </div>
-          </div>
-        </div>
 
-        {/* @ts-ignore */}
-        {!post?.metadata?.title &&
-          isAuthenticated &&
-          account?.address === session?.account?.address && (
-            <Tooltip
-              title="You can create a lens post for your untitled streams from content page"
-              arrow
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                push('/dashboard/content')
-              }}
-            >
-              <IconButton
-                size="medium"
-                href="/dashboard/content"
-                style={{
-                  backgroundColor: '#1976d2'
+        <div className="w-full start-between-row space-x-3">
+          <div className="start-col">
+            {/* @ts-ignore */}
+            <div className="text-sm font-semibold">
+              {/* @ts-ignore */}
+              <Markup>{post?.metadata?.title ?? 'Untitled stream'}</Markup>
+            </div>
+            <div className="start-row flex-wrap text-sm lg:text-xs 2xl:text-sm font-normal text-s-text gap-x-1">
+              <div className="flex flex-row items-center gap-x-1">
+                <Link
+                  prefetch
+                  className="no-underline group text-s-text font-semibold"
+                  href={formatHandle(post?.author ?? session?.account)}
+                >
+                  <div className="">
+                    {formatHandle(post?.author ?? session?.account)}
+                  </div>
+                </Link>
+                {premium && <VerifiedBadge />}
+              </div>
+              {/* dot */}
+              <div className={clsx(!post?.stats?.upvotes && 'hidden')}>
+                &middot;
+              </div>
+              <div className={clsx(!post?.stats?.upvotes && 'hidden')}>
+                {post?.stats?.upvotes} likes
+              </div>
+              <div className="">&middot;</div>
+              <div className="">
+                {timeAgo(post?.timestamp ?? session?.createdAt)}
+              </div>
+            </div>
+          </div>
+
+          {/* @ts-ignore */}
+          {!post?.metadata?.title &&
+            isAuthenticated &&
+            account?.address === session?.account?.address && (
+              <Tooltip
+                title="You can create a lens post for your untitled streams from content page"
+                arrow
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  push('/dashboard/content')
                 }}
               >
-                <ArrowOutwardIcon className="text-white" />
-              </IconButton>
-            </Tooltip>
-          )}
+                <IconButton
+                  size="medium"
+                  href="/dashboard/content"
+                  style={{
+                    backgroundColor: '#1976d2'
+                  }}
+                >
+                  <ArrowOutwardIcon className="text-white" />
+                </IconButton>
+              </Tooltip>
+            )}
+        </div>
       </div>
     </Link>
   )
