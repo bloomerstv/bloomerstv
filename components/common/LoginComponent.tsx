@@ -13,7 +13,12 @@ import useEns from '../../utils/hooks/useEns'
 import getStampFyiURL from '../../utils/getStampFyiURL'
 import { getShortAddress } from '../../utils/lib/getShortAddress'
 import LoadingImage from '../ui/LoadingImage'
-import { Role, useAccountsAvailable, useLogin } from '@lens-protocol/react'
+import {
+  LoginParams,
+  Role,
+  useAccountsAvailable,
+  useLogin
+} from '@lens-protocol/react'
 import { signMessageWith } from '@lens-protocol/react/viem'
 import useSession from '../../utils/hooks/useSession'
 import { APP_ADDRESS } from '../../utils/config'
@@ -106,14 +111,26 @@ const LoginComponent = ({
                         variant="contained"
                         onClick={async () => {
                           setSelectedAccountAddress(profile?.account.address)
-                          const data = await execute({
-                            accountOwner: {
-                              account: profile.account.address,
-                              owner: profile.account.owner,
-                              app: APP_ADDRESS
-                            },
-                            signMessage: signMessageWith(walletClient!)
-                          })
+
+                          const params: LoginParams =
+                            profile?.__typename === 'AccountManaged'
+                              ? {
+                                  accountManager: {
+                                    account: profile.account.address,
+                                    manager: address
+                                  },
+                                  signMessage: signMessageWith(walletClient!)
+                                }
+                              : {
+                                  accountOwner: {
+                                    account: profile.account.address,
+                                    owner: address,
+                                    app: APP_ADDRESS
+                                  },
+                                  signMessage: signMessageWith(walletClient!)
+                                }
+
+                          const data = await execute(params)
 
                           // if (data?.isOk() && data?.value.sponsored) {
                           if (data?.isOk()) {

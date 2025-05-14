@@ -18,7 +18,11 @@ import useEns from '../../../utils/hooks/useEns'
 import getStampFyiURL from '../../../utils/getStampFyiURL'
 import LoadingImage from '../../ui/LoadingImage'
 import useSession from '../../../utils/hooks/useSession'
-import { useAccountsAvailable, useLogin } from '@lens-protocol/react'
+import {
+  LoginParams,
+  useAccountsAvailable,
+  useLogin
+} from '@lens-protocol/react'
 // import useEnableSignless from '../../../utils/hooks/useEnableSignless'
 import { APP_ADDRESS } from '../../../utils/config'
 import { signMessageWith } from '@lens-protocol/react/viem'
@@ -103,14 +107,25 @@ const LoginPage = () => {
                           variant="contained"
                           onClick={async () => {
                             setSelectedAccountAddress(profile.account.address)
-                            const data = await execute({
-                              accountOwner: {
-                                account: profile.account.address,
-                                owner: profile.account.owner,
-                                app: APP_ADDRESS
-                              },
-                              signMessage: signMessageWith(walletClient!)
-                            })
+                            const params: LoginParams =
+                              profile?.__typename === 'AccountManaged'
+                                ? {
+                                    accountManager: {
+                                      account: profile.account.address,
+                                      manager: address
+                                    },
+                                    signMessage: signMessageWith(walletClient!)
+                                  }
+                                : {
+                                    accountOwner: {
+                                      account: profile.account.address,
+                                      owner: address,
+                                      app: APP_ADDRESS
+                                    },
+                                    signMessage: signMessageWith(walletClient!)
+                                  }
+
+                            const data = await execute(params)
 
                             if (data?.isOk()) {
                               window?.location.reload()
