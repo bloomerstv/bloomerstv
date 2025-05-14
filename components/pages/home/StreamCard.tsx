@@ -8,6 +8,7 @@ import PermIdentityIcon from '@mui/icons-material/PermIdentity'
 import VerifiedBadge from '../../ui/VerifiedBadge'
 import Markup from '../../common/Lexical/Markup'
 import { StreamerWithAccount } from '../../store/useStreamersWithAccounts'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 
 const StreamCard = ({ streamer }: { streamer: StreamerWithAccount }) => {
   return (
@@ -25,6 +26,12 @@ const StreamCard = ({ streamer }: { streamer: StreamerWithAccount }) => {
           className="w-full object-cover aspect-video bg-p-hover sm:rounded-xl transition-transform duration-300 ease-in-out transform hover:scale-105"
           alt="thumbnail"
         />
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <PlayArrowIcon
+            fontSize="large"
+            className="text-white transform transition-transform group-hover:scale-105 duration-300"
+          />
+        </div>
         <div className="absolute top-4 left-4 start-center-row gap-x-2">
           <LiveDiv />
           <div className="centered-row gap-x-1 text-white text-base bg-black bg-opacity-80 px-1.5 rounded-md">

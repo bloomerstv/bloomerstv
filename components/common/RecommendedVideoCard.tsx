@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import useIsMobile from '../../utils/hooks/useIsMobile'
 import HomeVideoCard from './HomeVideoCard'
 import getPublicationData from '../../utils/lib/getPublicationData'
@@ -23,6 +23,11 @@ const RecommendedVideoCard = ({ post }: { post: Post }) => {
       account={post?.author}
       stats={post?.stats}
       createdAt={post?.timestamp}
+      duration={
+        post?.metadata?.__typename === 'VideoMetadata'
+          ? (post?.metadata?.video?.duration ?? undefined)
+          : undefined
+      }
     />
   )
 }

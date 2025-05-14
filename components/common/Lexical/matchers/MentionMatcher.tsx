@@ -1,8 +1,5 @@
 import { Matcher } from 'interweave'
-import Link from 'next/link'
 import { createElement } from 'react'
-
-// import { UrlMatcher } from './UrlMatcher'
 
 export const Mention = ({ ...props }: any) => {
   const profile = {
@@ -12,17 +9,22 @@ export const Mention = ({ ...props }: any) => {
     id: null
   }
 
+  const handleProfileClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    window.location.href = `/${profile?.handle}`
+  }
+
   return (
     <span
       onClick={(e) => {
         e.stopPropagation()
       }}
     >
-      <Link prefetch href={`/${profile?.handle}`} className="no-underline">
+      <div onClick={handleProfileClick} className="inline-block no-underline">
         <span className="hover:underline text-blue-400 cursor-pointer">
           {profile?.handle && `${profile?.handle}`}
         </span>
-      </Link>
+      </div>
     </span>
   )
 }

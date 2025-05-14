@@ -90,7 +90,7 @@ const HomePageCards = () => {
       postTypes: [PostType.Root],
       apps: [APP_ADDRESS],
       metadata: {
-        mainContentFocus: [MainContentFocus.Video],
+        mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo],
         tags:
           selectedCategory?.tags?.length > 0
             ? {

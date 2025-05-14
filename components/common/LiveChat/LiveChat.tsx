@@ -36,7 +36,8 @@ import {
   Message,
   AccountMessage,
   SendMessageClipType,
-  SendMessageType
+  SendMessageType,
+  MessageType
 } from './LiveChatType'
 import ChatOptionsButton from './ChatOptionsButton'
 import LiveChatInput from './LiveChatInput'
@@ -120,11 +121,16 @@ const LiveChat = ({
     variables: {
       accountAddress
     },
+    skip: !accountAddress,
     fetchPolicy: 'no-cache'
   })
 
   useEffect(() => {
-    if (chats && !preMessages.length && messages.length === 0) {
+    if (
+      chats &&
+      !preMessages.length &&
+      messages?.filter((m) => m.type === MessageType.Account).length === 0
+    ) {
       // @ts-ignore
       const chatsFromDB: AccountMessage[] = chats.streamChats
       setMessages((prev) => {

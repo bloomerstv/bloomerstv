@@ -281,10 +281,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       </div>
       {account?.address && !isMobile && (
         <div className="w-[310px] 2xl:w-[350px] flex-none h-full">
-          <LiveChat
-            // @ts-ignore
-            accountAddress={account?.address}
-          />
+          <LiveChat accountAddress={account?.address} />
         </div>
       )}
     </div>

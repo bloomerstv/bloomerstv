@@ -44,8 +44,10 @@ const LoginButton = () => {
       >
         <LoginComponent open={open} onClose={handleClose} />
       </ModalWrapper>
-      {(!isAuthenticated ||
-        (isAuthenticated && !authenticatedUser?.sponsored)) && (
+
+      {!isAuthenticated && (
+        // (!isAuthenticated ||
+        //   (isAuthenticated && !authenticatedUser?.sponsored)) && (
         <div className="centered-row gap-x-2 sm:gap-x-4">
           <Button
             variant="outlined"

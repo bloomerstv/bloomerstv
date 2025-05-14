@@ -23,11 +23,12 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
   const { data, loading: postsLoading } = usePosts({
     filter: {
       postTypes: [PostType.Root, PostType.Quote],
-      // metadata: {
-      //   mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo]
-      // },
+      metadata: {
+        mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo]
+      },
       apps: [APP_ADDRESS]
-    }
+    },
+    pageSize: PageSize.Ten
   })
 
   const { posts, streamReplayPosts } = usePostsStore((state) => ({
@@ -97,7 +98,8 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
       {combinedData?.map((post) => {
         if (
           hideAccountAddresses.includes(post?.author?.address) ||
-          currentPostId === post?.id
+          currentPostId === post?.id ||
+          currentPostId === post?.slug
         ) {
           return null
         }
@@ -127,6 +129,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
                   // @ts-ignore
                   post?.metadata?.title ?? post?.metadata?.content?.slice(0, 50)
                 }
+                duration={getStreamReplay(post?.id)?.duration ?? undefined}
                 key={post?.id}
               />
             )

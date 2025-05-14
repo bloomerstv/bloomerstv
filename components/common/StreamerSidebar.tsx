@@ -108,7 +108,13 @@ const StreamerSidebar = () => {
     // get following profiles from public replays
     const offlineFollowingStreamers = offlineAccounts?.filter(
       (offlineAccount) => {
+        // Check if this account is already in streamersWithAccounts
+        const alreadyInStreamers = streamersWithAccounts?.some(
+          (streamer) => streamer?.accountAddress === offlineAccount?.address
+        )
+
         return (
+          !alreadyInStreamers &&
           offlineAccount?.operations?.isFollowedByMe &&
           (!isAuthenticated || offlineAccount?.address !== account?.address)
         )
@@ -116,13 +122,24 @@ const StreamerSidebar = () => {
     )
 
     return offlineFollowingStreamers || []
-  }, [offlineAccounts, isAuthenticated, account?.address])
+  }, [
+    offlineAccounts,
+    isAuthenticated,
+    account?.address,
+    streamersWithAccounts
+  ])
 
   const getOfflineRecommendedStreamers = useCallback((): Account[] => {
     // get following profiles from public replays
     const offlineRecommendedStreamers = offlineAccounts?.filter(
       (offlineAccount) => {
+        // Check if this account is already in streamersWithAccounts
+        const alreadyInStreamers = streamersWithAccounts?.some(
+          (streamer) => streamer?.accountAddress === offlineAccount?.address
+        )
+
         return (
+          !alreadyInStreamers &&
           !offlineAccount?.operations?.isFollowedByMe &&
           (!isAuthenticated || offlineAccount?.address !== account?.address)
         )
@@ -130,7 +147,12 @@ const StreamerSidebar = () => {
     )
 
     return offlineRecommendedStreamers || []
-  }, [offlineAccounts, isAuthenticated, account?.address])
+  }, [
+    offlineAccounts,
+    isAuthenticated,
+    account?.address,
+    streamersWithAccounts
+  ])
 
   const offlineFollowingStreamers = getOfflineFollowingStreamers()
   const offlineRecommendedStreamers = getOfflineRecommendedStreamers()
