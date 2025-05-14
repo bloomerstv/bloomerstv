@@ -69,7 +69,6 @@
     "dayjs": "^1.11.13",
     "ethers": "^6.13.5",
     "framer-motion": "^11.17.0",
-    "frames.js": "^0.21.1",
     "graphql-ws": "^5.16.2",
     "i": "^0.3.7",
     "interweave": "^13.1.0",

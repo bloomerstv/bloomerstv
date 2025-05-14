@@ -1,3 +1,9 @@
+/**
+ * TEMPORARILY DISABLED: frames.js implementation
+ * This file is being preserved for future use when frames.js is ready.
+ */
+
+/*
 import { openframes } from 'frames.js/middleware'
 import { createFrames } from 'frames.js/next'
 import { getLensFrameMessage, isLensFrameActionPayload } from 'frames.js/lens'
@@ -42,3 +48,9 @@ export const frames = createFrames({
     // })
   ]
 })
+*/
+
+// Placeholder export to maintain the module structure
+export const frames = (handler: any) => {
+  return async () => new Response('Frames functionality temporarily disabled')
+}

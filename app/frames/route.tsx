@@ -1,4 +1,10 @@
+/**
+ * TEMPORARILY DISABLED: frames.js implementation
+ * This file is being preserved for future use when frames.js is ready.
+ */
+
 /* eslint-disable react/jsx-key */
+/*
 import { Button } from 'frames.js/next'
 import { frames } from './frames'
 import { humanReadableNumber } from '../../utils/helpers'
@@ -78,7 +84,6 @@ const handleRequest = frames(async (ctx) => {
           tw="rounded-full object-cover absolute top-6 left-6"
         />
 
-        {/* name */}
         <span
           style={{
             zIndex: 20
@@ -88,7 +93,6 @@ const handleRequest = frames(async (ctx) => {
           {`bloomers.tv/${handle?.split('/')[1]}`}
         </span>
 
-        {/* follower count */}
         <div
           style={{
             zIndex: 20
@@ -140,3 +144,8 @@ const handleRequest = frames(async (ctx) => {
 
 export const GET = handleRequest
 export const POST = handleRequest
+*/
+
+// Placeholder export handlers to keep the file structure intact
+export const GET = async () => new Response('Frames temporarily disabled')
+export const POST = async () => new Response('Frames temporarily disabled')
