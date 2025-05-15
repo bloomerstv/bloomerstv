@@ -337,7 +337,6 @@ const LiveChat = ({
         accountAddress,
         currentSession
       )
-
       if (!lastStreamPostId) return
       const id = uuid()
       const locale = getUserLocale()
@@ -373,17 +372,18 @@ const LiveChat = ({
         throw new Error('Error uploading metadata to Grove')
       }
       // invoke the `execute` function to create the post
-      await execute({
+      const result = await execute({
         contentUri: response?.uri,
         commentOn: {
           post: lastStreamPostId
         }
       })
-      // if (!data?.isSuccess()) return
 
-      // const comment = await data?.value?.waitForCompletion()
-      // console.log('comment', comment)
-      // console.timeEnd('createComment')
+      if (result?.isErr()) {
+        toast.error(result.error.message)
+        // handle failure scenarios
+        throw new Error('Error creating comment')
+      }
     } catch (error) {
       console.error('Error creating comment', error)
     }
