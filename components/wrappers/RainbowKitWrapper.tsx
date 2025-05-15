@@ -25,7 +25,9 @@ import {
 } from '@rainbow-me/rainbowkit/wallets'
 import { cookieStorage } from '../../utils/lib/lens/storage'
 
-const defaultChains = isMainnet ? [chains.mainnet] : [chains.testnet]
+const defaultChains = isMainnet
+  ? [chains.mainnet, base]
+  : [chains.testnet, base]
 
 const defaultTransports = {
   [chains.mainnet.id]: http(),

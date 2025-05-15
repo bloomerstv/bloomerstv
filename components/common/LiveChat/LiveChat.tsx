@@ -475,7 +475,7 @@ const LiveChat = ({
           </IconButton>
         )}
         {showPopOutChat && (
-          <IconButton size="small" onClick={popOutChat}>
+          <IconButton size="small" onClick={popOutChat} title="Pop out chat">
             <ArrowOutwardIcon className="text-s-text" />
           </IconButton>
         )}

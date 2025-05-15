@@ -19,7 +19,7 @@ const DashboardSidebar = () => {
     skip: !isAuthenticated
   })
   return (
-    <div className="sm:w-[180px] 2xl:w-[250px] h-full bg-s-bg overflow-auto">
+    <div className="sm:w-[200px] 2xl:w-[250px] h-full bg-s-bg overflow-auto">
       {isAuthenticated && (
         <Link
           href={`/${formatHandle(account)}`}

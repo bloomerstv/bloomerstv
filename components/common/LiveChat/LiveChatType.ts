@@ -85,7 +85,6 @@ export interface SendMessageTradeType extends SendMessageBaseType {
   amount?: number
   formattedBuyAmountEth: string
   currencySymbol: string
-  currencyLogoImage: string
 }
 
 export type SendMessageType =

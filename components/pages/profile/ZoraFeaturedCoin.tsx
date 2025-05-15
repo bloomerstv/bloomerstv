@@ -113,7 +113,10 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
 
       const messagePayload: SendMessageTradeType = {
         id: uuid(),
-        content: `Bought ${coin.symbol} for ${ethAmount} ETH 🎉`,
+        content: `💰Bought $${coin.symbol} for ${ethAmount} ETH at $${
+          parseFloat(coin.marketCap || '0') /
+          parseFloat(coin.totalSupply || '1')
+        } 🎉`,
         type: ContentType.Trade,
         image: coin.mediaContent?.previewImage?.medium!,
         txHash: tx,
@@ -128,6 +131,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
       setBuyMode(false)
       setExpanded(false)
     } catch (error) {
+      console.log('Error during transaction:', error)
       toast.error('Transaction failed')
     }
   }
@@ -194,11 +198,12 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
       try {
         const response = await getCoin({
           address: coinAddress,
-          chain: 8453 // Base chain
+          chain: base.id // Base chain
         })
 
         // The API response structure may have zora20Token
         const coinData = response.data?.zora20Token
+
         if (coinData) {
           // @ts-ignore
           setCoin(coinData)
@@ -293,7 +298,9 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
     )
   }
 
-  const priceChangePositive = isPriceChangePositive(coin.marketCapDelta24h)
+  const priceChangePositive = isPriceChangePositive(
+    String(parseFloat(coin?.marketCapDelta24h ?? '0') * -1)
+  )
 
   return (
     <motion.div
@@ -349,7 +356,15 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
         <div className="flex items-center">
           <div className="text-right mr-2">
             <div className="font-medium text-p-text">
-              ${parseFloat(coin.marketCap || '0').toFixed(2)}
+              {(() => {
+                // Calculate price in USD
+                const priceInUsd =
+                  parseFloat(coin.marketCap || '0') /
+                  parseFloat(coin.totalSupply || '1')
+                // Format for display
+                const formattedPrice = `$${priceInUsd.toFixed(8)}`
+                return formattedPrice
+              })()}
             </div>
             <div
               className={`text-xs flex items-center ${priceChangePositive ? 'text-green-500' : 'text-red-500'}`}
@@ -359,7 +374,9 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
               ) : (
                 <TrendingDownIcon sx={{ fontSize: 14, marginRight: '2px' }} />
               )}
-              {formatPercentage(coin.marketCapDelta24h)}
+              {formatPercentage(
+                String(parseFloat(coin?.marketCapDelta24h ?? '0') * -1)
+              )}
             </div>
           </div>
           <motion.div

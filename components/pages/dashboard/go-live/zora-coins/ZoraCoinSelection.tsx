@@ -13,21 +13,20 @@ import {
   TableRow,
   Paper,
   Chip,
-  Pagination,
-  Alert
+  Pagination
 } from '@mui/material'
 import Tooltip from '@mui/material/Tooltip'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import StarIcon from '@mui/icons-material/Star'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import CreateNewZoraCoinButton from './CreateNewZoraCoinButton'
-import { useSession } from '@lens-protocol/react-web'
 import {
   useMyStreamQuery,
   useUpdateMyStreamMutation
 } from '../../../../../graphql/generated'
 import { base } from 'viem/chains'
 import toast from 'react-hot-toast'
+import useSession from '../../../../../utils/hooks/useSession'
 
 // Updated interface for coin data structure based on API response
 interface CoinBalance {
@@ -64,7 +63,7 @@ interface PaginationInfo {
 }
 
 const ZoraCoinSelection = () => {
-  const { data: session } = useSession()
+  const { isAuthenticated, authenticatedUser } = useSession()
 
   // State for coin balances
   const [coinBalances, setCoinBalances] = useState<CoinBalance[]>([])
@@ -81,7 +80,7 @@ const ZoraCoinSelection = () => {
 
   // Generate Zora coin URL
   const getZoraCoinUrl = (coinAddress: string) => {
-    return `https://zora.co/coin/base:${coinAddress}?referrer=${session?.authenticated ? session?.address : ''}`
+    return `https://zora.co/coin/base:${coinAddress}?referrer=${isAuthenticated ? authenticatedUser?.signer : ''}`
   }
 
   // Open coin URL in a new tab
@@ -91,13 +90,13 @@ const ZoraCoinSelection = () => {
 
   // Fetch user's coin balances
   const fetchCoinBalances = async (cursor?: string) => {
-    if (!session?.authenticated) return
+    if (!isAuthenticated) return
 
     setIsLoading(true)
 
     try {
       const response = await getProfileBalances({
-        identifier: session?.address,
+        identifier: authenticatedUser?.signer as string,
         count: pageSize,
         after: cursor
       })
@@ -179,15 +178,17 @@ const ZoraCoinSelection = () => {
       refetchMyStream()
     } catch (error) {
       console.error('Error updating featured coin:', error)
-      toast.error(error ?? 'Failed to update featured coin. Please try again.')
+      toast.error(
+        error?.toString() ?? 'Failed to update featured coin. Please try again.'
+      )
     }
   }
 
   useEffect(() => {
-    if (session?.authenticated && session?.address) {
+    if (isAuthenticated && authenticatedUser?.signer) {
       fetchCoinBalances()
     }
-  }, [session?.authenticated])
+  }, [isAuthenticated, authenticatedUser?.signer])
 
   // Refetch balances when a new coin is created
   const handleCoinCreated = () => {
