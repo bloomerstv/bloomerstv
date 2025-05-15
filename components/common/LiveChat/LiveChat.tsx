@@ -158,9 +158,13 @@ const LiveChat = ({
     }
   }, [isAuthenticated])
 
-  const joinChatWithProfile = useCallback(async () => {
-    if (!isAuthenticated || !socket) return
+  const joinChatWithAccount = useCallback(async () => {
+    if (!account?.address || !socket) return
     const idToken = await getIdentityTokenAsync()
+
+    if (!idToken) {
+      return
+    }
 
     socket.on('verified-to-send', () => {
       setVerifiedToSend(true)
@@ -174,10 +178,10 @@ const LiveChat = ({
     })
     // emit joined chat room
     socket.emit('joined-chat', idToken)
-  }, [socket, isAuthenticated])
+  }, [Boolean(socket), account?.address])
 
   useEffect(() => {
-    joinChatWithProfile()
+    joinChatWithAccount()
   }, [socket, account?.address])
 
   useEffect(() => {
@@ -332,7 +336,6 @@ const LiveChat = ({
   ) => {
     try {
       // create a comment under live stream publication
-      console.time('createComment')
       const lastStreamPostId = await getLastStreamPostId(
         accountAddress,
         currentSession
