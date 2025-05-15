@@ -6,6 +6,7 @@ import LoadingVideoCard from '../../ui/LoadingVideoCard'
 import { useIsVerifiedQuery } from '../../../graphql/generated'
 import {
   MainContentFocus,
+  PageSize,
   Post,
   PostType,
   usePosts
@@ -31,6 +32,7 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
       },
       apps: [APP_ADDRESS]
     },
+    pageSize: PageSize.Fifty,
     cursor
   })
 

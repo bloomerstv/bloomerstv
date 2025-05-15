@@ -28,7 +28,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
       },
       apps: [APP_ADDRESS]
     },
-    pageSize: PageSize.Ten
+    pageSize: PageSize.Fifty
   })
 
   const { posts, streamReplayPosts } = usePostsStore((state) => ({

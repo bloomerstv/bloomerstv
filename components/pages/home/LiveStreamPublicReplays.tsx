@@ -95,7 +95,7 @@ const HomePageCards = () => {
             : undefined
       }
     },
-    pageSize: PageSize.Ten
+    pageSize: PageSize.Fifty
   })
 
   const filteredPostsClips =

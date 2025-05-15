@@ -14,7 +14,7 @@ const VideosFeed = () => {
     filter: {
       postTypes: [PostType.Root],
       metadata: {
-        mainContentFocus: [MainContentFocus.Video]
+        mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo]
       },
       apps: [APP_ADDRESS]
     }
