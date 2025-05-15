@@ -8,9 +8,7 @@ interface ChatInteractionsState {
   setSendMessagePayload: (fn: SendMessagePayloadFunction | null) => void
 }
 
-export const useChatInteractions = create<ChatInteractionsState>(
-  (set, get) => ({
-    sendMessagePayload: null,
-    setSendMessagePayload: (fn) => set({ sendMessagePayload: fn })
-  })
-)
+export const useChatInteractions = create<ChatInteractionsState>((set) => ({
+  sendMessagePayload: null,
+  setSendMessagePayload: (fn) => set({ sendMessagePayload: fn })
+}))
