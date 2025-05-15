@@ -1,8 +1,8 @@
-import { Profile } from '@lens-protocol/react-web'
+import { Account } from '@lens-protocol/react'
 
-export const getBanner = (profile?: Profile | null): string | undefined => {
-  if (!profile) {
+export const getBanner = (account?: Account | null): string | undefined => {
+  if (!account) {
     return ''
   }
-  return profile?.metadata?.coverPicture?.optimized?.uri
+  return account?.metadata?.coverPicture
 }

@@ -34,7 +34,8 @@ export type Scalars = {
 
 export type Chat = {
   __typename?: 'Chat'
-  authorProfileId?: Maybe<Scalars['String']['output']>
+  accountAddress?: Maybe<Scalars['String']['output']>
+  authorAccountAddress?: Maybe<Scalars['String']['output']>
   avatarUrl?: Maybe<Scalars['String']['output']>
   clipPostId?: Maybe<Scalars['String']['output']>
   content?: Maybe<Scalars['String']['output']>
@@ -45,7 +46,6 @@ export type Chat = {
   handle?: Maybe<Scalars['String']['output']>
   id?: Maybe<Scalars['String']['output']>
   image?: Maybe<Scalars['String']['output']>
-  profileId?: Maybe<Scalars['String']['output']>
   txHash?: Maybe<Scalars['String']['output']>
 }
 
@@ -77,8 +77,8 @@ export type IpfsResult = {
 
 export type IsVerifiedResult = {
   __typename?: 'IsVerifiedResult'
+  accountAddress?: Maybe<Scalars['String']['output']>
   isVerified?: Maybe<Scalars['Boolean']['output']>
-  profileId?: Maybe<Scalars['String']['output']>
 }
 
 export type Mutation = {
@@ -95,7 +95,7 @@ export type Mutation = {
 }
 
 export type MutationAddNotificationSubscriberToStreamerArgs = {
-  profileId: Scalars['String']['input']
+  accountAddress: Scalars['String']['input']
 }
 
 export type MutationAddSubscriptionArgs = {
@@ -111,13 +111,13 @@ export type MutationCreateClipArgs = {
 }
 
 export type MutationCreateMyLensStreamSessionArgs = {
-  publicationId: Scalars['String']['input']
+  postId: Scalars['String']['input']
   sessionId?: InputMaybe<Scalars['String']['input']>
   viewType?: InputMaybe<ViewType>
 }
 
 export type MutationRemoveNotificationSubscriberFromStreamerArgs = {
-  profileId: Scalars['String']['input']
+  accountAddress: Scalars['String']['input']
 }
 
 export type MutationUpdateLensStreamSessionArgs = {
@@ -140,6 +140,7 @@ export type MutationUploadDataToIpfsArgs = {
 
 export type MyStream = Stream & {
   __typename?: 'MyStream'
+  accountAddress: Scalars['String']['output']
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   featuredCoin?: Maybe<FeaturedCoin>
   isActive?: Maybe<Scalars['Boolean']['output']>
@@ -151,7 +152,6 @@ export type MyStream = Stream & {
   nextStreamTime?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
-  profileId: Scalars['String']['output']
   streamDescription?: Maybe<Scalars['String']['output']>
   streamKey?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
@@ -167,7 +167,7 @@ export type Price = {
 export type Query = {
   __typename?: 'Query'
   getMyRecordedStreamSessions?: Maybe<Array<Maybe<RecordedSession>>>
-  isSubcribedNotificationForStreamer?: Maybe<Scalars['Boolean']['output']>
+  isSubscribedNotificationForStreamer?: Maybe<Scalars['Boolean']['output']>
   isVerified?: Maybe<Array<Maybe<IsVerifiedResult>>>
   liveStreamers?: Maybe<Array<Maybe<Streamer>>>
   myStream?: Maybe<MyStream>
@@ -175,7 +175,7 @@ export type Query = {
   ping?: Maybe<Scalars['JSON']['output']>
   shouldCreateNewPost?: Maybe<Scalars['String']['output']>
   streamChats?: Maybe<Array<Maybe<Chat>>>
-  streamReplayPublications?: Maybe<StreamReplayPublicationsResult>
+  streamReplayPosts?: Maybe<StreamReplayPostsResult>
   streamReplayRecording?: Maybe<StreamReplayRecording>
   streamer?: Maybe<SingleStreamer>
   streamerStats?: Maybe<StreamStats>
@@ -187,36 +187,36 @@ export type QueryGetMyRecordedStreamSessionsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>
 }
 
-export type QueryIsSubcribedNotificationForStreamerArgs = {
-  profileId: Scalars['String']['input']
+export type QueryIsSubscribedNotificationForStreamerArgs = {
+  accountAddress: Scalars['String']['input']
 }
 
 export type QueryIsVerifiedArgs = {
-  profileIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>
+  accountAddresses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>
 }
 
 export type QueryStreamChatsArgs = {
+  accountAddress: Scalars['String']['input']
   limit?: InputMaybe<Scalars['Int']['input']>
-  profileId: Scalars['String']['input']
 }
 
-export type QueryStreamReplayPublicationsArgs = {
-  profileId?: InputMaybe<Scalars['String']['input']>
+export type QueryStreamReplayPostsArgs = {
+  accountAddress?: InputMaybe<Scalars['String']['input']>
   skip?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type QueryStreamReplayRecordingArgs = {
-  profileId?: InputMaybe<Scalars['String']['input']>
-  publicationId?: InputMaybe<Scalars['String']['input']>
+  accountAddress?: InputMaybe<Scalars['String']['input']>
+  postId?: InputMaybe<Scalars['String']['input']>
   sessionId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type QueryStreamerArgs = {
-  profileId: Scalars['String']['input']
+  accountAddress: Scalars['String']['input']
 }
 
 export type QueryStreamerStatsArgs = {
-  profileId: Scalars['String']['input']
+  accountAddress: Scalars['String']['input']
 }
 
 export type QueryThumbnailArgs = {
@@ -233,7 +233,7 @@ export type RecordedSession = {
   customThumbnail?: Maybe<Scalars['String']['output']>
   mp4Url?: Maybe<Scalars['String']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
-  publicationId?: Maybe<Scalars['String']['output']>
+  postId?: Maybe<Scalars['String']['output']>
   recordingUrl?: Maybe<Scalars['String']['output']>
   sessionId?: Maybe<Scalars['String']['output']>
   sourceSegmentsDuration?: Maybe<Scalars['Float']['output']>
@@ -242,57 +242,57 @@ export type RecordedSession = {
 
 export type SingleStreamer = Stream & {
   __typename?: 'SingleStreamer'
+  accountAddress: Scalars['String']['output']
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   featuredCoin?: Maybe<FeaturedCoin>
   isActive?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   latestSessionCreatedAt?: Maybe<Scalars['BigNumber']['output']>
   latestSessionId?: Maybe<Scalars['String']['output']>
-  latestStreamPublicationId?: Maybe<Scalars['String']['output']>
+  latestStreamPostId?: Maybe<Scalars['String']['output']>
   nextStreamTime?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
-  profileId: Scalars['String']['output']
   streamDescription?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
   thumbnail?: Maybe<Scalars['String']['output']>
 }
 
 export type Stream = {
+  accountAddress: Scalars['String']['output']
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   featuredCoin?: Maybe<FeaturedCoin>
   isActive?: Maybe<Scalars['Boolean']['output']>
   lastSeen?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
-  profileId: Scalars['String']['output']
   streamDescription?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
 }
 
-export type StreamReplayPublication = {
-  __typename?: 'StreamReplayPublication'
+export type StreamReplayPost = {
+  __typename?: 'StreamReplayPost'
+  accountAddress?: Maybe<Scalars['String']['output']>
   createdAt?: Maybe<Scalars['BigNumber']['output']>
+  postId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
-  profileId?: Maybe<Scalars['String']['output']>
-  publicationId?: Maybe<Scalars['String']['output']>
   sessionId?: Maybe<Scalars['String']['output']>
   sourceSegmentsDuration?: Maybe<Scalars['Float']['output']>
   thumbnail?: Maybe<Scalars['String']['output']>
 }
 
-export type StreamReplayPublicationsResult = {
-  __typename?: 'StreamReplayPublicationsResult'
+export type StreamReplayPostsResult = {
+  __typename?: 'StreamReplayPostsResult'
   hasMore: Scalars['Boolean']['output']
   next: Scalars['Int']['output']
-  streamReplayPublications?: Maybe<Array<Maybe<StreamReplayPublication>>>
+  streamReplayPosts?: Maybe<Array<Maybe<StreamReplayPost>>>
 }
 
 export type StreamReplayRecording = {
   __typename?: 'StreamReplayRecording'
+  accountAddress?: Maybe<Scalars['String']['output']>
   createdAt?: Maybe<Scalars['BigNumber']['output']>
+  postId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
-  profileId?: Maybe<Scalars['String']['output']>
-  publicationId?: Maybe<Scalars['String']['output']>
   recordingUrl?: Maybe<Scalars['String']['output']>
   sessionId?: Maybe<Scalars['String']['output']>
 }
@@ -305,6 +305,7 @@ export type StreamStats = {
 
 export type Streamer = Stream & {
   __typename?: 'Streamer'
+  accountAddress: Scalars['String']['output']
   createdAt?: Maybe<Scalars['BigNumber']['output']>
   featuredCoin?: Maybe<FeaturedCoin>
   isActive?: Maybe<Scalars['Boolean']['output']>
@@ -313,7 +314,6 @@ export type Streamer = Stream & {
   nextStreamTime?: Maybe<Scalars['BigNumber']['output']>
   playbackId?: Maybe<Scalars['String']['output']>
   premium?: Maybe<Scalars['Boolean']['output']>
-  profileId: Scalars['String']['output']
   streamDescription?: Maybe<Scalars['String']['output']>
   streamName?: Maybe<Scalars['String']['output']>
   thumbnail?: Maybe<Scalars['String']['output']>
@@ -333,7 +333,7 @@ export enum ViewType {
 }
 
 export type AddNotificationSubscriberToStreamerMutationVariables = Exact<{
-  profileId: Scalars['String']['input']
+  accountAddress: Scalars['String']['input']
 }>
 
 export type AddNotificationSubscriberToStreamerMutation = {
@@ -369,7 +369,7 @@ export type CreateClipMutation = {
 }
 
 export type CreateMyLensStreamSessionMutationVariables = Exact<{
-  publicationId: Scalars['String']['input']
+  postId: Scalars['String']['input']
   viewType?: InputMaybe<ViewType>
   sessionId?: InputMaybe<Scalars['String']['input']>
 }>
@@ -387,7 +387,7 @@ export type GetMyRecordedStreamSessionsQuery = {
   __typename?: 'Query'
   getMyRecordedStreamSessions?: Array<{
     __typename?: 'RecordedSession'
-    publicationId?: string | null
+    postId?: string | null
     mp4Url?: string | null
     sourceSegmentsDuration?: number | null
     recordingUrl?: string | null
@@ -399,17 +399,17 @@ export type GetMyRecordedStreamSessionsQuery = {
   } | null> | null
 }
 
-export type IsSubcribedNotificationForStreamerQueryVariables = Exact<{
-  profileId: Scalars['String']['input']
+export type IsSubscribedNotificationForStreamerQueryVariables = Exact<{
+  accountAddress: Scalars['String']['input']
 }>
 
-export type IsSubcribedNotificationForStreamerQuery = {
+export type IsSubscribedNotificationForStreamerQuery = {
   __typename?: 'Query'
-  isSubcribedNotificationForStreamer?: boolean | null
+  isSubscribedNotificationForStreamer?: boolean | null
 }
 
 export type IsVerifiedQueryVariables = Exact<{
-  profileIds?: InputMaybe<
+  accountAddresses?: InputMaybe<
     | Array<InputMaybe<Scalars['String']['input']>>
     | InputMaybe<Scalars['String']['input']>
   >
@@ -420,7 +420,7 @@ export type IsVerifiedQuery = {
   isVerified?: Array<{
     __typename?: 'IsVerifiedResult'
     isVerified?: boolean | null
-    profileId?: string | null
+    accountAddress?: string | null
   } | null> | null
 }
 
@@ -430,7 +430,7 @@ export type LiveStreamersQuery = {
   __typename?: 'Query'
   liveStreamers?: Array<{
     __typename?: 'Streamer'
-    profileId: string
+    accountAddress: string
     streamName?: string | null
     lastSeen?: any | null
     isActive?: boolean | null
@@ -439,6 +439,7 @@ export type LiveStreamersQuery = {
     thumbnail?: string | null
     liveCount?: number | null
     premium?: boolean | null
+    streamDescription?: string | null
   } | null> | null
 }
 
@@ -448,7 +449,7 @@ export type MyStreamQuery = {
   __typename?: 'Query'
   myStream?: {
     __typename?: 'MyStream'
-    profileId: string
+    accountAddress: string
     streamName?: string | null
     streamDescription?: string | null
     lastSeen?: any | null
@@ -476,10 +477,15 @@ export type OfflineStreamersQuery = {
   __typename?: 'Query'
   offlineStreamers?: Array<{
     __typename?: 'Streamer'
-    profileId: string
+    accountAddress: string
     lastSeen?: any | null
     premium?: boolean | null
     nextStreamTime?: any | null
+    streamName?: string | null
+    streamDescription?: string | null
+    isActive?: boolean | null
+    createdAt?: any | null
+    playbackId?: string | null
   } | null> | null
 }
 
@@ -488,7 +494,7 @@ export type QueryQueryVariables = Exact<{ [key: string]: never }>
 export type QueryQuery = { __typename?: 'Query'; ping?: any | null }
 
 export type RemoveNotificationSubscriberFromStreamerMutationVariables = Exact<{
-  profileId: Scalars['String']['input']
+  accountAddress: Scalars['String']['input']
 }>
 
 export type RemoveNotificationSubscriberFromStreamerMutation = {
@@ -497,8 +503,8 @@ export type RemoveNotificationSubscriberFromStreamerMutation = {
 }
 
 export type StreamReplayRecordingQueryVariables = Exact<{
-  publicationId?: InputMaybe<Scalars['String']['input']>
-  profileId?: InputMaybe<Scalars['String']['input']>
+  postId?: InputMaybe<Scalars['String']['input']>
+  accountAddress?: InputMaybe<Scalars['String']['input']>
   sessionId?: InputMaybe<Scalars['String']['input']>
 }>
 
@@ -506,12 +512,12 @@ export type StreamReplayRecordingQuery = {
   __typename?: 'Query'
   streamReplayRecording?: {
     __typename?: 'StreamReplayRecording'
-    publicationId?: string | null
+    postId?: string | null
     recordingUrl?: string | null
     premium?: boolean | null
     createdAt?: any | null
     sessionId?: string | null
-    profileId?: string | null
+    accountAddress?: string | null
   } | null
 }
 
@@ -523,7 +529,8 @@ export type ShouldCreateNewPostQuery = {
 }
 
 export type StreamChatsQueryVariables = Exact<{
-  profileId: Scalars['String']['input']
+  accountAddress: Scalars['String']['input']
+  limit?: InputMaybe<Scalars['Int']['input']>
 }>
 
 export type StreamChatsQuery = {
@@ -533,59 +540,59 @@ export type StreamChatsQuery = {
     content?: string | null
     handle?: string | null
     avatarUrl?: string | null
-    profileId?: string | null
+    accountAddress?: string | null
     id?: string | null
     createdAt?: any | null
     txHash?: string | null
     formattedAmount?: string | null
     currencySymbol?: string | null
-    authorProfileId?: string | null
+    authorAccountAddress?: string | null
     contentType?: string | null
     clipPostId?: string | null
     image?: string | null
   } | null> | null
 }
 
-export type StreamReplayPublicationsQueryVariables = Exact<{
+export type StreamReplayPostsQueryVariables = Exact<{
   skip?: InputMaybe<Scalars['Int']['input']>
-  profileId?: InputMaybe<Scalars['String']['input']>
+  accountAddress?: InputMaybe<Scalars['String']['input']>
 }>
 
-export type StreamReplayPublicationsQuery = {
+export type StreamReplayPostsQuery = {
   __typename?: 'Query'
-  streamReplayPublications?: {
-    __typename?: 'StreamReplayPublicationsResult'
+  streamReplayPosts?: {
+    __typename?: 'StreamReplayPostsResult'
     next: number
     hasMore: boolean
-    streamReplayPublications?: Array<{
-      __typename?: 'StreamReplayPublication'
-      publicationId?: string | null
+    streamReplayPosts?: Array<{
+      __typename?: 'StreamReplayPost'
+      postId?: string | null
       thumbnail?: string | null
       sourceSegmentsDuration?: number | null
       premium?: boolean | null
       createdAt?: any | null
       sessionId?: string | null
-      profileId?: string | null
+      accountAddress?: string | null
     } | null> | null
   } | null
 }
 
 export type StreamerQueryVariables = Exact<{
-  profileId: Scalars['String']['input']
+  accountAddress: Scalars['String']['input']
 }>
 
 export type StreamerQuery = {
   __typename?: 'Query'
   streamer?: {
     __typename?: 'SingleStreamer'
-    profileId: string
+    accountAddress: string
     lastSeen?: any | null
     isActive?: boolean | null
     createdAt?: any | null
     playbackId?: string | null
     streamName?: string | null
     streamDescription?: string | null
-    latestStreamPublicationId?: string | null
+    latestStreamPostId?: string | null
     latestSessionId?: string | null
     latestSessionCreatedAt?: any | null
     nextStreamTime?: any | null
@@ -662,8 +669,8 @@ export type UploadDataToIpfsMutation = {
 }
 
 export const AddNotificationSubscriberToStreamerDocument = gql`
-  mutation AddNotificationSubscriberToStreamer($profileId: String!) {
-    addNotificationSubscriberToStreamer(profileId: $profileId)
+  mutation AddNotificationSubscriberToStreamer($accountAddress: String!) {
+    addNotificationSubscriberToStreamer(accountAddress: $accountAddress)
   }
 `
 export type AddNotificationSubscriberToStreamerMutationFn =
@@ -685,7 +692,7 @@ export type AddNotificationSubscriberToStreamerMutationFn =
  * @example
  * const [addNotificationSubscriberToStreamerMutation, { data, loading, error }] = useAddNotificationSubscriberToStreamerMutation({
  *   variables: {
- *      profileId: // value for 'profileId'
+ *      accountAddress: // value for 'accountAddress'
  *   },
  * });
  */
@@ -828,12 +835,12 @@ export type CreateClipMutationOptions = Apollo.BaseMutationOptions<
 >
 export const CreateMyLensStreamSessionDocument = gql`
   mutation CreateMyLensStreamSession(
-    $publicationId: String!
+    $postId: String!
     $viewType: ViewType
     $sessionId: String
   ) {
     createMyLensStreamSession(
-      publicationId: $publicationId
+      postId: $postId
       viewType: $viewType
       sessionId: $sessionId
     )
@@ -857,7 +864,7 @@ export type CreateMyLensStreamSessionMutationFn = Apollo.MutationFunction<
  * @example
  * const [createMyLensStreamSessionMutation, { data, loading, error }] = useCreateMyLensStreamSessionMutation({
  *   variables: {
- *      publicationId: // value for 'publicationId'
+ *      postId: // value for 'postId'
  *      viewType: // value for 'viewType'
  *      sessionId: // value for 'sessionId'
  *   },
@@ -888,7 +895,7 @@ export type CreateMyLensStreamSessionMutationOptions =
 export const GetMyRecordedStreamSessionsDocument = gql`
   query GetMyRecordedStreamSessions($skip: Int) {
     getMyRecordedStreamSessions(skip: $skip) {
-      publicationId
+      postId
       mp4Url
       sourceSegmentsDuration
       recordingUrl
@@ -971,36 +978,36 @@ export type GetMyRecordedStreamSessionsQueryResult = Apollo.QueryResult<
   GetMyRecordedStreamSessionsQuery,
   GetMyRecordedStreamSessionsQueryVariables
 >
-export const IsSubcribedNotificationForStreamerDocument = gql`
-  query IsSubcribedNotificationForStreamer($profileId: String!) {
-    isSubcribedNotificationForStreamer(profileId: $profileId)
+export const IsSubscribedNotificationForStreamerDocument = gql`
+  query IsSubscribedNotificationForStreamer($accountAddress: String!) {
+    isSubscribedNotificationForStreamer(accountAddress: $accountAddress)
   }
 `
 
 /**
- * __useIsSubcribedNotificationForStreamerQuery__
+ * __useIsSubscribedNotificationForStreamerQuery__
  *
- * To run a query within a React component, call `useIsSubcribedNotificationForStreamerQuery` and pass it any options that fit your needs.
- * When your component renders, `useIsSubcribedNotificationForStreamerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useIsSubscribedNotificationForStreamerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIsSubscribedNotificationForStreamerQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useIsSubcribedNotificationForStreamerQuery({
+ * const { data, loading, error } = useIsSubscribedNotificationForStreamerQuery({
  *   variables: {
- *      profileId: // value for 'profileId'
+ *      accountAddress: // value for 'accountAddress'
  *   },
  * });
  */
-export function useIsSubcribedNotificationForStreamerQuery(
+export function useIsSubscribedNotificationForStreamerQuery(
   baseOptions: Apollo.QueryHookOptions<
-    IsSubcribedNotificationForStreamerQuery,
-    IsSubcribedNotificationForStreamerQueryVariables
+    IsSubscribedNotificationForStreamerQuery,
+    IsSubscribedNotificationForStreamerQueryVariables
   > &
     (
       | {
-          variables: IsSubcribedNotificationForStreamerQueryVariables
+          variables: IsSubscribedNotificationForStreamerQueryVariables
           skip?: boolean
         }
       | { skip: boolean }
@@ -1008,28 +1015,28 @@ export function useIsSubcribedNotificationForStreamerQuery(
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    IsSubcribedNotificationForStreamerQuery,
-    IsSubcribedNotificationForStreamerQueryVariables
-  >(IsSubcribedNotificationForStreamerDocument, options)
+    IsSubscribedNotificationForStreamerQuery,
+    IsSubscribedNotificationForStreamerQueryVariables
+  >(IsSubscribedNotificationForStreamerDocument, options)
 }
-export function useIsSubcribedNotificationForStreamerLazyQuery(
+export function useIsSubscribedNotificationForStreamerLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    IsSubcribedNotificationForStreamerQuery,
-    IsSubcribedNotificationForStreamerQueryVariables
+    IsSubscribedNotificationForStreamerQuery,
+    IsSubscribedNotificationForStreamerQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    IsSubcribedNotificationForStreamerQuery,
-    IsSubcribedNotificationForStreamerQueryVariables
-  >(IsSubcribedNotificationForStreamerDocument, options)
+    IsSubscribedNotificationForStreamerQuery,
+    IsSubscribedNotificationForStreamerQueryVariables
+  >(IsSubscribedNotificationForStreamerDocument, options)
 }
-export function useIsSubcribedNotificationForStreamerSuspenseQuery(
+export function useIsSubscribedNotificationForStreamerSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        IsSubcribedNotificationForStreamerQuery,
-        IsSubcribedNotificationForStreamerQueryVariables
+        IsSubscribedNotificationForStreamerQuery,
+        IsSubscribedNotificationForStreamerQueryVariables
       >
 ) {
   const options =
@@ -1037,27 +1044,27 @@ export function useIsSubcribedNotificationForStreamerSuspenseQuery(
       ? baseOptions
       : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    IsSubcribedNotificationForStreamerQuery,
-    IsSubcribedNotificationForStreamerQueryVariables
-  >(IsSubcribedNotificationForStreamerDocument, options)
+    IsSubscribedNotificationForStreamerQuery,
+    IsSubscribedNotificationForStreamerQueryVariables
+  >(IsSubscribedNotificationForStreamerDocument, options)
 }
-export type IsSubcribedNotificationForStreamerQueryHookResult = ReturnType<
-  typeof useIsSubcribedNotificationForStreamerQuery
+export type IsSubscribedNotificationForStreamerQueryHookResult = ReturnType<
+  typeof useIsSubscribedNotificationForStreamerQuery
 >
-export type IsSubcribedNotificationForStreamerLazyQueryHookResult = ReturnType<
-  typeof useIsSubcribedNotificationForStreamerLazyQuery
+export type IsSubscribedNotificationForStreamerLazyQueryHookResult = ReturnType<
+  typeof useIsSubscribedNotificationForStreamerLazyQuery
 >
-export type IsSubcribedNotificationForStreamerSuspenseQueryHookResult =
-  ReturnType<typeof useIsSubcribedNotificationForStreamerSuspenseQuery>
-export type IsSubcribedNotificationForStreamerQueryResult = Apollo.QueryResult<
-  IsSubcribedNotificationForStreamerQuery,
-  IsSubcribedNotificationForStreamerQueryVariables
+export type IsSubscribedNotificationForStreamerSuspenseQueryHookResult =
+  ReturnType<typeof useIsSubscribedNotificationForStreamerSuspenseQuery>
+export type IsSubscribedNotificationForStreamerQueryResult = Apollo.QueryResult<
+  IsSubscribedNotificationForStreamerQuery,
+  IsSubscribedNotificationForStreamerQueryVariables
 >
 export const IsVerifiedDocument = gql`
-  query IsVerified($profileIds: [String]) {
-    isVerified(profileIds: $profileIds) {
+  query IsVerified($accountAddresses: [String]) {
+    isVerified(accountAddresses: $accountAddresses) {
       isVerified
-      profileId
+      accountAddress
     }
   }
 `
@@ -1074,7 +1081,7 @@ export const IsVerifiedDocument = gql`
  * @example
  * const { data, loading, error } = useIsVerifiedQuery({
  *   variables: {
- *      profileIds: // value for 'profileIds'
+ *      accountAddresses: // value for 'accountAddresses'
  *   },
  * });
  */
@@ -1130,7 +1137,7 @@ export type IsVerifiedQueryResult = Apollo.QueryResult<
 export const LiveStreamersDocument = gql`
   query LiveStreamers {
     liveStreamers {
-      profileId
+      accountAddress
       streamName
       lastSeen
       isActive
@@ -1139,6 +1146,7 @@ export const LiveStreamersDocument = gql`
       thumbnail
       liveCount
       premium
+      streamDescription
     }
   }
 `
@@ -1215,7 +1223,7 @@ export type LiveStreamersQueryResult = Apollo.QueryResult<
 export const MyStreamDocument = gql`
   query MyStream {
     myStream {
-      profileId
+      accountAddress
       streamName
       streamDescription
       lastSeen
@@ -1301,10 +1309,15 @@ export type MyStreamQueryResult = Apollo.QueryResult<
 export const OfflineStreamersDocument = gql`
   query OfflineStreamers {
     offlineStreamers {
-      profileId
+      accountAddress
       lastSeen
       premium
       nextStreamTime
+      streamName
+      streamDescription
+      isActive
+      createdAt
+      playbackId
     }
   }
 `
@@ -1441,8 +1454,8 @@ export type QueryQueryResult = Apollo.QueryResult<
   QueryQueryVariables
 >
 export const RemoveNotificationSubscriberFromStreamerDocument = gql`
-  mutation RemoveNotificationSubscriberFromStreamer($profileId: String!) {
-    removeNotificationSubscriberFromStreamer(profileId: $profileId)
+  mutation RemoveNotificationSubscriberFromStreamer($accountAddress: String!) {
+    removeNotificationSubscriberFromStreamer(accountAddress: $accountAddress)
   }
 `
 export type RemoveNotificationSubscriberFromStreamerMutationFn =
@@ -1464,7 +1477,7 @@ export type RemoveNotificationSubscriberFromStreamerMutationFn =
  * @example
  * const [removeNotificationSubscriberFromStreamerMutation, { data, loading, error }] = useRemoveNotificationSubscriberFromStreamerMutation({
  *   variables: {
- *      profileId: // value for 'profileId'
+ *      accountAddress: // value for 'accountAddress'
  *   },
  * });
  */
@@ -1491,21 +1504,21 @@ export type RemoveNotificationSubscriberFromStreamerMutationOptions =
   >
 export const StreamReplayRecordingDocument = gql`
   query StreamReplayRecording(
-    $publicationId: String
-    $profileId: String
+    $postId: String
+    $accountAddress: String
     $sessionId: String
   ) {
     streamReplayRecording(
-      publicationId: $publicationId
-      profileId: $profileId
+      postId: $postId
+      accountAddress: $accountAddress
       sessionId: $sessionId
     ) {
-      publicationId
+      postId
       recordingUrl
       premium
       createdAt
       sessionId
-      profileId
+      accountAddress
     }
   }
 `
@@ -1522,8 +1535,8 @@ export const StreamReplayRecordingDocument = gql`
  * @example
  * const { data, loading, error } = useStreamReplayRecordingQuery({
  *   variables: {
- *      publicationId: // value for 'publicationId'
- *      profileId: // value for 'profileId'
+ *      postId: // value for 'postId'
+ *      accountAddress: // value for 'accountAddress'
  *      sessionId: // value for 'sessionId'
  *   },
  * });
@@ -1658,18 +1671,18 @@ export type ShouldCreateNewPostQueryResult = Apollo.QueryResult<
   ShouldCreateNewPostQueryVariables
 >
 export const StreamChatsDocument = gql`
-  query StreamChats($profileId: String!) {
-    streamChats(profileId: $profileId) {
+  query StreamChats($accountAddress: String!, $limit: Int) {
+    streamChats(accountAddress: $accountAddress, limit: $limit) {
       content
       handle
       avatarUrl
-      profileId
+      accountAddress
       id
       createdAt
       txHash
       formattedAmount
       currencySymbol
-      authorProfileId
+      authorAccountAddress
       contentType
       clipPostId
       image
@@ -1690,7 +1703,8 @@ export const StreamChatsDocument = gql`
  * @example
  * const { data, loading, error } = useStreamChatsQuery({
  *   variables: {
- *      profileId: // value for 'profileId'
+ *      accountAddress: // value for 'accountAddress'
+ *      limit: // value for 'limit'
  *   },
  * });
  */
@@ -1750,17 +1764,17 @@ export type StreamChatsQueryResult = Apollo.QueryResult<
   StreamChatsQuery,
   StreamChatsQueryVariables
 >
-export const StreamReplayPublicationsDocument = gql`
-  query StreamReplayPublications($skip: Int, $profileId: String) {
-    streamReplayPublications(skip: $skip, profileId: $profileId) {
-      streamReplayPublications {
-        publicationId
+export const StreamReplayPostsDocument = gql`
+  query StreamReplayPosts($skip: Int, $accountAddress: String) {
+    streamReplayPosts(skip: $skip, accountAddress: $accountAddress) {
+      streamReplayPosts {
+        postId
         thumbnail
         sourceSegmentsDuration
         premium
         createdAt
         sessionId
-        profileId
+        accountAddress
       }
       next
       hasMore
@@ -1769,52 +1783,52 @@ export const StreamReplayPublicationsDocument = gql`
 `
 
 /**
- * __useStreamReplayPublicationsQuery__
+ * __useStreamReplayPostsQuery__
  *
- * To run a query within a React component, call `useStreamReplayPublicationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useStreamReplayPublicationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useStreamReplayPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStreamReplayPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useStreamReplayPublicationsQuery({
+ * const { data, loading, error } = useStreamReplayPostsQuery({
  *   variables: {
  *      skip: // value for 'skip'
- *      profileId: // value for 'profileId'
+ *      accountAddress: // value for 'accountAddress'
  *   },
  * });
  */
-export function useStreamReplayPublicationsQuery(
+export function useStreamReplayPostsQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    StreamReplayPublicationsQuery,
-    StreamReplayPublicationsQueryVariables
+    StreamReplayPostsQuery,
+    StreamReplayPostsQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    StreamReplayPublicationsQuery,
-    StreamReplayPublicationsQueryVariables
-  >(StreamReplayPublicationsDocument, options)
+    StreamReplayPostsQuery,
+    StreamReplayPostsQueryVariables
+  >(StreamReplayPostsDocument, options)
 }
-export function useStreamReplayPublicationsLazyQuery(
+export function useStreamReplayPostsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    StreamReplayPublicationsQuery,
-    StreamReplayPublicationsQueryVariables
+    StreamReplayPostsQuery,
+    StreamReplayPostsQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    StreamReplayPublicationsQuery,
-    StreamReplayPublicationsQueryVariables
-  >(StreamReplayPublicationsDocument, options)
+    StreamReplayPostsQuery,
+    StreamReplayPostsQueryVariables
+  >(StreamReplayPostsDocument, options)
 }
-export function useStreamReplayPublicationsSuspenseQuery(
+export function useStreamReplayPostsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        StreamReplayPublicationsQuery,
-        StreamReplayPublicationsQueryVariables
+        StreamReplayPostsQuery,
+        StreamReplayPostsQueryVariables
       >
 ) {
   const options =
@@ -1822,34 +1836,34 @@ export function useStreamReplayPublicationsSuspenseQuery(
       ? baseOptions
       : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    StreamReplayPublicationsQuery,
-    StreamReplayPublicationsQueryVariables
-  >(StreamReplayPublicationsDocument, options)
+    StreamReplayPostsQuery,
+    StreamReplayPostsQueryVariables
+  >(StreamReplayPostsDocument, options)
 }
-export type StreamReplayPublicationsQueryHookResult = ReturnType<
-  typeof useStreamReplayPublicationsQuery
+export type StreamReplayPostsQueryHookResult = ReturnType<
+  typeof useStreamReplayPostsQuery
 >
-export type StreamReplayPublicationsLazyQueryHookResult = ReturnType<
-  typeof useStreamReplayPublicationsLazyQuery
+export type StreamReplayPostsLazyQueryHookResult = ReturnType<
+  typeof useStreamReplayPostsLazyQuery
 >
-export type StreamReplayPublicationsSuspenseQueryHookResult = ReturnType<
-  typeof useStreamReplayPublicationsSuspenseQuery
+export type StreamReplayPostsSuspenseQueryHookResult = ReturnType<
+  typeof useStreamReplayPostsSuspenseQuery
 >
-export type StreamReplayPublicationsQueryResult = Apollo.QueryResult<
-  StreamReplayPublicationsQuery,
-  StreamReplayPublicationsQueryVariables
+export type StreamReplayPostsQueryResult = Apollo.QueryResult<
+  StreamReplayPostsQuery,
+  StreamReplayPostsQueryVariables
 >
 export const StreamerDocument = gql`
-  query Streamer($profileId: String!) {
-    streamer(profileId: $profileId) {
-      profileId
+  query Streamer($accountAddress: String!) {
+    streamer(accountAddress: $accountAddress) {
+      accountAddress
       lastSeen
       isActive
       createdAt
       playbackId
       streamName
       streamDescription
-      latestStreamPublicationId
+      latestStreamPostId
       latestSessionId
       latestSessionCreatedAt
       nextStreamTime
@@ -1875,7 +1889,7 @@ export const StreamerDocument = gql`
  * @example
  * const { data, loading, error } = useStreamerQuery({
  *   variables: {
- *      profileId: // value for 'profileId'
+ *      accountAddress: // value for 'accountAddress'
  *   },
  * });
  */

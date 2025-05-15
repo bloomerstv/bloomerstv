@@ -1,11 +1,11 @@
 import React from 'react'
 import StartLoadingPage from '../pages/loading/StartLoadingPage'
-import { useSession } from '@lens-protocol/react-web'
+import { usePublicClient } from '@lens-protocol/react'
 
 const ShowLoadingWrapper = ({ children }: { children: React.ReactNode }) => {
-  const { data, loading } = useSession()
+  const { currentSession } = usePublicClient()
 
-  if (loading && !data) {
+  if (!currentSession) {
     return (
       <div className="h-dvh">
         <StartLoadingPage />

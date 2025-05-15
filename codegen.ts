@@ -1,8 +1,9 @@
 import type { CodegenConfig } from '@graphql-codegen/cli'
+import { LOCAL_NODE_API_URL } from './utils/config'
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: `http://localhost:8000/graphql`,
+  schema: `${LOCAL_NODE_API_URL}/graphql`,
   documents: './graphql/*.graphql',
   generates: {
     './graphql/generated.ts': {

@@ -1,3 +1,4 @@
+import { Account } from '@lens-protocol/react'
 import { AVATAR } from '../config'
 import { ZERO_ADDRESS } from '../contants'
 import getStampFyiURL from './getStampFyiURL'
@@ -11,15 +12,15 @@ import sanitizeDStorageUrl from './sanitizeDStorageUrl'
  * @param namedTransform The named transform to use.
  * @returns The avatar image URL.
  */
-const getAvatar = (profile: any, namedTransform = AVATAR): string => {
+const getAvatar = (
+  account?: Account | null,
+  namedTransform = AVATAR
+): string => {
+  if (!account) {
+    return getStampFyiURL(ZERO_ADDRESS)
+  }
   const avatarUrl =
-    // Lens NFT Avatar fallbacks
-    profile?.metadata?.picture?.image?.optimized?.uri ??
-    profile?.metadata?.picture?.image?.raw?.uri ??
-    // Lens Profile Avatar fallbacks
-    profile?.metadata?.picture?.optimized?.uri ??
-    profile?.metadata?.picture?.raw?.uri ??
-    getStampFyiURL(profile?.ownedBy?.address ?? ZERO_ADDRESS)
+    account?.metadata?.picture ?? getStampFyiURL(account?.owner ?? ZERO_ADDRESS)
 
   return imageKit(sanitizeDStorageUrl(avatarUrl), namedTransform)
 }

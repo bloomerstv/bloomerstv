@@ -1,5 +1,4 @@
 'use client'
-import { SessionType, useSession } from '@lens-protocol/react-web'
 import React, { useState } from 'react'
 import { WIDGETS_URL } from '../../../../utils/config'
 import toast from 'react-hot-toast'
@@ -8,9 +7,10 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { Button, Checkbox, Input } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import useSession from '../../../../utils/hooks/useSession'
 
 const AlexBoxWidgetPage = () => {
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
   const [width, setWidth] = useState(300)
   const [height, setHeight] = useState(300)
   const [iframeKey, setIframeKey] = useState(Date.now())
@@ -21,12 +21,12 @@ const AlexBoxWidgetPage = () => {
     setIframeKey(Date.now())
   }
 
-  if (data?.type !== SessionType.WithProfile) {
+  if (!isAuthenticated) {
     return null
   }
 
   const handleCopy = () => {
-    const chatSourceUrl = `${WIDGETS_URL}/alert-box/${data?.profile?.id}?newCollects=${collectAlert}&newFollowers=${followerAlert}`
+    const chatSourceUrl = `${WIDGETS_URL}/alert-box/${account?.address}?newCollects=${collectAlert}&newFollowers=${followerAlert}`
     navigator.clipboard.writeText(chatSourceUrl)
     toast.success('Copied to clipboard')
   }
@@ -103,7 +103,7 @@ const AlexBoxWidgetPage = () => {
               style={{
                 border: 'none'
               }}
-              src={`${WIDGETS_URL}/alert-box/${data?.profile?.id}?newCollects=${collectAlert}&newFollowers=${followerAlert}&emulate=true`}
+              src={`${WIDGETS_URL}/alert-box/${account?.address}?newCollects=${collectAlert}&newFollowers=${followerAlert}&emulate=true`}
               className="w-full h-full"
             />
           </div>

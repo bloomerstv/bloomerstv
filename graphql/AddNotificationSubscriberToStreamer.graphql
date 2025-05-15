@@ -1,3 +1,3 @@
-mutation AddNotificationSubscriberToStreamer($profileId: String!) {
-  addNotificationSubscriberToStreamer(profileId: $profileId)
+mutation AddNotificationSubscriberToStreamer($accountAddress: String!) {
+  addNotificationSubscriberToStreamer(accountAddress: $accountAddress)
 }

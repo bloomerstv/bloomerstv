@@ -1,16 +1,9 @@
 'use client'
 import React, { useCallback } from 'react'
-import { useStreamersWithProfiles } from '../store/useStreamersWithProfiles'
 import StreamerBar from './StreamerSidebar/StreamerBar'
 import Link from 'next/link'
 import { DISCORD_INVITE_URL, GITHUB_URL, X_URL } from '../../utils/config'
-import {
-  LimitType,
-  Profile,
-  SessionType,
-  useProfiles,
-  useSession
-} from '@lens-protocol/react-web'
+
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import { IconButton } from '@mui/material'
@@ -23,27 +16,28 @@ import {
 } from '../../graphql/generated'
 import useIsMobile from '../../utils/hooks/useIsMobile'
 import StreamerBarLoading from './StreamerSidebar/StreamerBarLoading'
-import SubscribeToSuperBloomers from './SubscribeToSuperBloomers'
 import AppLinksRow from './AppLinksRow'
+import useSession from '../../utils/hooks/useSession'
+import { Account, useAccountsBulk } from '@lens-protocol/react'
+import { useStreamersWithAccounts } from '../store/useStreamersWithAccounts'
+import SubscribeToSuperBloomers from './SubscribeToSuperBloomers'
 
 const StreamerSidebar = () => {
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
   const pathname = usePathname()
   const { theme } = useTheme()
   const isMobile = useIsMobile()
-  const streamersWithProfiles = useStreamersWithProfiles(
-    (state) => state.streamersWithProfiles
+  const streamersWithAccounts = useStreamersWithAccounts(
+    (state) => state.streamersWithAccounts
   )
 
   const { data: offlineStreamers, loading } = useOfflineStreamersQuery()
 
   const { data: isVerified } = useIsVerifiedQuery({
     variables: {
-      // @ts-ignore
-      profileIds: [data?.profile?.id]
+      accountAddresses: [account?.address]
     },
-    // @ts-ignore
-    skip: !data?.profile?.id
+    skip: !account?.address
   })
 
   // Assuming offlineStreamers is already fetched and available
@@ -84,9 +78,9 @@ const StreamerSidebar = () => {
     sortedOfflineStreamers?.forEach((streamer) => {
       if (!streamer) return
 
-      if (map.get(streamer.profileId)) return
+      if (map.get(streamer.accountAddress)) return
 
-      map.set(streamer.profileId, {
+      map.set(streamer.accountAddress, {
         lastSeen: streamer?.lastSeen,
         premium: streamer?.premium,
         nextStreamTime: streamer?.nextStreamTime
@@ -94,48 +88,71 @@ const StreamerSidebar = () => {
     })
     return map
   }, [sortedOfflineStreamers])
-  const { data: offlineProfiles, loading: profileLoading } = useProfiles({
-    where: {
-      // @ts-ignore
-      profileIds:
-        sortedOfflineStreamers?.map((streamer) => streamer?.profileId) ?? []
-    },
-    limit: LimitType.Fifty
-  })
 
-  const followingStreamers = streamersWithProfiles?.filter((streamer) => {
-    return streamer?.profile?.operations?.isFollowedByMe?.value
-  })
-
-  const restOfTheStreamers = streamersWithProfiles?.filter((streamer) => {
-    return !streamer?.profile?.operations?.isFollowedByMe?.value
-  })
-
-  const getOfflineFollowingStreamers = useCallback((): Profile[] => {
-    // get following profiles from public replays
-    const offlineFollowingStreamers = offlineProfiles?.filter((profile) => {
-      return (
-        profile?.operations?.isFollowedByMe?.value &&
-        // @ts-ignore
-        (!data?.profile || profile?.id !== data?.profile?.id)
-      )
+  const { data: offlineAccounts, loading: offlineAccountsLoading } =
+    useAccountsBulk({
+      addresses:
+        sortedOfflineStreamers?.map((streamer) => streamer?.accountAddress) ??
+        []
     })
+
+  const followingStreamers = streamersWithAccounts?.filter((streamer) => {
+    return streamer?.account?.operations?.isFollowedByMe
+  })
+
+  const restOfTheStreamers = streamersWithAccounts?.filter((streamer) => {
+    return !streamer?.account?.operations?.isFollowedByMe
+  })
+
+  const getOfflineFollowingStreamers = useCallback((): Account[] => {
+    // get following profiles from public replays
+    const offlineFollowingStreamers = offlineAccounts?.filter(
+      (offlineAccount) => {
+        // Check if this account is already in streamersWithAccounts
+        const alreadyInStreamers = streamersWithAccounts?.some(
+          (streamer) => streamer?.accountAddress === offlineAccount?.address
+        )
+
+        return (
+          !alreadyInStreamers &&
+          offlineAccount?.operations?.isFollowedByMe &&
+          (!isAuthenticated || offlineAccount?.address !== account?.address)
+        )
+      }
+    )
 
     return offlineFollowingStreamers || []
-  }, [offlineProfiles])
+  }, [
+    offlineAccounts,
+    isAuthenticated,
+    account?.address,
+    streamersWithAccounts
+  ])
 
-  const getOfflineRecommendedStreamers = useCallback((): Profile[] => {
+  const getOfflineRecommendedStreamers = useCallback((): Account[] => {
     // get following profiles from public replays
-    const offlineRecommendedStreamers = offlineProfiles?.filter((profile) => {
-      return (
-        !profile?.operations?.isFollowedByMe?.value &&
-        // @ts-ignore
-        (!data?.profile || profile?.id !== data?.profile?.id)
-      )
-    })
+    const offlineRecommendedStreamers = offlineAccounts?.filter(
+      (offlineAccount) => {
+        // Check if this account is already in streamersWithAccounts
+        const alreadyInStreamers = streamersWithAccounts?.some(
+          (streamer) => streamer?.accountAddress === offlineAccount?.address
+        )
+
+        return (
+          !alreadyInStreamers &&
+          !offlineAccount?.operations?.isFollowedByMe &&
+          (!isAuthenticated || offlineAccount?.address !== account?.address)
+        )
+      }
+    )
 
     return offlineRecommendedStreamers || []
-  }, [offlineProfiles])
+  }, [
+    offlineAccounts,
+    isAuthenticated,
+    account?.address,
+    streamersWithAccounts
+  ])
 
   const offlineFollowingStreamers = getOfflineFollowingStreamers()
   const offlineRecommendedStreamers = getOfflineRecommendedStreamers()
@@ -146,7 +163,7 @@ const StreamerSidebar = () => {
     <div
       className={clsx(
         'h-full bg-s-bg overflow-auto no-scrollbar',
-        !minimize ? 'sm:min-w-[250px] sm:max-w-[300px] sm:py-2 pb-4' : 'py-2',
+        !minimize ? 'sm:w-[250px] sm:py-2 pb-4' : 'py-2',
         isMobile && 'px-1'
       )}
     >
@@ -157,12 +174,12 @@ const StreamerSidebar = () => {
               <div className="w-10 h-0.5" />
             </div>
           )}
-          {data?.type === SessionType.WithProfile && (
+          {isAuthenticated && (
             <>
               {!minimize && (
                 <div className="font-bold px-4 sm:py-2">Following Channels</div>
               )}
-              {(loading || profileLoading) && (
+              {(loading || offlineAccountsLoading) && (
                 <div className="flex flex-col w-full">
                   <StreamerBarLoading />
                   <StreamerBarLoading />
@@ -177,29 +194,29 @@ const StreamerSidebar = () => {
                 <div className="flex flex-col w-full">
                   {followingStreamers?.map((streamer) => {
                     return (
-                      // @ts-ignore
                       <StreamerBar
-                        key={streamer?.profileId}
+                        key={streamer?.accountAddress}
                         streamer={streamer}
                       />
                     )
                   })}
 
-                  {offlineFollowingStreamers?.slice(0, 10)?.map((profile) => {
+                  {offlineFollowingStreamers?.slice(0, 10)?.map((account) => {
                     return (
                       // @ts-ignore
                       <StreamerBar
-                        key={profile?.id}
+                        key={account?.address}
                         streamer={{
-                          profile,
-                          profileId: profile?.id,
-                          lastSeen: offlineStreamersMap.get(profile?.id)
+                          account,
+                          accountAddress: account?.address,
+                          lastSeen: offlineStreamersMap.get(account?.address)
                             ?.lastSeen,
-                          nextStreamTime: offlineStreamersMap.get(profile?.id)
-                            ?.nextStreamTime,
+                          nextStreamTime: offlineStreamersMap.get(
+                            account?.address
+                          )?.nextStreamTime,
                           premium:
-                            offlineStreamersMap.get(profile?.id)?.premium ??
-                            false
+                            offlineStreamersMap.get(account?.address)
+                              ?.premium ?? false
                         }}
                       />
                     )
@@ -207,7 +224,7 @@ const StreamerSidebar = () => {
                 </div>
               ) : (
                 <>
-                  {!minimize && !(loading || profileLoading) && (
+                  {!minimize && !(loading || offlineAccountsLoading) && (
                     <div className="px-4 py-2 text-sm text-s-text font-semibold">
                       No one from your followings has been streaming recently.
                     </div>
@@ -220,12 +237,12 @@ const StreamerSidebar = () => {
           <>
             {!minimize &&
               (loading ||
-                profileLoading ||
+                offlineAccountsLoading ||
                 restOfTheStreamers?.length > 0 ||
                 offlineRecommendedStreamers.length > 0) && (
                 <div className="font-bold px-4 py-2">Recommended Channels</div>
               )}
-            {(loading || profileLoading) && (
+            {(loading || offlineAccountsLoading) && (
               <div className="flex flex-col w-full">
                 <StreamerBarLoading />
                 <StreamerBarLoading />
@@ -239,27 +256,28 @@ const StreamerSidebar = () => {
                   return (
                     // @ts-ignore
                     <StreamerBar
-                      key={streamer?.profileId}
+                      key={streamer?.accountAddress}
                       streamer={streamer}
                     />
                   )
                 })}
 
-                {offlineRecommendedStreamers?.slice(0, 10)?.map((profile) => {
+                {offlineRecommendedStreamers?.slice(0, 10)?.map((account) => {
                   return (
                     // @ts-ignore
                     <StreamerBar
-                      key={profile?.id}
+                      key={account?.address}
                       streamer={{
-                        profile,
-                        profileId: profile?.id,
-                        lastSeen: offlineStreamersMap.get(profile?.id)
+                        account: account,
+                        accountAddress: account?.address,
+                        lastSeen: offlineStreamersMap.get(account?.address)
                           ?.lastSeen,
                         premium:
-                          offlineStreamersMap.get(profile?.id)?.premium ??
+                          offlineStreamersMap.get(account?.address)?.premium ??
                           false,
-                        nextStreamTime: offlineStreamersMap.get(profile?.id)
-                          ?.nextStreamTime
+                        nextStreamTime: offlineStreamersMap.get(
+                          account?.address
+                        )?.nextStreamTime
                       }}
                     />
                   )

@@ -5,16 +5,28 @@ export const STS_TOKEN_URL = process.env.NEXT_PUBLIC_STS_TOKEN_URL
 export const EVER_REGION = 'us-west-2'
 
 export const useOnlyPWAOnMobile = false
+export const CREATOR_EMAIL = 'devenrathodrd@gmail.com'
+
 export const isMainnet = process.env.NEXT_PUBLIC_LENS_MODE
   ? process.env.NEXT_PUBLIC_LENS_MODE === 'mainnet'
   : true
+
+export const APP_ADDRESS = isMainnet
+  ? // bloomers.tv
+    '0x5eD76435f79E025Ca5c534e17184FEC29b681DB5'
+  : '0x0f6c48a220ddC674662D53340FE1fF0653CC7e4f'
+
+export const LENS_JWKS_URL = isMainnet
+  ? 'https://api.lens.xyz/.well-known/jwks.json'
+  : 'https://api.testnet.lens.xyz/.well-known/jwks.json'
 
 export const AVATAR = 'tr:w-120,h-120'
 
 export const NODE_API_MODE =
   process.env.NEXT_PUBLIC_NODE_API_MODE ?? 'production'
 
-export const LOCAL_NODE_API_URL = process.env.NEXT_PUBLIC_LOCAL_NODE_API_URL ?? 'http://localhost:8000'
+export const LOCAL_NODE_API_URL =
+  process.env.NEXT_PUBLIC_LOCAL_NODE_API_URL ?? 'http://localhost:8000'
 export const PRODUCTION_NODE_API_URL = 'https://api.bloomers.tv'
 // export const PRODUCTION_NODE_API_URL = 'https://bloomerstv-api.onrender.com'
 export const DEVELOPMENT_NODE_API_URL =
@@ -54,10 +66,10 @@ export const NODE_GRAPHQL_URL = `${NODE_API_URL}/graphql`
 export const LIVE_PEER_RTMP_URL = 'rtmp://rtmp.livepeer.com/live'
 
 export const localStorageCredKey = isMainnet
-  ? 'lens.production.credentials'
-  : 'lens.development.credentials'
-export const lensTestnetUrl = 'https://api-v2-amoy.lens.dev'
-export const lensMainnetUrl = 'https://api-v2.lens.dev'
+  ? 'lens.mainnet.credentials'
+  : 'lens.testnet.credentials'
+export const lensTestnetUrl = 'https://api.testnet.lens.xyz/graphql'
+export const lensMainnetUrl = 'https://api.lens.xyz/graphql'
 export const wsLensGraphEndpoint = isMainnet
   ? 'wss://api-v2.lens.dev'
   : 'wss://api-v2-amoy.lens.dev'
@@ -224,7 +236,7 @@ export const SuperFluidInfo = {
 }
 
 // todo, move this to api to add / remove profiles from this list on the backend
-export const hideProfilesIds: string[] = []
+export const hideAccountAddresses: string[] = []
 
 export const NEXT_PUBLIC_VAPID_KEY =
   'BDv44ZwY7G3E1fgEuHeiw74cda-LG9gOFwTLFaD2ArveOdd3meLf37noJbztWUeS8GFSR59SjRpYToF3oZrG1dE'

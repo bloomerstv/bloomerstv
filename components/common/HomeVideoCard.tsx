@@ -1,9 +1,3 @@
-import {
-  Post,
-  Profile,
-  SessionType,
-  useSession
-} from '@lens-protocol/react-web'
 import Link from 'next/link'
 import React from 'react'
 import getAvatar from '../../utils/lib/getAvatar'
@@ -18,6 +12,8 @@ import VerifiedBadge from '../ui/VerifiedBadge'
 import LoadingImage from '../ui/LoadingImage'
 import { IconButton, Tooltip } from '@mui/material'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
+import useSession from '../../utils/hooks/useSession'
+import { Account, Post } from '@lens-protocol/react'
 const HomeVideoCard = ({
   post,
   cover,
@@ -32,12 +28,12 @@ const HomeVideoCard = ({
   session?: {
     sessionId: string
     createdAt: string
-    profile: Profile
+    account: Account
   }
 }) => {
   const pathname = usePathname()
   const asset = post ? getPublicationData(post?.metadata)?.asset : null
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
   const { push } = useRouter()
 
   if (!post && !session) return null
@@ -50,7 +46,7 @@ const HomeVideoCard = ({
         pathname === '/' ? 'lg:w-1/3 2xl:w-1/4' : 'lg:w-1/3'
       )}
       href={
-        post ? `/watch/${post?.id}` : `/watch/session/${session?.sessionId}`
+        post ? `/watch/${post?.slug}` : `/watch/session/${session?.sessionId}`
       }
     >
       <div className="w-full aspect-video relative mb-2 overflow-hidden sm:rounded-xl">
@@ -75,74 +71,81 @@ const HomeVideoCard = ({
         )}
       </div>
       <div className="sm:px-0 px-4 w-full start-row space-x-3">
-        <Link
-          prefetch
-          className="no-underline text-p-text group font-semibold text-s-text"
-          href={formatHandle(post?.by ?? session?.profile)}
+        <div
+          className="no-underline text-s-text group font-semibold cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation()
+            push(formatHandle(post?.author ?? session?.account))
+          }}
         >
           <img
-            src={getAvatar(post?.by ?? session?.profile)}
+            src={getAvatar(post?.author ?? session?.account)}
             className="w-10 h-10 rounded-full"
             alt="avatar"
           />
-        </Link>
-        <div className="start-col">
-          {/* @ts-ignore */}
-          <div className="text-sm font-semibold">
-            {/* @ts-ignore */}
-            <Markup>{post?.metadata?.title ?? 'Untitled stream'}</Markup>
-          </div>
-          <div className="start-row flex-wrap text-sm lg:text-xs 2xl:text-sm font-normal text-s-text gap-x-1">
-            <div className="flex flex-row items-center gap-x-1">
-              <Link
-                prefetch
-                className="no-underline group text-s-text font-semibold"
-                href={formatHandle(post?.by ?? session?.profile)}
-              >
-                <div className="">
-                  {formatHandle(post?.by ?? session?.profile)}
-                </div>
-              </Link>
-              {premium && <VerifiedBadge />}
-            </div>
-            {/* dot */}
-            <div className={clsx(!post?.stats?.upvotes && 'hidden')}>
-              &middot;
-            </div>
-            <div className={clsx(!post?.stats?.upvotes && 'hidden')}>
-              {post?.stats?.upvotes} likes
-            </div>
-            <div className="">&middot;</div>
-            <div className="">
-              {timeAgo(post?.createdAt ?? session?.createdAt)}
-            </div>
-          </div>
         </div>
 
-        {/* @ts-ignore */}
-        {!post?.metadata?.title &&
-          data?.type === SessionType.WithProfile &&
-          data?.profile?.id === session?.profile?.id && (
-            <Tooltip
-              title="You can create a lens post for your untitled streams from content page"
-              arrow
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                push('/dashboard/content')
-              }}
-            >
-              <IconButton
-                size="medium"
-                href="/dashboard/content"
-                style={{
-                  backgroundColor: '#1976d2'
+        <div className="w-full start-between-row space-x-3">
+          <div className="start-col">
+            {/* @ts-ignore */}
+            <div className="text-sm font-semibold">
+              {/* @ts-ignore */}
+              <Markup>{post?.metadata?.title ?? 'Untitled stream'}</Markup>
+            </div>
+            <div className="start-row flex-wrap text-sm lg:text-xs 2xl:text-sm font-normal text-s-text gap-x-1">
+              <div className="flex flex-row items-center gap-x-1">
+                <div
+                  className="no-underline group text-s-text font-semibold cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    push(formatHandle(post?.author ?? session?.account))
+                  }}
+                >
+                  <div className="">
+                    {formatHandle(post?.author ?? session?.account)}
+                  </div>
+                </div>
+                {premium && <VerifiedBadge />}
+              </div>
+              {/* dot */}
+              <div className={clsx(!post?.stats?.upvotes && 'hidden')}>
+                &middot;
+              </div>
+              <div className={clsx(!post?.stats?.upvotes && 'hidden')}>
+                {post?.stats?.upvotes} likes
+              </div>
+              <div className="">&middot;</div>
+              <div className="">
+                {timeAgo(post?.timestamp ?? session?.createdAt)}
+              </div>
+            </div>
+          </div>
+
+          {/* @ts-ignore */}
+          {!post?.metadata?.title &&
+            isAuthenticated &&
+            account?.address === session?.account?.address && (
+              <Tooltip
+                title="You can create a lens post for your untitled streams from content page"
+                arrow
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  push('/dashboard/content')
                 }}
               >
-                <ArrowOutwardIcon className="text-white" />
-              </IconButton>
-            </Tooltip>
-          )}
+                <IconButton
+                  size="medium"
+                  href="/dashboard/content"
+                  style={{
+                    backgroundColor: '#1976d2'
+                  }}
+                >
+                  <ArrowOutwardIcon className="text-white" />
+                </IconButton>
+              </Tooltip>
+            )}
+        </div>
       </div>
     </Link>
   )

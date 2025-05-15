@@ -7,8 +7,8 @@ import StarBorderIcon from '@mui/icons-material/StarBorder'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange'
 import {
-  Button,
-  IconButton,
+  // Button,
+  // IconButton,
   MenuItem,
   Select,
   Slider,
@@ -16,18 +16,15 @@ import {
 } from '@mui/material'
 import GroupsIcon from '@mui/icons-material/Groups'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
-import {
-  Amount,
-  Erc20,
-  RecipientWithSplit,
-  SessionType,
-  useSession
-} from '@lens-protocol/react-web'
-import { CURRENCIES, PROJECT_ADDRESS } from '../../../utils/config'
-import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1'
-import clsx from 'clsx'
-import WalletAddressTextField from './WalletAddressTextField'
+
+import { CURRENCIES } from '../../../utils/config'
+// import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1'
+// import clsx from 'clsx'
+// import WalletAddressTextField from './WalletAddressTextField'
 import { useIsVerifiedQuery } from '../../../graphql/generated'
+import useSession from '../../../utils/hooks/useSession'
+import { Erc20Amount } from '@lens-protocol/react'
+
 export interface SettingRecipientType {
   recipient?: string
   split?: number
@@ -66,16 +63,12 @@ const CollectSettingPopUp = () => {
     referalFee,
     numberOfDays,
     followerOnly,
-    recipients,
-    settingRecipients,
     setAmount,
     setDisableCollect,
     setCollectLimit,
     setReferalFee,
     setNumberOfDays,
-    setFollowerOnly,
-    setRecipients,
-    setSettingRecipients
+    setFollowerOnly
   } = useCollectPreferences((state) => state)
 
   const [isCollectLimit, setIsCollectLimit] = React.useState(false)
@@ -87,24 +80,22 @@ const CollectSettingPopUp = () => {
     String | undefined
   >()
 
-  const [recipientError, setRecipientError] = React.useState<
-    | "Split doesn't add up to 100%"
-    | 'There is a recipient with invalid address'
-    | 'There is a recipient with empty address'
-    | 'There are duplicate recipient addresses'
-    | 'Split % can not be 0'
-    | undefined
-  >(undefined)
+  // const [recipientError, setRecipientError] = React.useState<
+  //   | "Split doesn't add up to 100%"
+  //   | 'There is a recipient with invalid address'
+  //   | 'There is a recipient with empty address'
+  //   | 'There are duplicate recipient addresses'
+  //   | 'Split % can not be 0'
+  //   | undefined
+  // >(undefined)
 
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
 
   const { data: isVerified, loading: isVerifiedLoading } = useIsVerifiedQuery({
     variables: {
-      // @ts-ignore
-      profileIds: [data?.profile?.id]
+      accountAddresses: [account?.address]
     },
-    // @ts-ignore
-    skip: !data?.profile?.id
+    skip: !account?.address
   })
 
   const isSubscribedToSuperBloomers = isVerified?.isVerified?.[0]?.isVerified
@@ -130,155 +121,160 @@ const CollectSettingPopUp = () => {
       setAmountCurrency(amount?.asset?.symbol)
     }
 
-    if (
-      settingRecipients?.length === 0 &&
-      recipients &&
-      recipients.length > 0 &&
-      data?.type === SessionType.WithProfile
-    ) {
-      // @ts-ignore
-      // for project address add bloomerstv as handle & data?.address as data?.handle
-      const initRecipients = recipients.map((recipient) => {
-        if (recipient?.recipient === PROJECT_ADDRESS) {
-          return {
-            recipient: recipient?.recipient,
-            split: recipient?.split,
-            handle: 'bloomerstv'
-          }
-        } else if (recipient?.recipient === data?.address) {
-          return {
-            recipient: recipient?.recipient,
-            split: recipient?.split,
-            handle: data?.profile?.handle?.localName
-          }
-        }
-      })
-      setSettingRecipients(initRecipients as SettingRecipientType[])
-    }
+    // if (
+    //   settingRecipients?.length === 0 &&
+    //   recipients &&
+    //   recipients.length > 0 &&
+    //   isAuthenticated
+    // ) {
+    //   // @ts-ignore
+    //   // for project address add bloomerstv as handle & data?.address as data?.handle
+    //   const initRecipients = recipients.map((recipient) => {
+    //     if (recipient?.recipient === PROJECT_ADDRESS) {
+    //       return {
+    //         recipient: recipient?.recipient,
+    //         split: recipient?.split,
+    //         handle: 'bloomerstv'
+    //       }
+    //     } else if (recipient?.recipient === account?.address) {
+    //       return {
+    //         recipient: recipient?.recipient,
+    //         split: recipient?.split,
+    //         handle: account?.username?.localName
+    //       }
+    //     }
+    //   })
+    //   setSettingRecipients(initRecipients as SettingRecipientType[])
+    // }
   }, [
     collectLimit,
     amount,
     referalFee,
     numberOfDays,
-    recipients,
-    data?.type,
+    // recipients,
+    isAuthenticated,
     isVerifiedLoading
   ])
 
-  useEffect(() => {
-    if (data?.type !== SessionType.WithProfile || isVerifiedLoading) return
+  // useEffect(() => {
+  //   if (!isAuthenticated || isVerifiedLoading) return
 
-    if (!recipients || recipients?.length === 0) {
-      if (isSubscribedToSuperBloomers) {
-        setSettingRecipients([
-          {
-            recipient: data?.address,
-            handle: data?.profile?.handle?.localName,
-            split: 100
-          }
-        ])
-      } else {
-        setSettingRecipients([
-          {
-            recipient: PROJECT_ADDRESS,
-            handle: 'bloomerstv',
-            split: 5
-          },
-          {
-            recipient: data?.address,
-            handle: data?.profile?.handle?.localName,
-            split: 95
-          }
-        ])
-      }
+  //   if (!recipients || recipients?.length === 0) {
+  //     if (isSubscribedToSuperBloomers) {
+  //       setSettingRecipients([
+  //         {
+  //           recipient: account?.address,
+  //           handle: account?.username?.localName,
+  //           split: 100
+  //         }
+  //       ])
+  //     } else {
+  //       setSettingRecipients([
+  //         {
+  //           recipient: PROJECT_ADDRESS,
+  //           handle: 'bloomerstv',
+  //           split: 5
+  //         },
+  //         {
+  //           recipient: account?.address,
+  //           handle: account?.username?.localName,
+  //           split: 95
+  //         }
+  //       ])
+  //     }
 
-      return
-    }
+  //     return
+  //   }
 
-    // check if the user is not subscribed to superbloomers & the first recipient is not bloomerstv , because if it's not then set the first recipients
-    if (
-      !isSubscribedToSuperBloomers &&
-      (recipients[0]?.recipient !== PROJECT_ADDRESS ||
-        recipients[0]?.split !== 5)
-    ) {
-      setSettingRecipients([
-        {
-          recipient: PROJECT_ADDRESS,
-          handle: 'bloomerstv',
-          split: 5
-        },
-        {
-          recipient: data?.address,
-          handle: data?.profile?.handle?.localName,
-          split: 95
-        }
-      ])
-    }
-  }, [recipients, data?.type, isSubscribedToSuperBloomers, isVerifiedLoading])
+  //   // check if the user is not subscribed to superbloomers & the first recipient is not bloomerstv , because if it's not then set the first recipients
+  //   if (
+  //     !isSubscribedToSuperBloomers &&
+  //     (recipients[0]?.recipient !== PROJECT_ADDRESS ||
+  //       recipients[0]?.split !== 5)
+  //   ) {
+  //     setSettingRecipients([
+  //       {
+  //         recipient: PROJECT_ADDRESS,
+  //         handle: 'bloomerstv',
+  //         split: 5
+  //       },
+  //       {
+  //         recipient: account?.address,
+  //         handle: account?.username?.localName,
+  //         split: 95
+  //       }
+  //     ])
+  //   }
+  // }, [
+  //   recipients,
+  //   account?.address,
+  //   isSubscribedToSuperBloomers,
+  //   isVerifiedLoading
+  // ])
 
-  useEffect(() => {
-    if (!settingRecipients) return
-    // check if the split adds up to 100
-    const total = settingRecipients.reduce((acc, recipient) => {
-      // @ts-ignore
-      return acc + recipient?.split || 0
-    }, 0)
+  // useEffect(() => {
+  //   if (!settingRecipients) return
+  //   // check if the split adds up to 100
+  //   const total = settingRecipients.reduce((acc, recipient) => {
+  //     // @ts-ignore
+  //     return acc + recipient?.split || 0
+  //   }, 0)
 
-    // split can not be 0
+  //   // split can not be 0
 
-    const zeroSplit = settingRecipients.find((recipient) => {
-      // @ts-ignore
-      return recipient?.split <= 0 || !recipient?.split
-    })
+  //   const zeroSplit = settingRecipients.find((recipient) => {
+  //     // @ts-ignore
+  //     return recipient?.split <= 0 || !recipient?.split
+  //   })
 
-    if (zeroSplit) {
-      setRecipientError('Split % can not be 0')
-      return
-    }
+  //   if (zeroSplit) {
+  //     setRecipientError('Split % can not be 0')
+  //     return
+  //   }
 
-    if (total !== 100) {
-      setRecipientError("Split doesn't add up to 100%")
-      return
-    }
+  //   if (total !== 100) {
+  //     setRecipientError("Split doesn't add up to 100%")
+  //     return
+  //   }
 
-    // check if there is an invalid address
-    const nullRecipient = settingRecipients.find((recipient) => {
-      return !recipient.recipient
-    })
+  //   // check if there is an invalid address
+  //   const nullRecipient = settingRecipients.find((recipient) => {
+  //     return !recipient.recipient
+  //   })
 
-    if (nullRecipient) {
-      setRecipientError('There is a recipient with empty address')
-      return
-    }
+  //   if (nullRecipient) {
+  //     setRecipientError('There is a recipient with empty address')
+  //     return
+  //   }
 
-    // check if there is an invalid evm address
-    const invalidRecipient = settingRecipients.find((recipient) => {
-      return !recipient?.recipient?.match(/^0x[a-fA-F0-9]{40}$/)
-    })
+  //   // check if there is an invalid evm address
+  //   const invalidRecipient = settingRecipients.find((recipient) => {
+  //     return !recipient?.recipient?.match(/^0x[a-fA-F0-9]{40}$/)
+  //   })
 
-    if (invalidRecipient) {
-      setRecipientError('There is a recipient with invalid address')
-      return
-    }
+  //   if (invalidRecipient) {
+  //     setRecipientError('There is a recipient with invalid address')
+  //     return
+  //   }
 
-    // check if there are duplicate addresses
+  //   // check if there are duplicate addresses
 
-    const uniqueRecipients = new Set(
-      settingRecipients.map((recipient) => recipient?.recipient)
-    )
+  //   const uniqueRecipients = new Set(
+  //     settingRecipients.map((recipient) => recipient?.recipient)
+  //   )
 
-    if (uniqueRecipients.size !== settingRecipients.length) {
-      setRecipientError('There are duplicate recipient addresses')
-      return
-    }
+  //   if (uniqueRecipients.size !== settingRecipients.length) {
+  //     setRecipientError('There are duplicate recipient addresses')
+  //     return
+  //   }
 
-    setRecipientError(undefined)
+  //   setRecipientError(undefined)
 
-    // deep copy
-    const settingRecipientsCopy = JSON.parse(JSON.stringify(settingRecipients))
+  //   // deep copy
+  //   const settingRecipientsCopy = JSON.parse(JSON.stringify(settingRecipients))
 
-    setRecipients(settingRecipientsCopy as RecipientWithSplit[])
-  }, [settingRecipients])
+  //   setRecipients(settingRecipientsCopy)
+  // }, [settingRecipients])
 
   useEffect(() => {
     if (amountValue && amountCurrency) {
@@ -286,8 +282,15 @@ const CollectSettingPopUp = () => {
       const currency = CURRENCIES.find(
         (currency) => currency?.symbol === amountCurrency
       )
-      // @ts-ignore
-      setAmount(Amount.erc20(currency as Erc20, amountValue))
+      setAmount({
+        asset: {
+          __typename: 'Erc20',
+          name: currency?.name || '',
+          symbol: currency?.symbol || '',
+          decimals: currency?.decimals || 18
+        },
+        value: amountValue
+      } as Erc20Amount)
     }
   }, [amountValue, amountCurrency])
 
@@ -552,7 +555,7 @@ const CollectSettingPopUp = () => {
                     </div>
                   )}
                 </motion.div>
-                {settingRecipients?.map((recipient, index) => {
+                {/* {settingRecipients?.map((recipient, index) => {
                   return (
                     <motion.div
                       variants={itemWithHeightAndMt}
@@ -609,16 +612,16 @@ const CollectSettingPopUp = () => {
                       </IconButton>
                     </motion.div>
                   )
-                })}
+                })} */}
 
-                {recipientError && (
+                {/* {recipientError && (
                   <div className="text-xs font-semibold mt-2 text-red-500">
                     {recipientError}
                   </div>
-                )}
+                )} */}
 
                 {/* add recipient button */}
-                {settingRecipients && settingRecipients.length < 5 && (
+                {/* {settingRecipients && settingRecipients.length < 5 && (
                   <motion.div variants={itemWithHeightAndMt} className="w-full">
                     <Button
                       variant="outlined"
@@ -634,7 +637,7 @@ const CollectSettingPopUp = () => {
                       + Add Recipient
                     </Button>
                   </motion.div>
-                )}
+                )} */}
               </motion.div>
             </div>
           </div>

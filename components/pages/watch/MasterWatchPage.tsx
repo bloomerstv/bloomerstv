@@ -1,12 +1,12 @@
 'use client'
 import React from 'react'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
-import { Post, usePublication } from '@lens-protocol/react-web'
 import VideoPage from './VideoPage'
 import StartLoadingPage from '../loading/StartLoadingPage'
 import clsx from 'clsx'
 import TextAndImagePostPage from '../home/TextAndImagePostPage'
 import OtherVideosRecommendations from './OtherVideosRecommendations'
+import { Post, usePost } from '@lens-protocol/react'
 
 const MasterWatchPage = ({
   postId,
@@ -16,9 +16,9 @@ const MasterWatchPage = ({
   sessionId?: string
 }) => {
   const isMobile = useIsMobile()
-  const { data, loading } = usePublication({
-    // @ts-ignore
-    forId: postId
+
+  const { data, loading } = usePost({
+    post: postId
   })
 
   const memoizedVideoPage = React.useMemo(() => {
@@ -36,9 +36,9 @@ const MasterWatchPage = ({
   }
 
   if (
-    (data?.__typename === 'Post' || data?.__typename === 'Quote') &&
-    (data?.metadata?.__typename === 'TextOnlyMetadataV3' ||
-      data?.metadata?.__typename === 'ImageMetadataV3')
+    data?.__typename === 'Post' &&
+    (data?.metadata?.__typename === 'TextOnlyMetadata' ||
+      data?.metadata?.__typename === 'ImageMetadata')
   ) {
     return (
       <div
@@ -48,7 +48,7 @@ const MasterWatchPage = ({
         )}
       >
         <div className="w-full flex-grow h-full">
-          <TextAndImagePostPage publication={data} />
+          <TextAndImagePostPage post={data} />
         </div>
         {!isMobile && (
           <div className="sm:w-[500px] w-full">
@@ -61,8 +61,8 @@ const MasterWatchPage = ({
 
   if (
     (data?.__typename === 'Post' &&
-      (data?.metadata?.__typename === 'VideoMetadataV3' ||
-        data?.metadata?.__typename === 'LiveStreamMetadataV3')) ||
+      (data?.metadata?.__typename === 'VideoMetadata' ||
+        data?.metadata?.__typename === 'LivestreamMetadata')) ||
     sessionId
   ) {
     return (

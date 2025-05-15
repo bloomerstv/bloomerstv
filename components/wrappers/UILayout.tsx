@@ -9,12 +9,13 @@ import LoginPage from '../pages/home/LoginPage'
 import StreamerSidebar from '../common/StreamerSidebar'
 import { usePathname } from 'next/navigation'
 import DashboardSidebar from '../pages/dashboard/DashboardSidebar'
-import { useStreamReplayPublications } from '../../utils/hooks/useStreamReplayPublications'
 import useLiveStreamerProfiles from '../../utils/hooks/useLiveStreamerProfiles'
 import useNotifictionSubscriptions from '../../utils/hooks/useNotifictionSubscriptions'
 import { ModalRoot } from '../common/ModalRoot'
 import ModalWrapper from '../ui/Modal/ModalWrapper'
 import InstallMobileIcon from '@mui/icons-material/InstallMobile'
+import MigrationNotice from '../common/MigrationNotice'
+import { useStreamReplayPosts } from '../../utils/hooks/useStreamReplayPosts'
 
 interface Props {
   // Define any props that the component will accept
@@ -32,6 +33,9 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
     useState<React.ReactNode>(<></>)
 
   const [isPWA, setIsPWA] = useState<boolean>(false)
+
+  // Show migration notice instead of regular content
+  const showMigrationNotice = false // You can set this to false later when migration is complete
 
   const chromeAndroidInstructions = (
     <div>
@@ -187,6 +191,11 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
     setShowInstallPrompt(true)
   }, [isMobile, pathname])
 
+  // If showing migration notice, return it directly instead of the whole layout
+  if (showMigrationNotice) {
+    return <MigrationNotice />
+  }
+
   return (
     <>
       {isMobile ? (
@@ -263,7 +272,7 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
 }
 
 const GlobalHooks = () => {
-  useStreamReplayPublications({})
+  useStreamReplayPosts({})
   useLiveStreamerProfiles()
   useNotifictionSubscriptions()
 

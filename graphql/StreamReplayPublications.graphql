@@ -1,13 +1,13 @@
-query StreamReplayPublications($skip: Int, $profileId: String) {
-  streamReplayPublications(skip: $skip, profileId: $profileId) {
-    streamReplayPublications {
-      publicationId
+query StreamReplayPosts($skip: Int, $accountAddress: String) {
+  streamReplayPosts(skip: $skip, accountAddress: $accountAddress) {
+    streamReplayPosts {
+      postId
       thumbnail
       sourceSegmentsDuration
       premium
       createdAt
       sessionId
-      profileId
+      accountAddress
     }
     next
     hasMore

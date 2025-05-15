@@ -1,38 +1,67 @@
 import React from 'react'
 import { useLiveStreamersQuery } from '../../graphql/generated'
-import { useStreamersWithProfiles } from '../../components/store/useStreamersWithProfiles'
-import { useProfiles } from '@lens-protocol/react-web'
+import {
+  StreamerWithAccount,
+  useStreamersWithAccounts
+} from '../../components/store/useStreamersWithAccounts'
+import { useAccountsBulk } from '@lens-protocol/react'
 
 const useLiveStreamerProfiles = () => {
   const { data, loading: streamersLoading } = useLiveStreamersQuery()
-  const setStreamersWithProfiles = useStreamersWithProfiles(
-    (state) => state.setStreamersWithProfiles
+  const { setStreamersWithAccounts, setLoading } = useStreamersWithAccounts(
+    (state) => ({
+      setStreamersWithAccounts: state.setStreamersWithAccounts,
+      setLoading: state.setLoading
+    })
   )
 
-  const setLoading = useStreamersWithProfiles((state) => state.setLoading)
+  // Memoize the addresses array to prevent unnecessary re-renders
+  const addresses = React.useMemo(() => {
+    return (
+      data?.liveStreamers?.map((streamer) => streamer?.accountAddress) || []
+    )
+  }, [data?.liveStreamers])
 
-  const { data: profiles, loading: profilesLoading } = useProfiles({
-    where: {
-      // @ts-ignore
-      profileIds: data?.liveStreamers?.map((streamer) => streamer?.profileId)
-    }
+  // Skip the query if there are no addresses
+  const { data: accounts, loading: accountsLoading } = useAccountsBulk({
+    addresses
   })
 
-  const streamers = data?.liveStreamers?.map((streamer) => {
-    return {
-      ...streamer,
-      profile: profiles?.find((profile) => profile?.id === streamer?.profileId)
+  // Memoize the streamers array
+  const streamers = React.useMemo(() => {
+    if (!data?.liveStreamers || !accounts) return []
+
+    return data.liveStreamers.map((streamer) => {
+      return {
+        ...streamer,
+        account: accounts.find(
+          (account) => account?.address === streamer?.accountAddress
+        )
+      }
+    })
+  }, [data?.liveStreamers, accounts])
+
+  // Update the store only when streamers change
+  React.useEffect(() => {
+    if (streamers && streamers.length > 0) {
+      const validStreamers = streamers.filter(
+        (streamer): streamer is StreamerWithAccount =>
+          streamer.account !== undefined
+      )
+      setStreamersWithAccounts(validStreamers)
     }
-  })
+  }, [streamers, setStreamersWithAccounts])
 
+  // Update loading state
   React.useEffect(() => {
-    // @ts-ignore
-    setStreamersWithProfiles(streamers)
-  }, [streamers])
+    setLoading(streamersLoading || accountsLoading)
+  }, [streamersLoading, accountsLoading, setLoading])
 
-  React.useEffect(() => {
-    setLoading(streamersLoading || profilesLoading)
-  }, [streamersLoading, profilesLoading])
+  // Return values in case they're needed elsewhere
+  return {
+    streamers,
+    loading: streamersLoading || accountsLoading
+  }
 }
 
 export default useLiveStreamerProfiles

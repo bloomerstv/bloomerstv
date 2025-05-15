@@ -4,12 +4,12 @@ import React, { useState } from 'react'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import { WIDGETS_URL } from '../../../../utils/config'
-import { SessionType, useSession } from '@lens-protocol/react-web'
 import toast from 'react-hot-toast'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import Link from 'next/link'
+import useSession from '../../../../utils/hooks/useSession'
 const ChatBoxWidgetPage = () => {
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
   const [width, setWidth] = useState(300)
   const [height, setHeight] = useState(300)
   const [limit, setLimit] = useState(3)
@@ -20,12 +20,12 @@ const ChatBoxWidgetPage = () => {
     setIframeKey(Date.now())
   }
 
-  if (data?.type !== SessionType.WithProfile) {
+  if (!isAuthenticated) {
     return null
   }
 
   const handleCopy = () => {
-    const chatSourceUrl = `${WIDGETS_URL}/live-chat/${data?.profile?.id}?limit=${limit}&autoRemoveChatInterval=${autoRemoveChatInterval}`
+    const chatSourceUrl = `${WIDGETS_URL}/live-chat/${account?.address}?limit=${limit}&autoRemoveChatInterval=${autoRemoveChatInterval}`
     navigator.clipboard.writeText(chatSourceUrl)
     toast.success('Copied to clipboard')
   }
@@ -167,7 +167,7 @@ const ChatBoxWidgetPage = () => {
                 border: 'none'
               }}
               key={iframeKey}
-              src={`${WIDGETS_URL}/live-chat/${data?.profile?.id}?emulate=true&limit=${limit}&autoRemoveChatInterval=${autoRemoveChatInterval}`}
+              src={`${WIDGETS_URL}/live-chat/${account?.address}?emulate=true&limit=${limit}&autoRemoveChatInterval=${autoRemoveChatInterval}`}
             />
           </div>
           <div className="start-center-row gap-x-4 mt-4">

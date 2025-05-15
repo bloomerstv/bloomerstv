@@ -2,10 +2,10 @@
 import React from 'react'
 import LiveStreamEditor from './LiveStreamEditor'
 import LiveChat from '../../../common/LiveChat/LiveChat'
-import { useSession } from '@lens-protocol/react-web'
+import useSession from '../../../../utils/hooks/useSession'
 
 const GoLivePage = () => {
-  const { data } = useSession()
+  const { account } = useSession()
 
   return (
     <div className="flex flex-row h-full w-full">
@@ -13,12 +13,10 @@ const GoLivePage = () => {
         <LiveStreamEditor />
       </div>
       <div className="w-[280px] 2xl:w-[350px] flex-none h-full shrink-0">
-        {/* @ts-ignore */}
-        {data?.profile?.id && (
-          // @ts-ignore
+        {/* {createdPublicationId ? ( */}
+        {account?.address && (
           <LiveChat
-            // @ts-ignore
-            profileId={data?.profile?.id}
+            accountAddress={account?.address}
             showPopOutChat
             showLiveCount
           />
@@ -37,4 +35,3 @@ const GoLivePage = () => {
 }
 
 export default GoLivePage
- 

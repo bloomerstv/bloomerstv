@@ -1,4 +1,3 @@
-import { AnyPublication } from '@lens-protocol/react-web'
 import React from 'react'
 import LoadingImage from '../../ui/LoadingImage'
 import getAvatar from '../../../utils/lib/getAvatar'
@@ -18,14 +17,15 @@ import clsx from 'clsx'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import NotesIcon from '@mui/icons-material/Notes'
 import TextAndImagePostPage from './TextAndImagePostPage'
+import { AnyPost } from '@lens-protocol/react'
 
 const TextAndImagePostCard = ({
-  publication,
+  post,
   premium,
   className = '',
   isPostPage = false
 }: {
-  publication: AnyPublication
+  post: AnyPost
   premium?: boolean
   className?: string
   isPostPage?: boolean
@@ -33,17 +33,17 @@ const TextAndImagePostCard = ({
   const [isOpen, setIsOpen] = React.useState(false)
 
   if (
-    publication?.__typename === 'Comment' ||
-    publication?.__typename === 'Mirror'
+    (post?.__typename === 'Post' && post?.commentOn) ||
+    post?.__typename === 'Repost'
   )
     return null
   if (
-    publication?.metadata?.__typename !== 'TextOnlyMetadataV3' &&
-    publication?.metadata?.__typename !== 'ImageMetadataV3'
+    post?.metadata?.__typename !== 'TextOnlyMetadata' &&
+    post?.metadata?.__typename !== 'ImageMetadata'
   )
     return null
 
-  const asset = getPublicationData(publication?.metadata)?.asset
+  const asset = getPublicationData(post?.metadata)?.asset
 
   const handleComment = () => {
     if (isPostPage) return
@@ -62,7 +62,7 @@ const TextAndImagePostCard = ({
           classname="w-[500px]"
         >
           <div className="px-2 sm:px-0 w-screen sm:w-full">
-            <TextAndImagePostPage publication={publication} premium={premium} />
+            <TextAndImagePostPage post={post} premium={premium} />
           </div>
         </ModalWrapper>
       )}
@@ -78,22 +78,22 @@ const TextAndImagePostCard = ({
         <div className={clsx(isPostPage ? 'w-full' : 'w-[210px]')}>
           <div className="between-row w-full shrink-0">
             <Link
-              href={`/${formatHandle(publication?.by)}`}
+              href={`/${formatHandle(post?.author)}`}
               className="text-p-text no-underline"
             >
               <div className="start-row gap-x-2 shrink-0 w-full">
                 <LoadingImage
-                  src={getAvatar(publication?.by)}
+                  src={getAvatar(post?.author)}
                   className="w-9 h-9 rounded-full"
                   alt="avatar"
                 />
                 <div className="start-col shrink-0 w-full">
                   <div className="font-bold start-center-row text-s-text gap-x-1">
-                    <>{formatHandle(publication?.by)}</>
+                    <>{formatHandle(post?.author)}</>
                     {premium && <VerifiedBadge />}
                   </div>
                   <div className="text-xs text-s-text shrink-0">
-                    {timeAgo(publication?.createdAt)}
+                    {timeAgo(post?.timestamp)}
                   </div>
                 </div>
               </div>
@@ -108,17 +108,15 @@ const TextAndImagePostCard = ({
           >
             <Markup className="text-sm shrink-0">
               {isPostPage
-                ? publication?.metadata?.content
-                : stringToLength(publication?.metadata?.content, 85)}
+                ? post?.metadata?.content
+                : stringToLength(post?.metadata?.content, 85)}
             </Markup>
           </div>
           {/* quoted content with link */}
-          {publication?.__typename === 'Quote' &&
-          (publication?.quoteOn?.metadata?.__typename === 'VideoMetadataV3' ||
-            publication?.quoteOn?.metadata?.__typename ===
-              'LiveStreamMetadataV3') ? (
+          {post?.quoteOf?.metadata?.__typename === 'VideoMetadata' ||
+          post?.quoteOf?.metadata?.__typename === 'LivestreamMetadata' ? (
             <Link
-              href={`/watch/${publication?.quoteOn?.id}`}
+              href={`/watch/${post?.quoteOf?.slug}`}
               className="text-p-text no-underline shrink-0 w-fit"
             >
               <div
@@ -128,18 +126,18 @@ const TextAndImagePostCard = ({
               >
                 <div className="start-center-row text-s-text pb-1 pl-1">
                   <img
-                    src={getAvatar(publication?.quoteOn?.by)}
+                    src={getAvatar(post?.quoteOf?.author)}
                     className="w-4 h-4 rounded-full"
                     alt="avatar"
                   />
                   <div className="font-semibold ml-1">
-                    {formatHandle(publication?.quoteOn?.by)}
+                    {formatHandle(post?.quoteOf?.author)}
                   </div>
                 </div>
                 <div className="start-center-row">
                   <PlayArrowIcon fontSize="small" />
                   <div className="font-semibold shrink-0">
-                    {stringToLength(publication?.quoteOn?.metadata?.title, 28)}
+                    {stringToLength(post?.quoteOf?.metadata?.title, 28)}
                   </div>
                 </div>
               </div>
@@ -166,14 +164,8 @@ const TextAndImagePostCard = ({
               e.stopPropagation()
             }}
           >
-            <LikeButton
-              likeCount={publication?.stats?.upvotes}
-              publication={publication}
-            />
-            <MirrorButton
-              mirrorsCount={publication?.stats?.mirrors}
-              publication={publication}
-            />
+            <LikeButton likeCount={post?.stats?.upvotes} post={post} />
+            <MirrorButton repostsCount={post?.stats?.reposts} post={post} />
             <Tooltip title="Comments" arrow>
               <Button
                 size="small"
@@ -186,7 +178,7 @@ const TextAndImagePostCard = ({
                   borderRadius: '20px'
                 }}
               >
-                {publication?.stats?.comments}
+                {post?.stats?.comments}
               </Button>
             </Tooltip>
           </div>

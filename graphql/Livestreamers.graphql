@@ -1,6 +1,6 @@
 query LiveStreamers {
   liveStreamers {
-    profileId
+    accountAddress
     streamName
     lastSeen
     isActive
@@ -9,5 +9,6 @@ query LiveStreamers {
     thumbnail
     liveCount
     premium
+    streamDescription
   }
 }

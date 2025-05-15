@@ -2,9 +2,10 @@
 import React from 'react'
 import DoneIcon from '@mui/icons-material/Done'
 import GoSuperButton from '../../../components/pages/dashboard/go-live/GoSuperButton'
-import { SessionType, useSession } from '@lens-protocol/react-web'
+import useSession from '../../../utils/hooks/useSession'
+
 const page = () => {
-  const { data } = useSession()
+  const { isAuthenticated } = useSession()
   const freePlansPoints = [
     'Unlimited Streams',
     'Creating Clips',
@@ -21,7 +22,7 @@ const page = () => {
     '100% revenue on collects'
   ]
 
-  if (data?.type !== SessionType.WithProfile) {
+  if (!isAuthenticated) {
     return null
   }
 

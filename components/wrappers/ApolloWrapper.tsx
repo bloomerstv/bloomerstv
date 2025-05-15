@@ -8,7 +8,7 @@ import {
   createHttpLink
 } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
-import { useIdentityToken } from '@lens-protocol/react-web'
+import { getIdentityTokenAsync } from '../../utils/lib/getIdentityTokenAsync'
 
 const httpLink = createHttpLink({
   uri: NODE_GRAPHQL_URL
@@ -17,12 +17,11 @@ const httpLink = createHttpLink({
 const cache = new InMemoryCache()
 
 const ApolloWrapper = ({ children }: { children: React.ReactNode }) => {
-  const identityToken = useIdentityToken()
-
   const authLink = setContext(async () => {
+    const idToken = await getIdentityTokenAsync()
     return {
       headers: {
-        Authorization: identityToken ? `${identityToken}` : ''
+        Authorization: idToken ? `${idToken}` : ''
       }
     }
   })

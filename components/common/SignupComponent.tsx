@@ -1,13 +1,23 @@
-import { useCreateProfile, useValidateHandle } from '@lens-protocol/react-web'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import React, { useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
+import {
+  Role,
+  useAccount as useFetchAccount,
+  useLogin
+} from '@lens-protocol/react'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import { TextField } from '@mui/material'
 import toast from 'react-hot-toast'
 import { useTheme } from '../wrappers/TailwindThemeProvider'
 import { stringToLength } from '../../utils/stringToLength'
+import useCreateAccount from '../../utils/hooks/lens/useCreateAccount'
+import { account as accountMetadata } from '@lens-protocol/metadata'
+import { acl, storageClient } from '../../utils/lib/lens/storageClient'
+import useSession from '../../utils/hooks/useSession'
+import { signMessageWith } from '@lens-protocol/react/viem'
+import { APP_ADDRESS } from '../../utils/config'
 
 const SignupComponent = ({
   setOpen,
@@ -17,51 +27,54 @@ const SignupComponent = ({
   setOpen: (value: boolean) => void
   setOpenSignup: (value: boolean) => void
 }) => {
-  // const { data } = useSession()
+  const { authenticatedUser } = useSession()
+  const { execute: login, loading: loginLoading } = useLogin()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
   const { openConnectModal } = useConnectModal()
   const [localName, setLocalName] = useState('')
-  const {
-    execute: validateHandle,
-    loading: verifying,
-    error
-  } = useValidateHandle()
-  const { execute: createProfile, loading: creating } = useCreateProfile()
+  const { data, loading } = useFetchAccount({
+    username: {
+      localName
+    }
+  })
+  const { data: walletClient } = useWalletClient()
+
+  const { execute: createAccount, loading: creating } = useCreateAccount()
+
   const { theme } = useTheme()
 
   const onHandleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalName(e.target.value)
     if (!e.target.value) return
-    // @ts-ignore
-    await validateHandle({
-      localName: e.target.value
-    })
+    setLocalName(e.target.value)
   }
 
-  const handleCreateHandle = async () => {
+  const handleCreateUsername = async () => {
     try {
-      const result = await validateHandle({
-        localName: localName
-      })
-
-      if (result.isFailure()) {
-        toast.error(result.error.message)
+      if (!loading && data?.address) {
+        toast.error('Username already exists')
         return
       }
 
-      const createProfileResult = await createProfile({
-        localName: localName,
-        to: address as `0x${string}`
+      console.log('createAccount', localName)
+
+      const account = accountMetadata({
+        name: localName
       })
 
-      if (createProfileResult.isFailure()) {
-        toast.error(createProfileResult.error.message)
-        return
-      }
+      const response = await storageClient.uploadAsJson(account, {
+        acl: acl
+      })
+
+      await createAccount({
+        username: {
+          localName: localName
+        },
+        metadataUri: response?.uri
+      })
 
       toast.success('Profile created successfully')
       setOpenSignup(false)
-      setOpen(true)
+      setOpen(false)
     } catch (e) {
       console.error(e)
       toast.error(stringToLength(String(e), 100))
@@ -70,17 +83,16 @@ const SignupComponent = ({
 
   return (
     <div className="sm:px-0 px-3 py-2">
-      <div className="text-2xl font-bold">Create your handle</div>
+      <div className="text-2xl font-bold">Create your account</div>
       <div className="text-s-text font-semibold text-xs mt-0.5 mb-4">
-        This will be the last handle you'll ever need. Streaming & Live Chat on
-        BloomersTV requires a Lens profile
+        Streaming & Live Chat on BloomersTV requires a Lens Account
       </div>
 
       {address && (
         <div>
           <TextField
             className="w-full text-xl"
-            label="Handle"
+            label="Username"
             variant="outlined"
             value={localName}
             onChange={onHandleChange}
@@ -93,9 +105,19 @@ const SignupComponent = ({
             size="medium"
             focused={true}
           />
-          {error && (
+          {localName && data && !loading && (
             <div className="text-red-500 text-xs font-semibold mt-1">
-              {error?.message}
+              {'Username not available!'}
+            </div>
+          )}
+          {localName && data && loading && (
+            <div className="text-s-text text-xs font-semibold mt-1">
+              {'Checking username...'}
+            </div>
+          )}
+          {localName && !data && !loading && (
+            <div className="text-green-500 text-xs font-semibold mt-1">
+              {'Username available!'}
             </div>
           )}
           <div className="text-s-text text-xs mt-1 mb-4">
@@ -105,32 +127,71 @@ const SignupComponent = ({
       )}
 
       {isConnected ? (
-        <LoadingButton
-          variant="contained"
-          onClick={handleCreateHandle}
-          loading={verifying || creating || isConnecting || isReconnecting}
-          loadingPosition="start"
-          className="w-full"
-          sx={{
-            borderRadius: '24px',
-            padding: '12px 0'
-          }}
-          disabled={verifying || creating || !localName || Boolean(error)}
-          startIcon={
-            <img
-              src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
-              className="sm:w-7 sm:h-7 w-6 h-6 rounded-full"
-            />
-          }
-        >
-          {creating ? 'Creating...' : 'Create for 8 WMATIC'}
-        </LoadingButton>
+        authenticatedUser?.role === Role.OnboardingUser ? (
+          <LoadingButton
+            variant="contained"
+            onClick={handleCreateUsername}
+            loading={loading || creating || isConnecting || isReconnecting}
+            loadingPosition="start"
+            className="w-full"
+            sx={{
+              borderRadius: '24px',
+              padding: '12px 0'
+            }}
+            disabled={loading || creating || !localName || data?.address}
+            startIcon={
+              <img
+                src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
+                className="sm:w-7 sm:h-7 w-6 h-6 rounded-full"
+              />
+            }
+          >
+            {creating ? 'Creating...' : 'Create'}
+          </LoadingButton>
+        ) : (
+          <LoadingButton
+            variant="contained"
+            onClick={async () => {
+              if (!walletClient) {
+                toast.error('Wallet client not available')
+                return
+              }
+              const data = await login({
+                onboardingUser: {
+                  wallet: address,
+                  app: APP_ADDRESS
+                },
+                signMessage: signMessageWith(walletClient)
+              })
+
+              if (data?.isErr()) {
+                toast.error('Error signing in')
+                return
+              }
+            }}
+            loading={loginLoading}
+            loadingPosition="start"
+            className="w-full"
+            sx={{
+              borderRadius: '24px',
+              padding: '12px 0'
+            }}
+            disabled={loginLoading}
+            startIcon={
+              <img
+                src={`/Lens-Icon-T-${theme === 'dark' ? 'Black' : 'White'}.svg`}
+                className="sm:w-7 sm:h-7 w-6 h-6 rounded-full"
+              />
+            }
+          >
+            {'Sign with wallet'}
+          </LoadingButton>
+        )
       ) : (
         <div className="start-row space-x-4">
           <LoadingButton
             variant="contained"
             onClick={openConnectModal}
-            loading={isConnecting || isReconnecting}
             loadingPosition="start"
             className="w-full"
             sx={{

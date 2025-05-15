@@ -1,6 +1,6 @@
 query MyStream {
   myStream {
-    profileId
+    accountAddress
     streamName
     streamDescription
     lastSeen

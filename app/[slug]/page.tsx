@@ -3,7 +3,7 @@ import ProfilePage from '../../components/pages/profile/ProfilePage'
 import { getHandle } from '../../utils/lib/getHandle'
 import { Metadata } from 'next'
 import { APP_LINK, NODE_GRAPHQL_URL } from '../../utils/config'
-import { fetchMetadata } from 'frames.js/next'
+// import { fetchMetadata } from 'frames.js/next'
 import { headers } from 'next/headers'
 
 type Props = {
@@ -82,8 +82,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
           alt: 'BloomersTV Logo'
         }
       ]
-    },
-    other: !isFromFrontend ? await fetchMetadata(frameUrl) : undefined
+    }
+    // other: !isFromFrontend ? await fetchMetadata(frameUrl) : undefined
   }
 }
 

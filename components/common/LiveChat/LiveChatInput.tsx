@@ -10,15 +10,8 @@ import {
 } from '@mui/material'
 import React, { useEffect } from 'react'
 import SendIcon from '@mui/icons-material/Send'
-import {
-  LimitType,
-  Profile,
-  SessionType,
-  useProfile,
-  useSearchProfiles,
-  useSession
-} from '@lens-protocol/react-web'
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
+
+// import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import CloseIcon from '@mui/icons-material/Close'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import {
@@ -47,7 +40,7 @@ import {
 import { useTokenPriceQuery } from '../../../graphql/generated'
 import useHandleWrongNetwork from '../../../utils/hooks/useHandleWrongNetwork'
 import { MAX_UINT256 } from '../../../utils/contants'
-import { getLastStreamPublicationId } from '../../../utils/lib/lensApi'
+import { getLastStreamPostId } from '../../../utils/lib/lensApi'
 import { viewPublicClientPolygon } from '../../../utils/lib/viemPublicClient'
 import { ImageAttachment, SendMessageInput } from './LiveChat'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
@@ -56,50 +49,57 @@ import uploadToIPFS from '../../../utils/uploadToIPFS'
 import GifIcon from '@mui/icons-material/Gif'
 import { AnimatePresence, motion } from 'framer-motion'
 import GifAndStickerSelector from './GifAndStickerSelector'
+import {
+  useAccount as useProfileAccount,
+  useAccounts,
+  Account,
+  usePublicClient,
+  PageSize
+} from '@lens-protocol/react'
+import useSession from '../../../utils/hooks/useSession'
 
 const LiveChatInput = ({
   inputMessage,
   sendMessage,
   setInputMessage,
-  liveChatProfileId,
+  liveChatAccountAddress,
   imageAttachment,
   setImageAttachment
 }: {
   inputMessage: string
   sendMessage: (messageInput?: SendMessageInput) => Promise<void>
   setInputMessage: (value: string) => void
-  liveChatProfileId: string
+  liveChatAccountAddress: string
   imageAttachment: ImageAttachment
   setImageAttachment: (value: ImageAttachment) => void
 }) => {
+  const { currentSession } = usePublicClient()
   const imageFileInputRef = React.useRef(null)
   const [selectGif, setSelectGif] = React.useState<boolean>(false)
 
-  const { data: session } = useSession()
+  const { isAuthenticated, account } = useSession()
   const { ensAvatar, ensName } = useEns({
-    address: session?.type === SessionType.JustWallet ? session?.address : null
+    address: isAuthenticated ? account?.owner : null
   })
-  const profileId =
-    session?.type === SessionType.WithProfile
-      ? session?.profile?.id
-      : // @ts-ignore
-        (session?.address ?? '')
-  const avatar =
-    session?.type === SessionType.WithProfile
-      ? getAvatar(session?.profile)
-      : ensAvatar
-        ? ensAvatar
-        : session?.type === SessionType.JustWallet
-          ? getStampFyiURL(session?.address!)
-          : ''
-  const profileHandle =
-    session?.type === SessionType.WithProfile
-      ? formatHandle(session?.profile)
-      : ensName
-        ? ensName
-        : session?.type === SessionType.JustWallet
-          ? getShortAddress(session?.address!)
-          : ''
+
+  // const accountAddress = isAuthenticated
+  //   ? account?.address
+  //   : // @ts-ignore
+  //     (account?.owner ?? '')
+  const avatar = isAuthenticated
+    ? getAvatar(account)
+    : ensAvatar
+      ? ensAvatar
+      : !isAuthenticated
+        ? getStampFyiURL(account?.owner)
+        : ''
+  const profileHandle = isAuthenticated
+    ? formatHandle(account?.owner)
+    : ensName
+      ? ensName
+      : !isAuthenticated
+        ? getShortAddress(account?.owner)
+        : ''
 
   const [open, setOpen] = React.useState(false)
 
@@ -115,16 +115,21 @@ const LiveChatInput = ({
     setOpen(false)
   }
 
-  const { data: liveChatProfile } = useProfile({
-    // @ts-ignore
-    forProfileId: liveChatProfileId
+  const { data: liveChatAccount } = useProfileAccount({
+    address: liveChatAccountAddress
   })
+
   const [superChat, setSuperChat] = React.useState(false)
   const [handle, setHandle] = React.useState('')
-  const { data } = useSearchProfiles({
-    query: handle,
-    limit: LimitType.Ten
+  const { data } = useAccounts({
+    filter: {
+      searchBy: {
+        localNameQuery: handle
+      }
+    },
+    pageSize: PageSize.Ten
   })
+
   const [amountValue, setAmountValue] = React.useState<number>(100)
   const [amountCurrency, setAmountCurrency] = React.useState<
     String | undefined
@@ -232,13 +237,15 @@ const LiveChatInput = ({
 
   const handleTip = async () => {
     try {
-      if (!liveChatProfile?.id) return
+      if (!liveChatAccount?.address) return
       await handleWrongNetwork()
 
       setIsTipping(true)
 
-      const lastStreamPublicationId =
-        await getLastStreamPublicationId(liveChatProfileId)
+      const lastStreamPostId = await getLastStreamPostId(
+        liveChatAccountAddress,
+        currentSession
+      )
 
       const tx = await writeContractAsync({
         abi: tippingContractAbi,
@@ -246,11 +253,10 @@ const LiveChatInput = ({
         functionName: 'tip',
         args: [
           selectedCurrency?.address,
-          liveChatProfile?.ownedBy?.address,
+          liveChatAccount?.owner,
           finalValue,
-          profileId,
-          liveChatProfileId,
-          lastStreamPublicationId?.split('-')[1]
+          liveChatAccount?.address,
+          lastStreamPostId?.split('-')[1]
         ]
       })
       const transaction =
@@ -305,11 +311,11 @@ const LiveChatInput = ({
     }))
   }
 
-  const handleSelected = (profile: Profile) => {
+  const handleSelected = (account: Account) => {
     // set the full handle by removing the last word and adding the selected handle
     const words = inputMessage.split(' ')
     words.pop()
-    words.push(`@${profile?.handle?.fullHandle} `)
+    words.push(`@${account?.username?.value} `)
     setInputMessage(words.join(' '))
   }
 
@@ -365,9 +371,9 @@ const LiveChatInput = ({
   return (
     <div className="">
       {/* searched profiles */}
-      {data && data?.length > 0 && (
+      {data && data?.items.length > 0 && (
         <div className="start-col w-full mb-2">
-          {data?.slice(0, 4)?.map((profile: Profile) => {
+          {data?.items?.slice(0, 4)?.map((account: Account) => {
             return (
               <Button
                 variant="text"
@@ -378,14 +384,14 @@ const LiveChatInput = ({
                   paddingLeft: '12px',
                   textTransform: 'none'
                 }}
-                key={profile?.id}
+                key={account?.address}
                 className="text-p-text"
                 onClick={() => {
-                  handleSelected(profile)
+                  handleSelected(account)
                 }}
                 startIcon={
                   <img
-                    src={getAvatar(profile)}
+                    src={getAvatar(account)}
                     className="w-8 h-8 rounded-full"
                   />
                 }
@@ -393,13 +399,13 @@ const LiveChatInput = ({
                 autoCapitalize="none"
               >
                 <div className="flex flex-col items-start">
-                  {profile?.metadata?.displayName && (
+                  {account?.metadata?.name && (
                     <div className="leading-0 text-p-text text-base font-semibold">
-                      {profile?.metadata?.displayName}
+                      {account?.metadata?.name}
                     </div>
                   )}
                   <div className="text-p-text text-sm leading-0">
-                    {formatHandle(profile)}
+                    {formatHandle(account)}
                   </div>
                 </div>
               </Button>
@@ -440,7 +446,7 @@ const LiveChatInput = ({
         <GifAndStickerSelector
           onSelectGif={(url) => {
             setImageAttachment({
-              imageMimeType: 'image/gif',
+              imageMimeType: MediaImageMimeType.GIF,
               imagePreviewUrl: url,
               imageUrl: url
             })
@@ -653,7 +659,7 @@ const LiveChatInput = ({
                 isTipping ||
                 isWaitingForTransaction ||
                 amountValue === 0 ||
-                !liveChatProfile?.id ||
+                !liveChatAccount?.address ||
                 inputMessage?.trim().length === 0
               }
               loadingPosition="start"
@@ -795,7 +801,7 @@ const LiveChatInput = ({
                 </motion.div>
               )}
 
-            {inputMessage.trim().length === 0 && !selectGif && (
+            {/* {inputMessage.trim().length === 0 && !selectGif && (
               <motion.div
                 key="super"
                 initial="hidden"
@@ -817,7 +823,7 @@ const LiveChatInput = ({
                   <AttachMoneyIcon />
                 </IconButton>
               </motion.div>
-            )}
+            )} */}
           </AnimatePresence>
         </div>
       )}

@@ -1,4 +1,10 @@
+/**
+ * TEMPORARILY DISABLED: frames.js implementation
+ * This file is being preserved for future use when frames.js is ready.
+ */
+
 /* eslint-disable react/jsx-key */
+/*
 import { Button } from 'frames.js/next'
 import { frames } from '../frames'
 import {
@@ -52,7 +58,6 @@ export const POST = frames(async (ctx) => {
   return {
     image: (
       <div tw="w-full h-full pt-12 px-6 pb-6 bg-[#1976d2] relative flex items-center justify-center">
-        {/* route */}
         <span tw="text-white text-3xl absolute top-1 left-8">{`/${handle?.split('/')[1]}/stats`}</span>
         <div tw="bg-white relative rounded-3xl text-black w-full h-full items-center justify-center flex">
           <div tw="flex flex-col items-start justify-center">
@@ -99,3 +104,8 @@ export const POST = frames(async (ctx) => {
     ]
   }
 })
+*/
+
+// Placeholder export handler to keep the file structure intact
+export const POST = async () =>
+  new Response('Stats frames temporarily disabled')

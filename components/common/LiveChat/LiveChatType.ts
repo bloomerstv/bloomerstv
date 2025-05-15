@@ -6,7 +6,7 @@ export enum ContentType {
 
 export enum MessageType {
   System = 'System',
-  Profile = 'Profile'
+  Account = 'Account'
 }
 
 // Base type for common fields
@@ -21,12 +21,12 @@ export interface SystemMessage extends MessageBase {
   type: MessageType.System
 }
 
-// Type for messages of type "Profile"
-interface ProfileMessageBase extends MessageBase {
-  type: MessageType.Profile
+// Type for messages of type "Account"
+interface AccountMessageBase extends MessageBase {
+  type: MessageType.Account
   image?: string
-  profileId: string
-  authorProfileId?: string
+  accountAddress: string
+  authorAccountAddress?: string
   avatarUrl?: string
   handle: string
   amount?: number
@@ -35,17 +35,17 @@ interface ProfileMessageBase extends MessageBase {
   id: string
 }
 
-interface ProfileCommentMessage extends ProfileMessageBase {
+interface AccountCommentMessage extends AccountMessageBase {
   contentType: ContentType.Comment
 }
 
-interface ProfileClipMessage extends ProfileMessageBase {
+interface AccountClipMessage extends AccountMessageBase {
   contentType: ContentType.Clip
   clipPostId: string
   image: string
 }
 
-interface ProfileTradeMessage extends ProfileMessageBase {
+interface AccountTradeMessage extends AccountMessageBase {
   contentType: ContentType.Trade
   txHash: string
   amount?: number
@@ -54,12 +54,12 @@ interface ProfileTradeMessage extends ProfileMessageBase {
   image: string
 }
 
-export type ProfileMessage =
-  | ProfileCommentMessage
-  | ProfileClipMessage
-  | ProfileTradeMessage
+export type AccountMessage =
+  | AccountCommentMessage
+  | AccountClipMessage
+  | AccountTradeMessage
 
-export type Message = SystemMessage | ProfileMessage
+export type Message = SystemMessage | AccountMessage
 
 export interface SendMessageBaseType {
   id: string
@@ -73,7 +73,7 @@ export interface SendMessageCommentType extends SendMessageBaseType {
   txHash?: string
 }
 
-export interface SendMessageClipTyep extends SendMessageBaseType {
+export interface SendMessageClipType extends SendMessageBaseType {
   type: ContentType.Clip
   clipPostId: string
   image: string
@@ -85,10 +85,10 @@ export interface SendMessageTradeType extends SendMessageBaseType {
   amount?: number
   formattedBuyAmountEth: string
   currencySymbol: string
-  image: string
+  currencyLogoImage: string
 }
 
 export type SendMessageType =
   | SendMessageCommentType
-  | SendMessageClipTyep
+  | SendMessageClipType
   | SendMessageTradeType

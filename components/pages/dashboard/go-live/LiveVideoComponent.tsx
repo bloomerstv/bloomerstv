@@ -11,32 +11,10 @@ import {
   MyStream,
   ShouldCreateNewPostDocument,
   useCreateClipMutation,
-  useCreateMyLensStreamSessionMutation,
-  useUploadDataToArMutation
+  useCreateMyLensStreamSessionMutation
 } from '../../../../graphql/generated'
-import {
-  BroadcastingError,
-  InsufficientGasError,
-  OpenActionConfig,
-  OpenActionType,
-  PendingSigningRequestError,
-  PostAsyncResult,
-  Result,
-  SessionType,
-  UserRejectedError,
-  WalletConnectionError,
-  useCreatePost,
-  useProfile,
-  useSession
-} from '@lens-protocol/react-web'
 import formatHandle from '../../../../utils/lib/formatHandle'
-import {
-  APP_ID,
-  APP_LINK,
-  REDIRECTOR_URL,
-  defaultSponsored
-  // isMainnet
-} from '../../../../utils/config'
+import { APP_LINK, REDIRECTOR_URL } from '../../../../utils/config'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
 import { useMyStreamInfo } from '../../../store/useMyStreamInfo'
@@ -53,15 +31,26 @@ import { IconButton } from '@mui/material'
 import { BroadcastLive } from './Broadcast'
 import Player from '../../../common/Player/Player'
 import CloseIcon from '@mui/icons-material/Close'
-import useCollectSettings from '../../../common/Collect/useCollectSettings'
-import {
-  getTagsForCategory,
-  getTagsForSymbol
-} from '../../../../utils/categories'
+import { getTagsForCategory } from '../../../../utils/categories'
 // import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
 import { Src } from '@livepeer/react'
 import PostClipOnLens from '../../profile/PostClipOnLens'
+import {
+  Post,
+  Result,
+  SigningError,
+  TransactionIndexingError,
+  UnauthenticatedError,
+  UnexpectedError,
+  useAccount,
+  useCreatePost,
+  ValidationError
+} from '@lens-protocol/react'
+import { useWalletClient } from 'wagmi'
+import { handleOperationWith } from '@lens-protocol/react/viem'
+import useSession from '../../../../utils/hooks/useSession'
+import { acl, storageClient } from '../../../../utils/lib/lens/storageClient'
 
 const LiveVideoComponent = ({
   myStream,
@@ -78,28 +67,28 @@ const LiveVideoComponent = ({
   streamFromBrowser: boolean
   setStreamFromBrowser: (value: boolean) => void
 }) => {
-  const {
-    type,
-    amount,
-    collectLimit,
-    endsAt,
-    followerOnly,
-    recipients,
-    referralFee,
-    recipient
-  } = useCollectSettings()
+  // const {
+  //   type,
+  //   amount,
+  //   collectLimit,
+  //   endsAt,
+  //   followerOnly,
+  //   recipients,
+  //   referralFee,
+  //   recipient
+  // } = useCollectSettings()
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
   const [open, setOpen] = React.useState(false)
 
-  const { execute } = useCreatePost()
+  const { data: walletClient } = useWalletClient()
+  const { execute } = useCreatePost(handleOperationWith(walletClient))
   const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation({
     fetchPolicy: 'no-cache'
   })
   const [createClip] = useCreateClipMutation()
 
-  const { data } = useProfile({
-    // @ts-ignore
-    forProfileId: myStream.profileId
+  const { data } = useAccount({
+    address: myStream?.accountAddress
   })
 
   const { category, streamReplayViewType, playerStreamingMode } =
@@ -111,10 +100,8 @@ const LiveVideoComponent = ({
       }
     })
   const addLiveChatAt = useMyStreamInfo((state) => state.addLiveChatAt)
-  const [uploadDataToAR] = useUploadDataToArMutation({
-    fetchPolicy: 'no-cache'
-  })
-  const { data: session } = useSession()
+
+  const { isAuthenticated, account } = useSession()
   const client = useApolloClient()
   // const shouldCreateNewPost = async () => {
   //   const { data } = await client.query({
@@ -138,7 +125,7 @@ const LiveVideoComponent = ({
   const createLensPost = async (
     sessionId: string
   ): Promise<string | undefined> => {
-    if (session?.type !== SessionType.WithProfile) {
+    if (!isAuthenticated) {
       // If the user is not logged in, return undefined
       return
     }
@@ -161,7 +148,7 @@ const LiveVideoComponent = ({
     }
 
     // Get the user's handle from their profile
-    const streamerHandle = formatHandle(session?.profile)
+    const streamerHandle = formatHandle(account)
     // Get the profile link from the user's handle
     const profileLink = `${APP_LINK}/${streamerHandle}`
     // Generate a uuid for the post
@@ -176,28 +163,22 @@ const LiveVideoComponent = ({
 
     // Get the tags for the post
     const tags = [
-      ...getTagsForCategory(category),
-      ...getTagsForSymbol(
-        type && amount?.asset?.symbol ? amount.asset.symbol : ''
-      )
+      ...getTagsForCategory(category)
+      // ...getTagsForSymbol(
+      //   type && amount?.asset?.symbol ? amount.asset.symbol : ''
+      // )
     ]
 
     // Create the metadata for the post
     const metadata = liveStream({
       title: streamName,
       content: content,
-      marketplace: {
-        name: streamName,
-        description: `${streamName}\n\nLive on ${profileLink}`,
-        external_url: profileLink,
-        animation_url: mp4Url,
-        image: thumbnail
-      },
       attachments: [
         {
           type: MediaVideoMimeType.MP4,
           item: mp4Url,
-          cover: thumbnail
+          cover: thumbnail,
+          altTag: 'Live Stream'
         }
       ],
       attributes: [
@@ -209,7 +190,6 @@ const LiveVideoComponent = ({
       ],
       id: id,
       locale: locale,
-      appId: APP_ID,
       liveUrl: m3u8Url,
       playbackUrl: m3u8Url,
       tags: tags,
@@ -217,52 +197,42 @@ const LiveVideoComponent = ({
     })
 
     // Upload the metadata to Arweave
-    const { data, errors } = await uploadDataToAR({
-      variables: {
-        data: JSON.stringify(metadata)
-      }
+    const response = await storageClient.uploadAsJson(metadata, {
+      acl: acl,
+      name: `livestream-${formatHandle(account)}-${id}`
     })
 
-    if (errors?.[0]) {
-      // If there is an error, show an error
-      toast.error(errors[0].message)
+    if (!response?.uri) {
+      toast.error('Error uploading metadata to Arweave')
       throw new Error('Error uploading metadata to Arweave')
     }
 
-    // Get the transaction id from the response
-    const transactionId = data?.uploadDataToAR
+    // let actions: OpenActionConfig[] | undefined = []
 
-    if (!transactionId) {
-      // If the transaction id is not set, throw an error
-      throw new Error('Error uploading metadata to Arweave')
-    }
+    // if (type) {
+    //   // If there is a type set, create the actions array
+    //   actions = [
+    //     // @ts-ignore
+    //     {
+    //       type,
+    //       // @ts-ignore
+    //       amount,
+    //       collectLimit,
+    //       endsAt,
+    //       followerOnly,
+    //       referralFee: amount ? referralFee : undefined
+    //     }
+    //   ]
 
-    let actions: OpenActionConfig[] | undefined = []
-
-    if (type) {
-      // If there is a type set, create the actions array
-      actions = [
-        // @ts-ignore
-        {
-          type,
-          // @ts-ignore
-          amount,
-          collectLimit,
-          endsAt,
-          followerOnly,
-          referralFee: amount ? referralFee : undefined
-        }
-      ]
-
-      if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
-        // @ts-ignore
-        actions[0]['recipients'] = recipients
-      }
-      if (type === OpenActionType.SIMPLE_COLLECT) {
-        // @ts-ignore
-        actions[0]['recipient'] = recipient
-      }
-    }
+    //   if (type === OpenActionType.MULTIRECIPIENT_COLLECT) {
+    //     // @ts-ignore
+    //     actions[0]['recipients'] = recipients
+    //   }
+    //   if (type === OpenActionType.SIMPLE_COLLECT) {
+    //     // @ts-ignore
+    //     actions[0]['recipient'] = recipient
+    //   }
+    // }
 
     // If on mainnet, add the tip action
     // if (isMainnet) {
@@ -280,72 +250,37 @@ const LiveVideoComponent = ({
     // Set the maximum number of retries
     const MAX_RETRIES = 3
     let retries = 0
-    // @ts-ignore
-    let result: Result<
-      PostAsyncResult,
-      | BroadcastingError
-      | InsufficientGasError
-      | PendingSigningRequestError
-      | UserRejectedError
-      | WalletConnectionError
-    > = null
+
+    let result:
+      | Result<
+          Post,
+          | SigningError
+          | ValidationError<string>
+          | TransactionIndexingError
+          | UnauthenticatedError
+          | UnexpectedError
+        >
+      | undefined
 
     // Loop until the post is created or the maximum number of retries is reached
     while (retries < MAX_RETRIES) {
       try {
         // Execute the post creation
         result = await execute({
-          metadata: `ar://${transactionId}`,
-          sponsored: defaultSponsored,
-          actions: actions
+          contentUri: response.uri
+          // actions: actions
         })
 
-        if (result.isSuccess()) {
+        if (result.isOk()) {
           // If the execution is successful, break the loop
           break
         } else {
           // If the execution fails, increment the retry counter
           retries++
           if (retries === MAX_RETRIES) {
-            if (result.isFailure()) {
+            if (result.isErr()) {
               // If the maximum number of retries is reached, show an error
-              switch (result.error.name) {
-                case 'BroadcastingError':
-                  console.log(
-                    'There was an error broadcasting the transaction',
-                    result.error.message
-                  )
-                  toast.error('Error broadcasting the transaction')
-                  break
-
-                case 'PendingSigningRequestError':
-                  console.log(
-                    'There is a pending signing request in your wallet. ' +
-                      'Approve it or discard it and try again.'
-                  )
-                  toast.error(
-                    'There is a pending signing request in your wallet. ' +
-                      'Approve it or discard it and try again.'
-                  )
-                  break
-
-                case 'WalletConnectionError':
-                  console.log(
-                    'There was an error connecting to your wallet',
-                    result.error.message
-                  )
-                  toast.error(
-                    'Error connecting to your wallet' + result.error.message
-                  )
-                  break
-
-                case 'UserRejectedError':
-                  // the user decided to not sign, usually this is silently ignored by UIs
-                  break
-
-                default:
-                  toast.error('Error from Lens API' + result.error.message)
-              }
+              toast.error('Error from Lens API' + result.error.message)
             }
             // If the maximum number of retries has been reached, throw an error
             // toast.error(result.error.message)
@@ -364,24 +299,20 @@ const LiveVideoComponent = ({
       }
     }
 
-    if (!result.isSuccess()) {
+    if (!result) {
+      toast.error('Error creating post')
+      throw new Error('Error creating post')
+    }
+
+    if (result.isErr()) {
       // If the post creation failed, show an error
       toast.error(result.error.message)
       // handle failure scenarios
       throw new Error('Error creating post')
     }
 
-    // Wait for the post to be processed
-    const completion = await result.value.waitForCompletion()
-
-    if (completion.isFailure()) {
-      // If there is an error, show an error
-      toast.error(completion.error.message)
-      throw new Error('Error creating post during tx processing')
-    }
-
     // The post is now ready to be used
-    const post = completion.value
+    const post = result.value
 
     return post?.id
   }
@@ -412,6 +343,7 @@ const LiveVideoComponent = ({
         error: null
       })
 
+      console.log('Latest session ID:', latestSessionId)
       refreshMyStream()
 
       if (!latestSessionId) {
@@ -419,16 +351,15 @@ const LiveVideoComponent = ({
       }
 
       // if yet, create lens post and get post id
-      const publicationId = await toast.promise(
-        createLensPost(latestSessionId),
-        {
-          loading: 'Creating post for this stream...',
-          success: 'Post created!',
-          error: 'Error creating post'
-        }
-      )
+      const postId = await toast.promise(createLensPost(latestSessionId), {
+        loading: 'Creating post for this stream...',
+        success: 'Post created!',
+        error: 'Error creating post'
+      })
 
-      if (!publicationId) {
+      console.log('Post ID:', postId)
+
+      if (!postId) {
         return
       }
 
@@ -438,7 +369,7 @@ const LiveVideoComponent = ({
       const { data, errors } = await toast.promise(
         createMyLensStreamSession({
           variables: {
-            publicationId: publicationId,
+            postId,
             viewType: streamReplayViewType
           },
           fetchPolicy: 'no-cache'
@@ -449,6 +380,8 @@ const LiveVideoComponent = ({
           error: 'Error sending notification to your followers...'
         }
       )
+
+      console.log('data', data)
 
       if (errors?.[0] && !data?.createMyLensStreamSession) {
         toast.error(errors[0].message)
@@ -540,7 +473,7 @@ const LiveVideoComponent = ({
         onStreamStatusChange={(isLive) => {
           setStartedStreaming(isLive)
         }}
-        clipLength={session?.type === SessionType.WithProfile ? 30 : undefined}
+        clipLength={isAuthenticated ? 30 : undefined}
         createClip={handleClipClicked}
       />
     )
@@ -580,12 +513,12 @@ const LiveVideoComponent = ({
 
   return (
     <div className="w-[520px] shrink-0">
-      {clipUrl && data && session?.type === SessionType.WithProfile && (
+      {clipUrl && data && isAuthenticated && (
         <PostClipOnLens
           open={open}
           setOpen={setOpen}
           url={clipUrl}
-          profile={data}
+          account={data}
           sessionId={myStream?.latestSessionId}
         />
       )}

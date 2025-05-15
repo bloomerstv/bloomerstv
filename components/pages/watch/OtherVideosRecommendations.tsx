@@ -1,67 +1,71 @@
-import {
-  Post,
-  PublicationMetadataMainFocusType,
-  PublicationType,
-  usePublications
-} from '@lens-protocol/react-web'
 import React, { useCallback } from 'react'
-import { APP_ID, hideProfilesIds } from '../../../utils/config'
+import { APP_ADDRESS, hideAccountAddresses } from '../../../utils/config'
 import clsx from 'clsx'
 import RecommendedVideoCard from '../../common/RecommendedVideoCard'
-import { usePublicationsStore } from '../../store/usePublications'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import RecommendedCardLayout from '../../common/RecommendedCardLayout'
 import { usePathname } from 'next/navigation'
+import {
+  MainContentFocus,
+  PageSize,
+  Post,
+  PostStats,
+  PostType,
+  usePosts
+} from '@lens-protocol/react'
+import { usePostsStore } from '../../store/usePosts'
+import LoadingVideoCard from '../../ui/LoadingVideoCard'
 
 const OtherVideosRecommendations = ({ className }: { className?: string }) => {
   const isMobile = useIsMobile()
   const pathname = usePathname()
-  const { data } = usePublications({
-    where: {
-      publicationTypes: [PublicationType.Post],
+  const { data, loading: postsLoading } = usePosts({
+    filter: {
+      postTypes: [PostType.Root, PostType.Quote],
       metadata: {
-        mainContentFocus: [
-          PublicationMetadataMainFocusType.Video,
-          PublicationMetadataMainFocusType.ShortVideo
-        ],
-        // @ts-ignore
-        publishedOn: [APP_ID]
-      }
-    }
+        mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo]
+      },
+      apps: [APP_ADDRESS]
+    },
+    pageSize: PageSize.Ten
   })
 
-  const publications = usePublicationsStore((state) => state.publications)
-  const streamReplayPublication = usePublicationsStore(
-    (state) => state.streamReplayPublication
-  )
+  const { posts, streamReplayPosts } = usePostsStore((state) => ({
+    posts: state.posts,
+    streamReplayPosts: state.streamReplayPosts
+  }))
 
   const getStreamReplay = useCallback(
-    (publicationId: string) => {
+    (postId: string) => {
       const streamReplay =
-        streamReplayPublication?.streamReplayPublications?.streamReplayPublications?.find(
-          (p) => p?.publicationId === publicationId
+        streamReplayPosts?.streamReplayPosts?.streamReplayPosts?.find(
+          (p) => p?.postId === postId
         )
       return {
         thumbnail: streamReplay?.thumbnail,
         duration: streamReplay?.sourceSegmentsDuration
       }
     },
-    [streamReplayPublication]
+    [streamReplayPosts?.streamReplayPosts]
+  )
+
+  const filteredPostsClips = data?.items?.filter(
+    (p) => p.__typename === 'Post' && p.metadata?.__typename === 'VideoMetadata'
   )
 
   // add type streamClips to data
   const streamClips =
-    data?.map((post) => {
+    filteredPostsClips?.map((post) => {
       return {
         ...post,
         type: 'streamClips'
       }
     }) ?? []
 
-  // add type streamReplays to publications
+  // add type streamReplays to posts
   const streamReplays =
-    publications?.map((post) => {
+    posts?.map((post) => {
       return {
         ...post,
         type: 'streamReplays'
@@ -70,19 +74,32 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
 
   const combinedData = [...streamClips, ...streamReplays].sort(
     (a, b) =>
-      new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+      new Date(b?.timestamp).getTime() - new Date(a?.timestamp).getTime()
   )
 
   const currentPostId = pathname?.split('/')[2]
 
-  if (!data) return null
+  const isLoading = postsLoading
+
+  if (isLoading) {
+    return (
+      <div className={clsx('flex flex-col w-full h-full gap-y-4', className)}>
+        {Array(5)
+          .fill(null)
+          .map((_, i) => (
+            <LoadingVideoCard key={i} />
+          ))}
+      </div>
+    )
+  }
+
   return (
     <div className={clsx('flex flex-col w-full h-full gap-y-4', className)}>
       {combinedData?.map((post) => {
         if (
-          // @ts-ignore
-          hideProfilesIds.includes(post?.by?.id) ||
-          currentPostId === post?.id
+          hideAccountAddresses.includes(post?.author?.address) ||
+          currentPostId === post?.id ||
+          currentPostId === post?.slug
         ) {
           return null
         }
@@ -94,25 +111,25 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
             return (
               <HomeVideoCard
                 post={post as Post}
-                // @ts-ignore
-                cover={getStreamReplay(post?.id)?.thumbnail}
-                // @ts-ignore
-                duration={getStreamReplay(post?.id)?.duration}
+                cover={getStreamReplay(post?.id)?.thumbnail!}
+                duration={getStreamReplay(post?.id)?.duration!}
                 key={post?.id}
               />
             )
           } else {
             return (
               <RecommendedCardLayout
-                createdAt={post?.createdAt}
+                createdAt={post?.timestamp}
+                coverUrl={getStreamReplay(post?.id)?.thumbnail ?? undefined}
+                postLink={`/watch/${post?.slug}`}
+                account={post?.author}
                 // @ts-ignore
-                coverUrl={getStreamReplay(post?.id)?.thumbnail}
-                postLink={`/watch/${post?.id}`}
-                profile={post?.by}
-                // @ts-ignore
-                stats={post?.stats}
-                // @ts-ignore
-                title={post?.metadata?.title}
+                stats={post?.stats as PostStats}
+                title={
+                  // @ts-ignore
+                  post?.metadata?.title ?? post?.metadata?.content?.slice(0, 50)
+                }
+                duration={getStreamReplay(post?.id)?.duration ?? undefined}
                 key={post?.id}
               />
             )

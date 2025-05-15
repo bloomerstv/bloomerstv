@@ -1,13 +1,3 @@
-import {
-  Post,
-  Profile,
-  SessionType,
-  useApolloClient,
-  useFollow,
-  usePublication,
-  useSession,
-  useUnfollow
-} from '@lens-protocol/react-web'
 import React, { useEffect, useState } from 'react'
 import { SingleStreamer } from '../../../graphql/generated'
 import getAvatar from '../../../utils/lib/getAvatar'
@@ -20,12 +10,7 @@ import {
   MenuItem,
   MenuList
 } from '@mui/material'
-import {
-  APP_LINK,
-  APP_NAME,
-  defaultSponsored,
-  wsLensGraphEndpoint
-} from '../../../utils/config'
+import { APP_LINK, APP_NAME } from '../../../utils/config'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import MobileChatButton from './MobileChatButton'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
@@ -35,7 +20,7 @@ import MobileCommentButton from '../watch/MobileCommentButton'
 import LiveCount from './LiveCount'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
-import CollectButton from './CollectButton'
+// import CollectButton from './CollectButton'
 import FollowingButton from './FollowingButton'
 import { humanReadableNumber } from '../../../utils/helpers'
 import VerifiedBadge from '../../ui/VerifiedBadge'
@@ -43,67 +28,76 @@ import QuoteButton from './QuoteButton'
 import { useModal } from '../../common/ModalContext'
 import LikeButton from './LikeButton'
 import MirrorButton from './MirrorButton'
-import { createClient } from 'graphql-ws'
+// import { createClient } from 'graphql-ws'
 import Timer from '../../common/Timer'
+import { Account, Post, usePost } from '@lens-protocol/react'
+import useFollow from '../../../utils/hooks/lens/useFollow'
+import useUnFollow from '../../../utils/hooks/lens/useUnFollow'
+import useSession from '../../../utils/hooks/useSession'
+import useAccountStats from '../../../utils/hooks/lens/useAccountStats'
 
-const client = createClient({
-  url: wsLensGraphEndpoint
-})
+// const client = createClient({
+//   url: wsLensGraphEndpoint
+// })
 
-const NEW_PUBLICATION_STATS = `
-  subscription NewPublicationStats(
-    $for: PublicationId!,
-    $request: PublicationStatsCountOpenActionArgs,
-    $reactionsRequest: PublicationStatsReactionArgs
-  ) {
-    newPublicationStats(for: $for) {
-      id
-      comments
-      mirrors
-      quotes
-      reactions(request: $reactionsRequest)
-      countOpenActions(request: $request)
-    }
-  }
-`
+// const NEW_PUBLICATION_STATS = `
+//   subscription NewPublicationStats(
+//     $for: PublicationId!,
+//     $request: PublicationStatsCountOpenActionArgs,
+//     $reactionsRequest: PublicationStatsReactionArgs
+//   ) {
+//     newPublicationStats(for: $for) {
+//       id
+//       comments
+//       mirrors
+//       quotes
+//       reactions(request: $reactionsRequest)
+//       countOpenActions(request: $request)
+//     }
+//   }
+// `
 export interface NewPublicationStatsType {
   comments: number
   countOpenActions: number
   id: string
-  mirrors: number
+  reposts: number
   quotes: number
   reactions: number
 }
 
 const ProfileBar = ({
-  profile,
+  account,
   streamer,
   post,
   premium = false
 }: {
-  profile: Profile
+  account: Account
   streamer?: SingleStreamer
   post?: Post
   premium?: boolean
 }) => {
-  const [newPublicationStats, setNewPublicationStats] =
-    useState<NewPublicationStatsType | null>(null)
+  // const [newPublicationStats, setNewPublicationStats] =
+  //   useState<NewPublicationStatsType | null>(null)
   const [isFollowing, setIsFollowing] = React.useState<boolean>(
-    profile?.operations?.isFollowedByMe?.value
+    !!account?.operations?.isFollowedByMe
   )
   const { execute, loading: followLoading } = useFollow()
-  const { execute: unFollow, loading: unFollowing } = useUnfollow()
+  const { execute: unFollow, loading: unFollowing } = useUnFollow()
 
-  const { data: mySession } = useSession()
+  const { isAuthenticated } = useSession()
 
-  const { data } = usePublication({
-    // @ts-ignore
-    forId: streamer?.latestStreamPublicationId
+  const { data: accountStats } = useAccountStats({
+    account: account?.address
   })
 
-  const lensApolloClient = useApolloClient()
+  const { data } = usePost({
+    post: streamer?.latestStreamPostId
+  })
+
+  // const lensApolloClient = useApolloClient<UnfollowResult>()
 
   const [publication, setPublication] = useState<Post | null | undefined>(post)
+
   const isMobile = useIsMobile()
   const { openModal } = useModal()
 
@@ -116,45 +110,45 @@ const ProfileBar = ({
     setAnchorEl(null)
   }
 
-  useEffect(() => {
-    if (!streamer?.latestStreamPublicationId || !lensApolloClient) return
+  // useEffect(() => {
+  //   if (!streamer?.latestStreamPostId || !lensApolloClient) return
 
-    const unsubscribe = client.subscribe(
-      {
-        query: NEW_PUBLICATION_STATS,
-        variables: {
-          for: streamer?.latestStreamPublicationId,
-          request: {
-            anyOf: [
-              {
-                category: 'COLLECT'
-              }
-            ]
-          },
-          reactionsRequest: {
-            type: 'UPVOTE'
-          }
-        }
-      },
-      {
-        next: ({ data }) => {
-          // @ts-ignore
-          if (!data?.newPublicationStats) return
-          // @ts-ignore
-          setNewPublicationStats(data?.newPublicationStats)
-        },
-        complete: () => {},
-        error: (err) => {
-          console.error('err', err)
-        }
-      }
-    )
+  //   const unsubscribe = client.subscribe(
+  //     {
+  //       query: NEW_PUBLICATION_STATS,
+  //       variables: {
+  //         for: streamer?.latestStreamPostId,
+  //         request: {
+  //           anyOf: [
+  //             {
+  //               category: 'COLLECT'
+  //             }
+  //           ]
+  //         },
+  //         reactionsRequest: {
+  //           type: 'UPVOTE'
+  //         }
+  //       }
+  //     },
+  //     {
+  //       next: ({ data }) => {
+  //         // @ts-ignore
+  //         if (!data?.newPublicationStats) return
+  //         // @ts-ignore
+  //         setNewPublicationStats(data?.newPublicationStats)
+  //       },
+  //       complete: () => {},
+  //       error: (err) => {
+  //         console.error('err', err)
+  //       }
+  //     }
+  //   )
 
-    // return subscription()
-    return () => {
-      unsubscribe()
-    }
-  }, [lensApolloClient, streamer?.latestStreamPublicationId])
+  //   // return subscription()
+  //   return () => {
+  //     unsubscribe()
+  //   }
+  // }, [lensApolloClient, streamer?.latestStreamPublicationId])
 
   useEffect(() => {
     if (data?.__typename === 'Post' && !post) {
@@ -173,14 +167,13 @@ const ProfileBar = ({
       if (!mustLogin('Must Login to follow')) return
 
       const result = await execute({
-        profile: profile,
-        sponsored: defaultSponsored
+        account: account?.address
       })
 
-      if (result.isSuccess()) {
+      if (result.isOk()) {
         setIsFollowing(true)
-        toast.success(`Following ${formatHandle(profile)}`)
-      } else if (result.isFailure()) {
+        toast.success(`Following ${formatHandle(account)}`)
+      } else if (result.isErr()) {
         toast.error(result.error.message)
       }
     } catch (e) {
@@ -193,13 +186,13 @@ const ProfileBar = ({
     try {
       if (!mustLogin('Must Login to unfollow')) return
       const result = await unFollow({
-        profile: profile
+        account: account?.address
       })
 
-      if (result.isSuccess()) {
+      if (result.isOk()) {
         setIsFollowing(false)
-        toast.success(`Unfollowed ${formatHandle(profile)}`)
-      } else if (result.isFailure()) {
+        toast.success(`Unfollowed ${formatHandle(account)}`)
+      } else if (result.isErr()) {
         toast.error(result.error.message)
       }
     } catch (e) {
@@ -210,7 +203,7 @@ const ProfileBar = ({
   }
 
   const mustLogin = (infoMsg: string = 'Must Login'): Boolean => {
-    if (mySession?.type !== SessionType.WithProfile) {
+    if (!isAuthenticated) {
       openModal('login')
       toast.error(infoMsg)
       return false
@@ -227,7 +220,7 @@ const ProfileBar = ({
             title: APP_NAME,
             // @ts-ignore
             text: publication?.metadata?.title,
-            url: `${APP_LINK}/watch/${publication?.id}`
+            url: `${APP_LINK}/watch/${publication?.slug}`
           })
           .catch((error) => console.log('Error sharing', error))
         return
@@ -236,8 +229,8 @@ const ProfileBar = ({
       navigator
         .share({
           title: APP_NAME,
-          text: `Check out ${formatHandle(profile)} on ${APP_NAME}`,
-          url: `${APP_LINK}/${formatHandle(profile)}`
+          text: `Check out ${formatHandle(account)} on ${APP_NAME}`,
+          url: `${APP_LINK}/${formatHandle(account)}`
         })
         .catch((error) => console.log('Error sharing', error))
     }
@@ -300,12 +293,12 @@ const ProfileBar = ({
       <div className="m-2 sm:mt-5 sm:mx-8 flex flex-row justify-between items-start text-p-text">
         <div className="start-center-row gap-x-2 sm:gap-x-4 w-full">
           <Link
-            href={`/${formatHandle(profile)}`}
+            href={`/${formatHandle(account)}`}
             prefetch
             className="no-underline text-p-text centered-col"
           >
             <img
-              src={getAvatar(profile)}
+              src={getAvatar(account)}
               className="sm:w-16 sm:h-16 w-8 h-8 rounded-full"
             />
           </Link>
@@ -325,13 +318,13 @@ const ProfileBar = ({
                 {/* followes */}
                 <div>
                   <Link
-                    href={`/${formatHandle(profile)}`}
+                    href={`/${formatHandle(account)}`}
                     prefetch
                     className="no-underline text-p-text"
                   >
                     <div className="start-center-row gap-x-1">
                       <div className="font-semibold sm:text-sm">
-                        {formatHandle(profile)}
+                        {formatHandle(account)}
                       </div>
                       {(premium || streamer?.premium) && <VerifiedBadge />}
                     </div>
@@ -339,7 +332,9 @@ const ProfileBar = ({
 
                   <div className="start-center-row space-x-1 sm:text-sm text-xs">
                     <div className="">
-                      {humanReadableNumber(profile?.stats?.followers)}
+                      {humanReadableNumber(
+                        accountStats?.graphFollowStats?.followers
+                      )}
                     </div>
                     <div className="text-s-text">followers</div>
                   </div>
@@ -350,7 +345,7 @@ const ProfileBar = ({
                   handleFollow={handleFollow}
                   handleUnFollow={handleUnFollow}
                   isFollowing={isFollowing}
-                  profile={profile}
+                  account={account}
                   unFollowing={unFollowing}
                 />
               </div>
@@ -367,9 +362,9 @@ const ProfileBar = ({
                       }}
                     />
                   )}
-                  {profile?.id && !post && (
+                  {account?.address && !post && (
                     <div className="-mr-2">
-                      <LiveCount profileId={profile?.id} />
+                      <LiveCount accountAddress={account?.address} />
                     </div>
                   )}
                   <div className="-mr-3">
@@ -395,17 +390,15 @@ const ProfileBar = ({
                 }}
               />
             )}
-            {profile?.id && !post && streamer && (
-              <LiveCount profileId={profile?.id} />
+            {account?.address && !post && streamer && (
+              <LiveCount accountAddress={account?.address} />
             )}
 
             {/* like button  */}
             {publication?.id && (
               <LikeButton
-                publication={publication}
-                likeCount={
-                  newPublicationStats?.reactions ?? publication?.stats?.upvotes
-                }
+                post={publication}
+                likeCount={publication?.stats?.upvotes}
               />
             )}
 
@@ -413,17 +406,15 @@ const ProfileBar = ({
 
             {publication?.id && (
               <MirrorButton
-                mirrorsCount={
-                  newPublicationStats?.mirrors ?? publication?.stats?.mirrors
-                }
-                publication={publication}
+                repostsCount={publication?.stats?.reposts}
+                post={publication}
               />
             )}
 
             {publication && (
               <QuoteButton
                 quoteOn={publication.id}
-                quotingOnProfileHandle={formatHandle(publication?.by)}
+                quotingOnProfileHandle={formatHandle(publication?.author)}
                 // @ts-ignore
                 quotingTitle={
                   streamer?.streamName
@@ -432,20 +423,21 @@ const ProfileBar = ({
                       (publication?.metadata?.title ?? // @ts-ignore
                       publication?.metadata?.content)
                 }
-                numberOfQuotes={
-                  newPublicationStats?.quotes ?? publication?.stats?.quotes
+                numberOfQuotes={publication?.stats?.quotes}
+                hasQuoted={
+                  publication?.operations?.hasQuoted?.optimistic ?? false
                 }
               />
             )}
 
-            {publication && (
+            {/* {publication && (
               <CollectButton
                 handleFollow={handleFollow}
                 followLoading={followLoading}
                 post={publication}
                 isFollowing={isFollowing}
               />
-            )}
+            )} */}
 
             <div className="-mx-2.5">
               <IconButton onClick={handleMenuClick}>
@@ -459,38 +451,34 @@ const ProfileBar = ({
       {isMobile && (
         <div className="w-full">
           <div className="start-center-row gap-x-2 px-2 w-full no-scrollbar  overflow-x-auto">
-            {publication && (
+            {/* {publication && (
               <CollectButton
                 handleFollow={handleFollow}
                 followLoading={followLoading}
                 post={publication}
                 isFollowing={isFollowing}
               />
-            )}
+            )} */}
             {/* like button */}
             {publication?.id && (
               <LikeButton
-                likeCount={
-                  newPublicationStats?.reactions ?? publication?.stats?.upvotes
-                }
-                publication={publication}
+                likeCount={publication?.stats?.upvotes}
+                post={publication}
               />
             )}
             {/* mirror button */}
 
             {publication?.id && (
               <MirrorButton
-                mirrorsCount={
-                  newPublicationStats?.mirrors ?? publication?.stats?.mirrors
-                }
-                publication={publication}
+                repostsCount={publication?.stats?.reposts}
+                post={publication}
               />
             )}
 
             {publication && (
               <QuoteButton
                 quoteOn={publication.id}
-                quotingOnProfileHandle={formatHandle(publication?.by)}
+                quotingOnProfileHandle={formatHandle(publication?.author)}
                 // @ts-ignore
                 quotingTitle={
                   streamer?.streamName
@@ -499,16 +487,17 @@ const ProfileBar = ({
                       (publication?.metadata?.title ?? // @ts-ignore
                       publication?.metadata?.content)
                 }
-                numberOfQuotes={
-                  newPublicationStats?.quotes ?? publication?.stats?.quotes
+                numberOfQuotes={publication?.stats?.quotes}
+                hasQuoted={
+                  publication?.operations?.hasQuoted?.optimistic ?? false
                 }
               />
             )}
 
             {/* live chat button */}
-            {profile?.id && !post && streamer && (
+            {account?.address && !post && streamer && (
               <div className="shrink-0">
-                <MobileChatButton profileId={profile?.id} />
+                <MobileChatButton accountAddress={account?.address} />
               </div>
             )}
 

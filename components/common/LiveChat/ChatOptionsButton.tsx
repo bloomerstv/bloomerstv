@@ -3,18 +3,18 @@ import clsx from 'clsx'
 import React from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ChatOptions from './ChatOptions'
-import { SessionType, useSession } from '@lens-protocol/react-web'
+import useSession from '../../../utils/hooks/useSession'
 
 const ChatOptionsButton = ({
   handle,
   avatarUrl,
-  profileId,
-  chatProfileId,
+  accountAddress,
+  chatAccountAddress,
   socket,
   className
 }: {
-  chatProfileId?: string
-  profileId?: string
+  chatAccountAddress?: string
+  accountAddress?: string
   handle: string
   avatarUrl: string
   socket: any
@@ -22,7 +22,7 @@ const ChatOptionsButton = ({
 }) => {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [keepShowingMoreIcon, setKeepShowingMoreIcon] = React.useState(false)
-  const { data } = useSession()
+  const { isAuthenticated, account } = useSession()
 
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -30,13 +30,15 @@ const ChatOptionsButton = ({
     setAnchorEl(event.currentTarget)
   }
 
-  const isWalletMsg = profileId && profileId?.length > 20
+  const isWalletMsg = false
+
+  // const isWalletMsg = profileId && profileId?.length > 20
 
   // meaning most probably a wallet address
   if (
     isWalletMsg &&
-    data?.type === SessionType.WithProfile &&
-    data?.profile?.id !== chatProfileId?.toLowerCase()
+    isAuthenticated &&
+    account?.address !== chatAccountAddress
   ) {
     return null
   }
@@ -61,8 +63,8 @@ const ChatOptionsButton = ({
       </div>
       {open && (
         <ChatOptions
-          chatProfileId={chatProfileId}
-          profileId={profileId}
+          chatAccountAddress={chatAccountAddress}
+          accountAddress={accountAddress}
           handle={handle}
           avatarUrl={avatarUrl}
           socket={socket}

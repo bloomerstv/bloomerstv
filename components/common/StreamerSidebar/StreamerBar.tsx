@@ -1,5 +1,4 @@
 import React from 'react'
-import { StreamerWithProfile } from '../../store/useStreamersWithProfiles'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
 import Link from 'next/link'
@@ -16,18 +15,24 @@ import useIsMobile from '../../../utils/hooks/useIsMobile'
 import VerifiedBadge from '../../ui/VerifiedBadge'
 import Countdown from 'react-countdown'
 import { Tooltip } from '@mui/material'
-const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
+import { StreamerWithAccount } from '../../store/useStreamersWithAccounts'
+import useAccountStats from '../../../utils/hooks/lens/useAccountStats'
+const StreamerBar = ({ streamer }: { streamer: StreamerWithAccount }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const minimize = !isMobile && pathname !== '/'
   const nextStreamInFuture =
     !!streamer?.nextStreamTime &&
     new Date(streamer?.nextStreamTime) > new Date()
+
+  const { data } = useAccountStats({
+    account: streamer?.account?.address
+  })
   return (
     <Link
       prefetch
-      href={`/${formatHandle(streamer?.profile)}`}
-      key={streamer?.profileId}
+      href={`/${formatHandle(streamer?.account)}`}
+      key={streamer?.account?.address}
       className={clsx(
         'flex flex-row no-underline p-2 w-full items-center justify-between hover:bg-p-hover cursor-pointer',
         minimize ? '2xl:px-2.5' : '2xl:px-4'
@@ -35,7 +40,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
     >
       <div className={clsx(minimize ? 'centered-col' : 'centered-row')}>
         <img
-          src={getAvatar(streamer?.profile)}
+          src={getAvatar(streamer?.account)}
           alt="avatar"
           className={clsx(
             'rounded-full',
@@ -51,7 +56,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
           <div className="ml-2 space-y-2">
             <div className="start-center-row gap-x-1 leading-4">
               <div className="text-s-text font-bold ">
-                {formatHandle(streamer?.profile)}
+                {formatHandle(streamer?.account)}
               </div>
 
               {streamer?.premium && <VerifiedBadge />}
@@ -75,7 +80,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithProfile }) => {
             )}
             {isMobile && (
               <div className="text-s-text sm:font-normal leading-3 font-semibold text-xs">
-                {`${humanReadableNumber(streamer?.profile?.stats?.followers)} followers`}
+                {`${humanReadableNumber(data?.graphFollowStats?.followers)} followers`}
               </div>
             )}
           </div>

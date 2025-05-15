@@ -1,6 +1,4 @@
 'use client'
-
-import { SessionType, useSession } from '@lens-protocol/react-web'
 import React from 'react'
 import AvatarWithOptions from './AvatarWithOptions'
 import { Button } from '@mui/material'
@@ -9,9 +7,10 @@ import LoginIcon from '@mui/icons-material/Login'
 import LoginComponent from '../../../common/LoginComponent'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import SignupComponent from '../../../common/SignupComponent'
+import useSession from '../../../../utils/hooks/useSession'
 
 const LoginButton = () => {
-  const { data } = useSession()
+  const { isAuthenticated } = useSession()
 
   const [open, setOpen] = React.useState(false)
   const [openSignup, setOpenSignup] = React.useState(false)
@@ -45,27 +44,27 @@ const LoginButton = () => {
       >
         <LoginComponent open={open} onClose={handleClose} />
       </ModalWrapper>
-      {(data?.type === SessionType.Anonymous ||
-        (data?.type === SessionType.WithProfile &&
-          !data?.profile?.signless)) && (
+
+      {!isAuthenticated && (
+        // (!isAuthenticated ||
+        //   (isAuthenticated && !authenticatedUser?.sponsored)) && (
         <div className="centered-row gap-x-2 sm:gap-x-4">
-          {data?.type !== SessionType.WithProfile && (
-            <Button
-              variant="outlined"
-              onClick={() => setOpenSignup(true)}
-              size="small"
-              startIcon={
-                <div className="sm:w-7 sm:h-7 h-6 w-6">
-                  <PersonAddIcon fontSize="inherit" />
-                </div>
-              }
-              sx={{
-                borderRadius: '12px'
-              }}
-            >
-              Signup
-            </Button>
-          )}
+          <Button
+            variant="outlined"
+            onClick={() => setOpenSignup(true)}
+            size="small"
+            startIcon={
+              <div className="sm:w-7 sm:h-7 h-6 w-6">
+                <PersonAddIcon fontSize="inherit" />
+              </div>
+            }
+            sx={{
+              borderRadius: '12px'
+            }}
+          >
+            Signup
+          </Button>
+
           {/* {isMobile ? (
             <IconButton onClick={handleOpen}>
               <img
@@ -74,9 +73,10 @@ const LoginButton = () => {
               />
             </IconButton>
           ) : ( */}
-          {(data?.type === SessionType.Anonymous ||
-            (data?.type === SessionType.WithProfile &&
-              !data?.profile?.signless)) && (
+
+          {/* todo for some reason sponsored is showing false , while the enable signless shows it is already signleless, wait for fix from lens team meanwhile remove the ability to signless */}
+          {!isAuthenticated && (
+            // (isAuthenticated && !authenticatedUser?.sponsored)) && (
             <Button
               variant="contained"
               onClick={handleOpen}
@@ -91,13 +91,12 @@ const LoginButton = () => {
                 borderRadius: '12px'
               }}
             >
-              {data?.type === SessionType.WithProfile ? 'Go Signless' : 'Login'}
+              {isAuthenticated ? 'Go Signless' : 'Login'}
             </Button>
           )}
           {/* )} */}
         </div>
       )}
-      {/* @ts-ignore */}
       <AvatarWithOptions handleOpen={handleOpen} />
     </div>
   )

@@ -1,93 +1,92 @@
 import React, { useEffect, useRef, useState } from 'react'
-import {
-  AnyPublication,
-  LimitType,
-  Post,
-  PublicationMetadataMainFocusType,
-  PublicationType,
-  usePublications
-} from '@lens-protocol/react-web'
+
 import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
-import { useStreamReplayPublications } from '../../../utils/hooks/useStreamReplayPublications'
-import { usePublicationsStore } from '../../store/usePublications'
 import { Button, IconButton } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
-import { useStreamersWithProfiles } from '../../store/useStreamersWithProfiles'
 import useInnerWidth from '../../../utils/hooks/useInnerWidth'
 import {
-  StreamReplayPublication,
+  StreamReplayPost,
   useIsVerifiedQuery
 } from '../../../graphql/generated'
-import { APP_ID, hideProfilesIds } from '../../../utils/config'
+import { APP_ADDRESS, hideAccountAddresses } from '../../../utils/config'
 import { CATEGORIES } from '../../../utils/categories'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import clsx from 'clsx'
 import StreamCard from './StreamCard'
+import { useStreamersWithAccounts } from '../../store/useStreamersWithAccounts'
+import { usePostsStore } from '../../store/usePosts'
+import {
+  AnyPost,
+  MainContentFocus,
+  PageSize,
+  Post,
+  PostId,
+  PostType,
+  usePosts
+} from '@lens-protocol/react'
+import { useStreamReplayPosts } from '../../../utils/hooks/useStreamReplayPosts'
 const HomePageCards = () => {
   const [showShowMoreButton, setShowShowMoreButton] = useState(true)
   const [showAll, setShowAll] = React.useState(false)
-  const publications = usePublicationsStore((state) => state.publications)
+  const { posts, streamReplayPosts } = usePostsStore((state) => ({
+    posts: state.posts,
+    streamReplayPosts: state.streamReplayPosts
+  }))
   const width = useInnerWidth()
   const [selectedCategory, setSelectedCategory] = React.useState(CATEGORIES[0])
-  const streamReplayPublication = usePublicationsStore(
-    (state) => state.streamReplayPublication
-  )
+
   const {
-    profiles,
-    loading: profilesLoading,
-    streamersWithProfiles
-  } = useStreamersWithProfiles((state) => {
+    accounts,
+    loading: accountsLoading,
+    streamersWithAccounts
+  } = useStreamersWithAccounts((state) => {
     return {
-      profiles: state.profilesFromPublicReplays,
+      accounts: state.accountsFromPublicReplays,
       loading: state.loading,
-      streamersWithProfiles: state.streamersWithProfiles
+      streamersWithAccounts: state.streamersWithAccounts
     }
   })
 
-  const profilesMap = new Map(profiles?.map((p) => [p?.id, p]))
+  const accountsMap = new Map(accounts?.map((a) => [a?.address, a]))
 
   const isMobile = useIsMobile()
 
-  const publicationsMap = new Map(publications?.map((p) => [p?.id, p]))
+  const postsMap = new Map(posts?.map((p) => [p?.id, p]))
 
-  const filteredPublications =
-    streamReplayPublication?.streamReplayPublications?.streamReplayPublications?.filter(
-      (p) => {
-        const post = p?.publicationId
-          ? // @ts-ignore
-            publicationsMap.get(p?.publicationId)
-          : null
+  const filteredPosts =
+    streamReplayPosts?.streamReplayPosts?.streamReplayPosts?.filter((p) => {
+      const post = p?.postId
+        ? // @ts-ignore
+          postsMap.get(p?.postId)
+        : null
 
-        if (p?.publicationId && !post) return false
+      if (p?.postId && !post) return false
 
-        if (selectedCategory?.tags?.length > 0) {
-          return (
-            post?.__typename === 'Post' &&
-            post?.metadata?.tags?.some((tag) =>
-              selectedCategory?.tags?.includes(tag)
-            )
+      if (selectedCategory?.tags?.length > 0) {
+        return (
+          post?.__typename === 'Post' &&
+          // @ts-ignore
+          post?.metadata?.tags &&
+          // @ts-ignore
+          post?.metadata?.tags?.some((tag) =>
+            selectedCategory?.tags?.includes(tag)
           )
-        }
-
-        return true
+        )
       }
-    )
+
+      return true
+    })
 
   // for clips
-
-  const { data, loading } = usePublications({
-    where: {
-      publicationTypes: [PublicationType.Post, PublicationType.Quote],
+  const { data, loading } = usePosts({
+    filter: {
+      postTypes: [PostType.Root],
+      apps: [APP_ADDRESS],
       metadata: {
-        mainContentFocus: [
-          PublicationMetadataMainFocusType.ShortVideo,
-          PublicationMetadataMainFocusType.Video
-        ],
-        // @ts-ignore
-        publishedOn: [APP_ID],
+        mainContentFocus: [MainContentFocus.Video, MainContentFocus.ShortVideo],
         tags:
           selectedCategory?.tags?.length > 0
             ? {
@@ -96,40 +95,63 @@ const HomePageCards = () => {
             : undefined
       }
     },
-    limit: LimitType.TwentyFive
+    pageSize: PageSize.Ten
   })
+
+  const filteredPostsClips =
+    data?.items?.filter(
+      (p) =>
+        p.__typename === 'Post' && p.metadata?.__typename === 'VideoMetadata'
+    ) || []
 
   const { data: isVerified } = useIsVerifiedQuery({
     variables: {
-      profileIds: data?.map((p) => p.by?.id)
+      accountAddresses: filteredPostsClips?.map((p) => p.author?.address)
     }
   })
 
   const verifiedMap = new Map(
-    isVerified?.isVerified?.map((v) => [v?.profileId, v?.isVerified ?? false])
+    isVerified?.isVerified?.map((v) => [
+      v?.accountAddress,
+      v?.isVerified ?? false
+    ])
   )
 
   // add type streamClips to data
-  const streamClips =
-    data?.map((post) => {
-      return {
-        ...post,
-        type: 'streamClips'
-      }
-    }) ?? []
+  const streamClips = React.useMemo(() => {
+    return (
+      filteredPostsClips?.map((post) => {
+        return {
+          ...post,
+          type: 'streamClips'
+        }
+      }) ?? []
+    )
+  }, [filteredPostsClips])
 
-  const streamReplays =
-    filteredPublications?.map((post) => {
-      return {
-        ...post,
-        type: 'streamReplays'
-      }
-    }) ?? []
+  const streamReplays = React.useMemo(() => {
+    return (
+      filteredPosts?.map((post) => {
+        return {
+          ...post,
+          timestamp: post?.createdAt,
+          type: 'streamReplays'
+        }
+      }) ?? []
+    )
+  }, [filteredPosts])
 
-  const combinedData = [...streamReplays, ...streamClips].sort(
-    (a, b) =>
-      new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
-  )
+  const combinedData = React.useMemo(() => {
+    if (!streamReplays.length && !streamClips.length) {
+      return []
+    }
+
+    return [...streamReplays, ...streamClips].sort(
+      (a, b) =>
+        new Date(b?.timestamp || 0).getTime() -
+        new Date(a?.timestamp || 0).getTime()
+    )
+  }, [streamReplays, streamClips])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [isOverflowingLeft, setIsOverflowingLeft] = useState(false)
@@ -167,8 +189,8 @@ const HomePageCards = () => {
   const lengthToShow = isMobile
     ? 9
     : width < 1536
-      ? Math.max(12 - (streamersWithProfiles?.length ?? 0), 0)
-      : Math.max(16 - (streamersWithProfiles?.length ?? 0), 0)
+      ? Math.max(12 - (streamersWithAccounts?.length ?? 0), 0)
+      : Math.max(16 - (streamersWithAccounts?.length ?? 0), 0)
 
   const renderLoadingCards = () => {
     // Create an array of 8 elements and map over it
@@ -237,79 +259,78 @@ const HomePageCards = () => {
 
         {/* live streams */}
         {selectedCategory?.name === 'None' &&
-          streamersWithProfiles?.map((streamer) => {
-            if (hideProfilesIds.includes(streamer.profileId)) {
+          streamersWithAccounts?.map((streamer) => {
+            if (hideAccountAddresses.includes(streamer.accountAddress)) {
               return null
             }
-            return <StreamCard key={streamer?.profileId} streamer={streamer} />
+            return (
+              <StreamCard key={streamer?.accountAddress} streamer={streamer} />
+            )
           })}
 
         {/* live streams replay, clips and videos */}
-        {!loading &&
-        !profilesLoading &&
-        streamReplayPublication?.streamReplayPublications
-          ?.streamReplayPublications &&
-        streamReplayPublication?.streamReplayPublications
-          ?.streamReplayPublications?.length > 0 &&
-        combinedData &&
-        combinedData?.length > 0
-          ? combinedData
-              ?.slice(0, showAll ? combinedData?.length : lengthToShow)
-              ?.map((post) => {
-                if (post?.type === 'streamClips') {
-                  // @ts-ignore
-                  if (hideProfilesIds.includes(post?.by?.id)) {
-                    return null
-                  }
-                  return (
-                    <HomeVideoCard
-                      // @ts-ignore
-                      premium={verifiedMap.get(post?.by?.id)}
-                      // @ts-ignore
-                      key={post?.id}
-                      post={post as Post}
-                    />
-                  )
-                }
 
-                // @ts-ignore
-                const publication = post?.publicationId
-                  ? // @ts-ignore
-                    publicationsMap.get(post?.publicationId)
-                  : null
-                // @ts-ignore
-                if (hideProfilesIds.includes(publication?.by?.id)) {
+        {!loading &&
+          !accountsLoading &&
+          combinedData
+            ?.slice(0, showAll ? combinedData?.length : lengthToShow)
+            ?.map((post) => {
+              if (!post) return null
+
+              if (post?.type === 'streamClips' && post?.__typename === 'Post') {
+                if (hideAccountAddresses.includes(post?.author?.address)) {
                   return null
                 }
                 return (
                   <HomeVideoCard
-                    // @ts-ignore
-                    cover={post?.thumbnail}
-                    // @ts-ignore
-                    duration={post?.sourceSegmentsDuration}
-                    // @ts-ignore
-                    premium={!!post?.premium}
-                    // @ts-ignore
-                    key={publication?.id ?? post?.sessionId}
-                    post={publication as Post}
-                    // @ts-ignore
-                    session={
-                      publication
-                        ? undefined
-                        : {
-                            createdAt: post?.createdAt!,
-                            // @ts-ignore
-                            sessionId: post?.sessionId!,
-                            profile: profilesMap.get(
-                              // @ts-ignore
-                              post?.profileId
-                            )
-                          }
-                    }
+                    premium={verifiedMap.get(post?.author?.address)}
+                    key={post?.id}
+                    post={post as Post}
                   />
                 )
-              })
-          : renderLoadingCards()}
+              }
+
+              const streamReplayPost =
+                post?.__typename === 'StreamReplayPost'
+                  ? postsMap.get(post?.postId as PostId)
+                  : null
+              if (
+                post?.__typename === 'Post' &&
+                post?.author?.address &&
+                hideAccountAddresses.includes(post?.author?.address)
+              ) {
+                return null
+              }
+              return (
+                <HomeVideoCard
+                  // @ts-ignore
+                  cover={post?.thumbnail}
+                  // @ts-ignore
+                  duration={post?.sourceSegmentsDuration}
+                  // @ts-ignore
+                  premium={!!post?.premium}
+                  // @ts-ignore
+                  key={post?.id ?? post?.sessionId}
+                  post={streamReplayPost as Post}
+                  // @ts-ignore
+                  session={
+                    streamReplayPost
+                      ? undefined
+                      : {
+                          createdAt: post?.timestamp!,
+                          // @ts-ignore
+                          sessionId: post?.sessionId!,
+                          account: accountsMap.get(
+                            // @ts-ignore
+                            post?.accountAddress
+                          )
+                        }
+                  }
+                />
+              )
+            })}
+
+        {(loading || accountsLoading) && <>{renderLoadingCards()}</>}
 
         {!showAll && showShowMoreButton && (
           <div className="w-full centered-row -mt-4">
@@ -329,56 +350,50 @@ const HomePageCards = () => {
   )
 }
 
-const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
+const AccountsHomeCard = ({ accountAddress }: { accountAddress: string }) => {
   const [skip, setSkip] = useState(0)
-  const { loading, publications, streamReplayPublication } =
-    useStreamReplayPublications({
-      profileId: profileId,
-      skip: skip
-    })
+  const { loading, posts, streamReplayPosts } = useStreamReplayPosts({
+    accountAddress,
+    skip: skip
+  })
 
-  const [allStreamReplayPublications, setAllStreamReplayPublications] =
-    useState<StreamReplayPublication[]>([])
+  const [allStreamReplayPosts, setAllStreamReplayPosts] = useState<
+    StreamReplayPost[]
+  >([])
 
-  const [allPublications, setAllPublications] = useState<AnyPublication[]>([])
+  const [allPosts, setAllPosts] = useState<AnyPost[]>([])
 
   useEffect(() => {
-    // add it to allPublications if it isn't already added
+    // add it to allPosts if it isn't already added
 
-    setAllPublications((prev) => {
-      const newPublications = publications?.filter(
+    setAllPosts((prev) => {
+      const newPosts = posts?.filter(
         (p) => !prev?.some((prevP) => prevP?.id === p?.id)
       )
 
-      if (!newPublications || newPublications?.length === 0) return prev
+      if (!newPosts || newPosts?.length === 0) return prev
 
-      return [...prev, ...newPublications!]
+      return [...prev, ...newPosts!]
     })
-  }, [publications])
+  }, [posts])
 
   useEffect(() => {
     // @ts-ignore
-    setAllStreamReplayPublications((prev) => {
-      const newStreamReplayPublications =
-        streamReplayPublication?.streamReplayPublications?.streamReplayPublications?.filter(
-          (p) =>
-            !prev?.some((prevP) => prevP?.publicationId === p?.publicationId)
+    setAllStreamReplayPosts((prev) => {
+      const newStreamReplayPosts =
+        streamReplayPosts?.streamReplayPosts?.streamReplayPosts?.filter(
+          (p) => !prev?.some((prevP) => prevP?.postId === p?.postId)
         )
 
-      if (
-        !newStreamReplayPublications ||
-        newStreamReplayPublications?.length === 0
-      )
+      if (!newStreamReplayPosts || newStreamReplayPosts?.length === 0)
         return prev
 
-      return [...prev, ...newStreamReplayPublications!]
+      return [...prev, ...newStreamReplayPosts!]
     })
-  }, [
-    streamReplayPublication?.streamReplayPublications?.streamReplayPublications
-  ])
+  }, [streamReplayPosts?.streamReplayPosts?.streamReplayPosts])
 
   const streamReplayMap = new Map(
-    allStreamReplayPublications?.map((p) => [p?.publicationId, p])
+    allStreamReplayPosts?.map((p) => [p?.postId, p])
   )
 
   const loadMoreRef = useRef(null)
@@ -388,10 +403,10 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
       (entries) => {
         if (
           entries[0].isIntersecting &&
-          streamReplayPublication?.streamReplayPublications?.hasMore &&
+          streamReplayPosts?.streamReplayPosts?.hasMore &&
           !loading
         ) {
-          setSkip(streamReplayPublication?.streamReplayPublications?.next)
+          setSkip(streamReplayPosts?.streamReplayPosts?.next)
         }
       },
       { threshold: 1.0 }
@@ -407,16 +422,16 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
       }
     }
   }, [
-    streamReplayPublication?.streamReplayPublications?.hasMore,
+    streamReplayPosts?.streamReplayPosts?.hasMore,
     loading,
-    streamReplayPublication?.streamReplayPublications?.next
+    streamReplayPosts?.streamReplayPosts?.next
   ])
 
   return (
     <div className="w-full">
       {/* @ts-ignore */}
       <div className="flex flex-row flex-wrap w-full gap-y-6">
-        {allPublications?.map((post) => {
+        {allPosts?.map((post) => {
           return (
             <HomeVideoCard
               // @ts-ignore
@@ -430,8 +445,8 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
           )
         })}
 
-        {(streamReplayPublication?.streamReplayPublications?.hasMore ||
-          (!allPublications?.length && loading)) &&
+        {(streamReplayPosts?.streamReplayPosts?.hasMore ||
+          (!allPosts?.length && loading)) &&
           Array.from({ length: 3 }, (_, i) => <LoadingVideoCard key={i} />)}
       </div>
       <div ref={loadMoreRef} className="h-1" />
@@ -439,11 +454,15 @@ const ProfilesHomeCards = ({ profileId }: { profileId: string }) => {
   )
 }
 
-const LiveStreamPublicReplays = ({ profileId }: { profileId?: string }) => {
+const LiveStreamPublicReplays = ({
+  accountAddress
+}: {
+  accountAddress?: string
+}) => {
   return (
     <div className="w-full">
-      {profileId ? (
-        <ProfilesHomeCards profileId={profileId} />
+      {accountAddress ? (
+        <AccountsHomeCard accountAddress={accountAddress} />
       ) : (
         <HomePageCards />
       )}

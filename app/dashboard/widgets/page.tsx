@@ -101,7 +101,7 @@ const Widgets = () => {
           </Link>
         </div>
         <div className="">
-          <Link
+          {/* <Link
             href="/dashboard/widgets/alert-box"
             className="text-p-text no-underline"
           >
@@ -114,13 +114,35 @@ const Widgets = () => {
                 src={ALERT_BOX_PREVIEW_VIDEO}
                 className="w-full"
               />
-              <div className="text-lg pt-2 px-4 font-bold">Alert Box</div>
+              <div className="text-lg pt-2 px-4 font-bold">
+                Alert Box (Comming Soon)
+              </div>
               <div className="text-sm pb-4 px-4 font-semibold text-s-text">
                 Use the alert box to display alerts, such as notifications for
                 new followers and new collects.
               </div>
             </div>
-          </Link>
+          </Link> */}
+
+          <div className="text-p-text no-underline">
+            <div className="shadow-sm bg-p-bg hover:shadow-md rounded-xl cursor-pointer overflow-hidden transition-all ease-in-out duration-250">
+              <video
+                autoPlay
+                muted
+                loop
+                controls={false}
+                src={ALERT_BOX_PREVIEW_VIDEO}
+                className="w-full"
+              />
+              <div className="text-lg pt-2 px-4 font-bold">
+                Alert Box (Comming Soon)
+              </div>
+              <div className="text-sm pb-4 px-4 font-semibold text-s-text">
+                Use the alert box to display alerts, such as notifications for
+                new followers and new collects.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

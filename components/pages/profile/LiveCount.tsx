@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import { AnimatedCounter } from 'react-animated-counter'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
-const LiveCount = ({ profileId }: { profileId: string }) => {
+const LiveCount = ({ accountAddress }: { accountAddress: string }) => {
   const [count, setCount] = React.useState(0)
   const isMobile = useIsMobile()
   const { theme } = useTheme()
@@ -16,19 +16,22 @@ const LiveCount = ({ profileId }: { profileId: string }) => {
 
     newSocket.on('connect', () => {
       setTimeout(() => {
-        newSocket.emit('join-liveCount', profileId)
+        newSocket.emit('join-liveCount', accountAddress)
       }, 1000) // Wait for 1 second before joining the room
     })
 
-    newSocket.on('liveCountUpdate', ({ count, profileId: liveProfileId }) => {
-      if (liveProfileId === profileId) {
-        setCount(count)
+    newSocket.on(
+      'liveCountUpdate',
+      ({ count, accountAddress: liveAccountAddress }) => {
+        if (liveAccountAddress === accountAddress) {
+          setCount(count)
+        }
       }
-    })
+    )
 
     // newSocket.on('connect', () => {
     //   setTimeout(() => {
-    //     newSocket.emit('join', profileId)
+    //     newSocket.emit('join', accountAddress)
     //   }, 1000) // Wait for 1 second before joining the room
     // })
 

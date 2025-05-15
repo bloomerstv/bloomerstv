@@ -6,14 +6,12 @@ import {
   useUpdateMyStreamMutation
 } from '../../../../graphql/generated'
 import MyStreamEditButton from './MyStreamEditButton'
-import { SessionType, useSession } from '@lens-protocol/react-web'
 import { MenuItem, Select } from '@mui/material'
 import clsx from 'clsx'
 import StartLoadingPage from '../../loading/StartLoadingPage'
 import toast from 'react-hot-toast'
 import { useMyPreferences } from '../../../store/useMyPreferences'
 import LiveVideoComponent from './LiveVideoComponent'
-import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
 import { CATEGORIES_LIST } from '../../../../utils/categories'
 // import { stringToLength } from '../../../../utils/stringToLength'
 import StreamHealth from './StreamHealth'
@@ -21,6 +19,7 @@ import StreamKey from './StreamKey'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import dayjs, { Dayjs } from 'dayjs'
 import Timer from '../../../common/Timer'
+import useSession from '../../../../utils/hooks/useSession'
 
 // import Link from 'next/link'
 const LiveStreamEditor = () => {
@@ -29,7 +28,7 @@ const LiveStreamEditor = () => {
 
   const [updateMyStream] = useUpdateMyStreamMutation()
 
-  const { data: session } = useSession()
+  const { isAuthenticated } = useSession()
   const { data, error, refetch, loading } = useMyStreamQuery({
     pollInterval: 60000,
     fetchPolicy: 'no-cache'
@@ -68,7 +67,7 @@ const LiveStreamEditor = () => {
 
   const myStream = data?.myStream
 
-  if (session?.type !== SessionType.WithProfile) {
+  if (!isAuthenticated) {
     return <div>You must be logged in to stream.</div>
   }
 
@@ -107,12 +106,12 @@ const LiveStreamEditor = () => {
                 />
               </div>
 
-              <div className="space-y-1">
+              {/* <div className="space-y-1">
                 <div className="text-s-text font-bold text-md">
                   Collect Preview
                 </div>
                 <CollectSettingButton />
-              </div>
+              </div> */}
 
               {/* select stream replay view type and set */}
 

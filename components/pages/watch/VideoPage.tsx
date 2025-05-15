@@ -1,10 +1,4 @@
-import {
-  Post,
-  SessionType,
-  useProfile,
-  useSession
-} from '@lens-protocol/react-web'
-import React, { memo, useEffect } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import getPublicationData from '../../../utils/lib/getPublicationData'
 import ProfileInfoWithStream from '../profile/ProfileInfoWithStream'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
@@ -19,6 +13,8 @@ import { useStreamReplayRecordingQuery } from '../../../graphql/generated'
 import Player from '../../common/Player/Player'
 import { getCategoryForTag } from '../../../utils/categories'
 import Link from 'next/link'
+import { Post, useAccount } from '@lens-protocol/react'
+import useSession from '../../../utils/hooks/useSession'
 const VideoPage = ({
   post,
   sessionId
@@ -27,23 +23,35 @@ const VideoPage = ({
   sessionId?: string
 }) => {
   const isMobile = useIsMobile()
-  const { data: session } = useSession()
+  const { isAuthenticated, account: sessionAccount } = useSession()
+  const [recordingAccountAddress, setRecordingAccountAddress] = useState<
+    string | undefined
+  >(undefined)
 
   const asset = post ? getPublicationData(post?.metadata)?.asset : null
 
   const { data, error } = useStreamReplayRecordingQuery({
     variables: {
-      publicationId: post?.id,
+      postId: post?.id,
       sessionId: sessionId
     },
     skip:
-      (post && post?.metadata?.__typename !== 'LiveStreamMetadataV3') ||
+      (post &&
+        post?.__typename === 'Post' &&
+        post?.metadata?.__typename !== 'LivestreamMetadata') ||
       (!post?.id && !sessionId)
   })
 
-  const { data: profile } = useProfile({
-    // @ts-ignore
-    forProfileId: data?.streamReplayRecording?.profileId
+  // Update address in an effect to avoid render-time state updates
+  useEffect(() => {
+    if (data?.streamReplayRecording?.accountAddress) {
+      setRecordingAccountAddress(data.streamReplayRecording.accountAddress)
+    }
+  }, [data?.streamReplayRecording?.accountAddress])
+
+  // Only use useAccount when recordingAccountAddress is stable
+  const { data: account } = useAccount({
+    address: recordingAccountAddress
   })
 
   useEffect(() => {
@@ -56,7 +64,6 @@ const VideoPage = ({
 
     return (
       <Player
-        // @ts-ignore
         src={data?.streamReplayRecording?.recordingUrl}
         className="w-full"
         muted={false}
@@ -71,7 +78,6 @@ const VideoPage = ({
     if (!asset?.uri) return null
     return (
       <Player
-        // @ts-ignore
         src={asset?.uri}
         className="w-full"
         muted={false}
@@ -82,8 +88,8 @@ const VideoPage = ({
 
   if (
     post &&
-    post?.metadata?.__typename !== 'VideoMetadataV3' &&
-    post?.metadata?.__typename !== 'LiveStreamMetadataV3'
+    post?.metadata?.__typename !== 'VideoMetadata' &&
+    post?.metadata?.__typename !== 'LivestreamMetadata'
   ) {
     return (
       <div className="centered">
@@ -94,10 +100,8 @@ const VideoPage = ({
 
   return (
     <div className="h-full w-full">
-      {/* @ts-ignore */}
-
       <div className="sm:rounded-xl  overflow-hidden ">
-        {post?.metadata?.__typename === 'LiveStreamMetadataV3' ||
+        {post?.metadata?.__typename === 'LivestreamMetadata' ||
         data?.streamReplayRecording?.recordingUrl ? (
           <>
             {/* //todo here check if there is a recording is allowd to  from api, fetch it and show it here instead of liveUrl  */}
@@ -119,8 +123,7 @@ const VideoPage = ({
         )}
       </div>
       <ProfileInfoWithStream
-        // @ts-ignore
-        profile={post?.by ?? profile}
+        account={post?.author || account!}
         post={post}
         premium={data?.streamReplayRecording?.premium}
       />
@@ -131,15 +134,18 @@ const VideoPage = ({
 
           <div className="">
             {`${
-              post?.metadata?.__typename === 'LiveStreamMetadataV3' ||
+              post?.metadata?.__typename === 'LivestreamMetadata' ||
               (!post && sessionId)
                 ? 'Streamed'
                 : 'Posted'
-            } ${timeAgo(post?.createdAt || data?.streamReplayRecording?.createdAt)}`}{' '}
+            } ${timeAgo(post?.timestamp || data?.streamReplayRecording?.createdAt)}`}{' '}
           </div>
+          {/* @ts-ignore */}
           {post?.metadata?.tags?.[0] &&
+            // @ts-ignore
             getCategoryForTag(post?.metadata?.tags?.[0]) && (
               <div className="text-p-text bg-p-bg sm:bg-p-hover rounded-lg px-2 sm:px-3 py-0.5 sm:py-1 text-xs">
+                {/* @ts-ignore */}
                 {getCategoryForTag(post?.metadata?.tags?.[0])}
               </div>
             )}
@@ -166,8 +172,8 @@ const VideoPage = ({
           </Markup>
         ) : (
           <div>
-            {session?.type === SessionType.WithProfile &&
-              session?.profile?.id === profile?.id && (
+            {isAuthenticated &&
+              sessionAccount?.address === account?.address && (
                 <span className="text-2xl">
                   You can create a lens post for your untitled streams from{' '}
                   <span>
@@ -194,7 +200,7 @@ const VideoPage = ({
       {!isMobile && post && (
         <div className="border-t border-p-border mt-8 mb-4 mx-8">
           <div className="text-xl font-semibold my-4">{`${post?.stats?.comments} Comment${post?.stats?.comments > 1 ? 's' : ''}`}</div>
-          <CommentSection publication={post} />
+          <CommentSection post={post} />
         </div>
       )}
       {isMobile && <OtherVideosRecommendations className="py-4" />}

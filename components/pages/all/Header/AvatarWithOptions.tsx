@@ -1,4 +1,3 @@
-import { SessionType, useLogout, useSession } from '@lens-protocol/react-web'
 import React from 'react'
 import getAvatar from '../../../../utils/lib/getAvatar'
 import {
@@ -22,19 +21,20 @@ import useIsMobile from '../../../../utils/hooks/useIsMobile'
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import getStampFyiURL from '../../../../utils/getStampFyiURL'
-import { getShortAddress } from '../../../../utils/lib/getShortAddress'
 import useEns from '../../../../utils/hooks/useEns'
 import LoadingImage from '../../../ui/LoadingImage'
 import AppLinksRow from '../../../common/AppLinksRow'
+import useSession from '../../../../utils/hooks/useSession'
+import { useLogout } from '@lens-protocol/react'
 const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const isMobile = useIsMobile()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
 
-  const { data } = useSession()
-  const { ensAvatar, ensName } = useEns({
-    address: data?.type === SessionType.JustWallet ? data?.address : null
+  const { isAuthenticated, account } = useSession()
+  const { ensAvatar } = useEns({
+    address: isAuthenticated && !account?.username ? account?.owner : null
   })
 
   const handleClick = (event) => {
@@ -61,20 +61,16 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   }
 
   const { push } = useRouter()
-  if (data?.type === SessionType.Anonymous) return null
+  if (!isAuthenticated) return null
 
-  const avatar =
-    data?.type === SessionType.WithProfile
-      ? getAvatar(data?.profile)
-      : (ensAvatar ?? getStampFyiURL(data?.address!))
+  const avatar = isAuthenticated
+    ? getAvatar(account!)
+    : (ensAvatar ?? getStampFyiURL(account?.owner!))
 
-  const handle =
-    data?.type === SessionType.WithProfile
-      ? formatHandle(data?.profile)
-      : (ensName ?? getShortAddress(data?.address!))
-
-  const profile =
-    data?.type === SessionType.WithProfile ? data?.profile : undefined
+  const handle = account?.username?.localName
+  // data?.type === SessionType.WithProfile
+  //   ? formatHandle(data?.profile)
+  //   : (ensName ?? getShortAddress(data?.address!))
 
   if (isMobile) {
     return (
@@ -117,8 +113,8 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
             <MenuList>
               <MenuItem
                 onClick={() => {
-                  if (!profile) return
-                  push(`/${formatHandle(profile)}`)
+                  if (!account) return
+                  push(`/${formatHandle(account)}`)
                   handleClose()
                 }}
               >
@@ -130,7 +126,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
                 {handle}
               </MenuItem>
 
-              {profile && (
+              {account && (
                 <MenuItem onClick={handleSwitchProfile}>
                   <ListItemIcon>
                     <SwapHorizIcon fontSize="small" />
@@ -140,7 +136,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
               )}
               {/* <Divider /> */}
 
-              {!isMobile && profile && (
+              {!isMobile && account && (
                 <>
                   {/* <MenuItem
                 onClick={() => {
@@ -246,8 +242,8 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
         <MenuList>
           <MenuItem
             onClick={() => {
-              if (!profile) return
-              push(`/${formatHandle(profile)}`)
+              if (!account) return
+              push(`/${formatHandle(account)}`)
               handleClose()
             }}
           >
@@ -259,7 +255,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
             {handle}
           </MenuItem>
 
-          {profile && (
+          {account && (
             <MenuItem onClick={handleSwitchProfile}>
               <ListItemIcon>
                 <SwapHorizIcon fontSize="small" />
@@ -269,7 +265,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
           )}
           <Divider />
 
-          {!isMobile && profile && (
+          {!isMobile && account && (
             <>
               <MenuItem
                 onClick={() => {

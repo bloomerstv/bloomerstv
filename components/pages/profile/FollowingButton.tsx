@@ -1,4 +1,3 @@
-import { Profile, SessionType, useSession } from '@lens-protocol/react-web'
 import React from 'react'
 import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
@@ -17,45 +16,47 @@ import NotificationsOffIcon from '@mui/icons-material/NotificationsOff'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import {
   useAddNotificationSubscriberToStreamerMutation,
-  useIsSubcribedNotificationForStreamerQuery,
+  useIsSubscribedNotificationForStreamerQuery,
   useRemoveNotificationSubscriberFromStreamerMutation
 } from '../../../graphql/generated'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
+import { Account } from '@lens-protocol/react'
+import useSession from '../../../utils/hooks/useSession'
 
 const FollowingButton = ({
-  profile,
+  account,
   isFollowing,
   followLoading,
   unFollowing,
   handleFollow,
   handleUnFollow
 }: {
-  profile: Profile
+  account: Account
   isFollowing: boolean
   followLoading: boolean
   unFollowing: boolean
   handleFollow: () => Promise<void>
   handleUnFollow: () => Promise<void>
 }) => {
-  const { data: mySession } = useSession()
+  const { isAuthenticated, account: sessionAccount } = useSession()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const isMenuOpen = Boolean(anchorEl)
   const { theme } = useTheme()
   const { data: isSubscribed, refetch } =
-    useIsSubcribedNotificationForStreamerQuery({
+    useIsSubscribedNotificationForStreamerQuery({
       variables: {
-        profileId: profile.id
+        accountAddress: account.address
       },
-      skip: mySession?.type !== SessionType.WithProfile || !profile.id
+      skip: !isAuthenticated || !account.address
     })
 
   const [addSubscriber] = useAddNotificationSubscriberToStreamerMutation({
     variables: {
-      profileId: profile.id
+      accountAddress: account.address
     },
     onCompleted: () => {
       toast.success(
-        `You will recieve notification when ${formatHandle(profile)} goes live!`
+        `You will recieve notification when ${formatHandle(account)} goes live!`
       )
       refetch()
     }
@@ -64,11 +65,11 @@ const FollowingButton = ({
   const [removeSubscriber] =
     useRemoveNotificationSubscriberFromStreamerMutation({
       variables: {
-        profileId: profile.id
+        accountAddress: account.address
       },
       onCompleted: () => {
         toast.success(
-          `You will no longer recieve notifications from ${formatHandle(profile)}`
+          `You will no longer recieve notifications from ${formatHandle(account)}`
         )
         refetch()
       }
@@ -83,10 +84,7 @@ const FollowingButton = ({
     setAnchorEl(e.currentTarget)
   }
 
-  if (
-    mySession?.type !== SessionType.WithProfile ||
-    mySession?.profile?.id === profile.id
-  ) {
+  if (!isAuthenticated || sessionAccount?.address === account.address) {
     return null
   }
 
@@ -122,12 +120,13 @@ const FollowingButton = ({
         <MenuList className=" rounded-xl">
           <MenuItem
             onClick={async () => {
-              if (isSubscribed?.isSubcribedNotificationForStreamer) return
+              if (isSubscribed?.isSubscribedNotificationForStreamer) return
               await addSubscriber()
+
               handleOptionsClose()
             }}
             sx={{
-              backgroundColor: isSubscribed?.isSubcribedNotificationForStreamer
+              backgroundColor: isSubscribed?.isSubscribedNotificationForStreamer
                 ? theme === 'light'
                   ? 'rgba(0,0,0,0.1)'
                   : 'rgba(255,255,255,0.1)'
@@ -141,16 +140,17 @@ const FollowingButton = ({
           </MenuItem>
           <MenuItem
             onClick={async () => {
-              if (!isSubscribed?.isSubcribedNotificationForStreamer) return
+              if (!isSubscribed?.isSubscribedNotificationForStreamer) return
               await removeSubscriber()
               handleOptionsClose()
             }}
             sx={{
-              backgroundColor: !isSubscribed?.isSubcribedNotificationForStreamer
-                ? theme === 'light'
-                  ? 'rgba(0,0,0,0.1)'
-                  : 'rgba(255,255,255,0.1)'
-                : undefined
+              backgroundColor:
+                !isSubscribed?.isSubscribedNotificationForStreamer
+                  ? theme === 'light'
+                    ? 'rgba(0,0,0,0.1)'
+                    : 'rgba(255,255,255,0.1)'
+                  : undefined
             }}
           >
             <ListItemIcon>
@@ -186,7 +186,7 @@ const FollowingButton = ({
           }}
           className="font-semibold"
           startIcon={
-            isSubscribed?.isSubcribedNotificationForStreamer ? (
+            isSubscribed?.isSubscribedNotificationForStreamer ? (
               <NotificationsActiveIcon fontSize="large" />
             ) : (
               <NotificationsOffIcon fontSize="large" />

@@ -1,20 +1,18 @@
 'use client'
 import React from 'react'
-import { useStreamersWithProfiles } from '../../store/useStreamersWithProfiles'
+import { useStreamersWithAccounts } from '../../store/useStreamersWithAccounts'
 import { useOfflineStreamersQuery } from '../../../graphql/generated'
-import {
-  LimitType,
-  SessionType,
-  useProfiles,
-  useSession
-} from '@lens-protocol/react-web'
+
 import SingleHorizontalStreamerDiv from './SingleHorizontalStreamerDiv'
+import useSession from '../../../utils/hooks/useSession'
+import { useAccountsBulk } from '@lens-protocol/react'
 
 const StreamerHorizontalDiv = () => {
-  const { data } = useSession()
-  const { streamersWithProfiles, loading: streamersLoading } =
-    useStreamersWithProfiles((state) => ({
-      streamersWithProfiles: state.streamersWithProfiles,
+  const { isAuthenticated, authenticatedUser } = useSession()
+
+  const { streamersWithAccounts, loading: streamersLoading } =
+    useStreamersWithAccounts((state) => ({
+      streamersWithAccounts: state.streamersWithAccounts,
       loading: state.loading
     }))
   const { data: offlineStreamers, loading: offlineStreamersLoading } =
@@ -25,24 +23,23 @@ const StreamerHorizontalDiv = () => {
         (a, b) => b?.lastSeen - a?.lastSeen
       )
     : []
-  const { data: offlineProfiles, loading: offlineProfilesLoading } =
-    useProfiles({
-      where: {
-        // @ts-ignore
-        profileIds:
-          sortedOfflineStreamers?.map((streamer) => streamer?.profileId) ?? []
-      },
-      limit: LimitType.Fifty
+
+  const { data: offlineAccounts, loading: offlineAccountsLoading } =
+    useAccountsBulk({
+      addresses:
+        sortedOfflineStreamers
+          ?.map((streamer) => streamer?.accountAddress)
+          ?.slice(0, 50) ?? []
     })
 
-  const getOfflineVerified = (profileId: string) => {
+  const getOfflineVerified = (accountAddress: string) => {
     return sortedOfflineStreamers?.find(
-      (streamer) => streamer?.profileId === profileId
+      (streamer) => streamer?.accountAddress === accountAddress
     )?.premium
   }
 
   const loading =
-    streamersLoading || offlineStreamersLoading || offlineProfilesLoading
+    streamersLoading || offlineStreamersLoading || offlineAccountsLoading
 
   return (
     <div className="w-full p-4 no-scrollbar overflow-y-auto flex flex-row items-center gap-x-3">
@@ -57,29 +54,26 @@ const StreamerHorizontalDiv = () => {
             </div>
           ))}
 
-      {streamersWithProfiles?.map((streamer) => {
+      {streamersWithAccounts?.map((streamer) => {
         return (
           <SingleHorizontalStreamerDiv
-            key={streamer?.profileId}
-            profile={streamer?.profile}
+            key={streamer?.accountAddress}
+            account={streamer?.account}
             premium={streamer?.premium ?? false}
             live={true}
           />
         )
       })}
 
-      {offlineProfiles?.map((profile) => {
-        if (
-          data?.type === SessionType.WithProfile &&
-          profile?.id === data?.profile?.id
-        )
+      {offlineAccounts?.map((account) => {
+        if (isAuthenticated && account?.address === authenticatedUser?.address)
           return null
         return (
           <SingleHorizontalStreamerDiv
-            key={profile?.id}
-            profile={profile}
+            key={account?.address}
+            account={account}
             live={false}
-            premium={getOfflineVerified(profile?.id) ?? false}
+            premium={getOfflineVerified(account?.address) ?? false}
           />
         )
       })}

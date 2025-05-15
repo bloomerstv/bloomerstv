@@ -1,7 +1,7 @@
-import { Erc20Amount, RecipientWithSplit } from '@lens-protocol/react-web'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { SettingRecipientType } from '../common/Collect/CollectSettingPopUp'
+// import { SettingRecipientType } from '../common/Collect/CollectSettingPopUp'
+import { Erc20Amount } from '@lens-protocol/react'
 
 interface CollectPreferencesStore {
   amount?: Erc20Amount
@@ -10,16 +10,16 @@ interface CollectPreferencesStore {
   disableCollect: boolean
   followerOnly: boolean
   numberOfDays?: number
-  recipients?: RecipientWithSplit[]
-  settingRecipients?: SettingRecipientType[]
+  // recipients?: RecipientWithSplit[]
+  // settingRecipients?: SettingRecipientType[]
   setAmount: (amount?: Erc20Amount) => void
   setCollectLimit: (collectLimit?: number) => void
   setReferalFee: (referalFee?: number) => void
   setDisableCollect: (disableCollect: boolean) => void
   setFollowerOnly: (followerOnly: boolean) => void
   setNumberOfDays: (numberOfDays?: number) => void
-  setRecipients: (recipients?: RecipientWithSplit[]) => void
-  setSettingRecipients: (settingRecipients: SettingRecipientType[]) => void
+  // setRecipients: (recipients?: RecipientWithSplit[]) => void
+  // setSettingRecipients: (settingRecipients: SettingRecipientType[]) => void
 }
 
 export const useCollectPreferences = create<CollectPreferencesStore>(
@@ -31,19 +31,19 @@ export const useCollectPreferences = create<CollectPreferencesStore>(
       disableCollect: false,
       numberOfDays: undefined,
       followerOnly: true,
-      recipients: undefined,
-      settingRecipients: [],
+      // recipients: undefined,
+      // settingRecipients: [],
       setAmount: (amount?: Erc20Amount) => set(() => ({ amount })),
       setCollectLimit: (collectLimit?: number) => set(() => ({ collectLimit })),
       setReferalFee: (referalFee?: number) => set(() => ({ referalFee })),
       setDisableCollect: (disableCollect: boolean) =>
         set(() => ({ disableCollect })),
       setNumberOfDays: (numberOfDays?: number) => set(() => ({ numberOfDays })),
-      setFollowerOnly: (followerOnly: boolean) => set(() => ({ followerOnly })),
-      setRecipients: (recipients?: RecipientWithSplit[]) =>
-        set(() => ({ recipients })),
-      setSettingRecipients: (settingRecipients: SettingRecipientType[]) =>
-        set(() => ({ settingRecipients }))
+      setFollowerOnly: (followerOnly: boolean) => set(() => ({ followerOnly }))
+      // setRecipients: (recipients?: RecipientWithSplit[]) =>
+      //   set(() => ({ recipients })),
+      // setSettingRecipients: (settingRecipients: SettingRecipientType[]) =>
+      //   set(() => ({ settingRecipients }))
     }),
     {
       name: 'collectPreferences',
@@ -54,9 +54,9 @@ export const useCollectPreferences = create<CollectPreferencesStore>(
           referalFee: state.referalFee,
           disableCollect: state.disableCollect,
           followerOnly: state.followerOnly,
-          numberOfDays: state.numberOfDays,
-          recipients: state.recipients,
-          settingRecipients: state.settingRecipients
+          numberOfDays: state.numberOfDays
+          // recipients: state.recipients,
+          // settingRecipients: state.settingRecipients
         }
       }
     }

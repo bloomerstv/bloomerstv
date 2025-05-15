@@ -1,10 +1,3 @@
-import {
-  Comment,
-  PublicationReactionType,
-  SessionType,
-  useReactionToggle,
-  useSession
-} from '@lens-protocol/react-web'
 import React, { useEffect, useState } from 'react'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
@@ -17,38 +10,57 @@ import CommentIcon from '@mui/icons-material/Comment'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import clsx from 'clsx'
 import { humanReadableDateTime, timeAgo } from '../../../utils/helpers'
+import useSession from '../../../utils/hooks/useSession'
+import { Post, PostReactionType } from '@lens-protocol/react'
+import useAddReaction from '../../../utils/hooks/lens/useAddReaction'
+import useUndoReaction from '../../../utils/hooks/lens/useUndoReaction'
 
 const CommentRow = ({
   comment,
   level,
   className
 }: {
-  comment: Comment
+  comment: Post
   level: number
   className?: string
 }) => {
-  const { data } = useSession()
+  const { isAuthenticated } = useSession()
   const [showComments, setShowComments] = useState(false)
   const [liked, setLiked] = useState<Boolean>(false)
   const [likesCount, setLikeCount] = useState<number>(comment?.stats?.upvotes)
   const isMobile = useIsMobile()
 
   useEffect(() => {
-    setLiked(comment?.operations?.hasUpvoted)
+    setLiked(comment?.operations?.hasUpvoted ?? false)
     setLikeCount(comment?.stats?.upvotes)
   }, [comment?.stats?.upvotes, comment?.operations?.hasUpvoted])
   // @ts-ignore
   const content = comment?.metadata?.content
 
-  const { execute } = useReactionToggle()
+  const { execute: addReaction } = useAddReaction()
+  const { execute: undoReaction } = useUndoReaction()
+
   const handleLike = async () => {
     try {
-      if (data?.type !== SessionType.WithProfile) return
-      setLiked(!liked)
-      await execute({
-        publication: comment,
-        reaction: PublicationReactionType.Upvote
-      })
+      if (!isAuthenticated) return
+
+      console.log('liked', liked)
+
+      if (liked) {
+        setLiked(false)
+        setLikeCount(likesCount - 1)
+        await undoReaction({
+          post: comment?.id,
+          reaction: PostReactionType.Upvote
+        })
+      } else {
+        setLikeCount(likesCount + 1)
+        setLiked(true)
+        await addReaction({
+          post: comment?.id,
+          reaction: PostReactionType.Upvote
+        })
+      }
     } catch (e) {
       console.log(e)
     }
@@ -66,15 +78,15 @@ const CommentRow = ({
     <div
       className={clsx('flex flex-row pl-2.5 py-3 gap-x-3 w-full', className)}
     >
-      <img src={getAvatar(comment?.by)} className="w-8 h-8 rounded-full" />
+      <img src={getAvatar(comment?.author)} className="w-8 h-8 rounded-full" />
       <div className="flex flex-col w-full">
         <div className="start-center-row gap-x-2">
           <div className="text-sm sm:text-base font-semibold">
-            {formatHandle(comment?.by)}
+            {formatHandle(comment?.author)}
           </div>
-          <Tooltip title={humanReadableDateTime(comment?.createdAt)} arrow>
+          <Tooltip title={humanReadableDateTime(comment?.timestamp)} arrow>
             <div className="text-sm sm:text-base font-semibold text-s-text cursor-pointer">
-              {timeAgo(comment?.createdAt)}
+              {timeAgo(comment?.timestamp)}
             </div>
           </Tooltip>
         </div>
@@ -123,8 +135,7 @@ const CommentRow = ({
 
         {showComments && (
           <CommentSection
-            // @ts-ignore
-            publication={comment}
+            post={comment}
             className="ml-[-10px]"
             level={level + 1}
           />
