@@ -1,6 +1,5 @@
 import { create } from 'zustand'
-import { v4 as uuid } from 'uuid'
-import { ContentType, SendMessageType } from '../common/LiveChat/LiveChatType'
+import { SendMessageType } from '../common/LiveChat/LiveChatType'
 
 type SendMessagePayloadFunction = (message: SendMessageType) => void
 

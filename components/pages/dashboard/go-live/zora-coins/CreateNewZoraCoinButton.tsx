@@ -5,8 +5,7 @@ import {
   CircularProgress,
   Box,
   Typography,
-  Alert,
-  InputAdornment
+  Alert
 } from '@mui/material'
 import ModalWrapper from '../../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
@@ -52,9 +51,6 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  // Contract state
-  const [coinUri, setCoinUri] = useState<string | null>(null)
   const [coinAddress, setCoinAddress] = useState<Address | null>(null)
 
   const {
@@ -133,8 +129,6 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
         throw new Error('Failed to upload metadata')
       }
 
-      setCoinUri(metadataUploadResult.url)
-
       // Create coin parameters
       const coinParams: CreateCoinArgs = {
         name,
@@ -175,7 +169,6 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
     setUploadProgress(0)
     setIsUploading(false)
     setError(null)
-    setCoinUri(null)
     setCoinAddress(null)
   }
 
