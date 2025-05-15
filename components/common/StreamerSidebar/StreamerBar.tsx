@@ -17,6 +17,7 @@ import Countdown from 'react-countdown'
 import { Tooltip } from '@mui/material'
 import { StreamerWithAccount } from '../../store/useStreamersWithAccounts'
 import useAccountStats from '../../../utils/hooks/lens/useAccountStats'
+import { stringToLength } from '../../../utils/stringToLength'
 const StreamerBar = ({ streamer }: { streamer: StreamerWithAccount }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
@@ -56,7 +57,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithAccount }) => {
           <div className="ml-2 space-y-2">
             <div className="start-center-row gap-x-1 leading-4">
               <div className="text-s-text font-bold ">
-                {formatHandle(streamer?.account)}
+                {stringToLength(formatHandle(streamer?.account), 14)}
               </div>
 
               {streamer?.premium && <VerifiedBadge />}

@@ -163,7 +163,7 @@ const StreamerSidebar = () => {
     <div
       className={clsx(
         'h-full bg-s-bg overflow-auto no-scrollbar',
-        !minimize ? 'sm:w-[250px] sm:py-2 pb-4' : 'py-2',
+        !minimize ? 'sm:w-[280px] sm:py-2 pb-4' : 'py-2',
         isMobile && 'px-1'
       )}
     >
