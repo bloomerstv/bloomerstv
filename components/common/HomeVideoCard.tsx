@@ -39,15 +39,18 @@ const HomeVideoCard = ({
   if (!post && !session) return null
 
   return (
-    <Link
-      prefetch
+    <div
       className={clsx(
         'no-underline text-p-text group w-full sm:px-2 unselectable',
         pathname === '/' ? 'lg:w-1/3 2xl:w-1/4' : 'lg:w-1/3'
       )}
-      href={
-        post ? `/watch/${post?.slug}` : `/watch/session/${session?.sessionId}`
-      }
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        push(
+          post ? `/watch/${post?.slug}` : `/watch/session/${session?.sessionId}`
+        )
+      }}
     >
       <div className="w-full aspect-video relative mb-2 overflow-hidden sm:rounded-xl">
         <LoadingImage
@@ -147,7 +150,7 @@ const HomeVideoCard = ({
             )}
         </div>
       </div>
-    </Link>
+    </div>
   )
 }
 
