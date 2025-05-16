@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import React from 'react'
 import getAvatar from '../../utils/lib/getAvatar'
 import formatHandle from '../../utils/lib/formatHandle'
