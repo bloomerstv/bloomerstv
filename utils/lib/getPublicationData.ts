@@ -123,6 +123,13 @@ const getPublicationData = (
     case 'LivestreamMetadata':
       return {
         content: metadata.content,
+        asset: {
+          uri: metadata.liveUrl,
+          type: 'Video',
+          cover: metadata.attachments.find(
+            (attachment) => attachment.__typename === 'MediaImage'
+          )?.item
+        },
         attachments: getAttachmentsData(metadata.attachments)
       }
     default:
