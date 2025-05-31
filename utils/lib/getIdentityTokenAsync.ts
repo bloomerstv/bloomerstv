@@ -53,9 +53,13 @@ export const getIdentityTokenAsync = async (): Promise<null | string> => {
       })
     })
 
-    if (res.status !== 200) return null
-
     const json = await res.json()
+
+    if (!json?.data) {
+      // remove localStorageCredKey
+      localStorage.removeItem(localStorageCredKey)
+      return null
+    }
 
     const identityToken = json?.data?.refresh?.idToken
 
