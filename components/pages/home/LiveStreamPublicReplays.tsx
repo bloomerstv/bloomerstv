@@ -28,6 +28,7 @@ import {
   usePosts
 } from '@lens-protocol/react'
 import { useStreamReplayPosts } from '../../../utils/hooks/useStreamReplayPosts'
+import CoinsRow from './CoinsRow'
 const HomePageCards = () => {
   const [showShowMoreButton, setShowShowMoreButton] = useState(true)
   const [showAll, setShowAll] = React.useState(false)
@@ -252,6 +253,8 @@ const HomePageCards = () => {
           </div>
         )}
       </div>
+
+      <CoinsRow />
 
       {/* @ts-ignore */}
       <div className="flex flex-row flex-wrap w-full gap-y-6">

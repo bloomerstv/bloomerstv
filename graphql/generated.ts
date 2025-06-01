@@ -69,6 +69,12 @@ export type FeaturedCoinInput = {
   type?: InputMaybe<Scalars['String']['input']>
 }
 
+export type FeaturedCoinStreamer = {
+  __typename?: 'FeaturedCoinStreamer'
+  accountAddress: Scalars['String']['output']
+  featuredCoin?: Maybe<FeaturedCoin>
+}
+
 export type IpfsResult = {
   __typename?: 'IpfsResult'
   cid?: Maybe<Scalars['String']['output']>
@@ -166,6 +172,7 @@ export type Price = {
 
 export type Query = {
   __typename?: 'Query'
+  getFeaturedCoins?: Maybe<Array<Maybe<FeaturedCoinStreamer>>>
   getMyRecordedStreamSessions?: Maybe<Array<Maybe<RecordedSession>>>
   isSubscribedNotificationForStreamer?: Maybe<Scalars['Boolean']['output']>
   isVerified?: Maybe<Array<Maybe<IsVerifiedResult>>>
@@ -377,6 +384,22 @@ export type CreateMyLensStreamSessionMutationVariables = Exact<{
 export type CreateMyLensStreamSessionMutation = {
   __typename?: 'Mutation'
   createMyLensStreamSession?: boolean | null
+}
+
+export type GetFeaturedCoinsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetFeaturedCoinsQuery = {
+  __typename?: 'Query'
+  getFeaturedCoins?: Array<{
+    __typename?: 'FeaturedCoinStreamer'
+    accountAddress: string
+    featuredCoin?: {
+      __typename?: 'FeaturedCoin'
+      type?: string | null
+      coinAddress?: string | null
+      chainId?: string | null
+    } | null
+  } | null> | null
 }
 
 export type GetMyRecordedStreamSessionsQueryVariables = Exact<{
@@ -892,6 +915,88 @@ export type CreateMyLensStreamSessionMutationOptions =
     CreateMyLensStreamSessionMutation,
     CreateMyLensStreamSessionMutationVariables
   >
+export const GetFeaturedCoinsDocument = gql`
+  query GetFeaturedCoins {
+    getFeaturedCoins {
+      accountAddress
+      featuredCoin {
+        type
+        coinAddress
+        chainId
+      }
+    }
+  }
+`
+
+/**
+ * __useGetFeaturedCoinsQuery__
+ *
+ * To run a query within a React component, call `useGetFeaturedCoinsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFeaturedCoinsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFeaturedCoinsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFeaturedCoinsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetFeaturedCoinsQuery,
+    GetFeaturedCoinsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetFeaturedCoinsQuery, GetFeaturedCoinsQueryVariables>(
+    GetFeaturedCoinsDocument,
+    options
+  )
+}
+export function useGetFeaturedCoinsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetFeaturedCoinsQuery,
+    GetFeaturedCoinsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    GetFeaturedCoinsQuery,
+    GetFeaturedCoinsQueryVariables
+  >(GetFeaturedCoinsDocument, options)
+}
+export function useGetFeaturedCoinsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetFeaturedCoinsQuery,
+        GetFeaturedCoinsQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetFeaturedCoinsQuery,
+    GetFeaturedCoinsQueryVariables
+  >(GetFeaturedCoinsDocument, options)
+}
+export type GetFeaturedCoinsQueryHookResult = ReturnType<
+  typeof useGetFeaturedCoinsQuery
+>
+export type GetFeaturedCoinsLazyQueryHookResult = ReturnType<
+  typeof useGetFeaturedCoinsLazyQuery
+>
+export type GetFeaturedCoinsSuspenseQueryHookResult = ReturnType<
+  typeof useGetFeaturedCoinsSuspenseQuery
+>
+export type GetFeaturedCoinsQueryResult = Apollo.QueryResult<
+  GetFeaturedCoinsQuery,
+  GetFeaturedCoinsQueryVariables
+>
 export const GetMyRecordedStreamSessionsDocument = gql`
   query GetMyRecordedStreamSessions($skip: Int) {
     getMyRecordedStreamSessions(skip: $skip) {

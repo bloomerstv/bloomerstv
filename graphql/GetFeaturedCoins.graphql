@@ -1,0 +1,10 @@
+query GetFeaturedCoins {
+  getFeaturedCoins {
+    accountAddress
+    featuredCoin {
+      type
+      coinAddress
+      chainId
+    }
+  }
+}
