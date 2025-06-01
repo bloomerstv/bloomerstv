@@ -51,15 +51,15 @@ const DashboardSidebar = () => {
           Go Live
         </ListItemButton>
         <ListItemButton
-          selected={pathname === '/dashboard/zora-coins'}
+          selected={pathname === '/dashboard/coins'}
           LinkComponent={Link}
-          href="/dashboard/zora-coins"
+          href="/dashboard/coins"
           sx={{
             padding: '10px 20px'
           }}
         >
           <MonetizationOnIcon className="mr-2" />
-          Zora Coins
+          Coins
         </ListItemButton>
         <ListItemButton
           selected={pathname === '/dashboard/content'}

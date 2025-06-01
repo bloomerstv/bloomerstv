@@ -7,7 +7,6 @@ import {
   Typography,
   Alert
 } from '@mui/material'
-import ModalWrapper from '../../../../ui/Modal/ModalWrapper'
 import EditIcon from '@mui/icons-material/Edit'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
@@ -25,11 +24,12 @@ import {
   useWriteContract
 } from 'wagmi'
 import { Address } from 'viem'
-import { PROJECT_ADDRESS } from '../../../../../utils/config'
-import uploadToIPFS from '../../../../../utils/uploadToIPFS'
-import useHandleWrongNetwork from '../../../../../utils/hooks/useHandleWrongNetwork'
 import { base } from 'viem/chains'
 import toast from 'react-hot-toast'
+import useHandleWrongNetwork from '../../../../utils/hooks/useHandleWrongNetwork'
+import uploadToIPFS from '../../../../utils/uploadToIPFS'
+import { PROJECT_ADDRESS } from '../../../../utils/config'
+import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 
 interface CreateNewZoraCoinButtonProps {
   onCoinCreated?: () => void
@@ -140,7 +140,7 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
       }
 
       // Create configuration for wagmi
-      const contractCallParams = createCoinCall(coinParams)
+      const contractCallParams = await createCoinCall(coinParams)
 
       // Handle wrong network
       await handleWrongNetwork()
