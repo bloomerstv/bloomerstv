@@ -2,7 +2,6 @@ import React from 'react'
 import {
   Box,
   Card,
-  CardMedia,
   CardContent,
   Typography,
   Grid,
@@ -13,14 +12,9 @@ import {
   Paper,
   IconButton,
   Tooltip,
-  Stack,
-  List,
-  ListItem,
-  ListItemText
+  Stack
 } from '@mui/material'
 import {
-  TrendingUp,
-  TrendingDown,
   ContentCopy,
   MonetizationOn,
   Star,

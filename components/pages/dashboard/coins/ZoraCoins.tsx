@@ -20,32 +20,19 @@ import {
 } from '../../../../graphql/generated'
 import { base } from 'viem/chains'
 import toast from 'react-hot-toast'
-import CreateNewZoraCoinButton from './CreateNewZoraCoinButton'
 import CreateCoinModal from './CreateCoinModal'
 
 export default function ZoraCoins() {
   const [coinBalances, setCoinBalances] = useState<ProfileCoinBalances | null>(
     null
   )
-  console.log('coinBalances', coinBalances)
   const [featuredCoin, setFeaturedCoin] = useState<CoinBalance | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const { isAuthenticated, authenticatedUser } = useSession()
   const { data: myStream, refetch: refetchMyStream } = useMyStreamQuery()
   const [updateMyStream] = useUpdateMyStreamMutation()
-  const [pagination, setPagination] = useState({
-    cursor: undefined,
-    hasNextPage: false
-  })
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
-  const handleViewCoin = (coin: CoinBalance) => {
-    setFeaturedCoin(coin)
-    // Scroll to the featured coin section
-    document
-      .getElementById('featured-coin')
-      ?.scrollIntoView({ behavior: 'smooth' })
-  }
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   // Feature a coin on the user's stream
   const handleFeatureCoin = async (coin: CoinBalance) => {
@@ -135,11 +122,6 @@ export default function ZoraCoins() {
             setFeaturedCoin(featuredCoinData.node)
           }
         }
-
-        setPagination({
-          cursor: profile.coinBalances.pageInfo.endCursor,
-          hasNextPage: profile.coinBalances.pageInfo.hasNextPage
-        })
       } else {
         setCoinBalances({
           count: 0,
@@ -261,7 +243,6 @@ export default function ZoraCoins() {
             {coinBalances?.edges.length ? (
               <CoinTable
                 coinBalances={coinBalances}
-                onViewCoin={handleViewCoin}
                 onFeatureCoin={handleFeatureCoin}
                 featuredCoinAddress={featuredCoin?.coin.address || null}
               />

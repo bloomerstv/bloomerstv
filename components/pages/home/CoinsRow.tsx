@@ -5,7 +5,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CoinsRowItem from './CoinsRowItem'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import { useGetFeaturedCoins } from '../../../utils/hooks/useGetFeaturedCoins'
-import { Coins } from 'lucide-react'
 
 const CoinsRow = () => {
   const { featuredCoins, loading, error } = useGetFeaturedCoins()

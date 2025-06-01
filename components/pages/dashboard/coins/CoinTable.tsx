@@ -23,18 +23,15 @@ import {
   StarBorder
 } from '@mui/icons-material'
 import { ProfileCoinBalances, CoinBalance } from '../../../../utils/types/zora'
-import { formatTimeAgo } from '../../../../utils/formatters'
 
 interface CoinTableProps {
   coinBalances: ProfileCoinBalances
-  onViewCoin: (coin: CoinBalance) => void
   onFeatureCoin: (coin: CoinBalance) => void
   featuredCoinAddress: string | null
 }
 
 export default function CoinTable({
   coinBalances,
-  onViewCoin,
   onFeatureCoin,
   featuredCoinAddress
 }: CoinTableProps) {

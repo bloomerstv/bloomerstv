@@ -30,18 +30,6 @@ import useHandleWrongNetwork from '../../../../utils/hooks/useHandleWrongNetwork
 import { PROJECT_ADDRESS } from '../../../../utils/config'
 import { getCoinCreateFromLogs } from '@zoralabs/coins-sdk'
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1
-})
-
 interface CreateCoinModalProps {
   open: boolean
   onClose: () => void
@@ -65,7 +53,6 @@ export default function CreateCoinModal({
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [coinAddress, setCoinAddress] = useState<Address | null>(null)
 
   const {
     writeContractAsync,
@@ -89,7 +76,6 @@ export default function CreateCoinModal({
     setUploadProgress(0)
     setIsUploading(false)
     setError(null)
-    setCoinAddress(null)
   }
 
   const handleClose = () => {
@@ -207,7 +193,6 @@ export default function CreateCoinModal({
           )
         }
 
-        setCoinAddress(deployedCoinAddress)
         toast.success('Coin created successfully!')
 
         // Call the parent's callback
