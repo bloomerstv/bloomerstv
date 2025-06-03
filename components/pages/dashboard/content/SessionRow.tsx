@@ -11,8 +11,7 @@ import {
   // localDateAndTime,
   // secondsToTime
 } from '../../../../utils/helpers'
-import TableCell from '@mui/material/TableCell'
-import TableRow from '@mui/material/TableRow'
+import { TableRow, TableCell } from '@mui/material'
 // import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 // import DownloadIcon from '@mui/icons-material/Download'
 // import PauseIcon from '@mui/icons-material/Pause'
@@ -25,16 +24,11 @@ import { stringToLength } from '../../../../utils/stringToLength'
 import Link from 'next/link'
 import { HEY_APP_LINK } from '../../../../utils/config'
 import { Button, IconButton, Tooltip } from '@mui/material'
-import DownloadIcon from '@mui/icons-material/Download'
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
+import { Download, Eye, Edit, Scissors, Trash2, ImagePlus } from 'lucide-react'
 import PostStreamAsVideo from './PostStreamAsVideo'
-import CreateIcon from '@mui/icons-material/Create'
-import ContentCutIcon from '@mui/icons-material/ContentCut'
-import DeleteIcon from '@mui/icons-material/Delete'
 import toast from 'react-hot-toast'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import LoadingImage from '../../../ui/LoadingImage'
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import { MediaImageMimeType } from '@lens-protocol/metadata'
 import uploadToIPFS from '../../../../utils/uploadToIPFS'
 import getIPFSLink from '../../../../utils/getIPFSLink'
@@ -167,9 +161,9 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
     if (!session?.recordingUrl) return
     setThumbnail(
       session?.customThumbnail ??
-        // @ts-ignore
-        data?.metadata?.marketplace?.image?.optimized?.uri ??
-        getThumbnailFromRecordingUrl(session?.recordingUrl)
+      // @ts-ignore
+      data?.metadata?.marketplace?.image?.optimized?.uri ??
+      getThumbnailFromRecordingUrl(session?.recordingUrl)
     )
   }, [data?.id, session?.recordingUrl])
 
@@ -214,7 +208,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
               </Button>
             </div>
           }
-          Icon={<DeleteIcon />}
+          Icon={<Trash2 />}
           title="Delete Post"
         >
           <div className="text-lg">
@@ -226,7 +220,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
       <PostStreamAsVideo
         session={session}
         post={data}
-        Icon={<CreateIcon />}
+        Icon={<Edit />}
         modalTitle={postAsVideoProps.modalTitle ?? undefined}
         open={postAsVideoProps.open}
         defaultMode={postAsVideoProps.defaultMode}
@@ -264,20 +258,20 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
               {/* @ts-ignore */}
               {data?.metadata?.title
                 ? // @ts-ignore
-                  stringToLength(data?.metadata?.title, 40)
+                stringToLength(data?.metadata?.title, 40)
                 : 'Untitled Stream'}
             </Link>
             <div className="text-s-text text-xs font-semibold block group-hover:hidden">
               {data?.id
                 ? stringToLength(
-                    getSenitizedContent(
-                      // @ts-ignore
-                      data?.metadata?.content,
-                      // @ts-ignore
-                      data?.metadata?.title
-                    ),
-                    120
-                  )
+                  getSenitizedContent(
+                    // @ts-ignore
+                    data?.metadata?.content,
+                    // @ts-ignore
+                    data?.metadata?.title
+                  ),
+                  120
+                )
                 : 'Untitled Stream'}{' '}
               {data?.isDeleted && (
                 <span className="text-red-500">
@@ -321,22 +315,17 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                     )
                   }}
                 >
-                  <RemoveRedEyeIcon />
+                  <Eye />
                 </IconButton>
               </Tooltip>
 
               {data?.id && (
-                <Tooltip title="Upload thumbnail image with 16:9 ratio">
+                <Tooltip title="Change thumbnail" arrow>
                   <IconButton
-                    size="large"
-                    onClick={() => {
-                      // Programmatically click the file input when the button is clicked
-                      if (!imageFileInputRef.current) return
-                      // @ts-ignore
-                      imageFileInputRef.current.click()
-                    }}
+                    size="small"
+                    onClick={() => imageFileInputRef.current?.click()}
                   >
-                    <AddPhotoAlternateIcon />
+                    <ImagePlus size={16} />
                   </IconButton>
                 </Tooltip>
               )}
@@ -358,7 +347,7 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                       window.open(session?.mp4Url, '_blank')
                     }}
                   >
-                    <DownloadIcon />
+                    <Download />
                   </IconButton>
                 </Tooltip>
               )}
@@ -374,42 +363,38 @@ const SessionRow = ({ session }: { session: RecordedSession }) => {
                         open: true,
                         defaultMode: 'Video',
                         modalTitle: 'Create Post for this Stream',
-                        Icon: <CreateIcon />
+                        Icon: <Edit />
                       }))
                     }}
                   >
-                    <CreateIcon />
+                    <Edit />
                   </IconButton>
                 </Tooltip>
               )}
 
-              <Tooltip title="Create a Clip">
+              <Tooltip title="Make Clip" arrow>
                 <IconButton
-                  size="large"
-                  onClick={() => {
-                    // @ts-ignore
-                    setPostAsVideoProps((prev) => ({
-                      ...prev,
+                  size="small"
+                  onClick={() =>
+                    setPostAsVideoProps({
                       open: true,
-                      defaultMode: 'Clip',
                       modalTitle: 'Create Clip',
-                      Icon: <ContentCutIcon />
-                    }))
-                  }}
+                      Icon: <Scissors size={16} />,
+                      defaultMode: 'Clip'
+                    })
+                  }
                 >
-                  <ContentCutIcon />
+                  <Scissors size={16} />
                 </IconButton>
               </Tooltip>
 
               {data?.id && !data?.isDeleted && (
-                <Tooltip title="Delete the post">
+                <Tooltip title="Delete post" arrow>
                   <IconButton
-                    size="large"
-                    onClick={() => {
-                      setOpenDeleteConfirmation(true)
-                    }}
+                    onClick={() => setOpenDeleteConfirmation(true)}
+                    size="small"
                   >
-                    <DeleteIcon />
+                    <Trash2 size={16} />
                   </IconButton>
                 </Tooltip>
               )}

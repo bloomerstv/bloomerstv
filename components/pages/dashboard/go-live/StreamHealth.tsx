@@ -2,7 +2,7 @@ import React from 'react'
 import { MyStream } from '../../../../graphql/generated'
 import { Button } from '@mui/material'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
-import InfoIcon from '@mui/icons-material/Info'
+import { Info } from 'lucide-react'
 import OBSSetupGuide from './OBSSetupGuide'
 
 const StreamHealth = ({
@@ -25,7 +25,7 @@ const StreamHealth = ({
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         open={open}
-        Icon={<InfoIcon />}
+        Icon={<Info />}
         title="Connect OBS to Livepeer Studio"
         classname="w-[600px]"
         BotttomComponent={
@@ -57,16 +57,14 @@ const StreamHealth = ({
             <div className="start-center-row gap-x-3 text-white text-xs font-semibold">
               {errorIssues?.length > 0 && (
                 <div className="bg-red-400 rounded-full py-0.5 px-2">
-                  {`${errorIssues?.length} Error${
-                    errorIssues?.length > 1 ? 's' : ''
-                  }`}
+                  {`${errorIssues?.length} Error${errorIssues?.length > 1 ? 's' : ''
+                    }`}
                 </div>
               )}
               {warningIssues?.length > 0 && (
                 <div className="bg-orange-300 rounded-full  py-0.5 px-2">
-                  {`${warningIssues?.length} Warning${
-                    warningIssues?.length > 1 ? 's' : ''
-                  }`}
+                  {`${warningIssues?.length} Warning${warningIssues?.length > 1 ? 's' : ''
+                    }`}
                 </div>
               )}
             </div>

@@ -8,7 +8,7 @@ import {
   CardContent,
   Grid
 } from '@mui/material'
-import { MonetizationOn, AddCircleOutline } from '@mui/icons-material'
+import { Coins, PlusCircle } from 'lucide-react'
 import CoinTable from './CoinTable'
 import FeaturedCoin from './FeaturedCoin'
 import { ProfileCoinBalances, CoinBalance } from '../../../../utils/types/zora'
@@ -48,10 +48,10 @@ export default function ZoraCoins() {
             featuredCoin: isAlreadyFeatured
               ? null
               : {
-                  chainId: base.id.toString(),
-                  coinAddress: coin.coin.address.toLowerCase(),
-                  type: 'zora'
-                }
+                chainId: base.id.toString(),
+                coinAddress: coin.coin.address.toLowerCase(),
+                type: 'zora'
+              }
           }
         }
       })
@@ -183,7 +183,7 @@ export default function ZoraCoins() {
             gutterBottom
             className="flex items-center"
           >
-            <MonetizationOn fontSize="large" className="mr-2" /> Zora Coins
+            <Coins size={24} className="mr-2" /> Zora Coins
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Create, manage and trade social tokens on the Zora protocol
@@ -193,7 +193,7 @@ export default function ZoraCoins() {
         <Button
           variant="contained"
           color="primary"
-          startIcon={<AddCircleOutline />}
+          startIcon={<PlusCircle size={20} />}
           size="large"
           onClick={() => setIsCreateModalOpen(true)}
           className="font-bold"

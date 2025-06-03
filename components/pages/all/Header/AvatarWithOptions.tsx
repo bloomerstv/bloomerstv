@@ -9,23 +9,20 @@ import {
   MenuList,
   SwipeableDrawer
 } from '@mui/material'
-import Logout from '@mui/icons-material/Logout'
+import { LogOut, ToggleLeft, ToggleRight, ArrowLeftRight, LayoutDashboard, Sun, Moon } from 'lucide-react'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import { useTheme } from '../../../wrappers/TailwindThemeProvider'
-import ToggleOffIcon from '@mui/icons-material/ToggleOff'
-import ToggleOnIcon from '@mui/icons-material/ToggleOn'
 import { useDisconnect } from 'wagmi'
 import { useRouter } from 'next/navigation'
-// import CircleIcon from '@mui/icons-material/Circle'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
-import DashboardIcon from '@mui/icons-material/Dashboard'
 import getStampFyiURL from '../../../../utils/getStampFyiURL'
 import useEns from '../../../../utils/hooks/useEns'
 import LoadingImage from '../../../ui/LoadingImage'
 import AppLinksRow from '../../../common/AppLinksRow'
 import useSession from '../../../../utils/hooks/useSession'
 import { useLogout } from '@lens-protocol/react'
+
+
 const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const isMobile = useIsMobile()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
@@ -129,7 +126,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
               {account && (
                 <MenuItem onClick={handleSwitchProfile}>
                   <ListItemIcon>
-                    <SwapHorizIcon fontSize="small" />
+                    <ArrowLeftRight size={16} />
                   </ListItemIcon>
                   Switch Profile
                 </MenuItem>
@@ -157,7 +154,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
                     }}
                   >
                     <ListItemIcon>
-                      <DashboardIcon fontSize="small" />
+                      <LayoutDashboard size={16} />
                     </ListItemIcon>
                     Content
                   </MenuItem>
@@ -167,9 +164,9 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
               <MenuItem onClick={toggleTheme}>
                 <ListItemIcon>
                   {theme === 'light' ? (
-                    <ToggleOffIcon fontSize="small" />
+                    <ToggleLeft size={16} />
                   ) : (
-                    <ToggleOnIcon fontSize="small" />
+                    <ToggleRight size={16} />
                   )}
                 </ListItemIcon>
                 Dark Mode
@@ -177,7 +174,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
 
               <MenuItem onClick={handleLogout}>
                 <ListItemIcon>
-                  <Logout fontSize="small" />
+                  <LogOut size={16} />
                 </ListItemIcon>
                 Logout
               </MenuItem>
@@ -258,7 +255,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
           {account && (
             <MenuItem onClick={handleSwitchProfile}>
               <ListItemIcon>
-                <SwapHorizIcon fontSize="small" />
+                <ArrowLeftRight size={16} />
               </ListItemIcon>
               Switch Profile
             </MenuItem>
@@ -274,7 +271,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
                 }}
               >
                 <ListItemIcon>
-                  <DashboardIcon fontSize="small" />
+                  <LayoutDashboard size={16} />
                 </ListItemIcon>
                 Content
               </MenuItem>
@@ -284,9 +281,9 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
           <MenuItem onClick={toggleTheme}>
             <ListItemIcon>
               {theme === 'light' ? (
-                <ToggleOffIcon fontSize="small" />
+                <Sun size={16} />
               ) : (
-                <ToggleOnIcon fontSize="small" />
+                <Moon size={16} />
               )}
             </ListItemIcon>
             Dark Mode
@@ -294,7 +291,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
 
           <MenuItem onClick={handleLogout}>
             <ListItemIcon>
-              <Logout fontSize="small" />
+              <LogOut size={16} />
             </ListItemIcon>
             Logout
           </MenuItem>

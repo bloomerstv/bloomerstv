@@ -9,11 +9,7 @@ import {
   Tooltip
 } from '@mui/material'
 import React, { useEffect } from 'react'
-import SendIcon from '@mui/icons-material/Send'
-
-// import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
-import CloseIcon from '@mui/icons-material/Close'
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
+import { Send, X, HelpCircle, Wallet, ChevronRight, ImagePlus, FileImage } from 'lucide-react'
 import {
   useAccount,
   useReadContract,
@@ -22,9 +18,7 @@ import {
 } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import LoadingButton from '@mui/lab/LoadingButton'
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import { Address, formatUnits } from 'viem'
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
 import toast from 'react-hot-toast'
 import useEns from '../../../utils/hooks/useEns'
 import getAvatar from '../../../utils/lib/getAvatar'
@@ -43,10 +37,8 @@ import { MAX_UINT256 } from '../../../utils/contants'
 import { getLastStreamPostId } from '../../../utils/lib/lensApi'
 import { viewPublicClientPolygon } from '../../../utils/lib/viemPublicClient'
 import { ImageAttachment, SendMessageInput } from './LiveChat'
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import { MediaImageMimeType } from '@lens-protocol/metadata'
 import uploadToIPFS from '../../../utils/uploadToIPFS'
-import GifIcon from '@mui/icons-material/Gif'
 import { AnimatePresence, motion } from 'framer-motion'
 import GifAndStickerSelector from './GifAndStickerSelector'
 import {
@@ -171,8 +163,8 @@ const LiveChatInput = ({
 
   const balance = balanceData
     ? parseFloat(
-        formatUnits(balanceData as bigint, selectedCurrency?.decimals || 18)
-      ).toFixed(3)
+      formatUnits(balanceData as bigint, selectedCurrency?.decimals || 18)
+    ).toFixed(3)
     : 0
 
   const hasSufficientBalance = parseFloat(balance || '0') >= amountValue
@@ -436,7 +428,7 @@ const LiveChatInput = ({
               className="rounded-full "
               size="small"
             >
-              <CloseIcon className="text-white" />
+              <X className="text-white" />
             </IconButton>
           </div>
         </div>
@@ -470,7 +462,7 @@ const LiveChatInput = ({
                 className="rounded-full"
                 size="small"
               >
-                <CloseIcon />
+                <X />
               </IconButton>
               <div className="text-s-text font-semibold">Super Chat</div>
             </div>
@@ -486,7 +478,7 @@ const LiveChatInput = ({
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <HelpOutlineIcon className="text-s-text" />
+              <HelpCircle className="text-s-text" />
             </Tooltip>
           </div>
 
@@ -611,7 +603,7 @@ const LiveChatInput = ({
               loadingPosition="start"
               fullWidth
               size="small"
-              startIcon={<AccountBalanceWalletIcon />}
+              startIcon={<Wallet />}
               style={{
                 borderRadius: '20px',
                 padding: '8px 0'
@@ -641,7 +633,7 @@ const LiveChatInput = ({
               loadingPosition="start"
               fullWidth
               size="small"
-              startIcon={<KeyboardDoubleArrowRightIcon />}
+              startIcon={<ChevronRight />}
               style={{
                 borderRadius: '20px',
                 padding: '8px 0'
@@ -665,7 +657,7 @@ const LiveChatInput = ({
               loadingPosition="start"
               fullWidth
               size="small"
-              startIcon={<SendIcon />}
+              startIcon={<Send />}
               style={{
                 borderRadius: '20px',
                 padding: '8px 0'
@@ -703,11 +695,11 @@ const LiveChatInput = ({
                 variants={startIconVariants}
               >
                 <IconButton
-                  onClick={() => {}}
+                  onClick={() => { }}
                   className="text-s-text rounded-full"
                   size="small"
                 >
-                  <GifIcon />
+                  <FileImage size={18} />
                 </IconButton>
               </motion.div>
             )}
@@ -768,7 +760,7 @@ const LiveChatInput = ({
                       !imageAttachment?.imageUrl)
                   }
                 >
-                  <SendIcon />
+                  <Send size={18} />
                 </IconButton>
               </motion.div>
             )}
@@ -796,7 +788,7 @@ const LiveChatInput = ({
                     className="text-s-text rounded-full"
                     size="small"
                   >
-                    <AddPhotoAlternateIcon />
+                    <ImagePlus size={18} />
                   </IconButton>
                 </motion.div>
               )}

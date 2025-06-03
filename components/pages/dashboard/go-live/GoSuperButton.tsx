@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 import React from 'react'
-import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
+import { Rocket } from 'lucide-react'
 import Link from 'next/link'
 import { useMyStreamQuery } from '../../../../graphql/generated'
 import { SuperFluidInfo } from '../../../../utils/config'
@@ -29,7 +29,7 @@ const GoSuperButton = () => {
         fontWeight: 'bold'
         // backgroundColor: '#000000'
       }}
-      startIcon={!myStream?.myStream?.premium ? <RocketLaunchIcon /> : null}
+      startIcon={!myStream?.myStream?.premium ? <Rocket /> : null}
       fullWidth
     >
       {!myStream?.myStream?.premium ? 'Go Super' : 'Cancel Subscription'}

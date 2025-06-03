@@ -7,7 +7,7 @@ import {
   useAccount as useFetchAccount,
   useLogin
 } from '@lens-protocol/react'
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
+import { Wallet } from 'lucide-react'
 import { TextField } from '@mui/material'
 import toast from 'react-hot-toast'
 import { useTheme } from '../wrappers/TailwindThemeProvider'
@@ -198,7 +198,7 @@ const SignupComponent = ({
               borderRadius: '24px',
               padding: '12px 0'
             }}
-            startIcon={<AccountBalanceWalletIcon />}
+            startIcon={<Wallet />}
           >
             Connect Wallet
           </LoadingButton>

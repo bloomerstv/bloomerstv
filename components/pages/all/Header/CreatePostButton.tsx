@@ -1,6 +1,6 @@
 import { IconButton, Tooltip } from '@mui/material'
 import React from 'react'
-import EditNoteIcon from '@mui/icons-material/EditNote'
+import { Edit } from 'lucide-react'
 import CreatePostPopUp from './CreatePostPopUp'
 
 const CreatePostButton = () => {
@@ -14,7 +14,7 @@ const CreatePostButton = () => {
         title="Create a Post"
       >
         <IconButton>
-          <EditNoteIcon />
+          <Edit size={20} />
         </IconButton>
       </Tooltip>
 

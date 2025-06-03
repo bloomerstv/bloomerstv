@@ -1,8 +1,9 @@
-import { Button } from '@mui/material'
 import React, { useState } from 'react'
+import { Button } from '@mui/material'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import LiveChat from '../../common/LiveChat/LiveChat'
-import ChatIcon from '@mui/icons-material/Chat'
+import { MessageCircle } from 'lucide-react'
+
 const MobileChatButton = ({ accountAddress }: { accountAddress: string }) => {
   const [open, setOpen] = useState(false)
   const [heightOfChat, setHeightOfChat] = useState<string>('500')
@@ -33,7 +34,7 @@ const MobileChatButton = ({ accountAddress }: { accountAddress: string }) => {
         variant="contained"
         color="secondary"
         onClick={() => setOpen(true)}
-        startIcon={<ChatIcon />}
+        startIcon={<MessageCircle />}
       >
         Live Chat
       </Button>

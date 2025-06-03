@@ -3,9 +3,8 @@ import React from 'react'
 import AvatarWithOptions from './AvatarWithOptions'
 import { Button } from '@mui/material'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
-import LoginIcon from '@mui/icons-material/Login'
+import { LogIn, UserPlus } from 'lucide-react'
 import LoginComponent from '../../../common/LoginComponent'
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import SignupComponent from '../../../common/SignupComponent'
 import useSession from '../../../../utils/hooks/useSession'
 
@@ -23,7 +22,7 @@ const LoginButton = () => {
       <ModalWrapper
         open={openSignup}
         title="Sign up"
-        Icon={<PersonAddIcon fontSize="small" />}
+        Icon={<UserPlus size={20} />}
         onClose={() => setOpenSignup(false)}
         onOpen={() => setOpenSignup(true)}
         classname="w-[450px]"
@@ -37,7 +36,7 @@ const LoginButton = () => {
       <ModalWrapper
         open={open}
         title="login"
-        Icon={<LoginIcon fontSize="small" />}
+        Icon={<LogIn size={20} />}
         onClose={handleClose}
         onOpen={handleOpen}
         classname="w-[450px]"
@@ -53,9 +52,10 @@ const LoginButton = () => {
             variant="outlined"
             onClick={() => setOpenSignup(true)}
             size="small"
+            className='flex items-center justify-center'
             startIcon={
               <div className="sm:w-7 sm:h-7 h-6 w-6">
-                <PersonAddIcon fontSize="inherit" />
+                <UserPlus size={18} />
               </div>
             }
             sx={{

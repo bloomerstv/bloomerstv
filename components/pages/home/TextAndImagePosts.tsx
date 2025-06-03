@@ -1,8 +1,7 @@
 import React, { useRef } from 'react'
 import { APP_ADDRESS } from '../../../utils/config'
 import { useIsVerifiedQuery } from '../../../graphql/generated'
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { IconButton } from '@mui/material'
 import TextAndImagePostCard from './TextAndImagePostCard'
 import { MainContentFocus, PostType, usePosts } from '@lens-protocol/react'
@@ -51,10 +50,10 @@ const TextAndImagePosts = () => {
         <div className="text-p-text font-bold text-2xl">Community Posts</div>
         <div className="start-center-row">
           <IconButton size="small" onClick={() => scroll(-270)}>
-            <KeyboardArrowLeftIcon />
+            <ChevronLeft />
           </IconButton>
           <IconButton size="small" onClick={() => scroll(270)}>
-            <KeyboardArrowRightIcon />
+            <ChevronRight />
           </IconButton>
         </div>
       </div>

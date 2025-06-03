@@ -7,12 +7,7 @@ import {
   Typography,
   Alert
 } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit'
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
-import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import OpenInNewIcon from '@mui/icons-material/OpenInNew'
-import CelebrationIcon from '@mui/icons-material/Celebration'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import { Edit, ImagePlus, Copy, ExternalLink, PartyPopper, CheckCircle } from 'lucide-react'
 import {
   CreateCoinArgs,
   createCoinCall,
@@ -213,19 +208,16 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
         toast.custom(
           (t) => (
             <div
-              className={`${
-                t.visible ? 'animate-enter' : 'animate-leave'
-              } max-w-md w-full bg-white shadow-xl rounded-lg pointer-events-auto flex overflow-hidden ring-1 ring-black ring-opacity-5`}
+              className={`${t.visible ? 'animate-enter' : 'animate-leave'
+                } max-w-md w-full bg-white shadow-xl rounded-lg pointer-events-auto flex overflow-hidden ring-1 ring-black ring-opacity-5`}
             >
               <div className="bg-indigo-600 px-2 flex items-center justify-center">
-                <CelebrationIcon sx={{ color: 'white' }} />
+                <PartyPopper />
               </div>
               <div className="flex-1 p-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
-                    <CheckCircleIcon
-                      sx={{ color: 'rgb(99, 102, 241)', fontSize: 24 }}
-                    />
+                    <CheckCircle />
                   </div>
                   <div className="ml-3 flex-1">
                     <p className="text-sm font-medium text-gray-900">
@@ -245,7 +237,7 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
                   }}
                   className="w-full h-1/2 px-4 py-2 flex items-center justify-center text-sm font-medium text-indigo-600 hover:bg-indigo-50 transition-colors focus:outline-none"
                 >
-                  <ContentCopyIcon fontSize="small" className="mr-2" />
+                  <Copy className="mr-2" />
                   Copy Link
                 </button>
                 <div className="border-t border-gray-100 w-full"></div>
@@ -256,7 +248,7 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
                   }}
                   className="w-full h-1/2 px-4 py-2 flex items-center justify-center text-sm font-medium text-indigo-600 hover:bg-indigo-50 transition-colors focus:outline-none"
                 >
-                  <OpenInNewIcon fontSize="small" className="mr-2" />
+                  <ExternalLink className="mr-2" />
                   Open Zora
                 </button>
               </div>
@@ -320,7 +312,7 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
         }}
         onOpen={() => setOpen(true)}
         title="Create New Zora Coin"
-        Icon={<EditIcon />}
+        Icon={<Edit />}
         classname="w-[500px]"
         BotttomComponent={
           <div className="flex flex-row justify-end gap-x-2">
@@ -343,8 +335,8 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
               }}
             >
               {status === 'pending' ||
-              isWaitingForTransaction ||
-              isUploading ? (
+                isWaitingForTransaction ||
+                isUploading ? (
                 <>
                   <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
                   {isUploading
@@ -380,14 +372,14 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <Button
                     size="small"
-                    startIcon={<ContentCopyIcon />}
+                    startIcon={<Copy />}
                     onClick={() => copyCoinLink(coinAddress)}
                   >
                     Copy Link
                   </Button>
                   <Button
                     size="small"
-                    startIcon={<OpenInNewIcon />}
+                    startIcon={<ExternalLink />}
                     onClick={() => openCoinLink(coinAddress)}
                   >
                     Open
@@ -456,7 +448,7 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
               <Button
                 variant="outlined"
                 component="span"
-                startIcon={<AddPhotoAlternateIcon />}
+                startIcon={<ImagePlus />}
                 disabled={status === 'pending' || isWaitingForTransaction}
                 fullWidth
                 sx={{

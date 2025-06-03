@@ -2,7 +2,7 @@ import React from 'react'
 import LoginComponent from './LoginComponent'
 import ModalWrapper from '../ui/Modal/ModalWrapper'
 import { useModal } from './ModalContext'
-import LoginIcon from '@mui/icons-material/Login'
+import { LogIn } from 'lucide-react'
 
 export const ModalRoot = () => {
   const { modal, onClose, onOpen } = useModal()
@@ -20,7 +20,7 @@ export const ModalRoot = () => {
   const renderIcon = () => {
     switch (modal.type) {
       case 'login':
-        return <LoginIcon fontSize="small" />
+        return <LogIn />
       // Add cases for other modal types as needed
       default:
         return null

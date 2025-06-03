@@ -4,11 +4,10 @@ import formatHandle from '../../../utils/lib/formatHandle'
 import Link from 'next/link'
 import LiveDiv from '../../ui/LiveDiv'
 import LoadingImage from '../../ui/LoadingImage'
-import PermIdentityIcon from '@mui/icons-material/PermIdentity'
+import { User, Play } from 'lucide-react'
 import VerifiedBadge from '../../ui/VerifiedBadge'
 import Markup from '../../common/Lexical/Markup'
 import { StreamerWithAccount } from '../../store/useStreamersWithAccounts'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 
 const StreamCard = ({ streamer }: { streamer: StreamerWithAccount }) => {
   return (
@@ -27,15 +26,15 @@ const StreamCard = ({ streamer }: { streamer: StreamerWithAccount }) => {
           alt="thumbnail"
         />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <PlayArrowIcon
-            fontSize="large"
+          <Play
+            size={32}
             className="text-white transform transition-transform group-hover:scale-105 duration-300"
           />
         </div>
         <div className="absolute top-4 left-4 start-center-row gap-x-2">
           <LiveDiv />
           <div className="centered-row gap-x-1 text-white text-base bg-black bg-opacity-80 px-1.5 rounded-md">
-            <PermIdentityIcon fontSize="inherit" />
+            <User size={18} />
             <div className="text-sm font-semibold">{streamer?.liveCount}</div>
           </div>
         </div>

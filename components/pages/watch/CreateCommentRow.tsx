@@ -1,7 +1,7 @@
 import React from 'react'
 import getAvatar from '../../../utils/lib/getAvatar'
 import { IconButton } from '@mui/material'
-import SendIcon from '@mui/icons-material/Send'
+import { Send } from 'lucide-react'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../utils/getUserLocale'
 import { textOnly } from '@lens-protocol/metadata'
@@ -112,7 +112,7 @@ const CreateCommentRow = ({
         size="small"
         disabled={content?.trim().length === 0 || creating}
       >
-        <SendIcon />
+        <Send />
       </IconButton>
     </div>
   )

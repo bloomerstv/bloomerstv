@@ -37,7 +37,7 @@ import {
 // import uploadToIPFS from '../../../../utils/uploadToIPFS'
 // import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
-import ContentCutIcon from '@mui/icons-material/ContentCut'
+import { Scissors } from 'lucide-react'
 import Player from '../../../common/Player/Player'
 import clsx from 'clsx'
 import { useMyPreferences } from '../../../store/useMyPreferences'
@@ -51,7 +51,7 @@ const PostStreamAsVideo = ({
   post,
   session,
   modalTitle = 'Create Clip',
-  Icon = <ContentCutIcon />,
+  Icon = <Scissors />,
   open = false,
   defaultMode = 'Clip',
   setNewPostId,

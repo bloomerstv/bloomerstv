@@ -3,16 +3,16 @@ import getAvatar from '../../utils/lib/getAvatar'
 import formatHandle from '../../utils/lib/formatHandle'
 import getPublicationData from '../../utils/lib/getPublicationData'
 import { secondsToTime, timeAgo } from '../../utils/helpers'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import { Play, ExternalLink } from 'lucide-react'
 import Markup from './Lexical/Markup'
 import { usePathname, useRouter } from 'next/navigation'
 import clsx from 'clsx'
 import VerifiedBadge from '../ui/VerifiedBadge'
 import LoadingImage from '../ui/LoadingImage'
 import { IconButton, Tooltip } from '@mui/material'
-import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 import useSession from '../../utils/hooks/useSession'
 import { Account, Post } from '@lens-protocol/react'
+
 const HomeVideoCard = ({
   post,
   cover,
@@ -58,8 +58,8 @@ const HomeVideoCard = ({
           alt="thumbnail"
         />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <PlayArrowIcon
-            fontSize="large"
+          <Play
+            size={24}
             className="text-white transform transition-transform group-hover:scale-105 duration-300"
           />
         </div>
@@ -143,7 +143,7 @@ const HomeVideoCard = ({
                     backgroundColor: '#1976d2'
                   }}
                 >
-                  <ArrowOutwardIcon className="text-white" />
+                  <ExternalLink className="text-white" />
                 </IconButton>
               </Tooltip>
             )}
