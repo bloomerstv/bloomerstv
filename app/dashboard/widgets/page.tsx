@@ -7,7 +7,7 @@ import {
   HOW_TO_ADD_WIDGETS_VIDEO
 } from '../../../utils/config'
 import ModalWrapper from '../../../components/ui/Modal/ModalWrapper'
-import InfoIcon from '@mui/icons-material/Info'
+import { InfoIcon } from 'lucide-react'
 import { Button } from '@mui/material'
 
 const Widgets = () => {
