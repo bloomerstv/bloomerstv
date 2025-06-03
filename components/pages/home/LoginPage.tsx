@@ -3,8 +3,7 @@ import { Button, CircularProgress } from '@mui/material'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import React from 'react'
 import { useAccount, useDisconnect, useWalletClient } from 'wagmi'
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
-import PermIdentityIcon from '@mui/icons-material/PermIdentity'
+import { Wallet, User } from 'lucide-react'
 import formatHandle from '../../../utils/lib/formatHandle'
 import getAvatar from '../../../utils/lib/getAvatar'
 import clsx from 'clsx'
@@ -12,7 +11,6 @@ import { usePathname } from 'next/navigation'
 // import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import toast from 'react-hot-toast'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
-import WalletIcon from '@mui/icons-material/Wallet'
 import { getShortAddress } from '../../../utils/lib/getShortAddress'
 import useEns from '../../../utils/hooks/useEns'
 import getStampFyiURL from '../../../utils/getStampFyiURL'
@@ -88,7 +86,7 @@ const LoginPage = () => {
                       className={clsx(
                         'between-row w-full p-4',
                         i < profiles?.items.length - 1 &&
-                          'border-b border-p-border '
+                        'border-b border-p-border '
                       )}
                       key={profile?.account?.address}
                     >
@@ -110,21 +108,21 @@ const LoginPage = () => {
                             const params: LoginParams =
                               profile?.__typename === 'AccountManaged'
                                 ? {
-                                    accountManager: {
-                                      account: profile.account.address,
-                                      manager: address,
-                                      app: APP_ADDRESS
-                                    },
-                                    signMessage: signMessageWith(walletClient!)
-                                  }
+                                  accountManager: {
+                                    account: profile.account.address,
+                                    manager: address,
+                                    app: APP_ADDRESS
+                                  },
+                                  signMessage: signMessageWith(walletClient!)
+                                }
                                 : {
-                                    accountOwner: {
-                                      account: profile.account.address,
-                                      owner: address,
-                                      app: APP_ADDRESS
-                                    },
-                                    signMessage: signMessageWith(walletClient!)
-                                  }
+                                  accountOwner: {
+                                    account: profile.account.address,
+                                    owner: address,
+                                    app: APP_ADDRESS
+                                  },
+                                  signMessage: signMessageWith(walletClient!)
+                                }
 
                             const data = await execute(params)
 
@@ -158,7 +156,7 @@ const LoginPage = () => {
 
                   {profiles?.items.length === 0 && !loadingProfiles && (
                     <div className="centered-row w-full text-s-text p-4 text-sm">
-                      You don’t have any lens profiles linked to this wallet
+                      You don't have any lens profiles linked to this wallet
                       address. However, You can log in with your wallet and chat
                       with streamers
                     </div>
@@ -181,7 +179,7 @@ const LoginPage = () => {
                         </div>
                       </div>
                       <LoadingButton
-                        startIcon={<WalletIcon />}
+                        startIcon={<Wallet />}
                         onClick={async () => {
                           const data = await execute({
                             signMessage: signMessageWith(walletClient!),
@@ -216,7 +214,7 @@ const LoginPage = () => {
                 {/* continue as guest */}
                 <div className="start-col space-y-4 w-full">
                   <Button
-                    startIcon={<PermIdentityIcon />}
+                    startIcon={<User />}
                     onClick={() => setLoginAsGuest(true)}
                     variant="contained"
                     color="secondary"
@@ -332,7 +330,7 @@ const LoginPage = () => {
               onClick={openConnectModal}
               loading={isConnecting || isReconnecting}
               loadingPosition="start"
-              startIcon={<AccountBalanceWalletIcon />}
+              startIcon={<Wallet />}
               fullWidth
               size="large"
               sx={{
@@ -346,7 +344,7 @@ const LoginPage = () => {
             {/* continue as guest */}
 
             <Button
-              startIcon={<PermIdentityIcon />}
+              startIcon={<User />}
               onClick={() => setLoginAsGuest(true)}
               variant="contained"
               color="secondary"

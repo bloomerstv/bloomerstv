@@ -19,8 +19,6 @@ import Markup from '../Lexical/Markup'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import CloseIcon from '@mui/icons-material/Close'
 import { useMyPreferences } from '../../store/useMyPreferences'
-import VolumeUpIcon from '@mui/icons-material/VolumeUp'
-import VolumeOffIcon from '@mui/icons-material/VolumeOff'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 import { useStreamChatsQuery } from '../../../graphql/generated'
 import LiveCount from '../../pages/profile/LiveCount'
@@ -52,6 +50,7 @@ import { useCreatePost, usePublicClient } from '@lens-protocol/react'
 import { useWalletClient } from 'wagmi'
 import { handleOperationWith } from '@lens-protocol/react/viem'
 import { acl, storageClient } from '../../../utils/lib/lens/storageClient'
+import { Volume2, VolumeOff } from 'lucide-react'
 export type SendMessageInput = {
   txHash?: string
   clip?: {
@@ -368,25 +367,25 @@ const LiveChat = ({
 
       const metadata = imageUrl
         ? image({
-            content: inputMessage,
-            image: {
-              item: imageUrl,
-              type: imageMimeType || MediaImageMimeType.JPEG,
-              altTag: inputMessage,
-              license: MetadataLicenseType.CCO
-            },
-            id: id,
-            locale: locale,
-            attachments: [],
-            attributes: [],
-            tags: [],
-            title: ''
-          })
+          content: inputMessage,
+          image: {
+            item: imageUrl,
+            type: imageMimeType || MediaImageMimeType.JPEG,
+            altTag: inputMessage,
+            license: MetadataLicenseType.CCO
+          },
+          id: id,
+          locale: locale,
+          attachments: [],
+          attributes: [],
+          tags: [],
+          title: ''
+        })
         : textOnly({
-            content: inputMessage,
-            id: id,
-            locale: locale
-          })
+          content: inputMessage,
+          id: id,
+          locale: locale
+        })
 
       const response = await storageClient.uploadAsJson(metadata, {
         acl: acl,
@@ -462,7 +461,7 @@ const LiveChat = ({
             onClick={() => setLiveChatPopUpSound(!liveChatPopUpSound)}
             size="small"
           >
-            {liveChatPopUpSound ? <VolumeUpIcon /> : <VolumeOffIcon />}
+            {liveChatPopUpSound ? <Volume2 size={18} /> : <VolumeOff size={18} />}
           </IconButton>
 
           {showLiveCount && accountAddress && (
@@ -544,7 +543,7 @@ const LiveChat = ({
                       wordWrap: 'break-word', // adds support for older browsers, same as overflowWrap
                       wordBreak: 'break-word' // breaks words if they are too long to fit
                     }}
-                    // className="break-words whitespace-pre-wrap"
+                  // className="break-words whitespace-pre-wrap"
                   >
                     {msg.content}
                   </Markup>
@@ -584,8 +583,8 @@ const LiveChat = ({
                     className={clsx(
                       'text-s-text mr-1',
                       msg?.authorAccountAddress &&
-                        msg.accountAddress === msg?.authorAccountAddress &&
-                        'bg-brand text-white rounded-md px-1.5 py-0.5'
+                      msg.accountAddress === msg?.authorAccountAddress &&
+                      'bg-brand text-white rounded-md px-1.5 py-0.5'
                     )}
                   >
                     {msg.handle}
@@ -594,12 +593,12 @@ const LiveChat = ({
                   {(!msg?.contentType ||
                     (msg.contentType !== ContentType.Clip &&
                       msg.contentType !== ContentType.Trade)) && (
-                    <span>
-                      <Markup className="break-words whitespace-pre-wrap">
-                        {msg.content}
-                      </Markup>
-                    </span>
-                  )}
+                      <span>
+                        <Markup className="break-words whitespace-pre-wrap">
+                          {msg.content}
+                        </Markup>
+                      </span>
+                    )}
                 </div>
 
                 {/* show comment */}

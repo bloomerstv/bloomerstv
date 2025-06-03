@@ -2,7 +2,9 @@ import React from 'react'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
 import Link from 'next/link'
-import PermIdentityIcon from '@mui/icons-material/PermIdentity'
+import { Button } from '@mui/material'
+import { useRouter } from 'next/navigation'
+import { User } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import LiveDiv from '../../ui/LiveDiv'
@@ -93,7 +95,7 @@ const StreamerBar = ({ streamer }: { streamer: StreamerWithAccount }) => {
         <>
           {streamer?.isActive ? (
             <div className="centered-row gap-x-1 text-xl text-brand ">
-              <PermIdentityIcon fontSize="inherit" />
+              <User size={18} />
               <div className="text-base font-semibold">
                 {streamer?.liveCount}
               </div>

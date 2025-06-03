@@ -1,7 +1,6 @@
 'use client'
 import React from 'react'
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
-import CloseIcon from '@mui/icons-material/Close'
+import { ArrowLeftIcon, XIcon } from 'lucide-react'
 import { IconButton, List, ListItem, ListItemButton } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import formatHandle from '../../utils/lib/formatHandle'
@@ -33,7 +32,7 @@ const SearchPage = () => {
             }
           }}
         >
-          <ArrowBackIosIcon />
+          <ArrowLeftIcon className="w-4 h-4" />
         </IconButton>
 
         <div className="flex-grow">
@@ -52,7 +51,7 @@ const SearchPage = () => {
               setSearch('')
             }}
           >
-            <CloseIcon />
+            <XIcon className="w-4 h-4" />
           </IconButton>
         )}
       </div>

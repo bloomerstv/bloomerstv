@@ -4,10 +4,7 @@ import CollectSettingPopUp from './CollectSettingPopUp'
 import clsx from 'clsx'
 import { useCollectPreferences } from '../../store/useCollectPreferences'
 import { IconButton } from '@mui/material'
-import SettingsIcon from '@mui/icons-material/Settings'
-import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange'
-import LayersIcon from '@mui/icons-material/Layers'
+import { Settings, Clock, ArrowLeftRight, Layers } from 'lucide-react'
 
 const CollectSettingButton = ({
   className,
@@ -28,7 +25,7 @@ const CollectSettingButton = ({
       <ModalWrapper
         open={open}
         title="Collect Settings"
-        Icon={<LayersIcon />}
+        Icon={<Layers />}
         onClose={handleClose}
         onOpen={handleOpen}
         classname="w-[500px]"
@@ -46,7 +43,7 @@ const CollectSettingButton = ({
       >
         {/* preview */}
         <div className="centered-row gap-x-2">
-          <LayersIcon fontSize="small" />
+          <Layers />
 
           <div className="centered-col">
             <div className={clsx('font-semibold text-base leading-4')}>
@@ -67,14 +64,14 @@ const CollectSettingButton = ({
 
                 {referalFee && amount && (
                   <span className="centered-row gap-x-0.5">
-                    <CurrencyExchangeIcon fontSize="inherit" />
+                    <ArrowLeftRight />
                     {`${referalFee}%`}
                   </span>
                 )}
 
                 {numberOfDays && (
                   <span className="centered-row gap-x-0.5">
-                    <AccessTimeIcon fontSize="inherit" />
+                    <Clock />
                     {`${numberOfDays}d`}
                   </span>
                 )}
@@ -92,7 +89,7 @@ const CollectSettingButton = ({
               fontSize: '16px'
             }}
           >
-            <SettingsIcon fontSize="inherit" className="text-[#848491]" />
+            <Settings />
           </IconButton>
         </div>
       </button>

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { IconButton } from '@mui/material'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CoinsRowItem from './CoinsRowItem'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import { useGetFeaturedCoins } from '../../../utils/hooks/useGetFeaturedCoins'
@@ -53,7 +52,7 @@ const CoinsRow = () => {
       {isOverflowingLeft && !isMobile && (
         <div className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-p-bg z-10 px-1">
           <IconButton onClick={scrollLeft} size="medium">
-            <ChevronLeftIcon fontSize="medium" />
+            <ChevronLeft />
           </IconButton>
         </div>
       )}
@@ -104,7 +103,7 @@ const CoinsRow = () => {
       {isOverflowingRight && !isMobile && (
         <div className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-p-bg z-10 px-1">
           <IconButton onClick={scrollRight} size="medium">
-            <ChevronRightIcon fontSize="medium" />
+            <ChevronRight />
           </IconButton>
         </div>
       )}

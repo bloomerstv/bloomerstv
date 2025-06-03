@@ -1,17 +1,22 @@
 import React, { useState } from 'react'
 import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
   TextField,
   Box,
   Typography,
-  Alert,
-  Button,
-  CircularProgress
+  IconButton,
+  InputAdornment
 } from '@mui/material'
 import {
-  EditNote,
-  AddPhotoAlternate,
-  MonetizationOn
-} from '@mui/icons-material'
+  X,
+  Upload,
+  DollarSign,
+  Coins
+} from 'lucide-react'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import uploadToIPFS from '../../../../utils/uploadToIPFS'
 
@@ -227,9 +232,9 @@ export default function CreateCoinModal({
         }
         handleClose()
       }}
-      onOpen={() => {}}
+      onOpen={() => { }}
       title="Create New Coin"
-      Icon={<EditNote />}
+      Icon={<Coins />}
       classname="w-[500px]"
       BotttomComponent={
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
@@ -251,7 +256,7 @@ export default function CreateCoinModal({
               status === 'pending' || isWaitingForTransaction || isUploading ? (
                 <CircularProgress size={16} color="inherit" />
               ) : (
-                <MonetizationOn />
+                <DollarSign />
               )
             }
             sx={{
@@ -261,11 +266,10 @@ export default function CreateCoinModal({
             }}
           >
             {status === 'pending' || isWaitingForTransaction || isUploading
-              ? `${
-                  isUploading
-                    ? `Uploading ${uploadProgress.toFixed(0)}%`
-                    : 'Creating Coin...'
-                }`
+              ? `${isUploading
+                ? `Uploading ${uploadProgress.toFixed(0)}%`
+                : 'Creating Coin...'
+              }`
               : 'Create Coin'}
           </Button>
         </Box>
@@ -378,7 +382,7 @@ export default function CreateCoinModal({
                   component="span"
                   variant="outlined"
                   fullWidth
-                  startIcon={<AddPhotoAlternate />}
+                  startIcon={<Upload />}
                   disabled={status === 'pending' || isWaitingForTransaction}
                   sx={{
                     height: '100px',

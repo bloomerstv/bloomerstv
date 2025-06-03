@@ -7,8 +7,7 @@ import { DISCORD_INVITE_URL, GITHUB_URL, X_URL } from '../../utils/config'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import { IconButton } from '@mui/material'
-import XIcon from '@mui/icons-material/X'
-import GitHubIcon from '@mui/icons-material/GitHub'
+import { X, Github } from 'lucide-react'
 import { useTheme } from '../wrappers/TailwindThemeProvider'
 import {
   useIsVerifiedQuery,
@@ -190,7 +189,7 @@ const StreamerSidebar = () => {
                 </div>
               )}
               {Boolean(followingStreamers?.length) ||
-              Boolean(offlineFollowingStreamers?.length) ? (
+                Boolean(offlineFollowingStreamers?.length) ? (
                 <div className="flex flex-col w-full">
                   {followingStreamers?.map((streamer) => {
                     return (
@@ -251,39 +250,39 @@ const StreamerSidebar = () => {
             )}
             {(Boolean(restOfTheStreamers?.length) ||
               Boolean(offlineRecommendedStreamers?.length)) && (
-              <div className="flex flex-col w-full">
-                {restOfTheStreamers?.map((streamer) => {
-                  return (
-                    // @ts-ignore
-                    <StreamerBar
-                      key={streamer?.accountAddress}
-                      streamer={streamer}
-                    />
-                  )
-                })}
+                <div className="flex flex-col w-full">
+                  {restOfTheStreamers?.map((streamer) => {
+                    return (
+                      // @ts-ignore
+                      <StreamerBar
+                        key={streamer?.accountAddress}
+                        streamer={streamer}
+                      />
+                    )
+                  })}
 
-                {offlineRecommendedStreamers?.slice(0, 10)?.map((account) => {
-                  return (
-                    // @ts-ignore
-                    <StreamerBar
-                      key={account?.address}
-                      streamer={{
-                        account: account,
-                        accountAddress: account?.address,
-                        lastSeen: offlineStreamersMap.get(account?.address)
-                          ?.lastSeen,
-                        premium:
-                          offlineStreamersMap.get(account?.address)?.premium ??
-                          false,
-                        nextStreamTime: offlineStreamersMap.get(
-                          account?.address
-                        )?.nextStreamTime
-                      }}
-                    />
-                  )
-                })}
-              </div>
-            )}
+                  {offlineRecommendedStreamers?.slice(0, 10)?.map((account) => {
+                    return (
+                      // @ts-ignore
+                      <StreamerBar
+                        key={account?.address}
+                        streamer={{
+                          account: account,
+                          accountAddress: account?.address,
+                          lastSeen: offlineStreamersMap.get(account?.address)
+                            ?.lastSeen,
+                          premium:
+                            offlineStreamersMap.get(account?.address)?.premium ??
+                            false,
+                          nextStreamTime: offlineStreamersMap.get(
+                            account?.address
+                          )?.nextStreamTime
+                        }}
+                      />
+                    )
+                  })}
+                </div>
+              )}
           </>
         </div>
 
@@ -305,7 +304,7 @@ const StreamerSidebar = () => {
                   href={X_URL}
                   target="_blank"
                 >
-                  <XIcon fontSize="medium" />
+                  <X />
                 </IconButton>
                 <IconButton
                   LinkComponent={Link}
@@ -315,7 +314,7 @@ const StreamerSidebar = () => {
                     borderRadius: '0px'
                   }}
                 >
-                  <GitHubIcon fontSize="medium" />
+                  <Github />
                 </IconButton>
                 <IconButton
                   LinkComponent={Link}

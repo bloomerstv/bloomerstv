@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import DoneIcon from '@mui/icons-material/Done'
+import { CheckIcon } from 'lucide-react'
 import GoSuperButton from '../../../components/pages/dashboard/go-live/GoSuperButton'
 import useSession from '../../../utils/hooks/useSession'
 
@@ -48,7 +48,7 @@ const page = () => {
           <div className="space-y-1">
             {freePlansPoints.map((point) => (
               <div key={point} className="flex flex-row gap-x-2">
-                <DoneIcon fontSize="small" />
+                <CheckIcon className="w-4 h-4" />
                 <div>{point}</div>
               </div>
             ))}
@@ -69,7 +69,7 @@ const page = () => {
           <div className="space-y-1">
             {superPlansPoints.map((point) => (
               <div key={point} className="flex flex-row gap-x-2">
-                <DoneIcon fontSize="small" />
+                <CheckIcon className="w-4 h-4" />
                 <div>{point}</div>
               </div>
             ))}

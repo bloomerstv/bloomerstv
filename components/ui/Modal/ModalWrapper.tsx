@@ -8,7 +8,7 @@ import {
   Modal,
   SwipeableDrawer
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
+import { X } from 'lucide-react'
 import clsx from 'clsx'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
 // todo: show available profiles modal and allow user to select profile to login
@@ -110,7 +110,7 @@ const ModalWrapper = ({
               {/* close button */}
 
               <IconButton aria-label="close" size="small" onClick={onClose}>
-                <CloseIcon fontSize="inherit" />
+                <X size={16} />
               </IconButton>
             </div>
             <div className={clsx('max-h-[650px] overflow-auto ', classname)}>

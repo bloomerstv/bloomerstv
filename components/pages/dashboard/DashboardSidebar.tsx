@@ -4,14 +4,11 @@ import { usePathname } from 'next/navigation'
 import React from 'react'
 import getAvatar from '../../../utils/lib/getAvatar'
 import formatHandle from '../../../utils/lib/formatHandle'
-import CircleIcon from '@mui/icons-material/Circle'
-import VideoLibraryIcon from '@mui/icons-material/VideoLibrary'
-import WidgetsIcon from '@mui/icons-material/Widgets'
-import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
-import { useMyStreamQuery } from '../../../graphql/generated'
+import { Circle, Video, Grid3X3, Rocket, DollarSign } from 'lucide-react'
 import VerifiedBadge from '../../ui/VerifiedBadge'
 import useSession from '../../../utils/hooks/useSession'
+import { useMyStreamQuery } from '../../../graphql/generated'
+
 const DashboardSidebar = () => {
   const pathname = usePathname()
   const { isAuthenticated, account } = useSession()
@@ -47,7 +44,7 @@ const DashboardSidebar = () => {
             padding: '10px 20px'
           }}
         >
-          <CircleIcon className="mr-2" />
+          <Circle className="mr-2" />
           Go Live
         </ListItemButton>
         <ListItemButton
@@ -58,7 +55,7 @@ const DashboardSidebar = () => {
             padding: '10px 20px'
           }}
         >
-          <MonetizationOnIcon className="mr-2" />
+          <DollarSign className="mr-2" />
           Coins
         </ListItemButton>
         <ListItemButton
@@ -69,7 +66,7 @@ const DashboardSidebar = () => {
             padding: '10px 20px'
           }}
         >
-          <VideoLibraryIcon className="mr-2" />
+          <Video className="mr-2" />
           Content
         </ListItemButton>
         <ListItemButton
@@ -80,7 +77,7 @@ const DashboardSidebar = () => {
             padding: '10px 20px'
           }}
         >
-          <WidgetsIcon className="mr-2" />
+          <Grid3X3 className="mr-2" />
           Widgets
         </ListItemButton>
 
@@ -92,7 +89,7 @@ const DashboardSidebar = () => {
             padding: '10px 20px'
           }}
         >
-          <RocketLaunchIcon className="mr-2" />
+          <Rocket className="mr-2" />
           Subscription
         </ListItemButton>
       </div>

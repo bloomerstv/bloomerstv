@@ -1,9 +1,9 @@
 import { Button, CircularProgress } from '@mui/material'
 import React, { memo, useState } from 'react'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
-import InfoIcon from '@mui/icons-material/Info'
-import VideocamIcon from '@mui/icons-material/Videocam'
 import OBSSetupGuide from './OBSSetupGuide'
+import { Info } from 'lucide-react'
+import { Video } from 'lucide-react'
 const ConnectStream = ({
   handleGoLiveFromBrowser
 }: {
@@ -42,7 +42,7 @@ const ConnectStream = ({
         size="small"
         color="secondary"
         onClick={handleGoLiveFromBrowser}
-        startIcon={<VideocamIcon />}
+        startIcon={<Video />}
       >
         Go Live from Browser
       </Button>
@@ -52,7 +52,7 @@ const ConnectStream = ({
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         open={open}
-        Icon={<InfoIcon />}
+        Icon={<Info />}
         title="Connect OBS to Livepeer Studio"
         classname="w-[600px]"
         BotttomComponent={

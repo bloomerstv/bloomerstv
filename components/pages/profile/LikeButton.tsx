@@ -2,8 +2,7 @@ import { Button, Tooltip } from '@mui/material'
 import React, { useEffect } from 'react'
 import { useModal } from '../../common/ModalContext'
 import toast from 'react-hot-toast'
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
-import FavoriteIcon from '@mui/icons-material/Favorite'
+import { Heart } from 'lucide-react'
 import { AnimatedCounter } from 'react-animated-counter'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
 import { AnyPost, PostReactionType } from '@lens-protocol/react'
@@ -80,9 +79,9 @@ const LikeButton = ({
         onClick={handleLike}
         startIcon={
           liked ? (
-            <FavoriteIcon fontSize="small" className="text-brand" />
+            <Heart size={18} className="text-brand" />
           ) : (
-            <FavoriteBorderIcon fontSize="small" />
+            <Heart size={18} />
           )
         }
         sx={{

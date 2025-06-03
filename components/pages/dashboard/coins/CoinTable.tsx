@@ -12,16 +12,10 @@ import {
   Chip,
   Avatar,
   IconButton,
-  Tooltip
+  Tooltip,
+  Button
 } from '@mui/material'
-import {
-  ArrowUpward,
-  ArrowDownward,
-  SwapVert,
-  Visibility,
-  Star,
-  StarBorder
-} from '@mui/icons-material'
+import { ArrowUp, ArrowDown, ArrowUpDown, Eye, Star } from 'lucide-react'
 import { ProfileCoinBalances, CoinBalance } from '../../../../utils/types/zora'
 
 interface CoinTableProps {
@@ -147,11 +141,11 @@ export default function CoinTable({
 
   const getSortIcon = (field: string) => {
     if (sortField !== field)
-      return <SwapVert fontSize="small" color="disabled" />
+      return <ArrowUpDown size={16} className="text-gray-400" />
     return sortDirection === 'asc' ? (
-      <ArrowUpward fontSize="small" />
+      <ArrowUp size={16} />
     ) : (
-      <ArrowDownward fontSize="small" />
+      <ArrowDown size={16} />
     )
   }
 
@@ -202,7 +196,7 @@ export default function CoinTable({
               const isFeatured =
                 featuredCoinAddress &&
                 node.coin.address.toLowerCase() ===
-                  featuredCoinAddress.toLowerCase()
+                featuredCoinAddress.toLowerCase()
 
               // Calculate market cap percentage change
               const calculateMarketCapPercentageChange = () => {
@@ -299,15 +293,21 @@ export default function CoinTable({
                   </TableCell>
                   <TableCell>
                     <Box display="flex" gap={1}>
-                      <Tooltip title="View on Zora">
-                        <IconButton
-                          onClick={() => openCoinPage(node.coin.address)}
-                          size="small"
-                          color="primary"
-                        >
-                          <Visibility />
-                        </IconButton>
-                      </Tooltip>
+                      <Button
+                        size="small"
+                        startIcon={<Eye size={16} />}
+                        onClick={() => openCoinPage(node.coin.address)}
+                        sx={{
+                          borderRadius: '20px',
+                          backgroundColor: 'primary.main',
+                          color: 'white',
+                          '&:hover': {
+                            backgroundColor: 'primary.dark'
+                          }
+                        }}
+                      >
+                        View
+                      </Button>
                       <Tooltip
                         title={
                           isFeatured
@@ -317,10 +317,10 @@ export default function CoinTable({
                       >
                         <IconButton
                           size="small"
-                          color={isFeatured ? 'primary' : 'default'}
                           onClick={() => onFeatureCoin(node)}
+                          color={isFeatured ? 'primary' : 'default'}
                         >
-                          {isFeatured ? <Star /> : <StarBorder />}
+                          <Star size={16} fill={isFeatured ? 'currentColor' : 'none'} />
                         </IconButton>
                       </Tooltip>
                     </Box>

@@ -3,10 +3,8 @@ import React, { useState } from 'react'
 import { WIDGETS_URL } from '../../../../utils/config'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { Button, Checkbox, Input } from '@mui/material'
-import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import { ArrowLeftIcon, CopyIcon, PlayIcon } from 'lucide-react'
 import useSession from '../../../../utils/hooks/useSession'
 
 const AlexBoxWidgetPage = () => {
@@ -36,7 +34,7 @@ const AlexBoxWidgetPage = () => {
       <div className="">
         <Link href="/dashboard/widgets" className="text-p-text no-underline">
           <div className="start-center-row gap-x-2 text-3xl font-bold cursor-pointer">
-            <ArrowBackIosNewIcon className="cursor-pointer" />
+            <ArrowLeftIcon className="w-4 h-4" />
             <div>Alert Box</div>
           </div>
         </Link>
@@ -110,7 +108,7 @@ const AlexBoxWidgetPage = () => {
           <div className="start-center-row gap-x-4 mt-4">
             {/* // copy source url */}
             <Button
-              startIcon={<ContentCopyIcon />}
+              startIcon={<CopyIcon className="w-4 h-4" />}
               onClick={handleCopy}
               variant="contained"
               style={{
@@ -126,7 +124,7 @@ const AlexBoxWidgetPage = () => {
               onClick={() => {
                 refreshIframe()
               }}
-              startIcon={<PlayArrowIcon />}
+              startIcon={<PlayIcon className="w-4 h-4" />}
               variant="contained"
               style={{
                 borderRadius: '30px',

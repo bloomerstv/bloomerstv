@@ -10,10 +10,7 @@ import {
   MenuList,
   Tooltip
 } from '@mui/material'
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive'
-import NotificationsOffIcon from '@mui/icons-material/NotificationsOff'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { UserMinus, Bell, BellOff, ChevronDown } from 'lucide-react'
 import {
   useAddNotificationSubscriberToStreamerMutation,
   useIsSubscribedNotificationForStreamerQuery,
@@ -134,7 +131,7 @@ const FollowingButton = ({
             }}
           >
             <ListItemIcon>
-              <NotificationsActiveIcon fontSize="small" />
+              <Bell size={18} />
             </ListItemIcon>
             All
           </MenuItem>
@@ -154,7 +151,7 @@ const FollowingButton = ({
             }}
           >
             <ListItemIcon>
-              <NotificationsOffIcon fontSize="small" />
+              <BellOff size={18} />
             </ListItemIcon>
             None
           </MenuItem>
@@ -166,7 +163,7 @@ const FollowingButton = ({
             disabled={unFollowing}
           >
             <ListItemIcon>
-              <PersonRemoveIcon fontSize="small" />
+              <UserMinus size={18} />
             </ListItemIcon>
             Unfollow
           </MenuItem>
@@ -187,18 +184,15 @@ const FollowingButton = ({
           className="font-semibold"
           startIcon={
             isSubscribed?.isSubscribedNotificationForStreamer ? (
-              <NotificationsActiveIcon fontSize="large" />
+              <Bell size={20} />
             ) : (
-              <NotificationsOffIcon fontSize="large" />
+              <BellOff size={20} />
             )
           }
           endIcon={
-            <KeyboardArrowDownIcon
-              sx={{
-                transform: isMenuOpen ? 'rotate(180deg)' : undefined
-              }}
-              fontSize="large"
-              className="-mx-1"
+            <ChevronDown
+              size={20}
+              className={`-mx-1 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`}
             />
           }
           disableElevation
