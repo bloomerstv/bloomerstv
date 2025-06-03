@@ -1,7 +1,7 @@
 import { IconButton } from '@mui/material'
 import clsx from 'clsx'
 import React from 'react'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { MoreVertical } from 'lucide-react'
 import ChatOptions from './ChatOptions'
 import useSession from '../../../utils/hooks/useSession'
 
@@ -58,7 +58,7 @@ const ChatOptionsButton = ({
           onClick={handleClick}
           color="inherit"
         >
-          <MoreVertIcon color="inherit" />
+          <MoreVertical color="inherit" />
         </IconButton>
       </div>
       {open && (

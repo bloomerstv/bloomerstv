@@ -7,13 +7,12 @@ import {
   TextareaAutosize
 } from '@mui/material'
 import React from 'react'
-import EditNoteIcon from '@mui/icons-material/EditNote'
+import { Edit3 } from 'lucide-react'
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import getAvatar from '../../../../utils/lib/getAvatar'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import LoadingButton from '@mui/lab/LoadingButton'
-import ImageIcon from '@mui/icons-material/Image'
-import CloseIcon from '@mui/icons-material/Close'
+import { Image, X } from 'lucide-react'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../../utils/getUserLocale'
 import {
@@ -25,14 +24,13 @@ import toast from 'react-hot-toast'
 import useIsMobile from '../../../../utils/hooks/useIsMobile'
 // import CollectSettingButton from '../../../common/Collect/CollectSettingButton'
 // import useCollectSettings from '../../../common/Collect/useCollectSettings'
-import VideocamIcon from '@mui/icons-material/Videocam'
+import { Video } from 'lucide-react'
 import { generateVideoThumbnails } from '../../../../utils/generateThumbnail'
 import clsx from 'clsx'
-import FileUploadIcon from '@mui/icons-material/FileUpload'
+import { Upload, Edit } from 'lucide-react'
 import { getVideoDuration } from '../../../../utils/getVideoDuration'
 import { getFileFromDataURL } from '../../../../utils/getImageFileFromDataURL'
 import { stringToLength } from '../../../../utils/stringToLength'
-import EditIcon from '@mui/icons-material/Edit'
 import { useMyPreferences } from '../../../store/useMyPreferences'
 import useSession from '../../../../utils/hooks/useSession'
 import { useCreatePost } from '@lens-protocol/react'
@@ -54,7 +52,7 @@ interface previewFileType {
 const CreatePostPopUp = ({
   open,
   setOpen,
-  onCreatedCallback = () => {},
+  onCreatedCallback = () => { },
   quoteOn,
   quotingTitle,
   quotingOnProfileHandle
@@ -211,44 +209,44 @@ const CreatePostPopUp = ({
 
     const ipfsVideo = isVideo
       ? await uploadToIPFS(previewVideoFile.file, (progress) => {
-          console.log('progress: ', progress)
-          setVideoProgress(progress)
-        })
+        console.log('progress: ', progress)
+        setVideoProgress(progress)
+      })
       : null
 
     console.log('ipfsImage: ', ipfsImage)
     const duration = isVideo
       ? await getVideoDuration(previewVideoFile.url).then((num) =>
-          Math.round(num)
-        )
+        Math.round(num)
+      )
       : 0
 
     const metadata = isVideo
       ? video({
-          ...commonMetadata,
-          video: {
-            item: ipfsVideo?.url!,
-            type: previewVideoFile.file.type as MediaVideoMimeType,
-            cover: ipfsImage?.url,
-            duration: duration,
-            altTag: videoTitle ? `${videoTitle}\n${content}` : content
-          },
-          title: videoTitle,
-          tags: [...tags]
-        })
+        ...commonMetadata,
+        video: {
+          item: ipfsVideo?.url!,
+          type: previewVideoFile.file.type as MediaVideoMimeType,
+          cover: ipfsImage?.url,
+          duration: duration,
+          altTag: videoTitle ? `${videoTitle}\n${content}` : content
+        },
+        title: videoTitle,
+        tags: [...tags]
+      })
       : isImage
         ? image({
-            ...commonMetadata,
-            image: {
-              item: ipfsImage?.url!,
-              // @ts-ignore
-              type: imageMimeType as MediaImageMimeType,
-              altTag: videoTitle ? `${videoTitle}\n${content}` : content
-            }
-          })
+          ...commonMetadata,
+          image: {
+            item: ipfsImage?.url!,
+            // @ts-ignore
+            type: imageMimeType as MediaImageMimeType,
+            altTag: videoTitle ? `${videoTitle}\n${content}` : content
+          }
+        })
         : textOnly({
-            ...commonMetadata
-          })
+          ...commonMetadata
+        })
 
     const response = await storageClient.uploadAsJson(metadata, {
       acl: acl,
@@ -261,14 +259,14 @@ const CreatePostPopUp = ({
 
     const result = quoteOn
       ? await createPost({
-          contentUri: response.uri,
-          quoteOf: {
-            post: quoteOn
-          }
-        })
+        contentUri: response.uri,
+        quoteOf: {
+          post: quoteOn
+        }
+      })
       : await createPost({
-          contentUri: response.uri
-        })
+        contentUri: response.uri
+      })
 
     if (result.isErr()) {
       toast.error(result.error.message)
@@ -296,7 +294,7 @@ const CreatePostPopUp = ({
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         title="Create a Post"
-        Icon={<EditNoteIcon />}
+        Icon={<Edit3 />}
         classname="w-[600px]"
         BotttomComponent={
           <div className="flex flex-row gap-x-3 justify-end">
@@ -314,7 +312,7 @@ const CreatePostPopUp = ({
                 (previewVideoFile && videoTitle.trim().length === 0) ||
                 loading
               }
-              startIcon={<EditIcon />}
+              startIcon={<Edit />}
               variant="contained"
               size={isMobile ? 'small' : 'medium'}
               onClick={async () => {
@@ -418,7 +416,7 @@ const CreatePostPopUp = ({
                     >
                       <div className="space-y-2">
                         <div className="centered-row gap-x-1  text-xs">
-                          <FileUploadIcon fontSize="inherit" />
+                          <Upload />
                           <div className="text-s-text font-semibold">
                             Choose Thumbnail
                           </div>
@@ -491,7 +489,7 @@ const CreatePostPopUp = ({
                     }}
                     disabled={loading}
                   >
-                    <CloseIcon className="text-white rounded-full" />
+                    <X />
                   </IconButton>
                 )}
                 {loading && previewVideoFile && (
@@ -505,7 +503,7 @@ const CreatePostPopUp = ({
           ) : (
             <div className="start-center-row gap-x-3">
               <Button
-                startIcon={<ImageIcon />}
+                startIcon={<Image />}
                 sx={{
                   textTransform: 'none'
                 }}
@@ -531,7 +529,7 @@ const CreatePostPopUp = ({
 
               {/* video button */}
               <Button
-                startIcon={<VideocamIcon />}
+                startIcon={<Video />}
                 sx={{
                   textTransform: 'none'
                 }}

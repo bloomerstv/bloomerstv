@@ -6,9 +6,9 @@ import Link from 'next/link'
 import { useTheme } from '../../../wrappers/TailwindThemeProvider'
 import clsx from 'clsx'
 import { IconButton, Tooltip } from '@mui/material'
-import VideoCallIcon from '@mui/icons-material/VideoCall'
 import CreatePostButton from './CreatePostButton'
 import useSession from '../../../../utils/hooks/useSession'
+import { VideoIcon } from 'lucide-react'
 
 const TopHeader = () => {
   const { theme } = useTheme()
@@ -31,17 +31,17 @@ const TopHeader = () => {
         </div>
       </Link>
       <HeaderSearch />
-      <div className="centered-row gap-x-1">
+      <div className="centered-row gap-x-2">
         {isAuthenticated && <CreatePostButton />}
 
         {isAuthenticated && (
           <Tooltip title="Go Live">
             <IconButton LinkComponent={Link} href="/dashboard/go-live">
-              <VideoCallIcon />
+              <VideoIcon />
             </IconButton>
           </Tooltip>
         )}
-        <div className="ml-3">
+        <div className="ml-1">
           <LoginButton />
         </div>
       </div>

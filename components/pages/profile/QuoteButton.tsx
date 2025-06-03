@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
 import CreatePostPopUp from '../all/Header/CreatePostPopUp'
 import { Button, Tooltip } from '@mui/material'
-import FormatQuoteIcon from '@mui/icons-material/FormatQuote'
+import { Quote } from 'lucide-react'
 import { AnimatedCounter } from 'react-animated-counter'
 import { useTheme } from '../../wrappers/TailwindThemeProvider'
 import clsx from 'clsx'
+
 const QuoteButton = ({
   quoteOn,
   quotingTitle,
@@ -34,7 +35,7 @@ const QuoteButton = ({
           variant="contained"
           onClick={() => setOpen(true)}
           startIcon={
-            <FormatQuoteIcon className={clsx(hasQuoted && 'text-brand')} />
+            <Quote size={18} className={clsx(hasQuoted && 'text-brand')} />
           }
           sx={{
             boxShadow: 'none',

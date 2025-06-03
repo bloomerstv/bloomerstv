@@ -1,5 +1,5 @@
 import React from 'react'
-import SearchIcon from '@mui/icons-material/Search'
+import { Search, X } from 'lucide-react'
 import {
   ClickAwayListener,
   IconButton,
@@ -10,7 +10,6 @@ import {
 import { useRouter } from 'next/navigation'
 import formatHandle from '../../../../utils/lib/formatHandle'
 import MobileProfileList from '../../../ui/account/MobileProfileList'
-import CloseIcon from '@mui/icons-material/Close'
 import clsx from 'clsx'
 import { PageSize, useAccounts } from '@lens-protocol/react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -40,7 +39,7 @@ const HeaderSearch = () => {
     <ClickAwayListener onClickAway={closeSearch}>
       <div className={clsx('relative', showSearch && 'shadow-xl')}>
         <div className="centered-row border rounded-lg border-p-border px-3 py-1">
-          <SearchIcon className="text-s-text" />
+          <Search className="text-s-text" />
           <input
             type="text"
             className="w-full rounded-xl border-0 text-sm px-6 font-semibold bg-s-bg outline-none text-p-text"
@@ -55,7 +54,7 @@ const HeaderSearch = () => {
               }}
               onClick={closeSearch}
             >
-              <CloseIcon fontSize="small" />
+              <X size={16} />
             </IconButton>
           </div>
         </div>

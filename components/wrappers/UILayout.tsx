@@ -13,7 +13,7 @@ import useLiveStreamerProfiles from '../../utils/hooks/useLiveStreamerProfiles'
 import useNotifictionSubscriptions from '../../utils/hooks/useNotifictionSubscriptions'
 import { ModalRoot } from '../common/ModalRoot'
 import ModalWrapper from '../ui/Modal/ModalWrapper'
-import InstallMobileIcon from '@mui/icons-material/InstallMobile'
+import { Smartphone } from 'lucide-react'
 import MigrationNotice from '../common/MigrationNotice'
 import { useStreamReplayPosts } from '../../utils/hooks/useStreamReplayPosts'
 
@@ -216,13 +216,13 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
               onClose={() => setShowInstallPrompt(false)}
               onOpen={() => setShowInstallPrompt(true)}
               open={showInstallPrompt}
-              Icon={<InstallMobileIcon />}
+              Icon={<Smartphone />}
               title="Install BloomersTV on your mobile"
             >
               <div className="px-4 pb-4 pt-2 space-y-6">
                 <div className="font-bold text-2xl items-center">
                   <span className="mr-2">
-                    <InstallMobileIcon />
+                    <Smartphone />
                   </span>
                   Add To Home Screen
                 </div>

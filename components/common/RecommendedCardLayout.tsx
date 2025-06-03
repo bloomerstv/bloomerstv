@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import { Play } from 'lucide-react'
 import formatHandle from '../../utils/lib/formatHandle'
 import { secondsToTime, timeAgo } from '../../utils/helpers'
 import { stringToLength } from '../../utils/stringToLength'
@@ -8,6 +8,7 @@ import Markup from './Lexical/Markup'
 import LoadingImage from '../ui/LoadingImage'
 import { Account, PostStats } from '@lens-protocol/react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 const RecommendedCardLayout = ({
   postLink,
@@ -47,7 +48,7 @@ const RecommendedCardLayout = ({
             className="h-[99px] w-[176px] object-cover rounded-md z-0"
           />
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <PlayArrowIcon className="text-white transform transition-transform group-hover:scale-105 duration-300" />
+            <Play className="text-white transform transition-transform group-hover:scale-105 duration-300" />
           </div>
           {duration && (
             <div className="absolute bottom-3 right-2 bg-black bg-opacity-80 px-1.5 rounded">

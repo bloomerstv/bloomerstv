@@ -1,12 +1,6 @@
 import React from 'react'
 import { Typography } from '@mui/material'
-import ConstructionIcon from '@mui/icons-material/Construction'
-import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
-import UpdateIcon from '@mui/icons-material/Update'
-import EmailIcon from '@mui/icons-material/Email'
-import GitHubIcon from '@mui/icons-material/GitHub'
-import TwitterIcon from '@mui/icons-material/Twitter'
-import DiscordIcon from '@mui/icons-material/Message'
+import { Construction, Rocket, RotateCcw, Mail, Github, Twitter, MessageSquare } from 'lucide-react'
 import Image from 'next/image'
 import {
   CREATOR_EMAIL,
@@ -43,7 +37,7 @@ const MigrationNotice: React.FC = () => {
           </Typography>
 
           <div className="flex items-center justify-center gap-2 mb-4">
-            <ConstructionIcon className="text-yellow-500" />
+            <Construction className="text-yellow-500" />
             <Typography
               variant="subtitle1"
               className="text-s-text text-sm sm:text-base"
@@ -56,7 +50,7 @@ const MigrationNotice: React.FC = () => {
         <div className="space-y-5 sm:space-y-6">
           <div className="bg-p-bg/30 p-3 sm:p-4 rounded-lg space-y-4 border border-p-accent/10">
             <div className="flex items-center mb-3">
-              <UpdateIcon className="text-blue-400 mr-2 flex-shrink-0" />
+              <RotateCcw className="text-blue-400 mr-2 flex-shrink-0" />
               <Typography
                 variant="body1"
                 className="text-p-text font-medium text-sm sm:text-base"
@@ -74,7 +68,7 @@ const MigrationNotice: React.FC = () => {
             </Typography>
 
             <div className="flex items-center mb-3">
-              <RocketLaunchIcon className="text-purple-400 mr-2 flex-shrink-0" />
+              <Rocket className="text-purple-400 mr-2 flex-shrink-0" />
               <Typography
                 variant="body1"
                 className="text-p-text font-medium text-sm sm:text-base"
@@ -108,7 +102,7 @@ const MigrationNotice: React.FC = () => {
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 px-3 py-2 rounded-full bg-p-bg/50 hover:bg-p-bg transition text-s-text hover:text-p-text text-xs sm:text-sm border border-p-accent/10"
               >
-                <TwitterIcon fontSize="small" className="text-blue-400" />
+                <Twitter className="text-blue-400" />
                 <span>Twitter</span>
               </a>
 
@@ -118,7 +112,7 @@ const MigrationNotice: React.FC = () => {
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 px-3 py-2 rounded-full bg-p-bg/50 hover:bg-p-bg transition text-s-text hover:text-p-text text-xs sm:text-sm border border-p-accent/10"
               >
-                <DiscordIcon fontSize="small" className="text-indigo-400" />
+                <MessageSquare className="text-indigo-400" />
                 <span>Discord</span>
               </a>
 
@@ -128,7 +122,7 @@ const MigrationNotice: React.FC = () => {
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 px-3 py-2 rounded-full bg-p-bg/50 hover:bg-p-bg transition text-s-text hover:text-p-text text-xs sm:text-sm border border-p-accent/10"
               >
-                <GitHubIcon fontSize="small" className="text-gray-400" />
+                <Github className="text-gray-400" />
                 <span>GitHub</span>
               </a>
 
@@ -155,7 +149,7 @@ const MigrationNotice: React.FC = () => {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-p-accent/20 border border-p-accent/30 text-p-accent hover:bg-p-accent/30 transition-colors"
               >
-                <EmailIcon fontSize="small" />
+                <Mail />
                 <span className="font-medium select-all">{CREATOR_EMAIL}</span>
               </a>
             </div>

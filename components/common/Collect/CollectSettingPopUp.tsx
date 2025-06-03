@@ -1,11 +1,8 @@
 import React, { useEffect } from 'react'
 import { useCollectPreferences } from '../../store/useCollectPreferences'
-import LayersIcon from '@mui/icons-material/Layers'
+import { Layers, Star, Clock, ArrowLeftRight, Users, DollarSign } from 'lucide-react'
 import { IOSSwitch } from '../../ui/IOSSwitch'
 import { motion } from 'framer-motion'
-import StarBorderIcon from '@mui/icons-material/StarBorder'
-import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange'
 import {
   // Button,
   // IconButton,
@@ -14,16 +11,10 @@ import {
   Slider,
   TextField
 } from '@mui/material'
-import GroupsIcon from '@mui/icons-material/Groups'
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
-
-import { CURRENCIES } from '../../../utils/config'
-// import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1'
-// import clsx from 'clsx'
-// import WalletAddressTextField from './WalletAddressTextField'
 import { useIsVerifiedQuery } from '../../../graphql/generated'
 import useSession from '../../../utils/hooks/useSession'
 import { Erc20Amount } from '@lens-protocol/react'
+import { CURRENCIES } from '../../../utils/config'
 
 export interface SettingRecipientType {
   recipient?: string
@@ -80,15 +71,6 @@ const CollectSettingPopUp = () => {
     String | undefined
   >()
 
-  // const [recipientError, setRecipientError] = React.useState<
-  //   | "Split doesn't add up to 100%"
-  //   | 'There is a recipient with invalid address'
-  //   | 'There is a recipient with empty address'
-  //   | 'There are duplicate recipient addresses'
-  //   | 'Split % can not be 0'
-  //   | undefined
-  // >(undefined)
-
   const { isAuthenticated, account } = useSession()
 
   const { data: isVerified, loading: isVerifiedLoading } = useIsVerifiedQuery({
@@ -120,161 +102,14 @@ const CollectSettingPopUp = () => {
       setAmountValue(amount?.value)
       setAmountCurrency(amount?.asset?.symbol)
     }
-
-    // if (
-    //   settingRecipients?.length === 0 &&
-    //   recipients &&
-    //   recipients.length > 0 &&
-    //   isAuthenticated
-    // ) {
-    //   // @ts-ignore
-    //   // for project address add bloomerstv as handle & data?.address as data?.handle
-    //   const initRecipients = recipients.map((recipient) => {
-    //     if (recipient?.recipient === PROJECT_ADDRESS) {
-    //       return {
-    //         recipient: recipient?.recipient,
-    //         split: recipient?.split,
-    //         handle: 'bloomerstv'
-    //       }
-    //     } else if (recipient?.recipient === account?.address) {
-    //       return {
-    //         recipient: recipient?.recipient,
-    //         split: recipient?.split,
-    //         handle: account?.username?.localName
-    //       }
-    //     }
-    //   })
-    //   setSettingRecipients(initRecipients as SettingRecipientType[])
-    // }
   }, [
     collectLimit,
     amount,
     referalFee,
     numberOfDays,
-    // recipients,
     isAuthenticated,
     isVerifiedLoading
   ])
-
-  // useEffect(() => {
-  //   if (!isAuthenticated || isVerifiedLoading) return
-
-  //   if (!recipients || recipients?.length === 0) {
-  //     if (isSubscribedToSuperBloomers) {
-  //       setSettingRecipients([
-  //         {
-  //           recipient: account?.address,
-  //           handle: account?.username?.localName,
-  //           split: 100
-  //         }
-  //       ])
-  //     } else {
-  //       setSettingRecipients([
-  //         {
-  //           recipient: PROJECT_ADDRESS,
-  //           handle: 'bloomerstv',
-  //           split: 5
-  //         },
-  //         {
-  //           recipient: account?.address,
-  //           handle: account?.username?.localName,
-  //           split: 95
-  //         }
-  //       ])
-  //     }
-
-  //     return
-  //   }
-
-  //   // check if the user is not subscribed to superbloomers & the first recipient is not bloomerstv , because if it's not then set the first recipients
-  //   if (
-  //     !isSubscribedToSuperBloomers &&
-  //     (recipients[0]?.recipient !== PROJECT_ADDRESS ||
-  //       recipients[0]?.split !== 5)
-  //   ) {
-  //     setSettingRecipients([
-  //       {
-  //         recipient: PROJECT_ADDRESS,
-  //         handle: 'bloomerstv',
-  //         split: 5
-  //       },
-  //       {
-  //         recipient: account?.address,
-  //         handle: account?.username?.localName,
-  //         split: 95
-  //       }
-  //     ])
-  //   }
-  // }, [
-  //   recipients,
-  //   account?.address,
-  //   isSubscribedToSuperBloomers,
-  //   isVerifiedLoading
-  // ])
-
-  // useEffect(() => {
-  //   if (!settingRecipients) return
-  //   // check if the split adds up to 100
-  //   const total = settingRecipients.reduce((acc, recipient) => {
-  //     // @ts-ignore
-  //     return acc + recipient?.split || 0
-  //   }, 0)
-
-  //   // split can not be 0
-
-  //   const zeroSplit = settingRecipients.find((recipient) => {
-  //     // @ts-ignore
-  //     return recipient?.split <= 0 || !recipient?.split
-  //   })
-
-  //   if (zeroSplit) {
-  //     setRecipientError('Split % can not be 0')
-  //     return
-  //   }
-
-  //   if (total !== 100) {
-  //     setRecipientError("Split doesn't add up to 100%")
-  //     return
-  //   }
-
-  //   // check if there is an invalid address
-  //   const nullRecipient = settingRecipients.find((recipient) => {
-  //     return !recipient.recipient
-  //   })
-
-  //   if (nullRecipient) {
-  //     setRecipientError('There is a recipient with empty address')
-  //     return
-  //   }
-
-  //   // check if there is an invalid evm address
-  //   const invalidRecipient = settingRecipients.find((recipient) => {
-  //     return !recipient?.recipient?.match(/^0x[a-fA-F0-9]{40}$/)
-  //   })
-
-  //   if (invalidRecipient) {
-  //     setRecipientError('There is a recipient with invalid address')
-  //     return
-  //   }
-
-  //   // check if there are duplicate addresses
-
-  //   const uniqueRecipients = new Set(
-  //     settingRecipients.map((recipient) => recipient?.recipient)
-  //   )
-
-  //   if (uniqueRecipients.size !== settingRecipients.length) {
-  //     setRecipientError('There are duplicate recipient addresses')
-  //     return
-  //   }
-
-  //   setRecipientError(undefined)
-
-  //   // deep copy
-  //   const settingRecipientsCopy = JSON.parse(JSON.stringify(settingRecipients))
-
-  //   setRecipients(settingRecipientsCopy)
-  // }, [settingRecipients])
 
   useEffect(() => {
     if (amountValue && amountCurrency) {
@@ -297,7 +132,7 @@ const CollectSettingPopUp = () => {
   return (
     <div className="w-full space-y-8 font-bold sm:px-0 px-2 py-2 sm:py-0">
       <div className="start-row w-full space-x-3">
-        <LayersIcon className="text-brand" />
+        <Layers />
         <div className="between-row w-full">
           <div className="-mt-1">
             <div>Enable Collect</div>
@@ -338,7 +173,7 @@ const CollectSettingPopUp = () => {
       >
         <motion.div className="" variants={item}>
           <div className="start-row w-full space-x-3">
-            <StarBorderIcon className="text-brand" />
+            <Star />
             <div className="w-full">
               <div className="between-row w-full">
                 <div className="-mt-1">
@@ -383,7 +218,7 @@ const CollectSettingPopUp = () => {
 
         <motion.div className="" variants={item}>
           <div className="start-row w-full space-x-3">
-            <AccessTimeIcon className="text-brand" />
+            <Clock />
             <div className="w-full">
               <div className="between-row w-full">
                 <div className="-mt-1">
@@ -436,7 +271,7 @@ const CollectSettingPopUp = () => {
 
         <motion.div variants={item}>
           <div className="start-row w-full space-x-3">
-            <GroupsIcon className="text-brand" />
+            <Users />
             <div className="between-row w-full">
               <div className="-mt-1">
                 <div>Only Followers can collect</div>
@@ -454,8 +289,6 @@ const CollectSettingPopUp = () => {
 
         <motion.div variants={item}>
           <div className="flex flex-row w-full space-x-3">
-            <AttachMoneyIcon className="text-brand" />
-
             <div className="space-y-3 w-full">
               <div className="between-row w-full">
                 <div className="-mt-1">
@@ -555,89 +388,6 @@ const CollectSettingPopUp = () => {
                     </div>
                   )}
                 </motion.div>
-                {/* {settingRecipients?.map((recipient, index) => {
-                  return (
-                    <motion.div
-                      variants={itemWithHeightAndMt}
-                      key={index}
-                      className="start-row space-x-2 w-full"
-                    >
-                      <WalletAddressTextField
-                        index={index}
-                        value={String(recipient?.recipient)}
-                        setSettingRecipients={setSettingRecipients}
-                        settingRecipients={settingRecipients}
-                        isSubscribedToSuperBloomers={
-                          !!isSubscribedToSuperBloomers
-                        }
-                        key={index}
-                      />
-                      <TextField
-                        type="number"
-                        label="Split %"
-                        value={recipient?.split}
-                        disabled={index === 0 && !isSubscribedToSuperBloomers}
-                        onChange={(e) => {
-                          const newRecipients = [...settingRecipients]
-                          newRecipients[index].split = Number(e.target.value)
-                          setSettingRecipients(newRecipients)
-                        }}
-                        className="w-[110px]"
-                        size="small"
-                        inputProps={{
-                          max: 90,
-                          min: 1
-                        }}
-                      />
-
-                      <IconButton
-                        onClick={() => {
-                          const newRecipients = [...settingRecipients]
-                          newRecipients.splice(index, 1)
-                          setSettingRecipients(newRecipients)
-                        }}
-                        disabled={
-                          settingRecipients?.length === 1 ||
-                          ((index === 0 || settingRecipients?.length === 2) &&
-                            !isSubscribedToSuperBloomers)
-                        }
-                        className={clsx(
-                          (settingRecipients?.length === 1 ||
-                            ((index === 0 || settingRecipients?.length === 2) &&
-                              !isSubscribedToSuperBloomers)) &&
-                            'opacity-50 cursor-not-allowed'
-                        )}
-                      >
-                        <PersonRemoveAlt1Icon className="text-s-text" />
-                      </IconButton>
-                    </motion.div>
-                  )
-                })} */}
-
-                {/* {recipientError && (
-                  <div className="text-xs font-semibold mt-2 text-red-500">
-                    {recipientError}
-                  </div>
-                )} */}
-
-                {/* add recipient button */}
-                {/* {settingRecipients && settingRecipients.length < 5 && (
-                  <motion.div variants={itemWithHeightAndMt} className="w-full">
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => {
-                        setSettingRecipients([
-                          ...settingRecipients,
-                          { recipient: '', split: 0 }
-                        ])
-                      }}
-                      className="text-sm text-brand font-bold"
-                    >
-                      + Add Recipient
-                    </Button>
-                  </motion.div>
-                )} */}
               </motion.div>
             </div>
           </div>
@@ -665,7 +415,7 @@ const CollectSettingPopUp = () => {
         >
           <motion.div animate={isPaid ? 'open' : 'closed'} variants={item}>
             <div className="start-row w-full space-x-3">
-              <CurrencyExchangeIcon className="text-brand" />
+              <ArrowLeftRight />
               <div className="w-full">
                 <div className="between-row w-full">
                   <div className="-mt-1">

@@ -1,6 +1,6 @@
 import React from 'react'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
-import EditIcon from '@mui/icons-material/Edit'
+import { Edit } from 'lucide-react'
 import { Button, MenuItem, Select, TextField } from '@mui/material'
 import { v4 as uuid } from 'uuid'
 import getUserLocale from '../../../utils/getUserLocale'
@@ -187,7 +187,7 @@ const PostClipOnLens = ({
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         title="Post Clip on Lens"
-        Icon={<EditIcon />}
+        Icon={<Edit />}
         keepOpenOnBgClick
         classname="w-[600px]"
         BotttomComponent={

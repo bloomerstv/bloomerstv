@@ -7,15 +7,13 @@ import VerifiedBadge from '../../ui/VerifiedBadge'
 import Markup from '../../common/Lexical/Markup'
 import getPublicationData from '../../../utils/lib/getPublicationData'
 import { stringToLength } from '../../../utils/stringToLength'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import { Play, MessageCircle, FileText } from 'lucide-react'
 import Link from 'next/link'
 import LikeButton from '../profile/LikeButton'
-import MirrorButton from '../profile/MirrorButton'
+import RepostButton from '../profile/MirrorButton'
 import { Button, Tooltip } from '@mui/material'
-import CommentIcon from '@mui/icons-material/Comment'
 import clsx from 'clsx'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
-import NotesIcon from '@mui/icons-material/Notes'
 import TextAndImagePostPage from './TextAndImagePostPage'
 import { AnyPost } from '@lens-protocol/react'
 
@@ -57,7 +55,7 @@ const TextAndImagePostCard = ({
           onClose={() => setIsOpen(false)}
           onOpen={() => setIsOpen(true)}
           open={isOpen}
-          Icon={<NotesIcon />}
+          Icon={<FileText />}
           title="Post Details"
           classname="w-[500px]"
         >
@@ -114,7 +112,7 @@ const TextAndImagePostCard = ({
           </div>
           {/* quoted content with link */}
           {post?.quoteOf?.metadata?.__typename === 'VideoMetadata' ||
-          post?.quoteOf?.metadata?.__typename === 'LivestreamMetadata' ? (
+            post?.quoteOf?.metadata?.__typename === 'LivestreamMetadata' ? (
             <Link
               href={`/watch/${post?.quoteOf?.slug}`}
               className="text-p-text no-underline shrink-0 w-fit"
@@ -135,7 +133,7 @@ const TextAndImagePostCard = ({
                   </div>
                 </div>
                 <div className="start-center-row">
-                  <PlayArrowIcon fontSize="small" />
+                  <Play size={16} />
                   <div className="font-semibold shrink-0">
                     {stringToLength(post?.quoteOf?.metadata?.title, 28)}
                   </div>
@@ -165,14 +163,14 @@ const TextAndImagePostCard = ({
             }}
           >
             <LikeButton likeCount={post?.stats?.upvotes} post={post} />
-            <MirrorButton repostsCount={post?.stats?.reposts} post={post} />
+            <RepostButton repostsCount={post?.stats?.reposts} post={post} />
             <Tooltip title="Comments" arrow>
               <Button
                 size="small"
                 color="secondary"
                 variant="contained"
                 onClick={handleComment}
-                startIcon={<CommentIcon />}
+                startIcon={<MessageCircle size={16} />}
                 sx={{
                   boxShadow: 'none',
                   borderRadius: '20px'

@@ -1,11 +1,12 @@
-import { Button, Checkbox, TextField } from '@mui/material'
 import React, { useState } from 'react'
+import { Button } from '@mui/material'
+import ModalWrapper from '../../../ui/Modal/ModalWrapper'
+import MyStreamEditForm from './MyStreamEditForm'
+import { Edit } from 'lucide-react'
 import {
   MyStream,
   useUpdateMyStreamMutation
 } from '../../../../graphql/generated'
-import ModalWrapper from '../../../ui/Modal/ModalWrapper'
-import EditIcon from '@mui/icons-material/Edit'
 import { useMyStreamInfo } from '../../../store/useMyStreamInfo'
 import { APP_LINK } from '../../../../utils/config'
 import formatHandle from '../../../../utils/lib/formatHandle'
@@ -70,7 +71,7 @@ const MyStreamEditButton = ({
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         title="Edit Stream Info"
-        Icon={<EditIcon />}
+        Icon={<Edit />}
         classname="w-[500px]"
         BotttomComponent={
           <div className="flex flex-row justify-end">
@@ -113,9 +114,8 @@ const MyStreamEditButton = ({
               size="small"
               onChange={() => setAddLiveChatAt(!addLiveChatAt)}
             />
-            <div className="text-p-text">{`Add "Live Chat on ${
-              isAuthenticated && `${APP_LINK}/${formatHandle(account)}`
-            }" at the end of content`}</div>
+            <div className="text-p-text">{`Add "Live Chat on ${isAuthenticated && `${APP_LINK}/${formatHandle(account)}`
+              }" at the end of content`}</div>
           </div>
         </div>
       </ModalWrapper>

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import HomeVideoCard from '../../common/HomeVideoCard'
 import LoadingVideoCard from '../../ui/LoadingVideoCard'
 import { Button, IconButton } from '@mui/material'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import useInnerWidth from '../../../utils/hooks/useInnerWidth'
 import {
@@ -12,8 +12,6 @@ import {
 } from '../../../graphql/generated'
 import { APP_ADDRESS, hideAccountAddresses } from '../../../utils/config'
 import { CATEGORIES } from '../../../utils/categories'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import clsx from 'clsx'
 import StreamCard from './StreamCard'
 import { useStreamersWithAccounts } from '../../store/useStreamersWithAccounts'
@@ -61,7 +59,7 @@ const HomePageCards = () => {
     streamReplayPosts?.streamReplayPosts?.streamReplayPosts?.filter((p) => {
       const post = p?.postId
         ? // @ts-ignore
-          postsMap.get(p?.postId)
+        postsMap.get(p?.postId)
         : null
 
       if (p?.postId && !post) return false
@@ -91,8 +89,8 @@ const HomePageCards = () => {
         tags:
           selectedCategory?.tags?.length > 0
             ? {
-                oneOf: [selectedCategory?.tags[0]]
-              }
+              oneOf: [selectedCategory?.tags[0]]
+            }
             : undefined
       }
     },
@@ -215,7 +213,7 @@ const HomePageCards = () => {
         {isOverflowingLeft && !isMobile && (
           <div className="absolute left-0 bg-p-bg z-10 px-1 -mt-0.5">
             <IconButton onClick={scrollLeft} size="medium">
-              <ChevronLeftIcon fontSize="medium" />
+              <ChevronLeft />
             </IconButton>
           </div>
         )}
@@ -248,7 +246,7 @@ const HomePageCards = () => {
         {isOverflowingRight && !isMobile && (
           <div className="absolute top-0 right-0 bg-p-bg z-10 px-1 -mt-0.5">
             <IconButton onClick={scrollRight} size="medium">
-              <ChevronRightIcon fontSize="medium" />
+              <ChevronRight />
             </IconButton>
           </div>
         )}
@@ -320,14 +318,14 @@ const HomePageCards = () => {
                     streamReplayPost
                       ? undefined
                       : {
-                          createdAt: post?.timestamp!,
+                        createdAt: post?.timestamp!,
+                        // @ts-ignore
+                        sessionId: post?.sessionId!,
+                        account: accountsMap.get(
                           // @ts-ignore
-                          sessionId: post?.sessionId!,
-                          account: accountsMap.get(
-                            // @ts-ignore
-                            post?.accountAddress
-                          )
-                        }
+                          post?.accountAddress
+                        )
+                      }
                   }
                 />
               )
@@ -338,7 +336,7 @@ const HomePageCards = () => {
         {!showAll && showShowMoreButton && (
           <div className="w-full centered-row -mt-4">
             <Button
-              endIcon={<KeyboardArrowDownIcon />}
+              endIcon={<ChevronDown />}
               variant="text"
               autoCapitalize=""
               onClick={() => setShowAll(true)}

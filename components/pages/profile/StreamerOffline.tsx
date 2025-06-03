@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   StreamReplayRecording,
   Streamer,
   useAddNotificationSubscriberToStreamerMutation,
-  useIsSubscribedNotificationForStreamerQuery
+  useIsSubscribedNotificationForStreamerQuery,
+  SingleStreamer
 } from '../../../graphql/generated'
 import { getBanner } from '../../../utils/lib/getBannner'
 import { timeAgo } from '../../../utils/helpers'
@@ -13,20 +14,19 @@ import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFro
 import Player from '../../common/Player/Player'
 import clsx from 'clsx'
 import { getWebsiteLinksFromProfile } from './getWebsiteLinksFromProfile'
-import InsertLinkIcon from '@mui/icons-material/InsertLink'
-import TwitterIcon from '@mui/icons-material/Twitter'
-import GitHubIcon from '@mui/icons-material/GitHub'
-import InstagramIcon from '@mui/icons-material/Instagram'
-import LinkedInIcon from '@mui/icons-material/LinkedIn'
-import { ProfileLink } from './AboutProfile'
-import toast from 'react-hot-toast'
-import { Button } from '@mui/material'
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
-import NotificationsIcon from '@mui/icons-material/Notifications'
+import { Link, Twitter, Github, Instagram, Linkedin, Bell, BellRing } from 'lucide-react'
+import { Button, Tooltip } from '@mui/material'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import Countdown from 'react-countdown'
 import { Account, usePost } from '@lens-protocol/react'
 import useSession from '../../../utils/hooks/useSession'
+import { ProfileLink } from './AboutProfile'
+import toast from 'react-hot-toast'
+import { APP_LINK } from '../../../utils/config'
+import { useModal } from '../../common/ModalContext'
+import { humanReadableNumber } from '../../../utils/helpers'
+import VerifiedBadge from '../../ui/VerifiedBadge'
+import useAccountStats from '../../../utils/hooks/lens/useAccountStats'
 
 const StreamerOffline = ({
   account,
@@ -89,12 +89,12 @@ const StreamerOffline = ({
             {(!isMobile ||
               !streamer?.nextStreamTime ||
               new Date(streamer?.nextStreamTime) < new Date()) && (
-              <div className="text-s-text text-xs sm:text-base font-bold">
-                {streamer?.lastSeen
-                  ? `Streamed ${timeAgo(streamer?.lastSeen)}`
-                  : 'Never streamed before'}
-              </div>
-            )}
+                <div className="text-s-text text-xs sm:text-base font-bold">
+                  {streamer?.lastSeen
+                    ? `Streamed ${timeAgo(streamer?.lastSeen)}`
+                    : 'Never streamed before'}
+                </div>
+              )}
 
             {streamer?.nextStreamTime &&
               new Date(streamer?.nextStreamTime) > new Date() && (
@@ -130,14 +130,14 @@ const StreamerOffline = ({
                 {websiteLink && (
                   <ProfileLink
                     link={websiteLink}
-                    icon={<InsertLinkIcon fontSize="small" />}
+                    icon={<Link size={16} />}
                     className="pl-2 -ml-2"
                   />
                 )}
                 {twitterLink && (
                   <ProfileLink
                     link={twitterLink}
-                    icon={<TwitterIcon fontSize="small" />}
+                    icon={<Twitter size={16} />}
                     alias="Twitter"
                     className="pl-2 -ml-2"
                   />
@@ -145,7 +145,7 @@ const StreamerOffline = ({
                 {instagramLink && (
                   <ProfileLink
                     link={instagramLink}
-                    icon={<InstagramIcon fontSize="small" />}
+                    icon={<Instagram size={16} />}
                     alias="Instagram"
                     className="pl-2 -ml-2"
                   />
@@ -153,7 +153,7 @@ const StreamerOffline = ({
                 {githubLink && (
                   <ProfileLink
                     link={githubLink}
-                    icon={<GitHubIcon fontSize="small" />}
+                    icon={<Github size={16} />}
                     alias="GitHub"
                     className="pl-2 -ml-2"
                   />
@@ -161,7 +161,7 @@ const StreamerOffline = ({
                 {linkedInLink && (
                   <ProfileLink
                     link={linkedInLink}
-                    icon={<LinkedInIcon fontSize="small" />}
+                    icon={<Linkedin size={16} />}
                     alias="LinkedIn"
                     className="pl-2 -ml-2"
                   />
@@ -171,7 +171,7 @@ const StreamerOffline = ({
                     <>
                       {isSubscribed?.isSubscribedNotificationForStreamer ? (
                         <div className="flex flex-row gap-x-1 py-1.5 -ml-0.5 text-s-text">
-                          <NotificationsIcon fontSize="medium" />
+                          <BellRing />
                           <div className="text-left">
                             You will be notified when {formatHandle(account)}{' '}
                             goes live.
@@ -185,7 +185,7 @@ const StreamerOffline = ({
                             }}
                             color="primary"
                             variant="text"
-                            startIcon={<NotificationsNoneIcon />}
+                            startIcon={<Bell />}
                             sx={{
                               textTransform: 'none',
                               borderRadius: '20px'

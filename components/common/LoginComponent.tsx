@@ -6,9 +6,8 @@ import { useAccount, useDisconnect, useWalletClient } from 'wagmi'
 import getAvatar from '../../utils/lib/getAvatar'
 import formatHandle from '../../utils/lib/formatHandle'
 import LoadingButton from '@mui/lab/LoadingButton'
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
+import { Wallet } from 'lucide-react'
 import toast from 'react-hot-toast'
-import WalletIcon from '@mui/icons-material/Wallet'
 import useEns from '../../utils/hooks/useEns'
 import getStampFyiURL from '../../utils/getStampFyiURL'
 import { getShortAddress } from '../../utils/lib/getShortAddress'
@@ -92,7 +91,7 @@ const LoginComponent = ({
                     className={clsx(
                       'between-row w-full p-4',
                       i < profiles?.items.length - 1 &&
-                        'border-b border-p-border '
+                      'border-b border-p-border '
                     )}
                     key={profile?.account?.address}
                   >
@@ -115,21 +114,21 @@ const LoginComponent = ({
                           const params: LoginParams =
                             profile?.__typename === 'AccountManaged'
                               ? {
-                                  accountManager: {
-                                    account: profile.account.address,
-                                    manager: address,
-                                    app: APP_ADDRESS
-                                  },
-                                  signMessage: signMessageWith(walletClient!)
-                                }
+                                accountManager: {
+                                  account: profile.account.address,
+                                  manager: address,
+                                  app: APP_ADDRESS
+                                },
+                                signMessage: signMessageWith(walletClient!)
+                              }
                               : {
-                                  accountOwner: {
-                                    account: profile.account.address,
-                                    owner: address,
-                                    app: APP_ADDRESS
-                                  },
-                                  signMessage: signMessageWith(walletClient!)
-                                }
+                                accountOwner: {
+                                  account: profile.account.address,
+                                  owner: address,
+                                  app: APP_ADDRESS
+                                },
+                                signMessage: signMessageWith(walletClient!)
+                              }
 
                           const data = await execute(params)
 
@@ -168,7 +167,7 @@ const LoginComponent = ({
                   (!authenticatedUser ||
                     authenticatedUser?.role !== Role.OnboardingUser) && (
                     <div className="centered-row w-full text-s-text p-4 text-sm">
-                      You don’t have any lens profiles linked to this wallet
+                      You don't have any lens profiles linked to this wallet
                       address. However, You can log in with your wallet and chat
                       with streamers
                     </div>
@@ -179,7 +178,7 @@ const LoginComponent = ({
                   authenticatedUser?.role === Role.OnboardingUser && (
                     <div className="p-4 space-y-4">
                       <div className="centered-row w-full text-s-text text-sm">
-                        You don’t have any lens profiles linked to this wallet
+                        You don't have any lens profiles linked to this wallet
                         address.
                       </div>
                       <div className="text-xs sm:text-sm text-s-text font-semibold">
@@ -209,7 +208,7 @@ const LoginComponent = ({
                         </div>
                       </div>
                       <LoadingButton
-                        startIcon={<WalletIcon />}
+                        startIcon={<Wallet />}
                         onClick={async () => {
                           const data = await execute({
                             signMessage: signMessageWith(walletClient!),
@@ -318,7 +317,7 @@ const LoginComponent = ({
               onClick={openConnectModal}
               loading={isConnecting || isReconnecting}
               loadingPosition="start"
-              startIcon={<AccountBalanceWalletIcon />}
+              startIcon={<Wallet />}
             >
               Connect
             </LoadingButton>

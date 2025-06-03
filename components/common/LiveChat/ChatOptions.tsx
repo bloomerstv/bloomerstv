@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, ListItemIcon, Menu, MenuItem, MenuList } from '@mui/material'
 import { useRouter } from 'next/navigation'
-import BlockIcon from '@mui/icons-material/Block'
+import { Ban } from 'lucide-react'
 
 import toast from 'react-hot-toast'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -93,7 +93,7 @@ const ChatOptions = ({
         open={isPopUpOpen}
         title="Ban & Block"
         classname="w-[500px]"
-        Icon={<BlockIcon />}
+        Icon={<Ban />}
         BotttomComponent={
           <div className="flex flex-row justify-end gap-x-4">
             <Button variant="outlined" onClick={() => setIsPopUpOpen(false)}>
@@ -193,7 +193,7 @@ const ChatOptions = ({
             chatAccountAddress === optionAccount?.address && (
               <MenuItem onClick={openBanAndBlockPopup}>
                 <ListItemIcon>
-                  <BlockIcon fontSize="small" />
+                  <Ban />
                 </ListItemIcon>
                 Ban & Block
               </MenuItem>

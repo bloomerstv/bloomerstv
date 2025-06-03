@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react'
-import PermIdentityIcon from '@mui/icons-material/PermIdentity'
+import { User } from 'lucide-react'
 import io from 'socket.io-client'
 import { LIVE_CHAT_WEB_SOCKET_URL } from '../../../utils/config'
 import clsx from 'clsx'
@@ -47,7 +47,7 @@ const LiveCount = ({ accountAddress }: { accountAddress: string }) => {
         'centered-row sm:gap-x-1 text-xl sm:text-2xl text-p-text'
       )}
     >
-      <PermIdentityIcon fontSize="inherit" />
+      <User size={18} />
 
       <AnimatedCounter
         value={count}

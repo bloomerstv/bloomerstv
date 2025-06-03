@@ -11,10 +11,7 @@
 //   useSession
 // } from '@lens-protocol/react'
 // import React, { useEffect } from 'react'
-// import LayersIcon from '@mui/icons-material/Layers'
 // import { getRemainingTime } from '../../../utils/helpers'
-// import AccessTimeIcon from '@mui/icons-material/AccessTime'
-// import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange'
 // import { defaultSponsored } from '../../../utils/config'
 // import toast from 'react-hot-toast'
 // import { AnimatePresence, motion, useAnimation } from 'framer-motion'
@@ -388,7 +385,7 @@
 //               )}
 //               {timeRemaining && (
 //                 <span className="centered-row gap-x-0.5">
-//                   <AccessTimeIcon fontSize="inherit" />
+//                   <CurrencyExchangeIcon fontSize="inherit" />
 //                   {`${timeRemaining}`}
 //                 </span>
 //               )}

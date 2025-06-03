@@ -13,14 +13,7 @@ import {
   InputAdornment,
   Box
 } from '@mui/material'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import TrendingUpIcon from '@mui/icons-material/TrendingUp'
-import TrendingDownIcon from '@mui/icons-material/TrendingDown'
-import {
-  ShoppingBag, // Add this import for the sell icon
-  Launch
-} from '@mui/icons-material'
+import { Info, ChevronDown, TrendingUp, TrendingDown, ShoppingBag, ExternalLink } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAccount, useWriteContract, useBalance } from 'wagmi'
 import useHandleWrongNetwork from '../../../utils/hooks/useHandleWrongNetwork'
@@ -37,6 +30,7 @@ import { v4 as uuid } from 'uuid'
 import { useChatInteractions } from '../../store/useChatInteractions'
 import { formatNumber } from '../../../utils/formatters'
 import { ShoppingCartIcon } from 'lucide-react'
+
 interface ZoraCoin {
   id: string
   name: string
@@ -203,10 +197,9 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
 
       const messagePayload: SendMessageTradeType = {
         id: uuid(),
-        content: `💰Bought $${coin.symbol} for ${ethAmount} ETH at $${
-          parseFloat(coin.marketCap || '0') /
+        content: `💰Bought $${coin.symbol} for ${ethAmount} ETH at $${parseFloat(coin.marketCap || '0') /
           parseFloat(coin.totalSupply || '1')
-        } 🎉`,
+          } 🎉`,
         type: ContentType.Trade,
         image: coin.mediaContent?.previewImage?.medium!,
         txHash: tx,
@@ -566,14 +559,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
             <div className="flex items-center">
               <span className="font-bold text-p-text">{coin.symbol}</span>
               <Tooltip title="Featured Zora coin">
-                <InfoOutlinedIcon
-                  sx={{
-                    fontSize: 14,
-                    marginLeft: '4px',
-                    color: 'text.secondary',
-                    cursor: 'help'
-                  }}
-                />
+                <Info size={14} className="text-text-secondary cursor-help" />
               </Tooltip>
             </div>
             <div className="text-xs text-s-text">
@@ -589,9 +575,9 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
               className={`text-xs flex items-center ${priceChangePositive ? 'text-green-500' : 'text-red-500'}`}
             >
               {priceChangePositive ? (
-                <TrendingUpIcon sx={{ fontSize: 14, marginRight: '2px' }} />
+                <TrendingUp size={14} className="mr-2" />
               ) : (
-                <TrendingDownIcon sx={{ fontSize: 14, marginRight: '2px' }} />
+                <TrendingDown size={14} className="mr-2" />
               )}
               {formatPercentage(marketCapPercentageChange)}
             </div>
@@ -602,7 +588,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
             animate={expanded ? 'expanded' : 'collapsed'}
             transition={{ duration: 0.3 }}
           >
-            <KeyboardArrowDownIcon color="action" />
+            <ChevronDown size={14} className="text-action" />
           </motion.div>
         </div>
       </div>
@@ -691,7 +677,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                   size="small"
                   fullWidth
                   onClick={openCoinUrl}
-                  endIcon={<Launch fontSize="small" />}
+                  endIcon={<ExternalLink size={16} />}
                   sx={{
                     textTransform: 'none',
                     borderRadius: '8px',
@@ -719,7 +705,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                         e.stopPropagation()
                         enterBuyMode()
                       }}
-                      endIcon={<ShoppingCartIcon fontSize="small" />}
+                      endIcon={<ShoppingCartIcon size={16} />}
                       sx={{
                         textTransform: 'none',
                         borderRadius: '8px',
@@ -751,7 +737,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                           e.stopPropagation()
                           enterSellMode()
                         }}
-                        endIcon={<ShoppingBag fontSize="small" />}
+                        endIcon={<ShoppingBag size={16} />}
                         sx={{
                           textTransform: 'none',
                           borderRadius: '8px',
@@ -864,7 +850,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                     status === 'pending' ||
                     (ethBalanceData &&
                       parseFloat(ethAmount) >
-                        parseFloat(formatEther(ethBalanceData.value)))
+                      parseFloat(formatEther(ethBalanceData.value)))
                   }
                   sx={{
                     textTransform: 'none',

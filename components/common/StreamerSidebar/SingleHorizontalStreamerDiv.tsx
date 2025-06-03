@@ -5,7 +5,7 @@ import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
 import getAvatar from '../../../utils/lib/getAvatar'
 import LoadingButton from '@mui/lab/LoadingButton'
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import { UserPlus } from 'lucide-react'
 import Link from 'next/link'
 import VerifiedBadge from '../../ui/VerifiedBadge'
 import { Account } from '@lens-protocol/react'
@@ -59,7 +59,7 @@ const SingleHorizontalStreamerDiv = ({
           <div className="-mt-4 absolute bottom-0 z-40">
             <LoadingButton
               startIcon={
-                <PersonAddIcon
+                <UserPlus
                   fontSize="inherit"
                   sx={{
                     width: '10px',

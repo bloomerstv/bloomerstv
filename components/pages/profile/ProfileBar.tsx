@@ -13,8 +13,7 @@ import {
 import { APP_LINK, APP_NAME } from '../../../utils/config'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import MobileChatButton from './MobileChatButton'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import IosShareIcon from '@mui/icons-material/IosShare'
+import { MoreVertical, Share } from 'lucide-react'
 import Markup from '../../common/Lexical/Markup'
 import MobileCommentButton from '../watch/MobileCommentButton'
 import LiveCount from './LiveCount'
@@ -27,7 +26,7 @@ import VerifiedBadge from '../../ui/VerifiedBadge'
 import QuoteButton from './QuoteButton'
 import { useModal } from '../../common/ModalContext'
 import LikeButton from './LikeButton'
-import MirrorButton from './MirrorButton'
+import RepostButton from './MirrorButton'
 // import { createClient } from 'graphql-ws'
 import Timer from '../../common/Timer'
 import { Account, Post, usePost } from '@lens-protocol/react'
@@ -275,7 +274,7 @@ const ProfileBar = ({
         <MenuList>
           <MenuItem onClick={handleShare}>
             <ListItemIcon>
-              <IosShareIcon fontSize="small" />
+              <Share size={16} />
             </ListItemIcon>
             Share
           </MenuItem>
@@ -369,7 +368,7 @@ const ProfileBar = ({
                   )}
                   <div className="-mr-3">
                     <IconButton onClick={handleMenuClick}>
-                      <MoreVertIcon className="text-s-text" fontSize="small" />
+                      <MoreVertical className="text-s-text" size={20} />
                     </IconButton>
                   </div>
                 </div>
@@ -405,7 +404,7 @@ const ProfileBar = ({
             {/* mirror button */}
 
             {publication?.id && (
-              <MirrorButton
+              <RepostButton
                 repostsCount={publication?.stats?.reposts}
                 post={publication}
               />
@@ -420,7 +419,7 @@ const ProfileBar = ({
                   streamer?.streamName
                     ? streamer?.streamName
                     : // @ts-ignore
-                      (publication?.metadata?.title ?? // @ts-ignore
+                    (publication?.metadata?.title ?? // @ts-ignore
                       publication?.metadata?.content)
                 }
                 numberOfQuotes={publication?.stats?.quotes}
@@ -441,7 +440,7 @@ const ProfileBar = ({
 
             <div className="-mx-2.5">
               <IconButton onClick={handleMenuClick}>
-                <MoreVertIcon className="text-s-text" />
+                <MoreVertical className="text-s-text" />
               </IconButton>
             </div>
           </div>
@@ -469,7 +468,7 @@ const ProfileBar = ({
             {/* mirror button */}
 
             {publication?.id && (
-              <MirrorButton
+              <RepostButton
                 repostsCount={publication?.stats?.reposts}
                 post={publication}
               />
@@ -484,7 +483,7 @@ const ProfileBar = ({
                   streamer?.streamName
                     ? streamer?.streamName
                     : // @ts-ignore
-                      (publication?.metadata?.title ?? // @ts-ignore
+                    (publication?.metadata?.title ?? // @ts-ignore
                       publication?.metadata?.content)
                 }
                 numberOfQuotes={publication?.stats?.quotes}

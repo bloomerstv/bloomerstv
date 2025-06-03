@@ -30,7 +30,7 @@ import {
 import { IconButton } from '@mui/material'
 import { BroadcastLive } from './Broadcast'
 import Player from '../../../common/Player/Player'
-import CloseIcon from '@mui/icons-material/Close'
+import { X } from 'lucide-react'
 import { getTagsForCategory } from '../../../../utils/categories'
 // import { VerifiedOpenActionModules } from '../../../../utils/verified-openaction-modules'
 // import { encodeAbiParameters, type Address } from 'viem'
@@ -157,9 +157,8 @@ const LiveVideoComponent = ({
     const locale = getUserLocale()
 
     // Create the content for the post
-    const content = `${streamName}${
-      myStream?.streamDescription ? `\n\n${myStream?.streamDescription}` : ''
-    }${addLiveChatAt ? `\n\nLive Chat at ${profileLink}` : ''}`
+    const content = `${streamName}${myStream?.streamDescription ? `\n\n${myStream?.streamDescription}` : ''
+      }${addLiveChatAt ? `\n\nLive Chat at ${profileLink}` : ''}`
 
     // Get the tags for the post
     const tags = [
@@ -253,13 +252,13 @@ const LiveVideoComponent = ({
 
     let result:
       | Result<
-          Post,
-          | SigningError
-          | ValidationError<string>
-          | TransactionIndexingError
-          | UnauthenticatedError
-          | UnexpectedError
-        >
+        Post,
+        | SigningError
+        | ValidationError<string>
+        | TransactionIndexingError
+        | UnauthenticatedError
+        | UnexpectedError
+      >
       | undefined
 
     // Loop until the post is created or the maximum number of retries is reached
@@ -453,21 +452,21 @@ const LiveVideoComponent = ({
         src={
           playerStreamingMode === PlayerStreamingMode.Quality
             ? ([
-                {
-                  src: hlsUrl,
-                  type: 'hls'
-                }
-              ] as Src[])
+              {
+                src: hlsUrl,
+                type: 'hls'
+              }
+            ] as Src[])
             : ([
-                {
-                  src: hlsUrl,
-                  type: 'hls'
-                },
-                {
-                  src: webrtcUrl,
-                  type: 'webrtc'
-                }
-              ] as Src[])
+              {
+                src: hlsUrl,
+                type: 'hls'
+              },
+              {
+                src: webrtcUrl,
+                type: 'webrtc'
+              }
+            ] as Src[])
         }
         streamOfflineErrorComponent={ConnectStreamMemo}
         onStreamStatusChange={(isLive) => {
@@ -504,7 +503,7 @@ const LiveVideoComponent = ({
               }
             }}
           >
-            <CloseIcon className="text-white rounded-full" />
+            <X className="text-white rounded-full" />
           </IconButton>
         </div>
       </div>

@@ -3,11 +3,7 @@ import formatHandle from '../../../utils/lib/formatHandle'
 import Markup from '../../common/Lexical/Markup'
 import { getWebsiteLinksFromProfile } from './getWebsiteLinksFromProfile'
 import { shortFormOfLink } from '../../../utils/helpers'
-import InsertLinkIcon from '@mui/icons-material/InsertLink'
-import TwitterIcon from '@mui/icons-material/Twitter'
-import GitHubIcon from '@mui/icons-material/GitHub'
-import InstagramIcon from '@mui/icons-material/Instagram'
-import LinkedInIcon from '@mui/icons-material/LinkedIn'
+import { Link, Twitter, Github, Instagram, Linkedin } from 'lucide-react'
 import clsx from 'clsx'
 import { Account } from '@lens-protocol/react'
 
@@ -53,31 +49,31 @@ const AboutProfile = ({ account }: { account: Account }) => {
         {websiteLink && (
           <ProfileLink
             link={websiteLink}
-            icon={<InsertLinkIcon fontSize="small" />}
+            icon={<Link size={16} />}
           />
         )}
         {twitterLink && (
           <ProfileLink
             link={twitterLink}
-            icon={<TwitterIcon fontSize="small" />}
+            icon={<Twitter size={16} />}
           />
         )}
         {instagramLink && (
           <ProfileLink
             link={instagramLink}
-            icon={<InstagramIcon fontSize="small" />}
+            icon={<Instagram size={16} />}
           />
         )}
         {githubLink && (
           <ProfileLink
             link={githubLink}
-            icon={<GitHubIcon fontSize="small" />}
+            icon={<Github size={16} />}
           />
         )}
         {linkedInLink && (
           <ProfileLink
             link={linkedInLink}
-            icon={<LinkedInIcon fontSize="small" />}
+            icon={<Linkedin size={16} />}
           />
         )}
       </div>

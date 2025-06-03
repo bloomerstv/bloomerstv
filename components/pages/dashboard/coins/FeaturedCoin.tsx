@@ -15,16 +15,16 @@ import {
   Stack
 } from '@mui/material'
 import {
-  ContentCopy,
-  MonetizationOn,
+  Copy,
+  DollarSign,
   Star,
-  StarBorder,
-  LinkOutlined,
-  People,
-  SwapHoriz,
-  CalendarToday,
-  BarChart
-} from '@mui/icons-material'
+  Star as StarOutline,
+  ExternalLink,
+  Users,
+  ArrowLeftRight,
+  Calendar,
+  BarChart3
+} from 'lucide-react'
 import { CoinBalance } from '../../../../utils/types/zora'
 import {
   truncateAddress,
@@ -192,7 +192,7 @@ export default function FeaturedCoin({
                     {truncateAddress(coin.address)}
                     <Tooltip title="Copy Address">
                       <IconButton size="small" onClick={handleCopyAddress}>
-                        <ContentCopy fontSize="small" />
+                        <Copy size={16} />
                       </IconButton>
                     </Tooltip>
                   </Typography>
@@ -205,7 +205,7 @@ export default function FeaturedCoin({
                     variant={isFeatured ? 'contained' : 'outlined'}
                     color={isFeatured ? 'primary' : 'inherit'}
                     onClick={() => onFeatureCoin(coinBalance)}
-                    startIcon={isFeatured ? <Star /> : <StarBorder />}
+                    startIcon={isFeatured ? <Star /> : <StarOutline />}
                     size="small"
                     sx={{ borderRadius: '8px' }}
                   >
@@ -215,7 +215,7 @@ export default function FeaturedCoin({
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<MonetizationOn />}
+                  startIcon={<DollarSign />}
                   sx={{ borderRadius: '8px' }}
                   onClick={openOnZora}
                 >
@@ -348,9 +348,9 @@ export default function FeaturedCoin({
               }}
             >
               <Typography variant="subtitle1" fontWeight="medium" mb={1.5}>
-                <BarChart
-                  fontSize="small"
-                  sx={{ mr: 1, verticalAlign: 'middle' }}
+                <BarChart3
+                  size={16}
+                  style={{ marginRight: '4px', verticalAlign: 'middle' }}
                 />
                 Key Statistics
               </Typography>
@@ -375,9 +375,9 @@ export default function FeaturedCoin({
                       fontWeight="medium"
                       sx={{ display: 'flex', alignItems: 'center' }}
                     >
-                      <People
-                        fontSize="small"
-                        sx={{ mr: 0.5, color: 'text.secondary' }}
+                      <Users
+                        size={16}
+                        style={{ marginRight: '4px', color: '#666' }}
                       />
                       {coin.uniqueHolders}
                     </Typography>
@@ -392,9 +392,9 @@ export default function FeaturedCoin({
                       fontWeight="medium"
                       sx={{ display: 'flex', alignItems: 'center' }}
                     >
-                      <SwapHoriz
-                        fontSize="small"
-                        sx={{ mr: 0.5, color: 'text.secondary' }}
+                      <ArrowLeftRight
+                        size={16}
+                        style={{ marginRight: '4px', color: '#666' }}
                       />
                       {coin.transfers.count}
                     </Typography>
@@ -409,9 +409,9 @@ export default function FeaturedCoin({
                       fontWeight="medium"
                       sx={{ display: 'flex', alignItems: 'center' }}
                     >
-                      <CalendarToday
-                        fontSize="small"
-                        sx={{ mr: 0.5, color: 'text.secondary' }}
+                      <Calendar
+                        size={16}
+                        style={{ marginRight: '4px', color: '#666' }}
                       />
                       {formatTimeAgo(new Date(coin.createdAt))}
                     </Typography>
@@ -465,7 +465,7 @@ export default function FeaturedCoin({
                 <Button
                   variant="outlined"
                   size="small"
-                  startIcon={<LinkOutlined />}
+                  startIcon={<ExternalLink />}
                   href={`https://basescan.org/address/${coin.address}`}
                   target="_blank"
                   sx={{ borderRadius: '8px' }}
@@ -475,7 +475,7 @@ export default function FeaturedCoin({
                 <Button
                   variant="outlined"
                   size="small"
-                  startIcon={<MonetizationOn />}
+                  startIcon={<DollarSign />}
                   href={`https://zora.co/coin/base:${coin.address.toLowerCase()}`}
                   target="_blank"
                   sx={{ borderRadius: '8px' }}

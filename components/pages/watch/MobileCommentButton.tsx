@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 import React, { useState } from 'react'
-import CommentIcon from '@mui/icons-material/Comment'
+import { MessageCircle } from 'lucide-react'
 import ModalWrapper from '../../ui/Modal/ModalWrapper'
 import CommentSection from './CommentSection'
 import { AnyPost } from '@lens-protocol/react'
@@ -38,7 +38,7 @@ const MobileCommentButton = ({ post }: { post: AnyPost }) => {
           boxShadow: 'none'
         }}
         className="shrink-0"
-        startIcon={<CommentIcon />}
+        startIcon={<MessageCircle />}
       >
         Commments
       </Button>

@@ -1,7 +1,7 @@
 import { Button, Tooltip } from '@mui/material'
 import React, { useEffect } from 'react'
 import toast from 'react-hot-toast'
-import AutorenewIcon from '@mui/icons-material/Autorenew'
+import { Repeat } from 'lucide-react'
 
 import { useModal } from '../../common/ModalContext'
 import clsx from 'clsx'
@@ -11,7 +11,7 @@ import { AnyPost } from '@lens-protocol/react'
 import useSession from '../../../utils/hooks/useSession'
 import useRepost from '../../../utils/hooks/lens/useRepost'
 
-const MirrorButton = ({
+const RepostButton = ({
   post,
   repostsCount
 }: {
@@ -21,8 +21,8 @@ const MirrorButton = ({
   const { theme } = useTheme()
   const { isAuthenticated } = useSession()
   const { openModal } = useModal()
-  const [isMirrored, setIsMirrored] = React.useState(false)
-  const [newMirrorsCount, setNewMirrorsCount] = React.useState(repostsCount)
+  const [isReposted, setIsMirrored] = React.useState(false)
+  const [newRepostCount, setNewMirrorsCount] = React.useState(repostsCount)
 
   const { execute: createRepost } = useRepost()
 
@@ -35,11 +35,11 @@ const MirrorButton = ({
     return true
   }
 
-  const handleMirror = async () => {
+  const handleRepost = async () => {
     try {
       if (!mustLogin('Must Login to mirror')) return
-      if (isMirrored) return
-      setNewMirrorsCount(newMirrorsCount + 1)
+      if (isReposted) return
+      setNewMirrorsCount(newRepostCount + 1)
       setIsMirrored(true)
       const result = await createRepost({
         post: post?.id
@@ -63,19 +63,19 @@ const MirrorButton = ({
     if (post?.__typename === 'Repost') return
     setIsMirrored(
       !!post?.operations?.hasReposted?.optimistic ||
-        !!post?.operations?.hasReposted?.onChain
+      !!post?.operations?.hasReposted?.onChain
     )
   }, [post?.id])
 
   return (
-    <Tooltip title="Mirror" arrow>
+    <Tooltip title="Repost" arrow>
       <Button
         size="small"
         color="secondary"
         variant="contained"
-        onClick={handleMirror}
+        onClick={handleRepost}
         startIcon={
-          <AutorenewIcon className={clsx(isMirrored && 'text-brand')} />
+          <Repeat size={18} className={clsx(isReposted && 'text-brand')} />
         }
         sx={{
           boxShadow: 'none',
@@ -84,7 +84,7 @@ const MirrorButton = ({
         }}
       >
         <AnimatedCounter
-          value={newMirrorsCount}
+          value={newRepostCount}
           includeDecimals={false}
           includeCommas={true}
           color={theme === 'dark' ? '#ceced3' : '#1f1f23'}
@@ -100,4 +100,4 @@ const MirrorButton = ({
   )
 }
 
-export default MirrorButton
+export default RepostButton

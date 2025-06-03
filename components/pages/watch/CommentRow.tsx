@@ -4,9 +4,8 @@ import formatHandle from '../../../utils/lib/formatHandle'
 import Markup from '../../common/Lexical/Markup'
 import CommentSection from './CommentSection'
 import { Button, Tooltip } from '@mui/material'
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
-import FavoriteIcon from '@mui/icons-material/Favorite'
-import CommentIcon from '@mui/icons-material/Comment'
+import { Heart } from 'lucide-react'
+import { MessageCircle } from 'lucide-react'
 import useIsMobile from '../../../utils/hooks/useIsMobile'
 import clsx from 'clsx'
 import { humanReadableDateTime, timeAgo } from '../../../utils/helpers'
@@ -104,9 +103,9 @@ const CommentRow = ({
               onClick={handleLike}
               startIcon={
                 liked ? (
-                  <FavoriteIcon className="text-brand" />
+                  <Heart className="text-brand" />
                 ) : (
-                  <FavoriteBorderIcon className="" />
+                  <Heart className="" />
                 )
               }
               sx={{
@@ -124,7 +123,7 @@ const CommentRow = ({
                 sx={{
                   boxShadow: 'none'
                 }}
-                startIcon={<CommentIcon />}
+                startIcon={<MessageCircle />}
                 onClick={() => setShowComments(!showComments)}
               >
                 {comment?.stats?.comments}

@@ -18,15 +18,15 @@ import {
   Tooltip
 } from '@mui/material'
 import {
-  AttachMoney,
+  DollarSign,
   Info,
   Image,
-  Movie,
+  Video,
   Upload,
-  Help,
-  MonetizationOn,
+  HelpCircle,
+  Coins,
   Check
-} from '@mui/icons-material'
+} from 'lucide-react'
 import { styled } from '@mui/material/styles'
 
 const steps = ['Basic Info', 'Media Content', 'Economics', 'Review']
@@ -208,7 +208,7 @@ export default function CreateCoin() {
                         <Image color="action" />
                       </Tooltip>
                       <Tooltip title="Videos: MP4, WebM">
-                        <Movie color="action" />
+                        <Video color="action" />
                       </Tooltip>
                     </Box>
                     <Typography variant="caption" color="text.secondary" mt={1}>
@@ -250,7 +250,7 @@ export default function CreateCoin() {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <MonetizationOn />
+                          <Coins />
                         </InputAdornment>
                       )
                     }}
@@ -268,7 +268,7 @@ export default function CreateCoin() {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <AttachMoney />
+                          <DollarSign />
                         </InputAdornment>
                       )
                     }}
@@ -291,7 +291,7 @@ export default function CreateCoin() {
               point for this curve. Creator earnings are 5% of all trades.
               <Button
                 size="small"
-                startIcon={<Help fontSize="small" />}
+                startIcon={<HelpCircle />}
                 className="ml-2"
               >
                 Learn More
@@ -424,7 +424,7 @@ export default function CreateCoin() {
       <Card className="mb-6 border border-gray-200">
         <CardContent>
           <Box className="flex items-center gap-2 mb-3">
-            <MonetizationOn color="primary" fontSize="large" />
+            <Coins color="primary" fontSize="large" />
             <Typography variant="h5" fontWeight="bold">
               Create Your Coin
             </Typography>
@@ -462,7 +462,7 @@ export default function CreateCoin() {
                   variant="contained"
                   color="primary"
                   onClick={handleCreateCoin}
-                  startIcon={<MonetizationOn />}
+                  startIcon={<Coins />}
                 >
                   Create Coin
                 </Button>
