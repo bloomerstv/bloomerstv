@@ -17,10 +17,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TrendingDownIcon from '@mui/icons-material/TrendingDown'
-import {
-  ShoppingBag, // Add this import for the sell icon
-  Launch
-} from '@mui/icons-material'
+import { ShoppingBag } from '@mui/icons-material'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAccount, useWriteContract, useBalance } from 'wagmi'
 import useHandleWrongNetwork from '../../../utils/hooks/useHandleWrongNetwork'
