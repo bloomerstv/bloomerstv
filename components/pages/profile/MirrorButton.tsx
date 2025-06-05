@@ -84,6 +84,7 @@ const MirrorButton = ({
         }}
       >
         <AnimatedCounter
+          key={`mirror-counter-${theme}`} // Add key to force re-render on theme change
           value={newMirrorsCount}
           includeDecimals={false}
           includeCommas={true}

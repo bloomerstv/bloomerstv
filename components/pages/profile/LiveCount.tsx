@@ -50,6 +50,7 @@ const LiveCount = ({ accountAddress }: { accountAddress: string }) => {
       <PermIdentityIcon fontSize="inherit" />
 
       <AnimatedCounter
+        key={`live-count-${theme}`} // Add key to force re-render on theme change
         value={count}
         includeDecimals={false}
         includeCommas={true}

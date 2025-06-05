@@ -19,6 +19,7 @@ const LikeButton = ({
   likeCount: number
 }) => {
   const { theme } = useTheme()
+  console.log('theme', theme)
   const [liked, setLiked] = React.useState(false)
   const { isAuthenticated } = useSession()
   const { openModal } = useModal()
@@ -92,16 +93,17 @@ const LikeButton = ({
         }}
       >
         <AnimatedCounter
+          key={`like-counter-${theme}`} // Add key to force re-render on theme change
           value={newLikeCount}
           includeDecimals={false}
           includeCommas={true}
-          color={theme === 'dark' ? '#ceced3' : '#1f1f23'}
           incrementColor="#1976d2"
           fontSize="15px"
           containerStyles={{
             marginTop: '4px',
             marginBottom: '4px'
           }}
+          color={theme === 'dark' ? '#ceced3' : '#1f1f23'}
         />
       </Button>
     </Tooltip>

@@ -43,6 +43,7 @@ const QuoteButton = ({
           }}
         >
           <AnimatedCounter
+            key={`quote-counter-${theme}`} // Add key to force re-render on theme change
             value={quoteCount}
             includeDecimals={false}
             includeCommas={true}

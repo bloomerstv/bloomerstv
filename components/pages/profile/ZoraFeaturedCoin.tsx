@@ -629,13 +629,13 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
 
             {/* User balance (if any) */}
             {address && hasBalance && (
-              <div className="mb-3 bg-blue-100 dark:bg-blue-900/20 p-2 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm">
-                <div className="text-xs font-bold text-black dark:text-blue-300">
+              <div className="mb-3 bg-white dark:bg-gray-800 p-2 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm">
+                <div className="text-xs font-bold text-gray-900 dark:text-gray-100">
                   Your Balance
                 </div>
-                <div className="text-sm font-semibold flex items-center text-blue-950 dark:text-blue-200">
+                <div className="text-sm font-semibold flex items-center text-gray-800 dark:text-gray-200">
                   {formatBalance(userBalance)} {coin?.symbol}
-                  <span className="text-xs ml-1 text-blue-800 dark:text-blue-400">
+                  <span className="text-xs ml-1 text-gray-600 dark:text-gray-400">
                     (≈ $
                     {(
                       (parseFloat(formatBalance(userBalance)) *
