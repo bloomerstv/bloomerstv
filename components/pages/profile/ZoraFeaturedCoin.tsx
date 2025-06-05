@@ -36,7 +36,8 @@ import {
 import { v4 as uuid } from 'uuid'
 import { useChatInteractions } from '../../store/useChatInteractions'
 import { formatNumber } from '../../../utils/formatters'
-import { ShoppingCartIcon } from 'lucide-react'
+import { ShoppingCartIcon, ExternalLinkIcon, WalletIcon } from 'lucide-react'
+
 interface ZoraCoin {
   id: string
   name: string
@@ -628,13 +629,13 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
 
             {/* User balance (if any) */}
             {address && hasBalance && (
-              <div className="mb-3 bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg">
-                <div className="text-xs text-blue-600 dark:text-blue-300">
+              <div className="mb-3 bg-blue-100 dark:bg-blue-900/20 p-2 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm">
+                <div className="text-xs font-bold text-black dark:text-blue-300">
                   Your Balance
                 </div>
-                <div className="text-sm font-medium flex items-center">
+                <div className="text-sm font-semibold flex items-center text-blue-950 dark:text-blue-200">
                   {formatBalance(userBalance)} {coin?.symbol}
-                  <span className="text-xs ml-1 text-gray-500">
+                  <span className="text-xs ml-1 text-blue-800 dark:text-blue-400">
                     (≈ $
                     {(
                       (parseFloat(formatBalance(userBalance)) *
@@ -676,36 +677,56 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
               </div>
             </div>
 
-            {/* Action Buttons - Reorganized Layout */}
-            <Box
-              sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}
+            {/* View on Zora link - simplified version */}
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              className="mb-3"
             >
-              {/* View on Zora - Full Width */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full"
+              <div
+                onClick={openCoinUrl}
+                className="flex items-center text-blue-500 hover:text-blue-600 cursor-pointer text-xs py-1"
               >
-                <Button
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  onClick={openCoinUrl}
-                  endIcon={<Launch fontSize="small" />}
-                  sx={{
-                    textTransform: 'none',
-                    borderRadius: '8px',
-                    fontSize: '0.75rem',
-                    p: 1
-                  }}
-                >
-                  View on Zora
-                </Button>
-              </motion.div>
+                <ExternalLinkIcon size={14} className="mr-1" />
+                <span>View on Zora</span>
+              </div>
+            </motion.div>
 
-              {address && (
-                <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
-                  {/* Buy Tokens - 50% Width */}
+            {/* Action Buttons */}
+            {address ? (
+              <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
+                {/* Buy Tokens */}
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full"
+                >
+                  <Button
+                    variant="contained"
+                    size="small"
+                    fullWidth
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      enterBuyMode()
+                    }}
+                    endIcon={<ShoppingCartIcon size={16} />}
+                    sx={{
+                      textTransform: 'none',
+                      borderRadius: '8px',
+                      fontSize: '0.75rem',
+                      p: 1,
+                      bgcolor: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.dark'
+                      }
+                    }}
+                  >
+                    Buy Tokens
+                  </Button>
+                </motion.div>
+
+                {/* Sell Tokens - Only shown if user has balance */}
+                {hasBalance && (
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -715,60 +736,58 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                       variant="contained"
                       size="small"
                       fullWidth
+                      color="secondary"
                       onClick={(e) => {
                         e.stopPropagation()
-                        enterBuyMode()
+                        enterSellMode()
                       }}
-                      endIcon={<ShoppingCartIcon fontSize="small" />}
+                      endIcon={<ShoppingBag fontSize="small" />}
                       sx={{
                         textTransform: 'none',
                         borderRadius: '8px',
                         fontSize: '0.75rem',
                         p: 1,
-                        bgcolor: 'primary.main',
                         '&:hover': {
-                          bgcolor: 'primary.dark'
+                          opacity: 0.9
                         }
                       }}
                     >
-                      Buy Tokens
+                      Sell Tokens
                     </Button>
                   </motion.div>
-
-                  {/* Sell Tokens - 50% Width - Only shown if user has balance */}
-                  {hasBalance && (
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full"
-                    >
-                      <Button
-                        variant="contained"
-                        size="small"
-                        fullWidth
-                        color="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          enterSellMode()
-                        }}
-                        endIcon={<ShoppingBag fontSize="small" />}
-                        sx={{
-                          textTransform: 'none',
-                          borderRadius: '8px',
-                          fontSize: '0.75rem',
-                          p: 1,
-                          '&:hover': {
-                            opacity: 0.9
-                          }
-                        }}
-                      >
-                        Sell Tokens
-                      </Button>
-                    </motion.div>
-                  )}
-                </Box>
-              )}
-            </Box>
+                )}
+              </Box>
+            ) : (
+              /* Connect Wallet Button - Show when user is not connected */
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full"
+              >
+                <Button
+                  variant="contained"
+                  size="small"
+                  fullWidth
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    openConnectModal?.()
+                  }}
+                  endIcon={<WalletIcon size={16} />}
+                  sx={{
+                    textTransform: 'none',
+                    borderRadius: '8px',
+                    fontSize: '0.75rem',
+                    p: 1,
+                    bgcolor: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.dark'
+                    }
+                  }}
+                >
+                  Connect Wallet
+                </Button>
+              </motion.div>
+            )}
           </motion.div>
         )}
 
