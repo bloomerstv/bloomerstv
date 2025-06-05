@@ -15,7 +15,6 @@
 // import { getRemainingTime } from '../../../utils/helpers'
 // import AccessTimeIcon from '@mui/icons-material/AccessTime'
 // import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange'
-// import { defaultSponsored } from '../../../utils/config'
 // import toast from 'react-hot-toast'
 // import { AnimatePresence, motion, useAnimation } from 'framer-motion'
 // import { useRef } from 'react'

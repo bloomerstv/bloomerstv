@@ -75,9 +75,7 @@ export const wsLensGraphEndpoint = isMainnet
   : 'wss://api-v2-amoy.lens.dev'
 export const lensUrl = isMainnet ? lensMainnetUrl : lensTestnetUrl
 export const handlePrefix = 'lens/'
-export const defaultSponsored = process.env.NEXT_PUBLIC_DEFAULT_SPONSORED
-  ? process.env.NEXT_PUBLIC_DEFAULT_SPONSORED === 'true'
-  : true
+
 export const SHARE_LENS_URL = 'https://share.lens.xyz'
 export const GITHUB_URL = 'https://github.com/bloomerstv/bloomerstv'
 export const FEEDBACK_URL =

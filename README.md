@@ -79,7 +79,6 @@ Make sure you have the following installed:
    NEXT_PUBLIC_RAINBOW_KIT_PROJECT_ID=""
    NEXT_PUBLIC_LENS_MODE="mainnet"
    NEXT_PUBLIC_NODE_API_MODE="production"
-   NEXT_PUBLIC_DEFAULT_SPONSORED="true"
    NEXT_PUBLIC_LOCAL_NODE_API_URL="http://localhost:8000"
 ```
 
