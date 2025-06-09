@@ -9,23 +9,26 @@ import ShowLoadingWrapper from './ShowLoadingWrapper'
 import ToastWrapper from './ToastWrapper'
 import WaitForMount from './WaitForMount'
 import { ModalProvider } from '../common/ModalContext'
+import { AuthProvider } from './AuthContext'
 
 const MasterWrappers = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider>
       <MuiThemeWrapper>
         <RainbowKitWrapper>
-          <WaitForMount>
-            <ApolloWrapper>
-              <ShowLoadingWrapper>
-                <ModalProvider>
-                  <ToastWrapper>
-                    <UILayout>{children}</UILayout>
-                  </ToastWrapper>
-                </ModalProvider>
-              </ShowLoadingWrapper>
-            </ApolloWrapper>
-          </WaitForMount>
+          <AuthProvider>
+            <WaitForMount>
+              <ApolloWrapper>
+                <ShowLoadingWrapper>
+                  <ModalProvider>
+                    <ToastWrapper>
+                      <UILayout>{children}</UILayout>
+                    </ToastWrapper>
+                  </ModalProvider>
+                </ShowLoadingWrapper>
+              </ApolloWrapper>
+            </WaitForMount>
+          </AuthProvider>
         </RainbowKitWrapper>
       </MuiThemeWrapper>
     </ThemeProvider>

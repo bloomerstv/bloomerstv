@@ -86,3 +86,11 @@ export default function RootLayout({
     </html>
   )
 }
+
+// Add this export to keep state alive
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+export const preferredRegion = 'auto'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
+export const keepAlive = true
