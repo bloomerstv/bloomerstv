@@ -36,8 +36,6 @@ const ClipsFeed = ({ handle }: { handle?: string }) => {
     cursor
   })
 
-  console.log('data', data)
-
   useEffect(() => {
     if (data?.items && data.items.length > 0) {
       setAllPosts((prevPosts) => {
