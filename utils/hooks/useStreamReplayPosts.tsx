@@ -7,7 +7,6 @@ import { AnyPost, useAccountsBulk, usePosts } from '@lens-protocol/react'
 import useSession from './useSession'
 import { useStreamersWithAccounts } from '../../components/store/useStreamersWithAccounts'
 import { usePostsStore } from '../../components/store/usePosts'
-import { connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { getUniqueStringsIgnoreCase } from '../getUniqueElements'
 
 export const useStreamReplayPosts = ({
@@ -21,7 +20,7 @@ export const useStreamReplayPosts = ({
   posts?: AnyPost[]
   loading: boolean
 } => {
-  const { isAuthenticated, authenticatedUser } = useSession()
+  const { authenticatedUser } = useSession()
   const setAccountsFromPublicReplays = useStreamersWithAccounts(
     (state) => state.setAccountsFromPublicReplays
   )
