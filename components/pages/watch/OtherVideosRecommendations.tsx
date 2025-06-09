@@ -87,7 +87,7 @@ const OtherVideosRecommendations = ({ className }: { className?: string }) => {
         {Array(5)
           .fill(null)
           .map((_, i) => (
-            <LoadingVideoCard key={i} />
+            <LoadingVideoCard key={i} isRecommended={!isMobile} />
           ))}
       </div>
     )

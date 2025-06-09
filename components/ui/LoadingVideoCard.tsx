@@ -2,8 +2,30 @@ import clsx from 'clsx'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-const LoadingVideoCard = ({ className }: { className?: string }) => {
+const LoadingVideoCard = ({
+  className,
+  isRecommended = false
+}: {
+  className?: string
+  isRecommended?: boolean
+}) => {
   const pathname = usePathname()
+
+  if (isRecommended) {
+    return (
+      <div className={clsx('w-full animate-pulse', className)}>
+        <div className="w-full flex flex-row gap-x-3">
+          <div className="h-[99px] w-[176px] rounded-md bg-p-hover"></div>
+          <div className="flex flex-col space-y-2 flex-1">
+            <div className="h-4 bg-p-hover rounded w-full"></div>
+            <div className="h-4 bg-p-hover rounded w-5/6"></div>
+            <div className="h-3 bg-p-hover rounded w-1/2"></div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       className={clsx(
