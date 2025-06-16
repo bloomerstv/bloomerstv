@@ -64,5 +64,15 @@ export const Erc20TokenABI = [
     name: 'approve',
     outputs: [{ internalType: 'bool', type: 'bool' }],
     type: 'function'
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'to', type: 'address' },
+      { internalType: 'uint256', name: 'amount', type: 'uint256' }
+    ],
+    name: 'transfer',
+    outputs: [{ internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+    type: 'function'
   }
 ]

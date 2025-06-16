@@ -57,6 +57,19 @@ const LoadingImage: React.FC<LoadingImageProps> = ({
     }
   }, [props.src, defaultImage, loadingTimeout])
 
+  if (!props.src) {
+    return (
+      <div className={clsx('relative', props.className)}>
+        <img
+          src={defaultImage}
+          alt="Placeholder"
+          className={clsx('relative z-10', props.className)}
+          loading="eager"
+        />
+      </div>
+    )
+  }
+
   return (
     <div className={clsx('relative', props.className)}>
       {!isLoaded && (

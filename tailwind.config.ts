@@ -30,7 +30,9 @@ const config: Config = {
         's-text': 'var(--secondary-text)',
         'p-text': 'var(--primary-text)',
         'p-border': 'var(--primary-border)',
-        brand: 'var(--brand)'
+        brand: 'var(--brand)',
+        'zora-purple': '#5A5A8E',
+        'zora-blue': '#3F5FF8'
       }
     }
   },

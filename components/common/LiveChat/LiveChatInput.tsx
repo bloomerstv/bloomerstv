@@ -57,6 +57,8 @@ import {
   PageSize
 } from '@lens-protocol/react'
 import useSession from '../../../utils/hooks/useSession'
+import TipZoraCoins from './TipZoraCoins'
+import { MonetizationOnOutlined } from '@mui/icons-material'
 
 const LiveChatInput = ({
   inputMessage,
@@ -76,7 +78,7 @@ const LiveChatInput = ({
   const { currentSession } = usePublicClient()
   const imageFileInputRef = React.useRef(null)
   const [selectGif, setSelectGif] = React.useState<boolean>(false)
-
+  const [tipZoraCoins, setTipZoraCoins] = React.useState<boolean>(false)
   const { isAuthenticated, account } = useSession()
   const { ensAvatar, ensName } = useEns({
     address: isAuthenticated ? account?.owner : null
@@ -368,6 +370,17 @@ const LiveChatInput = ({
   const showAvatar =
     inputMessage.trim().length > 0 || imageAttachment?.imagePreviewUrl
 
+  // Handle opening Zora coins tipping
+  const handleOpenZoraCoins = () => {
+    setTipZoraCoins(true)
+    setSelectGif(false)
+  }
+
+  // Handle closing Zora coins tipping
+  const handleCloseZoraCoins = () => {
+    setTipZoraCoins(false)
+  }
+
   return (
     <div className="">
       {/* searched profiles */}
@@ -413,7 +426,6 @@ const LiveChatInput = ({
           })}
         </div>
       )}
-
       {/* image attachment preview */}
       {imageAttachment?.imagePreviewUrl && (
         <div className="max-w-full w-fit relative mb-1">
@@ -441,7 +453,6 @@ const LiveChatInput = ({
           </div>
         </div>
       )}
-
       {selectGif && (
         <GifAndStickerSelector
           onSelectGif={(url) => {
@@ -454,8 +465,15 @@ const LiveChatInput = ({
           }}
           className="h-[350px]"
         />
+      )}{' '}
+      {/* Zora coins tipping component */}
+      {tipZoraCoins && (
+        <TipZoraCoins
+          isOpen={tipZoraCoins}
+          onClose={handleCloseZoraCoins}
+          liveChatAccountAddress={liveChatAccount?.owner}
+        />
       )}
-
       {/* superchat component */}
       {superChat && (
         <div className="space-y-3 px-1 pb-2">
@@ -676,7 +694,7 @@ const LiveChatInput = ({
           )}
         </div>
       )}
-      {!superChat && (
+      {!superChat && !tipZoraCoins && (
         <div className="w-full flex flex-row items-end gap-x-1.5">
           <AnimatePresence mode="wait">
             {showAvatar ? (
@@ -824,6 +842,28 @@ const LiveChatInput = ({
                 </IconButton>
               </motion.div>
             )} */}
+
+            {inputMessage.trim().length === 0 &&
+              !selectGif &&
+              !imageAttachment?.imagePreviewUrl && (
+                <motion.div
+                  key="zora"
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  variants={endIconVariants}
+                  className="pb-0.5 -ml-2"
+                >
+                  <IconButton
+                    onClick={handleOpenZoraCoins}
+                    className="text-s-text rounded-full"
+                    size="small"
+                    title="Tip Zora Coins"
+                  >
+                    <MonetizationOnOutlined />
+                  </IconButton>
+                </motion.div>
+              )}
           </AnimatePresence>
         </div>
       )}
