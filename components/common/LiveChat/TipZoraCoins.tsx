@@ -12,7 +12,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import SendIcon from '@mui/icons-material/Send'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useAccount, useWriteContract } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { getProfileBalances } from '@zoralabs/coins-sdk'
@@ -26,7 +26,7 @@ import { Erc20TokenABI } from '../../../utils/lib/erc20'
 import { v4 as uuid } from 'uuid'
 import { ContentType, SendMessageTradeType } from '../LiveChat/LiveChatType'
 import { useChatInteractions } from '../../store/useChatInteractions'
-import { MonetizationOnOutlined, CurrencyExchange } from '@mui/icons-material'
+import { CurrencyExchange } from '@mui/icons-material'
 import { formatNumber } from '../../../utils/formatters'
 
 interface TipZoraCoinsProps {
@@ -68,7 +68,7 @@ const TipZoraCoins: React.FC<TipZoraCoinsProps> = ({
   const { address, isConnected, isConnecting, isReconnecting } = useAccount()
   const { openConnectModal } = useConnectModal()
   const handleWrongNetwork = useHandleWrongNetwork(base.id)
-  const { writeContractAsync, status } = useWriteContract()
+  const { writeContractAsync } = useWriteContract()
   const sendMessage = useChatInteractions((state) => state.sendMessagePayload)
 
   // Format balance for display
@@ -475,7 +475,7 @@ const TipZoraCoins: React.FC<TipZoraCoinsProps> = ({
           </Typography>
 
           <div className="max-h-[300px] overflow-y-auto space-y-2 pr-1">
-            {coinBalances.map((balance, index) => {
+            {coinBalances.map((balance) => {
               const tokenPrice = calculateTokenPrice(
                 balance.coin.marketCap,
                 balance.coin.totalSupply
