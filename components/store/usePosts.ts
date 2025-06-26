@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { AnyPost, Post } from '@lens-protocol/react'
+import { AnyPost } from '@lens-protocol/react'
 import { StreamReplayPostsQuery } from '../../graphql/generated'
 
 interface PostsStore {
@@ -9,8 +9,6 @@ interface PostsStore {
   setStreamReplayPosts: (
     streamReplayPosts: StreamReplayPostsQuery | null
   ) => void
-  clipPost?: Post | null
-  setClipPost: (clipPost: Post | null) => void
 }
 
 export const usePostsStore = create<PostsStore>((set) => ({
@@ -26,13 +24,5 @@ export const usePostsStore = create<PostsStore>((set) => ({
       return hasChanged ? { posts } : state
     }),
   setStreamReplayPosts: (streamReplayPosts) =>
-    set(() => ({ streamReplayPosts })),
-  clipPost: null,
-  setClipPost: (clipPost) =>
-    set((state) => {
-      // Only update if clipPost has actually changed
-      const hasChanged = state.clipPost?.id !== clipPost?.id
-
-      return hasChanged ? { clipPost } : state
-    })
+    set(() => ({ streamReplayPosts }))
 }))

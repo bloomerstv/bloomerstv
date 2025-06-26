@@ -34,7 +34,6 @@ import {
   ContentType,
   Message,
   AccountMessage,
-  SendMessageClipType,
   SendMessageType,
   MessageType
 } from './LiveChatType'
@@ -43,7 +42,6 @@ import LiveChatInput from './LiveChatInput'
 import LoadingImage from '../../ui/LoadingImage'
 import { stringToLength } from '../../../utils/stringToLength'
 import sanitizeDStorageUrl from '../../../utils/lib/sanitizeDStorageUrl'
-import { usePostsStore } from '../../store/usePosts'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import Link from 'next/link'
 import { useChatInteractions } from '../../store/useChatInteractions'
@@ -52,6 +50,7 @@ import { useCreatePost, usePublicClient } from '@lens-protocol/react'
 import { useWalletClient } from 'wagmi'
 import { handleOperationWith } from '@lens-protocol/react/viem'
 import { acl, storageClient } from '../../../utils/lib/lens/storageClient'
+
 export type SendMessageInput = {
   txHash?: string
   clip?: {
@@ -82,10 +81,6 @@ const LiveChat = ({
   preMessages?: AccountMessage[]
   showLiveCount?: boolean
 }) => {
-  const { clipPost, setClipPost } = usePostsStore((state) => ({
-    clipPost: state.clipPost,
-    setClipPost: state.setClipPost
-  }))
   const [imageAttachment, setImageAttachment] = useState<ImageAttachment>({
     imageUrl: undefined,
     imagePreviewUrl: undefined
@@ -184,24 +179,6 @@ const LiveChat = ({
   useEffect(() => {
     joinChatWithAccount()
   }, [socket, account?.address])
-
-  useEffect(() => {
-    if (!socket || !clipPost) return
-    const id = uuid()
-    if (clipPost?.metadata?.__typename !== 'VideoMetadata') {
-      toast.error('Clip post is not valid')
-      return
-    }
-    const sendMessage: SendMessageClipType = {
-      id,
-      clipPostId: clipPost?.slug,
-      content: clipPost?.metadata?.content,
-      image: clipPost?.metadata?.video?.cover,
-      type: ContentType.Clip
-    }
-    socket.emit('send-message', sendMessage)
-    setClipPost(null)
-  }, [socket, clipPost])
 
   useEffect(() => {
     const seen = new Set()

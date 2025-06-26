@@ -9,13 +9,15 @@ import formatHandle from '../../../utils/lib/formatHandle'
 import toast from 'react-hot-toast'
 import { CATEGORIES_LIST, getTagsForCategory } from '../../../utils/categories'
 import { useMyPreferences } from '../../store/useMyPreferences'
-import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
-import { usePostsStore } from '../../store/usePosts'
+// import { getThumbnailFromRecordingUrl } from '../../../utils/lib/getThumbnailFromRecordingUrl'
 import { Account, useCreatePost } from '@lens-protocol/react'
 import useSession from '../../../utils/hooks/useSession'
 import { handleOperationWith } from '@lens-protocol/react/viem'
 import { useWalletClient } from 'wagmi'
 import { acl, storageClient } from '../../../utils/lib/lens/storageClient'
+import { getThumbnailFromVideoUrl } from '../../../utils/generateThumbnail'
+import { useChatInteractions } from '../../store/useChatInteractions'
+import { ContentType } from '../../common/LiveChat/LiveChatType'
 
 const PostClipOnLens = ({
   open,
@@ -30,17 +32,6 @@ const PostClipOnLens = ({
   account?: Account
   sessionId?: string | null
 }) => {
-  // const {
-  //   type,
-  //   amount,
-  //   collectLimit,
-  //   endsAt,
-  //   followerOnly,
-  //   recipients,
-  //   referralFee,
-  //   recipient
-  // } = useCollectSettings()
-  const setClipPost = usePostsStore((state) => state.setClipPost)
   const { isAuthenticated } = useSession()
   const { category, setCategory } = useMyPreferences((state) => {
     return {
@@ -53,6 +44,9 @@ const PostClipOnLens = ({
   )
   const { data: walletClient } = useWalletClient()
   const { execute } = useCreatePost(handleOperationWith(walletClient))
+  const sendMessagePayload = useChatInteractions(
+    (state) => state.sendMessagePayload
+  )
 
   const createLensPost = async () => {
     // @ts-ignore
@@ -79,16 +73,18 @@ const PostClipOnLens = ({
       tags.push(`sessionId-${sessionId}`)
     }
 
-    // const coverThumbnailFile = await getThumbnailFromVideoUrl(url)
+    const coverThumbnailFile = await getThumbnailFromVideoUrl(url)
 
-    // let coverImageUrl = ''
+    let coverImageUrl = ''
 
-    // if (coverThumbnailFile) {
-    //   const d = await uploadToIPFS(coverThumbnailFile)
-    //   coverImageUrl = d?.url || ''
-    // }
+    if (coverThumbnailFile) {
+      const d = await storageClient.uploadFile(coverThumbnailFile, {
+        acl: acl
+      })
+      coverImageUrl = d?.gatewayUrl || ''
+    }
 
-    const coverImageUrl = getThumbnailFromRecordingUrl(url!)
+    // const coverImageUrl = getThumbnailFromRecordingUrl(url!)
 
     const metadata = shortVideo({
       title: title,
@@ -166,7 +162,19 @@ const PostClipOnLens = ({
     }
 
     if (result?.isOk()) {
-      setClipPost(result?.value)
+      // If sendMessagePayload is available, send the clip to the chat
+      if (
+        sendMessagePayload &&
+        result.value.metadata.__typename === 'VideoMetadata'
+      ) {
+        sendMessagePayload({
+          id: uuid(),
+          type: ContentType.Clip,
+          content: title,
+          image: result.value.metadata?.video?.cover || coverImageUrl,
+          clipPostId: result.value.slug
+        })
+      }
     }
   }
 
