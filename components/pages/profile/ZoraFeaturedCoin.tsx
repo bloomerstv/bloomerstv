@@ -575,7 +575,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
               </Tooltip>
             </div>
             <div className="text-xs text-s-text">
-              Market Cap: {formatNumber(Number(coin.marketCap))}
+              Market Cap: ${formatNumber(Number(coin.marketCap))}
             </div>
           </div>
         </div>
