@@ -50,6 +50,7 @@ import { useCreatePost, usePublicClient } from '@lens-protocol/react'
 import { useWalletClient } from 'wagmi'
 import { handleOperationWith } from '@lens-protocol/react/viem'
 import { acl, storageClient } from '../../../utils/lib/lens/storageClient'
+import ClipThumbnail from './ClipThumbnail'
 
 export type SendMessageInput = {
   txHash?: string
@@ -430,8 +431,8 @@ const LiveChat = ({
       >
         <LoginComponent onClose={() => setOpen(false)} open={open} />
       </ModalWrapper>
-      {/* title section */}
 
+      {/* title section */}
       <div className="between-row w-full pb-1 px-3 sm:px-4 sm:py-3  border-b border-p-border">
         <div className="centered-row space-x-2">
           <div className="font-semibold">{title}</div>
@@ -611,8 +612,9 @@ const LiveChat = ({
                               className="text-white transform transition-transform group-hover:scale-105 duration-300"
                             />
                           </div>
-                          <LoadingImage
-                            src={msg.image}
+                          <ClipThumbnail
+                            clipPostId={msg.clipPostId}
+                            imageUrl={msg.image}
                             className="w-24 h-14 rounded-md"
                           />
                         </div>
