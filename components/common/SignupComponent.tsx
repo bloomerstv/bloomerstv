@@ -1,5 +1,4 @@
 import LoadingButton from '@mui/lab/LoadingButton'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
 import React, { useState } from 'react'
 import { useAccount, useWalletClient } from 'wagmi'
 import {
@@ -18,6 +17,7 @@ import { acl, storageClient } from '../../utils/lib/lens/storageClient'
 import useSession from '../../utils/hooks/useSession'
 import { signMessageWith } from '@lens-protocol/react/viem'
 import { APP_ADDRESS } from '../../utils/config'
+import { ConnectKitButton } from 'connectkit'
 
 const SignupComponent = ({
   setOpen,
@@ -30,7 +30,6 @@ const SignupComponent = ({
   const { authenticatedUser } = useSession()
   const { execute: login, loading: loginLoading } = useLogin()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
-  const { openConnectModal } = useConnectModal()
   const [localName, setLocalName] = useState('')
   const { data, loading } = useFetchAccount({
     username: {
@@ -189,19 +188,23 @@ const SignupComponent = ({
         )
       ) : (
         <div className="start-row space-x-4">
-          <LoadingButton
-            variant="contained"
-            onClick={openConnectModal}
-            loadingPosition="start"
-            className="w-full"
-            sx={{
-              borderRadius: '24px',
-              padding: '12px 0'
-            }}
-            startIcon={<AccountBalanceWalletIcon />}
-          >
-            Connect Wallet
-          </LoadingButton>
+          <ConnectKitButton.Custom>
+            {({ show }) => (
+              <LoadingButton
+                variant="contained"
+                onClick={show}
+                loadingPosition="start"
+                className="w-full"
+                sx={{
+                  borderRadius: '24px',
+                  padding: '12px 0'
+                }}
+                startIcon={<AccountBalanceWalletIcon />}
+              >
+                Connect Wallet
+              </LoadingButton>
+            )}
+          </ConnectKitButton.Custom>
         </div>
       )}
     </div>

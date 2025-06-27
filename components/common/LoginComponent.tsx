@@ -1,5 +1,4 @@
 import { CircularProgress } from '@mui/material'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
 import clsx from 'clsx'
 import React, { useEffect } from 'react'
 import { useAccount, useDisconnect, useWalletClient } from 'wagmi'
@@ -22,6 +21,7 @@ import {
 import { signMessageWith } from '@lens-protocol/react/viem'
 import useSession from '../../utils/hooks/useSession'
 import { APP_ADDRESS } from '../../utils/config'
+import { ConnectKitButton } from 'connectkit'
 // import useEnableSignless from '../../utils/hooks/useEnableSignless'
 
 const LoginComponent = ({
@@ -34,7 +34,7 @@ const LoginComponent = ({
   const { data: walletClient } = useWalletClient()
   const { disconnectAsync } = useDisconnect()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
-  const { openConnectModal } = useConnectModal()
+
   const [selectedAccountAddress, setSelectedAccountAddress] =
     React.useState<string>()
   const { data: profiles, loading: loadingProfiles } = useAccountsAvailable({
@@ -63,12 +63,6 @@ const LoginComponent = ({
   //     toast.error(error.message)
   //   }
   // }, [error])
-
-  useEffect(() => {
-    if (open && !isConnected && openConnectModal && !isAuthenticated) {
-      openConnectModal()
-    }
-  }, [open, isConnected, isAuthenticated])
 
   return (
     <div className="p-4 sm:p-0">
@@ -313,15 +307,19 @@ const LoginComponent = ({
           <div className="text-2xl font-bold mb-4">Connect your wallet</div>
 
           <div className="start-row space-x-4">
-            <LoadingButton
-              variant="contained"
-              onClick={openConnectModal}
-              loading={isConnecting || isReconnecting}
-              loadingPosition="start"
-              startIcon={<AccountBalanceWalletIcon />}
-            >
-              Connect
-            </LoadingButton>
+            <ConnectKitButton.Custom>
+              {({ show }) => (
+                <LoadingButton
+                  variant="contained"
+                  onClick={show}
+                  loading={isConnecting || isReconnecting}
+                  loadingPosition="start"
+                  startIcon={<AccountBalanceWalletIcon />}
+                >
+                  Connect
+                </LoadingButton>
+              )}
+            </ConnectKitButton.Custom>
           </div>
         </>
       )}

@@ -1,6 +1,5 @@
 'use client'
 import React from 'react'
-import RainbowKitWrapper from './RainbowKitWrapper'
 import UILayout from './UILayout'
 import ThemeProvider from './TailwindThemeProvider'
 import MuiThemeWrapper from './MuiThemeWrapper'
@@ -10,12 +9,13 @@ import ToastWrapper from './ToastWrapper'
 import WaitForMount from './WaitForMount'
 import { ModalProvider } from '../common/ModalContext'
 import { AuthProvider } from './AuthContext'
+import WagmiWrapper from './WagmiWrapper'
 
 const MasterWrappers = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider>
       <MuiThemeWrapper>
-        <RainbowKitWrapper>
+        <WagmiWrapper>
           <AuthProvider>
             <WaitForMount>
               <ApolloWrapper>
@@ -29,7 +29,7 @@ const MasterWrappers = ({ children }: { children: React.ReactNode }) => {
               </ApolloWrapper>
             </WaitForMount>
           </AuthProvider>
-        </RainbowKitWrapper>
+        </WagmiWrapper>
       </MuiThemeWrapper>
     </ThemeProvider>
   )

@@ -1,7 +1,7 @@
 import { immutable, StorageClient } from '@lens-chain/storage-client'
 import { isMainnet } from '../../config'
-import { chains } from '@lens-chain/sdk/viem'
+import { lens, lensTestnet } from 'wagmi/chains'
 
 export const storageClient = StorageClient.create()
 
-export const acl = immutable(isMainnet ? chains.mainnet.id : chains.testnet.id)
+export const acl = immutable(isMainnet ? lens.id : lensTestnet.id)

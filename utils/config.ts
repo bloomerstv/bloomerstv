@@ -1,5 +1,7 @@
 export const APP_NAME = 'BloomersTV'
 export const APP_LINK = 'https://bloomers.tv'
+export const APP_ICON_LINK = 'https://bloomers.tv/icon-192x192.png'
+export const APP_DESCRIPTION = 'Live Streaming platform on Lens.'
 export const APP_ID = 'bloomers.tv'
 export const STS_TOKEN_URL = process.env.NEXT_PUBLIC_STS_TOKEN_URL
 export const EVER_REGION = 'us-west-2'

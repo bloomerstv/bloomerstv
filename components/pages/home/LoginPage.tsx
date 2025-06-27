@@ -1,6 +1,5 @@
 import LoadingButton from '@mui/lab/LoadingButton'
 import { Button, CircularProgress } from '@mui/material'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
 import React from 'react'
 import { useAccount, useDisconnect, useWalletClient } from 'wagmi'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
@@ -26,6 +25,7 @@ import {
 // import useEnableSignless from '../../../utils/hooks/useEnableSignless'
 import { APP_ADDRESS } from '../../../utils/config'
 import { signMessageWith } from '@lens-protocol/react/viem'
+import { ConnectKitButton } from 'connectkit'
 
 const LoginPage = () => {
   const { data: walletClient } = useWalletClient()
@@ -35,7 +35,6 @@ const LoginPage = () => {
   const { isAuthenticated } = useSession()
   const { disconnectAsync } = useDisconnect()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
-  const { openConnectModal } = useConnectModal()
   const [selectedAccountAddress, setSelectedAccountAddress] =
     React.useState<string>()
   const { data: profiles, loading: loadingProfiles } = useAccountsAvailable({
@@ -327,22 +326,25 @@ const LoginPage = () => {
           <div className="font-bold text-7xl my-16">Connect your wallet</div>
 
           <div className="start-col w-full my-6 space-y-8 ">
-            <LoadingButton
-              variant="contained"
-              onClick={openConnectModal}
-              loading={isConnecting || isReconnecting}
-              loadingPosition="start"
-              startIcon={<AccountBalanceWalletIcon />}
-              fullWidth
-              size="large"
-              sx={{
-                borderRadius: '2rem',
-                padding: '1rem 0'
-              }}
-            >
-              Connect
-            </LoadingButton>
-
+            <ConnectKitButton.Custom>
+              {({ show }) => (
+                <LoadingButton
+                  variant="contained"
+                  onClick={show}
+                  loading={isConnecting || isReconnecting}
+                  loadingPosition="start"
+                  startIcon={<AccountBalanceWalletIcon />}
+                  fullWidth
+                  size="large"
+                  sx={{
+                    borderRadius: '2rem',
+                    padding: '1rem 0'
+                  }}
+                >
+                  Connect
+                </LoadingButton>
+              )}
+            </ConnectKitButton.Custom>
             {/* continue as guest */}
 
             <Button

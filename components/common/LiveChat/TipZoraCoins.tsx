@@ -14,7 +14,6 @@ import SendIcon from '@mui/icons-material/Send'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { motion } from 'framer-motion'
 import { useAccount, useWriteContract } from 'wagmi'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { getProfileBalances } from '@zoralabs/coins-sdk'
 import toast from 'react-hot-toast'
 import { Address } from 'viem'
@@ -28,6 +27,7 @@ import { ContentType, SendMessageTradeType } from '../LiveChat/LiveChatType'
 import { useChatInteractions } from '../../store/useChatInteractions'
 import { CurrencyExchange } from '@mui/icons-material'
 import { formatNumber } from '../../../utils/formatters'
+import { ConnectKitButton } from 'connectkit'
 
 interface TipZoraCoinsProps {
   isOpen: boolean
@@ -66,7 +66,6 @@ const TipZoraCoins: React.FC<TipZoraCoinsProps> = ({
   const [isTipping, setIsTipping] = useState(false)
 
   const { address, isConnected, isConnecting, isReconnecting } = useAccount()
-  const { openConnectModal } = useConnectModal()
   const handleWrongNetwork = useHandleWrongNetwork(base.id)
   const { writeContractAsync } = useWriteContract()
   const sendMessage = useChatInteractions((state) => state.sendMessagePayload)
@@ -319,20 +318,24 @@ const TipZoraCoins: React.FC<TipZoraCoinsProps> = ({
           <Typography className="text-p-text text-center mb-4">
             Connect your wallet to tip Zora coins
           </Typography>
-          <LoadingButton
-            variant="contained"
-            color="primary"
-            onClick={openConnectModal}
-            loading={isConnecting || isReconnecting}
-            loadingPosition="start"
-            startIcon={<AccountBalanceWalletIcon />}
-            style={{
-              borderRadius: '20px',
-              padding: '8px 16px'
-            }}
-          >
-            Connect Wallet
-          </LoadingButton>
+          <ConnectKitButton.Custom>
+            {({ show }) => (
+              <LoadingButton
+                variant="contained"
+                color="primary"
+                onClick={show}
+                loading={isConnecting || isReconnecting}
+                loadingPosition="start"
+                startIcon={<AccountBalanceWalletIcon />}
+                style={{
+                  borderRadius: '20px',
+                  padding: '8px 16px'
+                }}
+              >
+                Connect Wallet
+              </LoadingButton>
+            )}
+          </ConnectKitButton.Custom>
         </div>
       ) : isLoading ? (
         <div className="p-4 flex flex-col items-center">

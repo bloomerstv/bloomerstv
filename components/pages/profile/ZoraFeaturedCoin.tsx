@@ -25,7 +25,6 @@ import { base } from 'viem/chains'
 import toast from 'react-hot-toast'
 import { Address, parseEther, formatEther } from 'viem'
 import { PROJECT_ADDRESS } from '../../../utils/config'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
 import {
   ContentType,
   SendMessageTradeType
@@ -34,6 +33,7 @@ import { v4 as uuid } from 'uuid'
 import { useChatInteractions } from '../../store/useChatInteractions'
 import { formatNumber } from '../../../utils/formatters'
 import { ShoppingCartIcon, ExternalLinkIcon, WalletIcon } from 'lucide-react'
+import { ConnectKitButton } from 'connectkit'
 
 interface ZoraCoin {
   id: string
@@ -80,7 +80,6 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
   const [hasBalance, setHasBalance] = useState(false)
 
   const { address } = useAccount()
-  const { openConnectModal } = useConnectModal()
 
   // Fetch ETH balance using wagmi
   const { data: ethBalanceData } = useBalance({
@@ -168,11 +167,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
   // Handle Buy transaction
   const handleBuyCoin = async () => {
     if (!coin?.address) return
-    if (!address) {
-      toast.error('Please connect your wallet')
-      openConnectModal?.()
-      return
-    }
+
     try {
       await handleWrongNetwork()
 
@@ -227,11 +222,6 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
   // Handle Sell transaction
   const handleSellCoin = async () => {
     if (!coin?.address) return
-    if (!address) {
-      toast.error('Please connect your wallet')
-      openConnectModal?.()
-      return
-    }
 
     if (!sellAmount || parseFloat(sellAmount) <= 0) {
       toast.error('Please enter a valid amount to sell')
@@ -761,28 +751,29 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                 whileTap={{ scale: 0.98 }}
                 className="w-full"
               >
-                <Button
-                  variant="contained"
-                  size="small"
-                  fullWidth
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    openConnectModal?.()
-                  }}
-                  endIcon={<WalletIcon size={16} />}
-                  sx={{
-                    textTransform: 'none',
-                    borderRadius: '8px',
-                    fontSize: '0.75rem',
-                    p: 1,
-                    bgcolor: 'primary.main',
-                    '&:hover': {
-                      bgcolor: 'primary.dark'
-                    }
-                  }}
-                >
-                  Connect Wallet
-                </Button>
+                <ConnectKitButton.Custom>
+                  {({ show }) => (
+                    <Button
+                      variant="contained"
+                      size="small"
+                      fullWidth
+                      onClick={show}
+                      endIcon={<WalletIcon size={16} />}
+                      sx={{
+                        textTransform: 'none',
+                        borderRadius: '8px',
+                        fontSize: '0.75rem',
+                        p: 1,
+                        bgcolor: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.dark'
+                        }
+                      }}
+                    >
+                      Connect Wallet
+                    </Button>
+                  )}
+                </ConnectKitButton.Custom>
               </motion.div>
             )}
           </motion.div>
@@ -868,36 +859,45 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                 whileTap={{ scale: 0.98 }}
                 className="flex-1"
               >
-                <Button
-                  variant="contained"
-                  size="small"
-                  fullWidth
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleBuyCoin()
-                  }}
-                  disabled={
-                    status === 'pending' ||
-                    (ethBalanceData &&
-                      parseFloat(ethAmount) >
-                        parseFloat(formatEther(ethBalanceData.value)))
-                  }
-                  sx={{
-                    textTransform: 'none',
-                    borderRadius: '8px',
-                    fontSize: '0.75rem',
-                    bgcolor: 'primary.main',
-                    '&:hover': {
-                      bgcolor: 'primary.dark'
-                    }
-                  }}
-                >
-                  {status === 'pending' ? (
-                    <CircularProgress size={16} color="inherit" />
-                  ) : (
-                    'Confirm Purchase'
+                <ConnectKitButton.Custom>
+                  {({ show, isConnected, address }) => (
+                    <Button
+                      variant="contained"
+                      size="small"
+                      fullWidth
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        if (!isConnected || !address) {
+                          toast.error('Please connect your wallet')
+                          show?.()
+                          return
+                        }
+                        handleBuyCoin()
+                      }}
+                      disabled={
+                        status === 'pending' ||
+                        (ethBalanceData &&
+                          parseFloat(ethAmount) >
+                            parseFloat(formatEther(ethBalanceData.value)))
+                      }
+                      sx={{
+                        textTransform: 'none',
+                        borderRadius: '8px',
+                        fontSize: '0.75rem',
+                        bgcolor: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.dark'
+                        }
+                      }}
+                    >
+                      {status === 'pending' ? (
+                        <CircularProgress size={16} color="inherit" />
+                      ) : (
+                        'Confirm Purchase'
+                      )}
+                    </Button>
                   )}
-                </Button>
+                </ConnectKitButton.Custom>
               </motion.div>
             </div>
           </motion.div>
@@ -979,28 +979,37 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                 whileTap={{ scale: 0.98 }}
                 className="flex-1"
               >
-                <Button
-                  variant="contained"
-                  size="small"
-                  fullWidth
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleSellCoin()
-                  }}
-                  disabled={status === 'pending' || !sellAmount}
-                  color="secondary"
-                  sx={{
-                    textTransform: 'none',
-                    borderRadius: '8px',
-                    fontSize: '0.75rem'
-                  }}
-                >
-                  {status === 'pending' ? (
-                    <CircularProgress size={16} color="inherit" />
-                  ) : (
-                    'Confirm Sale'
+                <ConnectKitButton.Custom>
+                  {({ show, isConnected, address }) => (
+                    <Button
+                      variant="contained"
+                      size="small"
+                      fullWidth
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        if (!isConnected || !address) {
+                          toast.error('Please connect your wallet')
+                          show?.()
+                          return
+                        }
+                        handleBuyCoin()
+                      }}
+                      disabled={status === 'pending' || !sellAmount}
+                      color="secondary"
+                      sx={{
+                        textTransform: 'none',
+                        borderRadius: '8px',
+                        fontSize: '0.75rem'
+                      }}
+                    >
+                      {status === 'pending' ? (
+                        <CircularProgress size={16} color="inherit" />
+                      ) : (
+                        'Confirm Sale'
+                      )}
+                    </Button>
                   )}
-                </Button>
+                </ConnectKitButton.Custom>
               </motion.div>
             </div>
           </motion.div>

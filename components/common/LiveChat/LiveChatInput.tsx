@@ -20,7 +20,6 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract
 } from 'wagmi'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
 import LoadingButton from '@mui/lab/LoadingButton'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import { Address, formatUnits } from 'viem'
@@ -59,6 +58,7 @@ import {
 import useSession from '../../../utils/hooks/useSession'
 import TipZoraCoins from './TipZoraCoins'
 import { MonetizationOnOutlined } from '@mui/icons-material'
+import { ConnectKitButton } from 'connectkit'
 
 const LiveChatInput = ({
   inputMessage,
@@ -140,7 +140,6 @@ const LiveChatInput = ({
   const selectedCurrency = CURRENCIES.find(
     (currency) => currency.symbol === amountCurrency
   )
-  const { openConnectModal } = useConnectModal()
 
   const { data: txHash, writeContractAsync } = useWriteContract()
   const { isLoading: isWaitingForTransaction } = useWaitForTransactionReceipt({
@@ -621,22 +620,26 @@ const LiveChatInput = ({
 
           {/* the buttons */}
           {!isConnected ? (
-            <LoadingButton
-              variant="contained"
-              color="primary"
-              onClick={openConnectModal}
-              loading={isConnecting || isReconnecting}
-              loadingPosition="start"
-              fullWidth
-              size="small"
-              startIcon={<AccountBalanceWalletIcon />}
-              style={{
-                borderRadius: '20px',
-                padding: '8px 0'
-              }}
-            >
-              Connect Wallet
-            </LoadingButton>
+            <ConnectKitButton.Custom>
+              {({ show }) => (
+                <LoadingButton
+                  variant="contained"
+                  color="primary"
+                  onClick={show}
+                  loading={isConnecting || isReconnecting}
+                  loadingPosition="start"
+                  fullWidth
+                  size="small"
+                  startIcon={<AccountBalanceWalletIcon />}
+                  style={{
+                    borderRadius: '20px',
+                    padding: '8px 0'
+                  }}
+                >
+                  Connect Wallet
+                </LoadingButton>
+              )}
+            </ConnectKitButton.Custom>
           ) : !hasSufficientBalance ? (
             <Button
               variant="contained"
