@@ -9,13 +9,7 @@ import { useStreamersWithAccounts } from '../../components/store/useStreamersWit
 import { usePostsStore } from '../../components/store/usePosts'
 import { getUniqueStringsIgnoreCase } from '../getUniqueElements'
 
-export const useStreamReplayPosts = ({
-  accountAddress,
-  skip = 0
-}: {
-  accountAddress?: string
-  skip?: number
-}): {
+export const useStreamReplayPosts = (): {
   streamReplayPosts?: StreamReplayPostsQuery
   posts?: AnyPost[]
   loading: boolean
@@ -29,12 +23,7 @@ export const useStreamReplayPosts = ({
     setStreamReplayPosts: state.setStreamReplayPosts
   }))
 
-  const { data, loading: streamReplayLoading } = useStreamReplayPostsQuery({
-    variables: {
-      skip: skip,
-      accountAddress
-    }
-  })
+  const { data, loading: streamReplayLoading } = useStreamReplayPostsQuery()
 
   const { data: accountsWithoutPosts } = useAccountsBulk({
     addresses: getUniqueStringsIgnoreCase(
@@ -61,8 +50,6 @@ export const useStreamReplayPosts = ({
 
   // Effect for processing accounts and setting accounts from public replays
   useEffect(() => {
-    if (accountAddress) return
-
     // get unique accountAddresses from posts
     const uniqueAccounts = Array.from(
       new Set(posts?.items?.map((p) => p?.author))
@@ -77,21 +64,55 @@ export const useStreamReplayPosts = ({
       ...uniqueAccounts,
       ...(accountsWithoutPosts ?? [])
     ])
-  }, [posts, accountAddress, authenticatedUser, accountsWithoutPosts])
+  }, [posts, authenticatedUser, accountsWithoutPosts])
 
   // Effect for setting stream replay posts in the store
   useEffect(() => {
     if (data) {
       setStreamReplayPosts(data ?? null)
     }
-  }, [data, accountAddress])
+  }, [data])
 
   // Effect for setting posts in the store
   useEffect(() => {
-    if (posts && posts?.items.length > 0 && !accountAddress) {
+    if (posts && posts?.items.length > 0) {
       setPosts(posts?.items as AnyPost[])
     }
-  }, [posts, accountAddress, setPosts])
+  }, [posts, setPosts])
+
+  return {
+    streamReplayPosts: data,
+    posts: posts?.items as AnyPost[],
+    loading: streamReplayLoading || loading
+  }
+}
+
+export const useStreamReplayPostsOfAccount = ({
+  accountAddress,
+  skip = 0
+}: {
+  accountAddress: string
+  skip?: number
+}): {
+  streamReplayPosts?: StreamReplayPostsQuery
+  posts?: AnyPost[]
+  loading: boolean
+} => {
+  const { data, loading: streamReplayLoading } = useStreamReplayPostsQuery({
+    variables: {
+      skip: skip,
+      accountAddress
+    }
+  })
+
+  const { data: posts, loading } = usePosts({
+    filter: {
+      posts:
+        data?.streamReplayPosts?.streamReplayPosts
+          ?.map((p) => p?.postId)
+          .filter((p) => p) || []
+    }
+  })
 
   return {
     streamReplayPosts: data,

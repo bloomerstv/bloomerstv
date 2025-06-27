@@ -1,6 +1,6 @@
 'use client'
 import clsx from 'clsx'
-import LiveStreamPublicReplays from '../components/pages/home/LiveStreamPublicReplays'
+import { HomePageVideoFeed } from '../components/pages/home/LiveStreamPublicReplays'
 import useIsMobile from '../utils/hooks/useIsMobile'
 import StreamerHorizontalDiv from '../components/common/StreamerSidebar/StreamerHorizontalDiv'
 import MobileTopHeader from '../components/pages/all/Header/MobileTopHeader'
@@ -21,7 +21,7 @@ export default function Home() {
 
       {isMobile && <StreamerHorizontalDiv />}
 
-      <LiveStreamPublicReplays />
+      <HomePageVideoFeed />
       <TextAndImagePosts />
     </div>
   )

@@ -17,7 +17,6 @@ import formatHandle from '../../../utils/lib/formatHandle'
 import PostClipOnLens from './PostClipOnLens'
 import ClipsFeed from '../home/ClipsFeed'
 import toast from 'react-hot-toast'
-import LiveStreamPublicReplays from '../home/LiveStreamPublicReplays'
 import { timeAgo } from '../../../utils/helpers'
 import Markup from '../../common/Lexical/Markup'
 import Player from '../../common/Player/Player'
@@ -31,6 +30,7 @@ import HorizontalNavigation from '../../ui/HorizontalNavigation'
 import ZoraFeaturedCoin from './ZoraFeaturedCoin'
 import { useAccount } from '@lens-protocol/react'
 import useSession from '../../../utils/hooks/useSession'
+import { AccountsStreamsFeed } from './AccountsStreamsFeed'
 
 const ProfilePage = ({ handle }: { handle: string }) => {
   const [clipUrl, setClipUrl] = React.useState<string | null>(null)
@@ -209,7 +209,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
       component: 'LiveStreamPublicReplays',
       render: () => (
         <div className="pb-[80vh]">
-          <LiveStreamPublicReplays accountAddress={account?.address} />
+          <AccountsStreamsFeed accountAddress={account?.address} />
         </div>
       )
     }

@@ -208,7 +208,7 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
           <LoginPage />
           <div className="flex-grow overflow-auto no-scrollbar">{children}</div>
           <div className="shrink-0 w-full">
-            {!pathname.startsWith('/live-chat') && <MobileBottomNavbar />}
+            {!pathname?.startsWith('/live-chat') && <MobileBottomNavbar />}
           </div>
 
           {isMobile && !isPWA && (
@@ -257,7 +257,7 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
               <TopHeader />
             </div>
             <div className="start-center-row h-dvh pt-[50px] overflow-hidden">
-              {pathname.startsWith('/dashboard') ? (
+              {pathname?.startsWith('/dashboard') ? (
                 <DashboardSidebar />
               ) : (
                 <>{pathname === '/' && <StreamerSidebar />}</>
@@ -272,7 +272,7 @@ const UILayoutPage = ({ children }: { children: React.ReactNode }) => {
 }
 
 const GlobalHooks = () => {
-  useStreamReplayPosts({})
+  useStreamReplayPosts()
   useLiveStreamerProfiles()
   useNotifictionSubscriptions()
 
