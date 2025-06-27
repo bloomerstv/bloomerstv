@@ -206,7 +206,7 @@ export const HomePageVideoFeed = () => {
   }, [combinedData?.length])
 
   return (
-    <>
+    <div className="w-full">
       {/* categories row  */}
       <div className="relative w-full overflow-x-hidden">
         {isOverflowingLeft && !isMobile && (
@@ -346,6 +346,6 @@ export const HomePageVideoFeed = () => {
           </div>
         )}
       </div>
-    </>
+    </div>
   )
 }
