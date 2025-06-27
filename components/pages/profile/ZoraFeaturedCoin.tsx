@@ -992,7 +992,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                           show?.()
                           return
                         }
-                        handleBuyCoin()
+                        handleSellCoin()
                       }}
                       disabled={status === 'pending' || !sellAmount}
                       color="secondary"

@@ -16,7 +16,6 @@ import StreamCard from './StreamCard'
 import { useStreamersWithAccounts } from '../../store/useStreamersWithAccounts'
 import { usePostsStore } from '../../store/usePosts'
 import {
-  AnyPost,
   MainContentFocus,
   PageSize,
   Post,

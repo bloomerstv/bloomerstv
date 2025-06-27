@@ -1,6 +1,6 @@
 import { CircularProgress } from '@mui/material'
 import clsx from 'clsx'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useAccount, useDisconnect, useWalletClient } from 'wagmi'
 import getAvatar from '../../utils/lib/getAvatar'
 import formatHandle from '../../utils/lib/formatHandle'
@@ -24,13 +24,7 @@ import { APP_ADDRESS } from '../../utils/config'
 import { ConnectKitButton } from 'connectkit'
 // import useEnableSignless from '../../utils/hooks/useEnableSignless'
 
-const LoginComponent = ({
-  open,
-  onClose
-}: {
-  open?: boolean
-  onClose?: () => void
-}) => {
+const LoginComponent = ({ onClose }: { onClose?: () => void }) => {
   const { data: walletClient } = useWalletClient()
   const { disconnectAsync } = useDisconnect()
   const { isConnected, address, isConnecting, isReconnecting } = useAccount()
@@ -314,9 +308,14 @@ const LoginComponent = ({
                   onClick={show}
                   loading={isConnecting || isReconnecting}
                   loadingPosition="start"
+                  className="w-full"
+                  sx={{
+                    borderRadius: '24px',
+                    padding: '12px 0'
+                  }}
                   startIcon={<AccountBalanceWalletIcon />}
                 >
-                  Connect
+                  Connect Wallet
                 </LoadingButton>
               )}
             </ConnectKitButton.Custom>

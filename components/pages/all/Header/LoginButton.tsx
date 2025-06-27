@@ -42,7 +42,7 @@ const LoginButton = () => {
         onOpen={handleOpen}
         classname="w-[450px]"
       >
-        <LoginComponent open={open} onClose={handleClose} />
+        <LoginComponent onClose={handleClose} />
       </ModalWrapper>
 
       {!isAuthenticated && (

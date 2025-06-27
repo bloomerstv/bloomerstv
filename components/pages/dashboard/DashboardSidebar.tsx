@@ -73,7 +73,7 @@ const DashboardSidebar = () => {
           Content
         </ListItemButton>
         <ListItemButton
-          selected={pathname.startsWith('/dashboard/widgets')}
+          selected={pathname?.startsWith('/dashboard/widgets')}
           LinkComponent={Link}
           href="/dashboard/widgets"
           sx={{
@@ -85,7 +85,7 @@ const DashboardSidebar = () => {
         </ListItemButton>
 
         <ListItemButton
-          selected={pathname.startsWith('/dashboard/subscription')}
+          selected={pathname?.startsWith('/dashboard/subscription')}
           LinkComponent={Link}
           href="/dashboard/subscription"
           sx={{
