@@ -1,4 +1,5 @@
 import { Account } from '@lens-protocol/react'
+import { stringToLength } from '../stringToLength'
 
 const formatHandle = (account?: Account | null, keepSuffix = false): string => {
   if (!account) {
@@ -7,7 +8,7 @@ const formatHandle = (account?: Account | null, keepSuffix = false): string => {
   const handleInfo = account?.username
 
   if (!handleInfo) {
-    return account?.address || ''
+    return stringToLength(account?.address, 12) || ''
   }
   if (keepSuffix) {
     return handleInfo?.value
