@@ -16,7 +16,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import {
   CreateCoinArgs,
   createCoinCall,
-  getCoinCreateFromLogs
+  DeployCurrency,
+  getCoinCreateFromLogs,
+  ValidMetadataURI
 } from '@zoralabs/coins-sdk'
 import {
   useAccount,
@@ -133,10 +135,11 @@ const CreateNewZoraCoinButton: React.FC<CreateNewZoraCoinButtonProps> = ({
       const coinParams: CreateCoinArgs = {
         name,
         symbol,
-        uri: metadataUploadResult.url,
+        uri: metadataUploadResult.url as ValidMetadataURI,
         payoutRecipient: address as Address,
         platformReferrer: PROJECT_ADDRESS as Address,
-        owners: address ? [address as Address] : []
+        owners: address ? [address as Address] : [],
+        currency: DeployCurrency.ETH
       }
 
       // Create configuration for wagmi

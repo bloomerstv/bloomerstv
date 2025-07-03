@@ -151,15 +151,14 @@ const TipZoraCoins: React.FC<TipZoraCoinsProps> = ({
         identifier: address as string,
         count: 50 // Fetch more coins to avoid pagination issues
       })
-      console.log('Fetched coin balances:', response.data)
 
-      const profile: any = response.data?.profile
+      const profile = response.data?.profile
       if (profile?.coinBalances) {
         const edges = profile.coinBalances.edges || []
         const balances = edges
           .map((edge) => edge.node)
           .filter((node) => parseFloat(formatBalance(node.balance)) > 0)
-        setCoinBalances(balances)
+        setCoinBalances(balances as CoinBalance[])
       } else {
         setCoinBalances([])
       }

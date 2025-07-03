@@ -16,7 +16,12 @@ import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import uploadToIPFS from '../../../../utils/uploadToIPFS'
 
 // Similar to CreateNewZoraCoinButton but simplified
-import { CreateCoinArgs, createCoinCall } from '@zoralabs/coins-sdk'
+import {
+  CreateCoinArgs,
+  createCoinCall,
+  DeployCurrency,
+  ValidMetadataURI
+} from '@zoralabs/coins-sdk'
 import {
   useAccount,
   useWaitForTransactionReceipt,
@@ -149,10 +154,12 @@ export default function CreateCoinModal({
       const coinParams: CreateCoinArgs = {
         name,
         symbol,
-        uri: metadataUploadResult.url,
+        uri: metadataUploadResult.url as ValidMetadataURI,
         payoutRecipient: address as Address,
         platformReferrer: PROJECT_ADDRESS as Address,
-        owners: address ? [address as Address] : []
+        owners: address ? [address as Address] : [],
+        chainId: base.id,
+        currency: DeployCurrency.ETH
       }
 
       // Create configuration for wagmi

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import {
+  createTradeCall,
   getCoin,
-  tradeCoinCall,
-  TradeParams,
-  getProfileBalances
+  getProfileBalances,
+  TradeParameters
 } from '@zoralabs/coins-sdk'
 import {
   CircularProgress,
@@ -19,12 +19,11 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TrendingDownIcon from '@mui/icons-material/TrendingDown'
 import { ShoppingBag } from '@mui/icons-material'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAccount, useWriteContract, useBalance } from 'wagmi'
+import { useAccount, useBalance, useWalletClient, useChainId } from 'wagmi'
 import useHandleWrongNetwork from '../../../utils/hooks/useHandleWrongNetwork'
 import { base } from 'viem/chains'
 import toast from 'react-hot-toast'
-import { Address, parseEther, formatEther } from 'viem'
-import { PROJECT_ADDRESS } from '../../../utils/config'
+import { Address, parseEther, formatEther, Hex } from 'viem'
 import {
   ContentType,
   SendMessageTradeType
@@ -78,8 +77,10 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
   const [sellAmount, setSellAmount] = useState('')
   const [userBalance, setUserBalance] = useState('0')
   const [hasBalance, setHasBalance] = useState(false)
+  const [isPending, setIsPending] = useState(false)
 
   const { address } = useAccount()
+  const chainId = useChainId()
 
   // Fetch ETH balance using wagmi
   const { data: ethBalanceData } = useBalance({
@@ -88,7 +89,8 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
 
   const handleWrongNetwork = useHandleWrongNetwork(base.id)
 
-  const { writeContractAsync, status } = useWriteContract()
+  const { data: walletClient } = useWalletClient()
+
   const sendMessagePayload = useChatInteractions(
     (state) => state.sendMessagePayload
   )
@@ -168,29 +170,37 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
   const handleBuyCoin = async () => {
     if (!coin?.address) return
 
+    setIsPending(true)
     try {
       await handleWrongNetwork()
 
-      const tradeParams: TradeParams = {
-        direction: 'buy',
-        target: coin.address as Address,
-        args: {
-          orderSize: parseEther(ethAmount), // Use the input value
-          recipient: address as Address,
-          minAmountOut: 0n,
-          tradeReferrer: PROJECT_ADDRESS as Address
-        }
+      const tradeParams: TradeParameters = {
+        sell: {
+          type: 'eth'
+        },
+        buy: {
+          type: 'erc20',
+          address: coin.address as Address
+        },
+        amountIn: parseEther(ethAmount), // Convert ETH amount to wei
+        recipient: address as Address,
+        slippage: 0.05,
+        sender: address as Address
       }
 
-      const contractCallParams = tradeCoinCall(tradeParams)
+      const quote = await createTradeCall(tradeParams)
 
-      const tx = await writeContractAsync({
-        abi: contractCallParams?.abi,
-        address: contractCallParams?.address,
-        args: contractCallParams?.args,
-        functionName: contractCallParams?.functionName,
-        value: tradeParams.args.orderSize
+      const tx = await walletClient?.sendTransaction({
+        to: quote.call.target as Address,
+        data: quote.call.data as Hex,
+        value: BigInt(quote.call.value),
+        account: address as Address
       })
+
+      if (!tx) {
+        toast.error('Transaction failed')
+        return
+      }
 
       toast.success('Transaction sent!')
 
@@ -216,6 +226,8 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
     } catch (error) {
       console.log('Error during transaction:', error)
       toast.error('Transaction failed')
+    } finally {
+      setIsPending(false)
     }
   }
 
@@ -228,28 +240,37 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
       return
     }
 
+    setIsPending(true)
     try {
       await handleWrongNetwork()
 
-      const tradeParams: TradeParams = {
-        direction: 'sell',
-        target: coin.address as Address,
-        args: {
-          orderSize: BigInt(Math.floor(parseFloat(sellAmount) * 10 ** 18)), // Convert to token units
-          recipient: address as Address,
-          minAmountOut: 0n,
-          tradeReferrer: PROJECT_ADDRESS as Address
-        }
+      const tradeParams: TradeParameters = {
+        buy: {
+          type: 'eth'
+        },
+        sell: {
+          address: coin.address as Address,
+          type: 'erc20'
+        },
+        amountIn: parseEther(sellAmount),
+        slippage: 0.15,
+        sender: address as Address,
+        recipient: address as Address
       }
 
-      const contractCallParams = tradeCoinCall(tradeParams)
+      const quote = await createTradeCall(tradeParams)
 
-      const tx = await writeContractAsync({
-        abi: contractCallParams?.abi,
-        address: contractCallParams?.address,
-        args: contractCallParams?.args,
-        functionName: contractCallParams?.functionName
+      const tx = await walletClient?.sendTransaction({
+        to: quote.call.target as Address,
+        data: quote.call.data as Hex,
+        value: BigInt(quote.call.value),
+        account: address as Address
       })
+
+      if (!tx) {
+        toast.error('Transaction failed')
+        return
+      }
 
       toast.success('Transaction sent!')
 
@@ -280,6 +301,8 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
     } catch (error) {
       console.log('Error during transaction:', error)
       toast.error('Transaction failed')
+    } finally {
+      setIsPending(false)
     }
   }
 
@@ -412,6 +435,8 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
 
         // The API response structure may have zora20Token
         const coinData = response.data?.zora20Token
+
+        console.log('Fetched coin data:', coinData)
 
         if (coinData) {
           // @ts-ignore
@@ -680,7 +705,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
             </motion.div>
 
             {/* Action Buttons */}
-            {address ? (
+            {address && chainId === base.id ? (
               <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
                 {/* Buy Tokens */}
                 <motion.div
@@ -752,12 +777,25 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                 className="w-full"
               >
                 <ConnectKitButton.Custom>
-                  {({ show }) => (
+                  {({ show, isConnected }) => (
                     <Button
                       variant="contained"
                       size="small"
                       fullWidth
-                      onClick={show}
+                      onClick={async (e) => {
+                        e.stopPropagation()
+                        if (!isConnected) {
+                          show?.()
+                        } else if (chainId !== base.id) {
+                          // If connected but not on Base network, switch to Base
+                          try {
+                            await handleWrongNetwork()
+                          } catch (error) {
+                            console.error('Network switching failed:', error)
+                            toast.error('Failed to switch to Base network')
+                          }
+                        }
+                      }}
                       endIcon={<WalletIcon size={16} />}
                       sx={{
                         textTransform: 'none',
@@ -770,7 +808,11 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                         }
                       }}
                     >
-                      Connect Wallet
+                      {!isConnected
+                        ? 'Connect Wallet'
+                        : chainId !== base.id
+                          ? 'Switch to Base'
+                          : 'Connected'}
                     </Button>
                   )}
                 </ConnectKitButton.Custom>
@@ -821,7 +863,6 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                 )}
               </div>
               <div className="flex justify-between text-xs text-s-text mt-1">
-                <div>Enter the amount of ETH you want to spend</div>
                 {ethBalanceData && (
                   <div>
                     Balance: {formatEthBalance(ethBalanceData.value)} ETH
@@ -875,7 +916,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                         handleBuyCoin()
                       }}
                       disabled={
-                        status === 'pending' ||
+                        isPending ||
                         (ethBalanceData &&
                           parseFloat(ethAmount) >
                             parseFloat(formatEther(ethBalanceData.value)))
@@ -890,7 +931,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                         }
                       }}
                     >
-                      {status === 'pending' ? (
+                      {isPending ? (
                         <CircularProgress size={16} color="inherit" />
                       ) : (
                         'Confirm Purchase'
@@ -994,7 +1035,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                         }
                         handleSellCoin()
                       }}
-                      disabled={status === 'pending' || !sellAmount}
+                      disabled={isPending || !sellAmount}
                       color="secondary"
                       sx={{
                         textTransform: 'none',
@@ -1002,7 +1043,7 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
                         fontSize: '0.75rem'
                       }}
                     >
-                      {status === 'pending' ? (
+                      {isPending ? (
                         <CircularProgress size={16} color="inherit" />
                       ) : (
                         'Confirm Sale'
