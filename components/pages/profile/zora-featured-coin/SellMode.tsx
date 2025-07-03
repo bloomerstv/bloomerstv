@@ -15,7 +15,7 @@ import {
 import { useChatInteractions } from '@/components/store/useChatInteractions'
 import useHandleWrongNetwork from '@/utils/hooks/useHandleWrongNetwork'
 import { ZoraCoin } from './types'
-import { formatBalance } from './utils'
+import { calculateTokenPrice, formatBalance } from './utils'
 
 interface SellModeProps {
   coin: ZoraCoin
@@ -106,9 +106,14 @@ const SellMode: React.FC<SellModeProps> = ({
       const tokenPrice = marketCapValue / totalSupplyValue
       const estimatedEthReceived = parseFloat(sellAmount) * tokenPrice
 
+      const formatterCurrentPrice = calculateTokenPrice(
+        coin.marketCap,
+        coin.totalSupply
+      )
+
       const messagePayload: SendMessageTradeType = {
         id: uuid(),
-        content: `💰Sold ${sellAmount} $${coin.symbol} for ~$${estimatedEthReceived.toFixed(4)} at $${tokenPrice.toFixed(6)}/${coin.symbol} 🎉`,
+        content: `💰Sold ${sellAmount} $${coin.symbol} for ~$${estimatedEthReceived.toFixed(4)} at $${formatterCurrentPrice}/${coin.symbol} 🎉`,
         type: ContentType.Trade,
         image: coin.mediaContent?.previewImage?.medium!,
         txHash: tx,

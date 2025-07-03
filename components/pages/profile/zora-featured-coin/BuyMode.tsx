@@ -15,7 +15,7 @@ import {
 import { useChatInteractions } from '@/components/store/useChatInteractions'
 import useHandleWrongNetwork from '@/utils/hooks/useHandleWrongNetwork'
 import { ZoraCoin } from './types'
-import { formatEthBalance } from './utils'
+import { formatEthBalance, calculateTokenPrice } from './utils'
 
 interface BuyModeProps {
   coin: ZoraCoin
@@ -99,12 +99,14 @@ const BuyMode: React.FC<BuyModeProps> = ({
 
       toast.success('Transaction sent!')
 
+      const formatterCurrentPrice = calculateTokenPrice(
+        coin.marketCap,
+        coin.totalSupply
+      )
+
       const messagePayload: SendMessageTradeType = {
         id: uuid(),
-        content: `💰Bought $${coin.symbol} for ${ethAmount} ETH at $${
-          parseFloat(coin.marketCap || '0') /
-          parseFloat(coin.totalSupply || '1')
-        } 🎉`,
+        content: `💰Bought $${coin.symbol} for ${ethAmount} ETH at $${formatterCurrentPrice}/${coin.symbol} 🎉`,
         type: ContentType.Trade,
         image: coin.mediaContent?.previewImage?.medium!,
         txHash: tx,

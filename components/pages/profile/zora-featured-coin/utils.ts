@@ -54,7 +54,7 @@ export const isPriceChangePositive = (value: string) => {
   return parseFloat(value) >= 0
 }
 
-// Calculate price per token
+// Calculate price per token with smart precision
 export const calculateTokenPrice = (
   marketCap?: string,
   totalSupply?: string
@@ -67,13 +67,23 @@ export const calculateTokenPrice = (
     isNaN(totalSupplyValue) ||
     totalSupplyValue === 0
   ) {
-    return '0.0000'
+    return '0.00'
   }
 
   const price = marketCapValue / totalSupplyValue
-  // Format to appropriate decimal places depending on value
-  if (price < 0.0001) return price.toFixed(8)
-  if (price < 0.01) return price.toFixed(6)
-  if (price < 1) return price.toFixed(4)
-  return price.toFixed(2)
+
+  // If price is >= 1, show only 2 decimal places
+  if (price >= 1) {
+    return price.toFixed(2)
+  }
+
+  // For prices < 1, check if they start with "0.00" (very small)
+  const priceString = price.toString()
+  if (priceString.startsWith('0.00')) {
+    // For very small prices like 0.0001234, show up to 6 significant digits
+    return price.toPrecision(2)
+  }
+
+  // For prices like 0.1234, 0.5678, etc., show 4 decimal places
+  return price.toFixed(4)
 }
