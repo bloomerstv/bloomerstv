@@ -27,7 +27,7 @@ import {
 } from '../../store/useMyPreferences'
 import { Src } from '@livepeer/react'
 import HorizontalNavigation from '../../ui/HorizontalNavigation'
-import ZoraFeaturedCoin from './ZoraFeaturedCoin'
+import ZoraFeaturedCoin from './zora-featured-coin'
 import { useAccount } from '@lens-protocol/react'
 import useSession from '../../../utils/hooks/useSession'
 import { AccountsStreamsFeed } from './AccountsStreamsFeed'
