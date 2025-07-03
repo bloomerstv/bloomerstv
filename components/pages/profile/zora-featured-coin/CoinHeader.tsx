@@ -13,6 +13,7 @@ import {
   isPriceChangePositive,
   calculateTokenPrice
 } from './utils'
+import { stringToLength } from '../../../../utils/stringToLength'
 
 interface CoinHeaderProps {
   coin: ZoraCoin
@@ -66,7 +67,9 @@ const CoinHeader: React.FC<CoinHeaderProps> = ({
         </motion.div>
         <div>
           <div className="flex items-center">
-            <span className="font-bold text-p-text">{coin.symbol}</span>
+            <span className="font-bold text-p-text">
+              {stringToLength(coin.symbol, 10)}
+            </span>
             <Tooltip title="Featured Zora coin">
               <InfoOutlinedIcon
                 sx={{

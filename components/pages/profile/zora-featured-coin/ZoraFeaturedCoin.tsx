@@ -11,6 +11,7 @@ import CoinExternalLink from './CoinExternalLink'
 import CoinActionButtons from './CoinActionButtons'
 import BuyMode from './BuyMode'
 import SellMode from './SellMode'
+import PriceChart from './PriceChart'
 
 const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
   coinAddress,
@@ -126,8 +127,6 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
         // The API response structure may have zora20Token
         const coinData = response.data?.zora20Token
 
-        console.log('Fetched coin data:', coinData)
-
         if (coinData) {
           // @ts-ignore
           setCoin(coinData)
@@ -239,6 +238,8 @@ const ZoraFeaturedCoin: React.FC<ZoraFeaturedCoinProps> = ({
               hasBalance={hasBalance}
               userBalance={userBalance}
             />
+
+            <PriceChart coin={coin} className="mb-4" />
 
             <CoinExternalLink coin={coin} />
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Users, Calendar } from 'lucide-react'
+import { Tooltip } from '@mui/material'
 import { formatNumber } from '@/utils/formatters'
 import { ZoraCoin } from './types'
 import { formatBalance } from './utils'
@@ -49,18 +50,37 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({
 
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div className="text-xs">
-          <div className="text-p-text font-medium flex items-center">
-            <Users size={12} className="mr-1 text-s-text" />
-            {coin.uniqueHolders?.toLocaleString() || 'N/A'}
-          </div>
+          <Tooltip 
+            title={`Total number of unique holders: ${coin.uniqueHolders?.toLocaleString() || '0'}`}
+            arrow
+            placement="top"
+          >
+            <div className="text-p-text font-medium flex items-center cursor-help">
+              <Users size={12} className="mr-1 text-s-text" />
+              {coin.uniqueHolders?.toLocaleString() || 'N/A'}
+            </div>
+          </Tooltip>
         </div>
         <div className="text-xs">
-          <div className="text-p-text font-medium flex items-center">
-            <Calendar size={12} className="mr-1 text-s-text" />
-            {coin.createdAt
-              ? new Date(coin.createdAt).toLocaleDateString()
-              : 'N/A'}
-          </div>
+          <Tooltip 
+            title={`Created on: ${coin.createdAt ? new Date(coin.createdAt).toLocaleDateString('en-US', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }) : 'Date not available'}`}
+            arrow
+            placement="top"
+          >
+            <div className="text-p-text font-medium flex items-center cursor-help">
+              <Calendar size={12} className="mr-1 text-s-text" />
+              {coin.createdAt
+                ? new Date(coin.createdAt).toLocaleDateString()
+                : 'N/A'}
+            </div>
+          </Tooltip>
         </div>
       </div>
     </>

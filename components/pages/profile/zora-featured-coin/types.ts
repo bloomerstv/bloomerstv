@@ -11,6 +11,7 @@ export interface ZoraCoin {
   createdAt?: string
   creatorAddress?: string
   uniqueHolders?: number
+  uniswapV3PoolAddress?: string
   mediaContent?: {
     mimeType?: string
     originalUri?: string
