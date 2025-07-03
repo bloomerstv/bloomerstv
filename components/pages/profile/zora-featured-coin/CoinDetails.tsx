@@ -1,7 +1,6 @@
 import React from 'react'
 import { Users, Calendar } from 'lucide-react'
 import { Tooltip } from '@mui/material'
-import { formatNumber } from '@/utils/formatters'
 import { ZoraCoin } from './types'
 import { formatBalance } from './utils'
 
