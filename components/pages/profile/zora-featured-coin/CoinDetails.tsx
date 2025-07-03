@@ -50,7 +50,7 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({
 
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div className="text-xs">
-          <Tooltip 
+          <Tooltip
             title={`Total number of unique holders: ${coin.uniqueHolders?.toLocaleString() || '0'}`}
             arrow
             placement="top"
@@ -62,15 +62,19 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({
           </Tooltip>
         </div>
         <div className="text-xs">
-          <Tooltip 
-            title={`Created on: ${coin.createdAt ? new Date(coin.createdAt).toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            }) : 'Date not available'}`}
+          <Tooltip
+            title={`Created on: ${
+              coin.createdAt
+                ? new Date(coin.createdAt).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })
+                : 'Date not available'
+            }`}
             arrow
             placement="top"
           >

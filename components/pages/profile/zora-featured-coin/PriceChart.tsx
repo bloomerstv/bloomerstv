@@ -152,12 +152,15 @@ const PriceChartComponent: React.FC<PriceChartProps> = ({
   }, [data])
 
   // Handle timeframe changes with loading state
-  const handleTimeFrameChange = useCallback((timeFrame: TimeFrame) => {
-    if (timeFrame !== selectedTimeFrame) {
-      setIsChangingTimeFrame(true)
-      setSelectedTimeFrame(timeFrame)
-    }
-  }, [selectedTimeFrame])
+  const handleTimeFrameChange = useCallback(
+    (timeFrame: TimeFrame) => {
+      if (timeFrame !== selectedTimeFrame) {
+        setIsChangingTimeFrame(true)
+        setSelectedTimeFrame(timeFrame)
+      }
+    },
+    [selectedTimeFrame]
+  )
 
   // Clear loading state when fetch completes
   useEffect(() => {
@@ -279,12 +282,16 @@ const PriceChartComponent: React.FC<PriceChartProps> = ({
 
   // Determine loading states
   const isInitialLoad = !hasInitialData.current && fetching
-  const isRefreshing = hasInitialData.current && (fetching || isChangingTimeFrame)
+  const isRefreshing =
+    hasInitialData.current && (fetching || isChangingTimeFrame)
 
   // Only show early returns for true initial states
   if (!poolAddress) {
     return (
-      <div className={`p-3 bg-s-bg rounded-lg ${className}`} style={{ minHeight: '200px' }}>
+      <div
+        className={`p-3 bg-s-bg rounded-lg ${className}`}
+        style={{ minHeight: '200px' }}
+      >
         <p className="text-s-text text-center text-sm">
           No pool data available
         </p>
@@ -294,7 +301,10 @@ const PriceChartComponent: React.FC<PriceChartProps> = ({
 
   if (error && !hasInitialData.current) {
     return (
-      <div className={`p-3 bg-s-bg rounded-lg ${className}`} style={{ minHeight: '200px' }}>
+      <div
+        className={`p-3 bg-s-bg rounded-lg ${className}`}
+        style={{ minHeight: '200px' }}
+      >
         <p className="text-red-400 text-center text-sm">Error loading data</p>
       </div>
     )
@@ -302,7 +312,10 @@ const PriceChartComponent: React.FC<PriceChartProps> = ({
 
   if (isInitialLoad) {
     return (
-      <div className={`p-3 bg-s-bg rounded-lg ${className}`} style={{ minHeight: '200px' }}>
+      <div
+        className={`p-3 bg-s-bg rounded-lg ${className}`}
+        style={{ minHeight: '200px' }}
+      >
         <div className="flex justify-center items-center h-full">
           <CircularProgress size={20} />
         </div>
@@ -351,17 +364,24 @@ const PriceChartComponent: React.FC<PriceChartProps> = ({
         {/* Loading overlay */}
         {isRefreshing && (
           <div className="absolute inset-0 bg-black bg-opacity-20 backdrop-blur-[1px] flex items-center justify-center z-10 rounded">
-            <CircularProgress size={16} sx={{ color: 'rgba(255, 255, 255, 0.8)' }} />
+            <CircularProgress
+              size={16}
+              sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
+            />
           </div>
         )}
 
         {/* Chart content */}
-        <div className={`h-full w-full transition-opacity duration-200 ${
-          isRefreshing ? 'opacity-50' : 'opacity-100'
-        }`}>
+        <div
+          className={`h-full w-full transition-opacity duration-200 ${
+            isRefreshing ? 'opacity-50' : 'opacity-100'
+          }`}
+        >
           {chartData.length === 0 ? (
             <div className="h-full flex items-center justify-center">
-              <p className="text-s-text text-center text-sm">No data available</p>
+              <p className="text-s-text text-center text-sm">
+                No data available
+              </p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
@@ -421,9 +441,11 @@ const PriceChartComponent: React.FC<PriceChartProps> = ({
 
       {/* Price range info */}
       {chartData.length > 0 && (
-        <div className={`flex justify-between items-center text-xs text-s-text transition-opacity duration-200 ${
-          isRefreshing ? 'opacity-60' : 'opacity-100'
-        }`}>
+        <div
+          className={`flex justify-between items-center text-xs text-s-text transition-opacity duration-200 ${
+            isRefreshing ? 'opacity-60' : 'opacity-100'
+          }`}
+        >
           <div className="flex flex-col">
             <span>{formatDateRange(chartData[0].timestamp)}</span>
             <span className="font-medium text-p-text">
