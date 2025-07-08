@@ -288,7 +288,11 @@ const CreatePostPopUp = ({
     }
   }
 
-  if (!isAuthenticated) return null
+  if (!isAuthenticated || !account) return null
+
+  // Check if account score meets the minimum requirement
+  const isScoreTooLow = account?.score < 8500
+
   return (
     <>
       <ModalWrapper
@@ -299,300 +303,348 @@ const CreatePostPopUp = ({
         Icon={<EditNoteIcon />}
         classname="w-[600px]"
         BotttomComponent={
-          <div className="flex flex-row gap-x-3 justify-end">
-            {/* cancle button & save button */}
-            <Button
-              variant="text"
-              onClick={() => setOpen(false)}
-              size={isMobile ? 'small' : 'medium'}
-            >
-              Cancel
-            </Button>
-            <LoadingButton
-              disabled={
-                (!previewVideoFile && content.trim().length === 0) ||
-                (previewVideoFile && videoTitle.trim().length === 0) ||
-                loading
-              }
-              startIcon={<EditIcon />}
-              variant="contained"
-              size={isMobile ? 'small' : 'medium'}
-              onClick={async () => {
-                try {
-                  setLoading(true)
-                  await handleCreatePost()
-                } catch (error) {
-                  toast.error('Error creating post')
-                  console.error('Error creating post', error)
-                } finally {
-                  setLoading(false)
-                }
-              }}
-              loading={loading}
-              loadingPosition="start"
-            >
-              Post
-            </LoadingButton>
-          </div>
-        }
-      >
-        <div className="flex flex-col gap-y-3 px-3 sm:px-0">
-          <div className="start-center-row gap-x-3">
-            <img
-              src={getAvatar(account)}
-              alt="avatar"
-              className="w-8 h-8 rounded-full"
-            />
-            <div className="font-bold">{formatHandle(account)}</div>
-          </div>
-          {previewVideoFile && (
-            <TextField
-              label="Video Title"
-              variant="outlined"
-              onChange={(e) => setVideoTitle(e.target.value)}
-              value={videoTitle}
-              inputProps={{
-                maxLength: 100
-              }}
-              disabled={loading}
-              size="small"
-              helperText={`${100 - videoTitle.length} / 100 characters remaining`}
-            />
-          )}
-          <TextareaAutosize
-            className={clsx(
-              'text-base bg-s-bg  resize-none border-none outline-none w-full font-semibold font-sans leading-normal',
-              loading ? 'text-s-text' : 'text-p-text'
-            )}
-            aria-label="empty textarea"
-            placeholder="Write a message..."
-            style={{
-              resize: 'none'
-            }}
-            disabled={loading}
-            minRows={1}
-            maxRows={5}
-            onChange={(e) => setContent(e.target.value)}
-            value={content}
-          />
-
-          <input
-            type="file"
-            ref={imageFileInputRef}
-            style={{ display: 'none' }} // Hide the file input
-            onChange={handleImageFileChange}
-            accept="image/*" // Optional: limit the file chooser to only image files
-          />
-          {previewImageFile || previewVideoFile ? (
-            <div className="relative">
-              {previewImageFile && (
-                <img
-                  src={previewImageFile.url}
-                  alt="preview"
-                  className="w-full rounded-xl"
-                />
-              )}
-
-              {previewVideoFile && (
-                <>
-                  <video
-                    src={previewVideoFile.url}
-                    controls
-                    className="w-full rounded-xl"
-                  />
-                  <div
-                    className={clsx(
-                      'flex flex-row flex-wrap gap-2 py-2',
-                      loading && 'hidden'
-                    )}
-                  >
-                    {/* upload custom thumbnail */}
-                    <div
-                      className="h-[90px] centered-col text-center w-[160px] bg-p-hover rounded-xl cursor-pointer"
-                      onClick={() => {
-                        // Programmatically click the file input when the button is clicked
-                        if (!imageFileInputRef.current) return
-                        // @ts-ignore
-                        imageFileInputRef.current.click()
-                      }}
-                    >
-                      <div className="space-y-2">
-                        <div className="centered-row gap-x-1  text-xs">
-                          <FileUploadIcon fontSize="inherit" />
-                          <div className="text-s-text font-semibold">
-                            Choose Thumbnail
-                          </div>
-                        </div>
-                        <div className="text-xs text-s-text">
-                          Click to upload a custom thumbnail
-                        </div>
-                      </div>
-                    </div>
-
-                    {previewCustomThumbnail && (
-                      <div className="relative">
-                        <img
-                          src={previewCustomThumbnail.url}
-                          alt="thumbnail"
-                          className={clsx(
-                            'h-[90px] rounded-xl unselectable cursor-pointer'
-                          )}
-                          onClick={() => setSelectedThumbnailIndex(-1)}
-                        />
-                        {selectedThumbnailIndex === -1 && (
-                          <div
-                            className="absolute shadow-inner z-30 top-0 right-0 left-0 h-[90px] w-full rounded-xl"
-                            style={{
-                              border: '4px solid #1976d2'
-                            }}
-                          />
-                        )}
-                      </div>
-                    )}
-                    {generatedThumbnails.map((thumbnail, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={thumbnail}
-                          alt="thumbnail"
-                          className={clsx(
-                            'h-[90px] unselectable rounded-xl cursor-pointer'
-                          )}
-                          onClick={() => setSelectedThumbnailIndex(index)}
-                        />
-                        {selectedThumbnailIndex === index && (
-                          <div
-                            className="absolute shadow-inner z-30 top-0 right-0 left-0 h-[90px] w-full rounded-xl"
-                            style={{
-                              border: '4px solid #1976d2'
-                            }}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              <div
-                className={clsx(
-                  'absolute top-2 right-2 bg-black/60',
-                  loading ? 'rounded-sm' : 'rounded-full'
-                )}
+          !isScoreTooLow ? (
+            <div className="flex flex-row gap-x-3 justify-end">
+              {/* cancle button & save button */}
+              <Button
+                variant="text"
+                onClick={() => setOpen(false)}
+                size={isMobile ? 'small' : 'medium'}
               >
-                {!loading && (
-                  <IconButton
-                    color="secondary"
-                    size="small"
-                    onClick={() => {
-                      setPreviewImageFile(null)
-                      setPreviewVideoFile(null)
-                      setPreviewCustomThumbnail(null)
-                      setSelectedThumbnailIndex(0)
-                    }}
-                    disabled={loading}
-                  >
-                    <CloseIcon className="text-white rounded-full" />
-                  </IconButton>
-                )}
-                {loading && previewVideoFile && (
-                  // show loading with percentage
-                  <div className="text-white rounded-full p-2 px-3 font-semibold">
-                    {videoProgress}%
-                  </div>
-                )}
-              </div>
+                Cancel
+              </Button>
+              <LoadingButton
+                disabled={
+                  (!previewVideoFile && content.trim().length === 0) ||
+                  (previewVideoFile && videoTitle.trim().length === 0) ||
+                  loading
+                }
+                startIcon={<EditIcon />}
+                variant="contained"
+                size={isMobile ? 'small' : 'medium'}
+                onClick={async () => {
+                  try {
+                    setLoading(true)
+                    await handleCreatePost()
+                  } catch (error) {
+                    toast.error('Error creating post')
+                    console.error('Error creating post', error)
+                  } finally {
+                    setLoading(false)
+                  }
+                }}
+                loading={loading}
+                loadingPosition="start"
+              >
+                Post
+              </LoadingButton>
             </div>
           ) : (
-            <div className="start-center-row gap-x-3">
+            <div className="flex flex-row gap-x-3 justify-end">
               <Button
-                startIcon={<ImageIcon />}
-                sx={{
-                  textTransform: 'none'
-                }}
                 variant="text"
-                color="inherit"
-                onClick={() => {
-                  // Programmatically click the file input when the button is clicked
-                  if (!imageFileInputRef.current) return
-                  // @ts-ignore
-                  imageFileInputRef.current.click()
-                }}
+                onClick={() => setOpen(false)}
+                size={isMobile ? 'small' : 'medium'}
               >
-                Image
-              </Button>
-
-              <input
-                type="file"
-                ref={videoFileInputRef}
-                style={{ display: 'none' }} // Hide the file input
-                onChange={handleVideoFileChange}
-                accept="video/*" // Optional: limit the file chooser to only video files
-              />
-
-              {/* video button */}
-              <Button
-                startIcon={<VideocamIcon />}
-                sx={{
-                  textTransform: 'none'
-                }}
-                variant="text"
-                color="inherit"
-                onClick={() => {
-                  // Programmatically click the file input when the button is clicked
-                  if (!videoFileInputRef.current) return
-                  // @ts-ignore
-                  videoFileInputRef.current.click()
-                }}
-              >
-                Video
+                Close
               </Button>
             </div>
-          )}
-
-          {quoteOn && quotingTitle && (
-            <div className="bg-p-hover text-sm p-2 rounded-lg">
-              <div>
-                Quoting a post by{' '}
-                <span className="text-brand">{quotingOnProfileHandle}</span>
+          )
+        }
+      >
+        {isScoreTooLow ? (
+          <div className="flex flex-col gap-y-4 px-3 sm:px-0 py-4">
+            <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-md">
+              <div className="flex items-start">
+                <div className="ml-3">
+                  <h3 className="text-lg font-medium text-yellow-800 mb-2">
+                    Account Score Too Low
+                  </h3>
+                  <div className="text-yellow-700 space-y-2">
+                    <p>
+                      You cannot create posts on BloomersTV yet. You need to
+                      increase your account score to at least{' '}
+                      <strong>8,500</strong> by being active on Lens and
+                      engaging with others.
+                    </p>
+                    <p>
+                      <strong>Your current score:</strong>{' '}
+                      {account?.score?.toLocaleString() || 0}
+                    </p>
+                    <p>
+                      <strong>Required score:</strong> 8,500
+                    </p>
+                    <p className="text-sm mt-3">
+                      Create posts is currently restricted to users with more
+                      than 8,500 account score. Keep engaging on Lens to
+                      increase your score!
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="font-semibold">
-                {stringToLength(quotingTitle, 50)}
-              </div>
-            </div>
-          )}
-
-          <div className="start-row gap-x-4 sm:gap-x-10 w-full overflow-auto no-scrollbar">
-            {/* <div className="start-col gap-y-1 w-fit shrink-0">
-              <div className="text-s-text font-semibold text-sm">
-                Collect Preview
-              </div>
-              <CollectSettingButton disabled={loading} />
-            </div> */}
-
-            <div className="start-col gap-y-1 w-fit">
-              <div className="text-s-text font-semibold text-sm">Category</div>
-              <Select
-                value={category}
-                onChange={(e) => {
-                  if (!e.target.value) return
-                  setCategory(e.target.value as string)
-                }}
-                variant="standard"
-                size="small"
-                sx={{
-                  borderRadius: '100px'
-                }}
-                disabled={loading}
-              >
-                {CATEGORIES_LIST.map((category) => (
-                  <MenuItem value={category} key={category}>
-                    {category}
-                  </MenuItem>
-                ))}
-              </Select>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-col gap-y-3 px-3 sm:px-0">
+            <div className="start-center-row gap-x-3">
+              <img
+                src={getAvatar(account)}
+                alt="avatar"
+                className="w-8 h-8 rounded-full"
+              />
+              <div className="font-bold">{formatHandle(account)}</div>
+            </div>
+            {previewVideoFile && (
+              <TextField
+                label="Video Title"
+                variant="outlined"
+                onChange={(e) => setVideoTitle(e.target.value)}
+                value={videoTitle}
+                inputProps={{
+                  maxLength: 100
+                }}
+                disabled={loading}
+                size="small"
+                helperText={`${100 - videoTitle.length} / 100 characters remaining`}
+              />
+            )}
+            <TextareaAutosize
+              className={clsx(
+                'text-base bg-s-bg  resize-none border-none outline-none w-full font-semibold font-sans leading-normal',
+                loading ? 'text-s-text' : 'text-p-text'
+              )}
+              aria-label="empty textarea"
+              placeholder="Write a message..."
+              style={{
+                resize: 'none'
+              }}
+              disabled={loading}
+              minRows={1}
+              maxRows={5}
+              onChange={(e) => setContent(e.target.value)}
+              value={content}
+            />
+
+            <input
+              type="file"
+              ref={imageFileInputRef}
+              style={{ display: 'none' }} // Hide the file input
+              onChange={handleImageFileChange}
+              accept="image/*" // Optional: limit the file chooser to only image files
+            />
+            {previewImageFile || previewVideoFile ? (
+              <div className="relative">
+                {previewImageFile && (
+                  <img
+                    src={previewImageFile.url}
+                    alt="preview"
+                    className="w-full rounded-xl"
+                  />
+                )}
+
+                {previewVideoFile && (
+                  <>
+                    <video
+                      src={previewVideoFile.url}
+                      controls
+                      className="w-full rounded-xl"
+                    />
+                    <div
+                      className={clsx(
+                        'flex flex-row flex-wrap gap-2 py-2',
+                        loading && 'hidden'
+                      )}
+                    >
+                      {/* upload custom thumbnail */}
+                      <div
+                        className="h-[90px] centered-col text-center w-[160px] bg-p-hover rounded-xl cursor-pointer"
+                        onClick={() => {
+                          // Programmatically click the file input when the button is clicked
+                          if (!imageFileInputRef.current) return
+                          // @ts-ignore
+                          imageFileInputRef.current.click()
+                        }}
+                      >
+                        <div className="space-y-2">
+                          <div className="centered-row gap-x-1  text-xs">
+                            <FileUploadIcon fontSize="inherit" />
+                            <div className="text-s-text font-semibold">
+                              Choose Thumbnail
+                            </div>
+                          </div>
+                          <div className="text-xs text-s-text">
+                            Click to upload a custom thumbnail
+                          </div>
+                        </div>
+                      </div>
+
+                      {previewCustomThumbnail && (
+                        <div className="relative">
+                          <img
+                            src={previewCustomThumbnail.url}
+                            alt="thumbnail"
+                            className={clsx(
+                              'h-[90px] rounded-xl unselectable cursor-pointer'
+                            )}
+                            onClick={() => setSelectedThumbnailIndex(-1)}
+                          />
+                          {selectedThumbnailIndex === -1 && (
+                            <div
+                              className="absolute shadow-inner z-30 top-0 right-0 left-0 h-[90px] w-full rounded-xl"
+                              style={{
+                                border: '4px solid #1976d2'
+                              }}
+                            />
+                          )}
+                        </div>
+                      )}
+                      {generatedThumbnails.map((thumbnail, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={thumbnail}
+                            alt="thumbnail"
+                            className={clsx(
+                              'h-[90px] unselectable rounded-xl cursor-pointer'
+                            )}
+                            onClick={() => setSelectedThumbnailIndex(index)}
+                          />
+                          {selectedThumbnailIndex === index && (
+                            <div
+                              className="absolute shadow-inner z-30 top-0 right-0 left-0 h-[90px] w-full rounded-xl"
+                              style={{
+                                border: '4px solid #1976d2'
+                              }}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <div
+                  className={clsx(
+                    'absolute top-2 right-2 bg-black/60',
+                    loading ? 'rounded-sm' : 'rounded-full'
+                  )}
+                >
+                  {!loading && (
+                    <IconButton
+                      color="secondary"
+                      size="small"
+                      onClick={() => {
+                        setPreviewImageFile(null)
+                        setPreviewVideoFile(null)
+                        setPreviewCustomThumbnail(null)
+                        setSelectedThumbnailIndex(0)
+                      }}
+                      disabled={loading}
+                    >
+                      <CloseIcon className="text-white rounded-full" />
+                    </IconButton>
+                  )}
+                  {loading && previewVideoFile && (
+                    // show loading with percentage
+                    <div className="text-white rounded-full p-2 px-3 font-semibold">
+                      {videoProgress}%
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="start-center-row gap-x-3">
+                <Button
+                  startIcon={<ImageIcon />}
+                  sx={{
+                    textTransform: 'none'
+                  }}
+                  variant="text"
+                  color="inherit"
+                  onClick={() => {
+                    // Programmatically click the file input when the button is clicked
+                    if (!imageFileInputRef.current) return
+                    // @ts-ignore
+                    imageFileInputRef.current.click()
+                  }}
+                >
+                  Image
+                </Button>
+
+                <input
+                  type="file"
+                  ref={videoFileInputRef}
+                  style={{ display: 'none' }} // Hide the file input
+                  onChange={handleVideoFileChange}
+                  accept="video/*" // Optional: limit the file chooser to only video files
+                />
+
+                {/* video button */}
+                <Button
+                  startIcon={<VideocamIcon />}
+                  sx={{
+                    textTransform: 'none'
+                  }}
+                  variant="text"
+                  color="inherit"
+                  onClick={() => {
+                    // Programmatically click the file input when the button is clicked
+                    if (!videoFileInputRef.current) return
+                    // @ts-ignore
+                    videoFileInputRef.current.click()
+                  }}
+                >
+                  Video
+                </Button>
+              </div>
+            )}
+
+            {quoteOn && quotingTitle && (
+              <div className="bg-p-hover text-sm p-2 rounded-lg">
+                <div>
+                  Quoting a post by{' '}
+                  <span className="text-brand">{quotingOnProfileHandle}</span>
+                </div>
+                <div className="font-semibold">
+                  {stringToLength(quotingTitle, 50)}
+                </div>
+              </div>
+            )}
+
+            <div className="start-row gap-x-4 sm:gap-x-10 w-full overflow-auto no-scrollbar">
+              {/* <div className="start-col gap-y-1 w-fit shrink-0">
+                <div className="text-s-text font-semibold text-sm">
+                  Collect Preview
+                </div>
+                <CollectSettingButton disabled={loading} />
+              </div> */}
+
+              <div className="start-col gap-y-1 w-fit">
+                <div className="text-s-text font-semibold text-sm">
+                  Category
+                </div>
+                <Select
+                  value={category}
+                  onChange={(e) => {
+                    if (!e.target.value) return
+                    setCategory(e.target.value as string)
+                  }}
+                  variant="standard"
+                  size="small"
+                  sx={{
+                    borderRadius: '100px'
+                  }}
+                  disabled={loading}
+                >
+                  {CATEGORIES_LIST.map((category) => (
+                    <MenuItem value={category} key={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
+            </div>
+          </div>
+        )}
       </ModalWrapper>
     </>
   )
