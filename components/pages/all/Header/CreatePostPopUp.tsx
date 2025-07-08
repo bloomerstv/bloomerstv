@@ -291,7 +291,7 @@ const CreatePostPopUp = ({
   if (!isAuthenticated || !account) return null
 
   // Check if account score meets the minimum requirement
-  const isScoreTooLow = account?.score < 8500
+  const isScoreTooLow = account?.score < 8000
 
   return (
     <>
@@ -364,7 +364,7 @@ const CreatePostPopUp = ({
                     <p>
                       You cannot create posts on BloomersTV yet. You need to
                       increase your account score to at least{' '}
-                      <strong>8,500</strong> by being active on Lens and
+                      <strong>8,000</strong> by being active on Lens and
                       engaging with others.
                     </p>
                     <p>
@@ -372,11 +372,11 @@ const CreatePostPopUp = ({
                       {account?.score?.toLocaleString() || 0}
                     </p>
                     <p>
-                      <strong>Required score:</strong> 8,500
+                      <strong>Required score:</strong> 8,000
                     </p>
                     <p className="text-sm mt-3">
                       Create posts is currently restricted to users with more
-                      than 8,500 account score. Keep engaging on Lens to
+                      than 8,000 account score. Keep engaging on Lens to
                       increase your score!
                     </p>
                   </div>

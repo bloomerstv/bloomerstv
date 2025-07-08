@@ -15,7 +15,7 @@ const TextAndImagePosts = () => {
         mainContentFocus: [MainContentFocus.TextOnly, MainContentFocus.Image]
       },
       accountScore: {
-        atLeast: 8500
+        atLeast: 8000
       },
       apps: [APP_ADDRESS]
     }
