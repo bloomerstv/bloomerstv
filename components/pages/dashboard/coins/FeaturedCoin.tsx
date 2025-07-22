@@ -21,7 +21,6 @@ import {
   StarBorder,
   LinkOutlined,
   People,
-  SwapHoriz,
   CalendarToday,
   BarChart
 } from '@mui/icons-material'
