@@ -56,9 +56,6 @@ export interface CoinData {
   payoutRecipientAddress: string
   creatorProfile: CreatorProfile
   mediaContent: MediaContent
-  transfers: {
-    count: number
-  }
   uniqueHolders: number
 }
 

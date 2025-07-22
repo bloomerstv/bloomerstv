@@ -96,7 +96,7 @@ export default function FeaturedCoin({
     return '0.00'
   }
 
-  const isVideo = coin.mediaContent.mimeType.includes('video')
+  const isVideo = coin?.mediaContent?.mimeType.includes('video')
 
   // Open coin URL in Zora
   const openOnZora = () => {
@@ -380,23 +380,6 @@ export default function FeaturedCoin({
                         sx={{ mr: 0.5, color: 'text.secondary' }}
                       />
                       {coin.uniqueHolders}
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <Box>
-                    <Typography variant="body2" color="text.secondary">
-                      Transfers
-                    </Typography>
-                    <Typography
-                      fontWeight="medium"
-                      sx={{ display: 'flex', alignItems: 'center' }}
-                    >
-                      <SwapHoriz
-                        fontSize="small"
-                        sx={{ mr: 0.5, color: 'text.secondary' }}
-                      />
-                      {coin.transfers.count}
                     </Typography>
                   </Box>
                 </Grid>
