@@ -1,0 +1,11 @@
+{
+  // Enable ESLint Flat Config in the extension
+  "eslint.useFlatConfig": true,
+  // Ensure ESLint validates TS/JS files
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ]
+}
