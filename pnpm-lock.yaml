@@ -78,8 +78,8 @@ importers:
         specifier: ^5.81.5
         version: 5.81.5(react@19.1.0)
       '@zoralabs/coins-sdk':
-        specifier: ^0.2.8
-        version: 0.2.8(abitype@1.0.8(typescript@5.8.3)(zod@3.24.4))(viem@2.31.6(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4))
+        specifier: ^0.3.0
+        version: 0.3.0(abitype@1.0.8(typescript@5.8.3)(zod@3.24.4))(viem@2.31.6(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4))
       aws-crt:
         specifier: ^1.27.1
         version: 1.27.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -3929,15 +3929,15 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@zoralabs/coins-sdk@0.2.8':
-    resolution: {integrity: sha512-vni9qcdS6/9HUOue7SDir2wHn+SSSDmxfZhBcCzQWdK9NaW/+E5jCWXuQGFgBzKpLc4FN5ktJz36v92BADQE3g==}
+  '@zoralabs/coins-sdk@0.3.0':
+    resolution: {integrity: sha512-ep/IaG13vwFmePDNp9UsDaNgLz1uB3C5JmTBtBOkT9saQomx4apheonA4Za/t8oCwe/VyQ51h0TAgHCiVS5i4A==}
     engines: {node: '>=22'}
     peerDependencies:
       abitype: ^1.0.8
       viem: ^2.21.55
 
-  '@zoralabs/protocol-deployments@0.6.1':
-    resolution: {integrity: sha512-iDO5EhLrqDw0keudRq9omuSdvHG852de5/apY2p7QLBDxitQuJ/6/jOaq2WB4B6GPVUh2fTd5+CdoSsbJhJv5g==}
+  '@zoralabs/protocol-deployments@0.6.2':
+    resolution: {integrity: sha512-RvyoNtVwcEzCNLWKqIwYlIC60TzBoZhxYrwpLxBfvoBlWSvQ8wyoc1/Z1f5fqNMPOd2wjk/eK8FAhMgaHerJdQ==}
 
   abitype@1.0.8:
     resolution: {integrity: sha512-ZeiI6h3GnW06uYDLx0etQtX/p8E24UaHHBj57RSjK7YBFe7iuVn07EDpOeP451D06sF27VOz9JJPlIKJmXgkEg==}
@@ -13989,14 +13989,14 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@zoralabs/coins-sdk@0.2.8(abitype@1.0.8(typescript@5.8.3)(zod@3.24.4))(viem@2.31.6(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4))':
+  '@zoralabs/coins-sdk@0.3.0(abitype@1.0.8(typescript@5.8.3)(zod@3.24.4))(viem@2.31.6(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4))':
     dependencies:
       '@hey-api/client-fetch': 0.8.4
-      '@zoralabs/protocol-deployments': 0.6.1
+      '@zoralabs/protocol-deployments': 0.6.2
       abitype: 1.0.8(typescript@5.8.3)(zod@3.24.4)
       viem: 2.31.6(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
 
-  '@zoralabs/protocol-deployments@0.6.1': {}
+  '@zoralabs/protocol-deployments@0.6.2': {}
 
   abitype@1.0.8(typescript@5.8.3)(zod@3.22.4):
     optionalDependencies:

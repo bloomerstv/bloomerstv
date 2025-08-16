@@ -76,6 +76,7 @@ const uploadToIPFS = async (
     await task.done()
     const result = await client.headObject(params)
     const metadata = result.Metadata
+    console.log('IPFS upload result:', result)
 
     return {
       url: `ipfs://${metadata?.['ipfs-hash']}`,

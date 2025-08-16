@@ -66,8 +66,6 @@ const PriceChartComponent: React.FC<PriceChartProps> = ({
 
   // Build query based on timeframe
   const { query, variables } = useMemo(() => {
-    if (!poolAddress) return { query: '', variables: {} }
-
     const now = Math.floor(Date.now() / 1000)
     let timeThreshold: number
     let queryType: 'hourly' | 'daily'
@@ -111,7 +109,7 @@ const PriceChartComponent: React.FC<PriceChartProps> = ({
             }
           }
         `,
-        variables: { pool: poolAddress.toLowerCase(), timeThreshold }
+        variables: { pool: poolAddress?.toLowerCase() || '', timeThreshold }
       }
     } else {
       return {
@@ -130,7 +128,7 @@ const PriceChartComponent: React.FC<PriceChartProps> = ({
             }
           }
         `,
-        variables: { pool: poolAddress.toLowerCase(), timeThreshold }
+        variables: { pool: poolAddress?.toLowerCase() || '', timeThreshold }
       }
     }
   }, [poolAddress, selectedTimeFrame])
@@ -139,7 +137,7 @@ const PriceChartComponent: React.FC<PriceChartProps> = ({
   const [result] = useQuery({
     query,
     variables,
-    pause: !poolAddress || !query // Use pause instead of conditional calling
+    pause: !poolAddress // Only pause when no poolAddress
   })
 
   const { data, fetching, error } = result

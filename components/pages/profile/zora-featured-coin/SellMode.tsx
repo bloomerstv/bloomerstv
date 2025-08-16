@@ -4,10 +4,10 @@ import { Button, TextField, InputAdornment } from '@mui/material'
 import { ConnectKitButton } from 'connectkit'
 import { toast } from 'react-hot-toast'
 import { parseEther, Address, Hex } from 'viem'
-import { useWalletClient } from 'wagmi'
+import { useWalletClient, usePublicClient } from 'wagmi'
 import { v4 as uuid } from 'uuid'
 import { base } from 'viem/chains'
-import { createTradeCall, TradeParameters } from '@zoralabs/coins-sdk'
+import { tradeCoin, TradeParameters } from '@zoralabs/coins-sdk'
 import {
   ContentType,
   SendMessageTradeType
@@ -43,6 +43,7 @@ const SellMode: React.FC<SellModeProps> = ({
   setIsPending
 }) => {
   const { data: walletClient } = useWalletClient()
+  const publicClient = usePublicClient()
   const handleWrongNetwork = useHandleWrongNetwork(base.id)
 
   const sendMessagePayload = useChatInteractions(
@@ -70,7 +71,13 @@ const SellMode: React.FC<SellModeProps> = ({
     try {
       await handleWrongNetwork()
 
-      const tradeParams: TradeParameters = {
+      if (!walletClient || !address) {
+        toast.error('Wallet not connected')
+        setIsPending(false)
+        return
+      }
+
+      const tradeParameters: TradeParameters = {
         buy: {
           type: 'eth'
         },
@@ -79,22 +86,36 @@ const SellMode: React.FC<SellModeProps> = ({
           type: 'erc20'
         },
         amountIn: parseEther(sellAmount),
-        slippage: 0.15,
-        sender: address as Address,
-        recipient: address as Address
+        slippage: 0.05, // 5% slippage tolerance
+        sender: address as Address
       }
 
-      const quote = await createTradeCall(tradeParams)
-
-      const tx = await walletClient?.sendTransaction({
-        to: quote.call.target as Address,
-        data: quote.call.data as Hex,
-        value: BigInt(quote.call.value),
+      // Using tradeCoin function directly with the connected wallet
+      const result = await tradeCoin({
+        tradeParameters,
+        walletClient,
+        // Properly structure the publicClient with account
+        // @ts-ignore
+        publicClient,
         account: address as Address
       })
 
-      if (!tx) {
+      // Handle different result formats to extract transaction hash
+      let txHash = ''
+      if (typeof result === 'string') {
+        txHash = result
+      } else if (result && typeof result === 'object') {
+        // Extract hash from various possible response formats
+        txHash =
+          result.hash ||
+          result.transactionHash ||
+          (result.response && result.response.hash) ||
+          ''
+      }
+
+      if (!txHash) {
         toast.error('Transaction failed')
+        setIsPending(false)
         return
       }
 
@@ -116,7 +137,7 @@ const SellMode: React.FC<SellModeProps> = ({
         content: `💰Sold ${sellAmount} $${coin.symbol} for ~$${estimatedEthReceived.toFixed(4)} at $${formatterCurrentPrice}/${coin.symbol} 🎉`,
         type: ContentType.Trade,
         image: coin.mediaContent?.previewImage?.medium!,
-        txHash: tx,
+        txHash: txHash,
         currencySymbol: coin.symbol,
         formattedBuyAmountEth: estimatedEthReceived.toFixed(4)
       }

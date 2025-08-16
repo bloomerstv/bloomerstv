@@ -3,7 +3,6 @@ import {
   TextField,
   Box,
   Typography,
-  Alert,
   Button,
   CircularProgress
 } from '@mui/material'
@@ -15,24 +14,20 @@ import {
 import ModalWrapper from '../../../ui/Modal/ModalWrapper'
 import uploadToIPFS from '../../../../utils/uploadToIPFS'
 
-// Similar to CreateNewZoraCoinButton but simplified
 import {
   CreateCoinArgs,
   createCoinCall,
-  DeployCurrency,
   ValidMetadataURI
 } from '@zoralabs/coins-sdk'
-import {
-  useAccount,
-  useWaitForTransactionReceipt,
-  useWriteContract
-} from 'wagmi'
+import { useAccount, useSendTransaction } from 'wagmi'
 import { Address } from 'viem'
 import { base } from 'viem/chains'
 import toast from 'react-hot-toast'
 import useHandleWrongNetwork from '../../../../utils/hooks/useHandleWrongNetwork'
 import { PROJECT_ADDRESS } from '../../../../utils/config'
 import { getCoinCreateFromLogs } from '@zoralabs/coins-sdk'
+import { acl, storageClient } from '../../../../utils/lib/lens/storageClient'
+import { viemPublicClientBase } from '../../../../utils/lib/viemPublicClient'
 
 interface CreateCoinModalProps {
   open: boolean
@@ -56,20 +51,9 @@ export default function CreateCoinModal({
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [currentStatus, setCurrentStatus] = useState<string>('')
 
-  const {
-    writeContractAsync,
-    status,
-    data: txHash,
-    error: writeError
-  } = useWriteContract()
-
-  const { isLoading: isWaitingForTransaction, data: receipt } =
-    useWaitForTransactionReceipt({
-      hash: txHash,
-      query: { enabled: Boolean(txHash) }
-    })
+  const { sendTransactionAsync, status } = useSendTransaction()
 
   const handleReset = () => {
     setName('')
@@ -79,7 +63,6 @@ export default function CreateCoinModal({
     setImagePreview(null)
     setUploadProgress(0)
     setIsUploading(false)
-    setError(null)
   }
 
   const handleClose = () => {
@@ -97,27 +80,29 @@ export default function CreateCoinModal({
 
   const handleCreateCoin = async () => {
     if (!address) {
-      setError('Please connect your wallet first')
+      toast.error('Please connect your wallet first')
       return
     }
 
     if (!name || !symbol || !description || !imageFile) {
-      setError('Please fill in all fields and upload an image')
+      toast.error('Please fill in all fields and upload an image')
       return
     }
 
     try {
       setIsUploading(true)
-      setError(null)
+      setCurrentStatus('Uploading image...')
 
       // Upload image to IPFS
       const imageUploadResult = await uploadToIPFS(imageFile, (progress) => {
-        setUploadProgress(progress / 2) // First half of the process
+        setUploadProgress(progress / 2)
       })
 
       if (!imageUploadResult?.url) {
         throw new Error('Failed to upload image')
       }
+
+      setCurrentStatus('Uploading metadata...')
 
       // Create metadata JSON
       const metadata = {
@@ -128,108 +113,89 @@ export default function CreateCoinModal({
         properties: {}
       }
 
-      // Create a Blob from the metadata JSON
-      const metadataBlob = new Blob([JSON.stringify(metadata)], {
-        type: 'application/json'
+      const metadataUploadResult = await storageClient.uploadAsJson(metadata, {
+        acl: acl
       })
 
-      // Convert Blob to File for uploadToIPFS
-      const metadataFile = new File([metadataBlob], 'metadata.json', {
-        type: 'application/json'
-      })
-
-      // Upload metadata to IPFS
-      const metadataUploadResult = await uploadToIPFS(
-        metadataFile,
-        (progress) => {
-          setUploadProgress(50 + progress / 2) // Second half of the process
-        }
-      )
-
-      if (!metadataUploadResult?.url) {
+      if (!metadataUploadResult?.gatewayUrl) {
         throw new Error('Failed to upload metadata')
       }
+
+      setCurrentStatus('Preparing transaction...')
 
       // Create coin parameters
       const coinParams: CreateCoinArgs = {
         name,
         symbol,
-        uri: metadataUploadResult.url as ValidMetadataURI,
-        payoutRecipient: address as Address,
+        metadata: {
+          type: 'RAW_URI',
+          uri: metadataUploadResult.gatewayUrl as ValidMetadataURI
+        },
         platformReferrer: PROJECT_ADDRESS as Address,
-        owners: address ? [address as Address] : [],
         chainId: base.id,
-        currency: DeployCurrency.ETH
+        currency: 'ETH',
+        creator: address as Address
       }
 
-      // Create configuration for wagmi
-      const contractCallParams = await createCoinCall(coinParams)
+      const txCalls = await createCoinCall(coinParams)
 
-      // Handle wrong network
+      setCurrentStatus('Waiting for signature...')
+
       await handleWrongNetwork()
 
-      // Execute contract call
-      await writeContractAsync({
-        abi: contractCallParams?.abi,
-        address: contractCallParams?.address,
-        args: contractCallParams?.args,
-        functionName: contractCallParams?.functionName
+      const txResult = await sendTransactionAsync({
+        to: txCalls[0].to,
+        data: txCalls[0].data,
+        value: txCalls[0].value
       })
+
+      setCurrentStatus('Waiting for confirmation...')
+
+      // Wait for transaction confirmation
+      const receipt = await viemPublicClientBase.waitForTransactionReceipt({
+        hash: txResult,
+        confirmations: 1
+      })
+
+      setCurrentStatus('Processing deployment...')
+
+      const coinDeployment = getCoinCreateFromLogs(receipt)
+      const deployedCoinAddress = coinDeployment?.coin
+
+      if (!deployedCoinAddress) {
+        throw new Error('Failed to get deployed coin address from transaction')
+      }
+
+      setIsUploading(false)
+      setCurrentStatus('')
+
+      toast.success(
+        `Coin created successfully! Address: ${deployedCoinAddress.slice(
+          0,
+          6
+        )}...${deployedCoinAddress.slice(-4)}`
+      )
+
+      // Call the parent's callback
+      if (onCoinCreated) {
+        setTimeout(() => {
+          onCoinCreated()
+        }, 1500)
+      }
     } catch (err: any) {
       console.error('Error creating coin:', err)
-      setError(err.message || 'Failed to create coin')
+      toast.error(err.message || 'Failed to create coin')
       setIsUploading(false)
+      setCurrentStatus('')
     }
   }
-
-  // Handle transaction completion
-  React.useEffect(() => {
-    if (receipt) {
-      setIsUploading(false)
-
-      try {
-        const coinDeployment = getCoinCreateFromLogs(receipt)
-        const deployedCoinAddress = coinDeployment?.coin
-
-        console.log('Deployed coin address:', deployedCoinAddress)
-
-        if (!deployedCoinAddress) {
-          throw new Error(
-            'Failed to get deployed coin address from transaction'
-          )
-        }
-
-        toast.success('Coin created successfully!')
-
-        // Call the parent's callback
-        if (onCoinCreated) {
-          setTimeout(() => {
-            onCoinCreated()
-          }, 1500)
-        }
-      } catch (err: any) {
-        console.error('Error processing transaction receipt:', err)
-        toast.error(err.message || 'Failed to create coin')
-        setIsUploading(false)
-        setError(err.message || 'Failed to process transaction')
-      }
-    }
-  }, [receipt])
-
-  // Show write errors
-  React.useEffect(() => {
-    if (writeError) {
-      setError(writeError.message || 'Transaction failed')
-      setIsUploading(false)
-    }
-  }, [writeError])
 
   return (
     <ModalWrapper
       open={open}
       onClose={() => {
-        if (status === 'pending' || isWaitingForTransaction) {
-          setError('Transaction is still pending. Please wait.')
+        if (status === 'pending' || isUploading) {
+          toast.error('Transaction is still pending. Please wait.')
           return
         }
         handleClose()
@@ -243,7 +209,7 @@ export default function CreateCoinModal({
           <Button
             variant="outlined"
             onClick={handleClose}
-            disabled={status === 'pending' || isWaitingForTransaction}
+            disabled={status === 'pending' || isUploading}
             sx={{ borderRadius: '8px' }}
           >
             Cancel
@@ -251,11 +217,9 @@ export default function CreateCoinModal({
           <Button
             variant="contained"
             onClick={handleCreateCoin}
-            disabled={
-              status === 'pending' || isWaitingForTransaction || isUploading
-            }
+            disabled={status === 'pending' || isUploading}
             startIcon={
-              status === 'pending' || isWaitingForTransaction || isUploading ? (
+              status === 'pending' || isUploading ? (
                 <CircularProgress size={16} color="inherit" />
               ) : (
                 <MonetizationOn />
@@ -267,20 +231,14 @@ export default function CreateCoinModal({
               '&:hover': { bgcolor: '#4F46E5' }
             }}
           >
-            {status === 'pending' || isWaitingForTransaction || isUploading
-              ? `${
-                  isUploading
-                    ? `Uploading ${uploadProgress.toFixed(0)}%`
-                    : 'Creating Coin...'
-                }`
+            {status === 'pending' || isUploading
+              ? currentStatus || `Uploading ${uploadProgress.toFixed(0)}%`
               : 'Create Coin'}
           </Button>
         </Box>
       }
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: 1 }}>
-        {error && <Alert severity="error">{error}</Alert>}
-
         <TextField
           label="Coin Name"
           variant="outlined"
@@ -288,7 +246,7 @@ export default function CreateCoinModal({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. My Awesome Coin"
-          disabled={status === 'pending' || isWaitingForTransaction}
+          disabled={status === 'pending' || isUploading}
           required
           inputProps={{ maxLength: 50 }}
           helperText={`${name.length}/50 characters`}
@@ -301,9 +259,9 @@ export default function CreateCoinModal({
           value={symbol}
           onChange={(e) => setSymbol(e.target.value.toUpperCase())}
           placeholder="e.g. MAC"
-          inputProps={{ maxLength: 5 }}
-          helperText="Max 5 characters"
-          disabled={status === 'pending' || isWaitingForTransaction}
+          inputProps={{ maxLength: 10 }}
+          helperText="Max 10 characters"
+          disabled={status === 'pending' || isUploading}
           required
         />
 
@@ -316,7 +274,7 @@ export default function CreateCoinModal({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Enter a description for your coin"
-          disabled={status === 'pending' || isWaitingForTransaction}
+          disabled={status === 'pending' || isUploading}
           required
           inputProps={{ maxLength: 500 }}
           helperText={`${description.length}/500 characters`}
@@ -346,7 +304,7 @@ export default function CreateCoinModal({
               id="coin-image-upload"
               type="file"
               onChange={handleImageChange}
-              disabled={status === 'pending' || isWaitingForTransaction}
+              disabled={status === 'pending' || isUploading}
             />
 
             <label
@@ -386,7 +344,7 @@ export default function CreateCoinModal({
                   variant="outlined"
                   fullWidth
                   startIcon={<AddPhotoAlternate />}
-                  disabled={status === 'pending' || isWaitingForTransaction}
+                  disabled={status === 'pending' || isUploading}
                   sx={{
                     height: '100px',
                     border: '1px dashed',
@@ -408,7 +366,7 @@ export default function CreateCoinModal({
             color="text.secondary"
             sx={{ mt: 0.5, display: 'block' }}
           >
-            Recommended: Square image, JPG or PNG format
+            JPG or PNG format Recommended: Square image, JPG or PNG format
           </Typography>
         </Box>
       </Box>

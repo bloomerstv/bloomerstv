@@ -59,7 +59,7 @@
     "@radix-ui/react-popover": "^1.1.14",
     "@radix-ui/react-select": "^2.2.5",
     "@tanstack/react-query": "^5.81.5",
-    "@zoralabs/coins-sdk": "^0.2.8",
+    "@zoralabs/coins-sdk": "^0.3.0",
     "aws-crt": "^1.27.1",
     "axios": "^1.10.0",
     "clsx": "^2.1.1",
