@@ -366,7 +366,6 @@ function Clip({
   )
 }
 
-// eslint-disable-next-line react/display-name
 const Settings = React.forwardRef(
   (
     { className }: { className?: string },
@@ -578,7 +577,6 @@ const Settings = React.forwardRef(
   }
 )
 
-// eslint-disable-next-line react/display-name
 const RateSelectItem = React.forwardRef<
   HTMLDivElement,
   Player.RateSelectItemProps
@@ -600,7 +598,6 @@ const RateSelectItem = React.forwardRef<
   )
 })
 
-// eslint-disable-next-line react/display-name
 const VideoQualitySelectItem = React.forwardRef<
   HTMLDivElement,
   Player.VideoQualitySelectItemProps

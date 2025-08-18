@@ -20,7 +20,7 @@ export const getRegistration =
     const registrations = await navigator.serviceWorker.getRegistrations()
     let registration: ServiceWorkerRegistration | null = null
 
-    for (let reg of registrations) {
+    for (const reg of registrations) {
       if (reg.active && reg.active.scriptURL.endsWith('/service-worker.js')) {
         registration = reg
         break

@@ -77,7 +77,7 @@ export const getIdentityTokenAsync = async (): Promise<null | string> => {
     localStorage.setItem(localStorageCredKey, JSON.stringify(newCredJson))
 
     return identityToken
-  } catch (e) {
+  } catch {
     return null
   }
 }

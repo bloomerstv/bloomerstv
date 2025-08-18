@@ -26,7 +26,6 @@ export class MentionNode extends TextNode {
     return new MentionNode(node.__mention, node.__text, node.__key)
   }
   static importJSON(serializedNode: SerializedMentionNode): MentionNode {
-    // eslint-disable-next-line no-use-before-define
     const node = $createMentionNode(serializedNode.mentionName)
     node.setTextContent(serializedNode.text)
     node.setFormat(serializedNode.format)
@@ -74,7 +73,6 @@ export class MentionNode extends TextNode {
         }
 
         return {
-          // eslint-disable-next-line no-use-before-define
           conversion: convertMentionElement,
           priority: 1
         }

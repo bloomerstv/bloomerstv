@@ -3,7 +3,6 @@ import {
   EnableSignlessResult,
   usePublicClient,
   UnexpectedError,
-  SessionClient,
   ResultAsync,
   UnauthenticatedError
 } from '@lens-protocol/react'

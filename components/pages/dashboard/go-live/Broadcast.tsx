@@ -140,7 +140,6 @@ const ContextComponent = ({
   return <></>
 }
 
-// eslint-disable-next-line react/display-name
 const SourceSelectComposed = React.forwardRef(
   (
     { name, type }: { name: string; type: 'audioinput' | 'videoinput' },
@@ -192,7 +191,6 @@ const SourceSelectComposed = React.forwardRef(
   )
 )
 
-// eslint-disable-next-line react/display-name
 const SourceSelectItem = React.forwardRef<
   HTMLDivElement,
   Broadcast.SelectItemProps

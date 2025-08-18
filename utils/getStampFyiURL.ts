@@ -1,4 +1,4 @@
-import { ZERO_ADDRESS } from "./contants";
+import { ZERO_ADDRESS } from './contants'
 
 /**
  *
@@ -6,11 +6,11 @@ import { ZERO_ADDRESS } from "./contants";
  * @returns cdn.stamp.fyi url
  */
 const getStampFyiURL = (address: string) => {
-  let currentAddress = address;
+  let currentAddress = address
   if (!address) {
-    currentAddress = ZERO_ADDRESS;
+    currentAddress = ZERO_ADDRESS
   }
-  return `https://cdn.stamp.fyi/avatar/eth:${currentAddress.toLowerCase()}?s=250`;
-};
+  return `https://cdn.stamp.fyi/avatar/eth:${currentAddress.toLowerCase()}?s=250`
+}
 
-export default getStampFyiURL;
+export default getStampFyiURL

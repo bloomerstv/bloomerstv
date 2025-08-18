@@ -3,7 +3,6 @@
  * This file is being preserved for future use when frames.js is ready.
  */
 
-/* eslint-disable react/jsx-key */
 /*
 import { Button } from 'frames.js/next'
 import { frames } from '../frames'

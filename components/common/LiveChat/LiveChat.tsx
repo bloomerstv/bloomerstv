@@ -1,10 +1,6 @@
 import { Button, IconButton } from '@mui/material'
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
-import {
-  // APP_ID,
-  APP_LINK,
-  LIVE_CHAT_WEB_SOCKET_URL
-} from '../../../utils/config'
+import { APP_LINK, LIVE_CHAT_WEB_SOCKET_URL } from '../../../utils/config'
 import io from 'socket.io-client'
 import {
   image,
@@ -101,6 +97,7 @@ const LiveChat = ({
   const [popedOut, setPopedOut] = React.useState(false)
   const isMobile = useIsMobile()
   const { data: wallet } = useWalletClient()
+  // @ts-ignore
   const { execute } = useCreatePost(handleOperationWith(wallet))
   const [verifiedToSend, setVerifiedToSend] = useState(false)
 
