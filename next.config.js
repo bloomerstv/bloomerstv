@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 // const webpack = require('webpack')
 
-const withPWA = require('@ducanh2912/next-pwa').default({
+import nextPWA from '@ducanh2912/next-pwa'
+const withPWA = nextPWA({
   dest: 'public',
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
@@ -29,8 +30,17 @@ const nextConfig = {
     // )
 
     return config
+  },
+  async redirects() {
+    return [
+      {
+        source: '/.well-known/farcaster.json',
+        destination:
+          'https://api.farcaster.xyz/miniapps/hosted-manifest/0198bc68-dbd1-08d1-c04d-cdc517eb062b',
+        permanent: false
+      }
+    ]
   }
 }
 
-module.exports = withPWA(nextConfig)
-// module.exports = nextConfig
+export default withPWA(nextConfig)

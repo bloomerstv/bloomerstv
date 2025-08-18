@@ -2,7 +2,7 @@
 import React from 'react'
 
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit'
-
+import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector'
 import { base } from 'wagmi/chains'
 import { lens, lensTestnet } from 'wagmi/chains'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
@@ -33,7 +33,7 @@ const config = createConfig(
     // @ts-ignore
     chains: defaultChains,
     transports: defaultTransports,
-
+    connectors: [farcasterMiniApp()],
     // Required API Keys
     walletConnectProjectId: process.env.NEXT_PUBLIC_RAINBOW_KIT_PROJECT_ID!,
 
