@@ -18,6 +18,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { PublicClient, testnet, mainnet } from '@lens-protocol/react'
 import { LensProvider } from '@lens-protocol/react'
 import { cookieStorage } from '../../utils/lib/lens/storage'
+import { MiniAppProvider } from '@neynar/react'
 
 const defaultChains = isMainnet ? [lens, base] : [lensTestnet, base]
 
@@ -69,7 +70,11 @@ const WagmiWrapper = ({ children }: { children: React.ReactNode }) => {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ConnectKitProvider theme={'auto'} mode={'dark'}>
-          <LensProvider client={client}>{children}</LensProvider>
+          <LensProvider client={client}>
+            <MiniAppProvider analyticsEnabled={true} backButtonEnabled={false}>
+              {children}
+            </MiniAppProvider>
+          </LensProvider>
         </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
