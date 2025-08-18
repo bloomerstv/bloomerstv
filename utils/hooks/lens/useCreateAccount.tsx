@@ -31,6 +31,7 @@ const useCreateAccount = (): UseCreateAccountReturn => {
 
     // @ts-ignore - Handle potential type issues with sessionClient
     const result = await createAccountWithUsername(sessionClient, request)
+      // @ts-ignore
       .andThen(handleOperationWith(walletClient))
       .andThen(sessionClient.waitForTransaction)
       // @ts-ignore
