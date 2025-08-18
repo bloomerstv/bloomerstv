@@ -71,7 +71,7 @@ const WagmiWrapper = ({ children }: { children: React.ReactNode }) => {
       <QueryClientProvider client={queryClient}>
         <ConnectKitProvider theme={'auto'} mode={'dark'}>
           <LensProvider client={client}>
-            <MiniAppProvider analyticsEnabled={true} backButtonEnabled={false}>
+            <MiniAppProvider analyticsEnabled={true} backButtonEnabled={true}>
               {children}
             </MiniAppProvider>
           </LensProvider>
