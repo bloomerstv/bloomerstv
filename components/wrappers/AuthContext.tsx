@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           return
         }
 
-        setAccount(accountResult.value)
+        setAccount(accountResult.value as Account)
         setAccountError(null)
       } catch (err) {
         setAccountError(err instanceof Error ? err : new Error(String(err)))
