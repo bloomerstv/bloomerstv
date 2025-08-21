@@ -35,8 +35,12 @@ const nextConfig = {
     return [
       {
         source: '/.well-known/farcaster.json',
+        // production
+        // destination:
+        //   'https://api.farcaster.xyz/miniapps/hosted-manifest/0198bc68-dbd1-08d1-c04d-cdc517eb062b',
+        // dev
         destination:
-          'https://api.farcaster.xyz/miniapps/hosted-manifest/0198bc68-dbd1-08d1-c04d-cdc517eb062b',
+          'https://api.farcaster.xyz/miniapps/hosted-manifest/0198cc82-1541-1652-6334-3e068629cf62',
         permanent: false
       }
     ]
