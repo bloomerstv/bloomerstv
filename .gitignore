@@ -38,3 +38,6 @@ next-env.d.ts
 sw.*
 workbox-*
 swe-worker-*
+
+# claude
+.claude/
