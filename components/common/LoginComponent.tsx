@@ -22,6 +22,7 @@ import { signMessageWith } from '@lens-protocol/react/viem'
 import useSession from '../../utils/hooks/useSession'
 import { APP_ADDRESS } from '../../utils/config'
 import { ConnectKitButton } from 'connectkit'
+import { FarcasterLoginButton } from './FarcasterLoginButton'
 // import useEnableSignless from '../../utils/hooks/useEnableSignless'
 
 const LoginComponent = ({ onClose }: { onClose?: () => void }) => {
@@ -300,7 +301,29 @@ const LoginComponent = ({ onClose }: { onClose?: () => void }) => {
         <>
           <div className="text-2xl font-bold mb-4">Connect your wallet</div>
 
-          <div className="start-row space-x-4">
+          <div className="flex flex-col gap-4">
+            {/* Farcaster Login Button */}
+            {/* TEST: Keeping dialog open after login to see Farcaster info */}
+            <FarcasterLoginButton
+              onSuccess={() => {
+                console.log(
+                  'Farcaster login successful - keeping dialog open for testing'
+                )
+                // onClose() // Commented out for testing
+              }}
+            />
+
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-p-border" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-p-bg text-s-text">Or</span>
+              </div>
+            </div>
+
+            {/* Regular Wallet Connect */}
             <ConnectKitButton.Custom>
               {({ show }) => (
                 <LoadingButton

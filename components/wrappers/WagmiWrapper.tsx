@@ -34,7 +34,11 @@ const config = createConfig(
     // @ts-ignore
     chains: defaultChains,
     transports: defaultTransports,
-    connectors: [farcasterMiniApp()],
+    // Include both default connectors (for QR code) and farcasterMiniApp (for in-app)
+    connectors: [
+      farcasterMiniApp()
+      // Default connectors will be added automatically by getDefaultConfig
+    ],
     // Required API Keys
     walletConnectProjectId: process.env.NEXT_PUBLIC_RAINBOW_KIT_PROJECT_ID!,
 
