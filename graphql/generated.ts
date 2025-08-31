@@ -56,6 +56,28 @@ export type ClipResult = {
   playbackUrl?: Maybe<Scalars['String']['output']>
 }
 
+export type FarcasterAuthResponse = {
+  __typename?: 'FarcasterAuthResponse'
+  message?: Maybe<Scalars['String']['output']>
+  success: Scalars['Boolean']['output']
+  token?: Maybe<Scalars['String']['output']>
+  user?: Maybe<FarcasterUser>
+}
+
+export type FarcasterUser = {
+  __typename?: 'FarcasterUser'
+  activeStatus?: Maybe<Scalars['String']['output']>
+  bio?: Maybe<Scalars['String']['output']>
+  displayName?: Maybe<Scalars['String']['output']>
+  fid: Scalars['Int']['output']
+  followerCount?: Maybe<Scalars['Int']['output']>
+  followingCount?: Maybe<Scalars['Int']['output']>
+  pfpUrl?: Maybe<Scalars['String']['output']>
+  powerBadge?: Maybe<Scalars['Boolean']['output']>
+  username: Scalars['String']['output']
+  verifiedAddresses?: Maybe<Array<Maybe<Scalars['String']['output']>>>
+}
+
 export type FeaturedCoin = {
   __typename?: 'FeaturedCoin'
   chainId?: Maybe<Scalars['String']['output']>
@@ -188,6 +210,7 @@ export type Query = {
   streamerStats?: Maybe<StreamStats>
   thumbnail?: Maybe<Scalars['String']['output']>
   tokenPrice?: Maybe<Price>
+  verifyFarcasterAuth?: Maybe<FarcasterAuthResponse>
 }
 
 export type QueryGetMyRecordedStreamSessionsArgs = {
@@ -232,6 +255,10 @@ export type QueryThumbnailArgs = {
 
 export type QueryTokenPriceArgs = {
   address: Scalars['String']['input']
+}
+
+export type QueryVerifyFarcasterAuthArgs = {
+  token: Scalars['String']['input']
 }
 
 export type RecordedSession = {
@@ -688,6 +715,33 @@ export type UploadDataToIpfsMutation = {
     __typename?: 'IpfsResult'
     cid?: string | null
     size?: number | null
+  } | null
+}
+
+export type VerifyFarcasterAuthQueryVariables = Exact<{
+  token: Scalars['String']['input']
+}>
+
+export type VerifyFarcasterAuthQuery = {
+  __typename?: 'Query'
+  verifyFarcasterAuth?: {
+    __typename?: 'FarcasterAuthResponse'
+    success: boolean
+    message?: string | null
+    token?: string | null
+    user?: {
+      __typename?: 'FarcasterUser'
+      fid: number
+      username: string
+      displayName?: string | null
+      pfpUrl?: string | null
+      bio?: string | null
+      followerCount?: number | null
+      followingCount?: number | null
+      verifiedAddresses?: Array<string | null> | null
+      activeStatus?: string | null
+      powerBadge?: boolean | null
+    } | null
   } | null
 }
 
@@ -2400,6 +2454,102 @@ export type UploadDataToIpfsMutationResult =
 export type UploadDataToIpfsMutationOptions = Apollo.BaseMutationOptions<
   UploadDataToIpfsMutation,
   UploadDataToIpfsMutationVariables
+>
+export const VerifyFarcasterAuthDocument = gql`
+  query VerifyFarcasterAuth($token: String!) {
+    verifyFarcasterAuth(token: $token) {
+      success
+      user {
+        fid
+        username
+        displayName
+        pfpUrl
+        bio
+        followerCount
+        followingCount
+        verifiedAddresses
+        activeStatus
+        powerBadge
+      }
+      message
+      token
+    }
+  }
+`
+
+/**
+ * __useVerifyFarcasterAuthQuery__
+ *
+ * To run a query within a React component, call `useVerifyFarcasterAuthQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVerifyFarcasterAuthQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVerifyFarcasterAuthQuery({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useVerifyFarcasterAuthQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    VerifyFarcasterAuthQuery,
+    VerifyFarcasterAuthQueryVariables
+  > &
+    (
+      | { variables: VerifyFarcasterAuthQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    )
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    VerifyFarcasterAuthQuery,
+    VerifyFarcasterAuthQueryVariables
+  >(VerifyFarcasterAuthDocument, options)
+}
+export function useVerifyFarcasterAuthLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    VerifyFarcasterAuthQuery,
+    VerifyFarcasterAuthQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    VerifyFarcasterAuthQuery,
+    VerifyFarcasterAuthQueryVariables
+  >(VerifyFarcasterAuthDocument, options)
+}
+export function useVerifyFarcasterAuthSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        VerifyFarcasterAuthQuery,
+        VerifyFarcasterAuthQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    VerifyFarcasterAuthQuery,
+    VerifyFarcasterAuthQueryVariables
+  >(VerifyFarcasterAuthDocument, options)
+}
+export type VerifyFarcasterAuthQueryHookResult = ReturnType<
+  typeof useVerifyFarcasterAuthQuery
+>
+export type VerifyFarcasterAuthLazyQueryHookResult = ReturnType<
+  typeof useVerifyFarcasterAuthLazyQuery
+>
+export type VerifyFarcasterAuthSuspenseQueryHookResult = ReturnType<
+  typeof useVerifyFarcasterAuthSuspenseQuery
+>
+export type VerifyFarcasterAuthQueryResult = Apollo.QueryResult<
+  VerifyFarcasterAuthQuery,
+  VerifyFarcasterAuthQueryVariables
 >
 
 export interface PossibleTypesResultData {

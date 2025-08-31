@@ -16,9 +16,9 @@ const MasterWrappers = ({ children }: { children: React.ReactNode }) => {
     <ThemeProvider>
       <MuiThemeWrapper>
         <WagmiWrapper>
-          <AuthProvider>
-            <WaitForMount>
-              <ApolloWrapper>
+          <WaitForMount>
+            <ApolloWrapper>
+              <AuthProvider>
                 <ShowLoadingWrapper>
                   <ModalProvider>
                     <ToastWrapper>
@@ -26,9 +26,9 @@ const MasterWrappers = ({ children }: { children: React.ReactNode }) => {
                     </ToastWrapper>
                   </ModalProvider>
                 </ShowLoadingWrapper>
-              </ApolloWrapper>
-            </WaitForMount>
-          </AuthProvider>
+              </AuthProvider>
+            </ApolloWrapper>
+          </WaitForMount>
         </WagmiWrapper>
       </MuiThemeWrapper>
     </ThemeProvider>

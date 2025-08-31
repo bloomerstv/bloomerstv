@@ -1,0 +1,19 @@
+query VerifyFarcasterAuth($token: String!) {
+  verifyFarcasterAuth(token: $token) {
+    success
+    user {
+      fid
+      username
+      displayName
+      pfpUrl
+      bio
+      followerCount
+      followingCount
+      verifiedAddresses
+      activeStatus
+      powerBadge
+    }
+    message
+    token
+  }
+}

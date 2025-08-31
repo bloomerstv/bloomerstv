@@ -26,15 +26,25 @@ import LoadingImage from '../../../ui/LoadingImage'
 import AppLinksRow from '../../../common/AppLinksRow'
 import useSession from '../../../../utils/hooks/useSession'
 import { useLogout } from '@lens-protocol/react'
+
 const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const isMobile = useIsMobile()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
 
-  const { isAuthenticated, account } = useSession()
+  const {
+    isAuthenticated,
+    account,
+    authenticatedFarcasterUser,
+    isFarcasterAuthenticated,
+    logoutFarcaster
+  } = useSession()
   const { ensAvatar } = useEns({
-    address: isAuthenticated && !account?.username ? account?.owner : null
+    address:
+      isAuthenticated && !account?.username && !isFarcasterAuthenticated
+        ? account?.owner
+        : null
   })
 
   const handleClick = (event) => {
@@ -49,8 +59,14 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const { execute } = useLogout()
 
   const handleLogout = async () => {
-    await disconnectAsync()
-    await execute()
+    if (isFarcasterAuthenticated) {
+      // Logout from Farcaster
+      logoutFarcaster()
+    } else {
+      // Logout from Lens
+      await disconnectAsync()
+      await execute()
+    }
     handleClose()
   }
 
@@ -63,11 +79,18 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
   const { push } = useRouter()
   if (!isAuthenticated) return null
 
-  const avatar = isAuthenticated
-    ? getAvatar(account!)
-    : (ensAvatar ?? getStampFyiURL(account?.owner!))
+  // Use Farcaster data if authenticated with Farcaster, otherwise use Lens data
+  const avatar =
+    isFarcasterAuthenticated && authenticatedFarcasterUser?.pfpUrl
+      ? authenticatedFarcasterUser.pfpUrl
+      : isAuthenticated
+        ? getAvatar(account!)
+        : (ensAvatar ?? getStampFyiURL(account?.owner!))
 
-  const handle = account?.username?.localName
+  const handle =
+    isFarcasterAuthenticated && authenticatedFarcasterUser?.username
+      ? authenticatedFarcasterUser.username
+      : account?.username?.localName
   // data?.type === SessionType.WithProfile
   //   ? formatHandle(data?.profile)
   //   : (ensName ?? getShortAddress(data?.address!))
@@ -113,9 +136,13 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
             <MenuList>
               <MenuItem
                 onClick={() => {
-                  if (!account) return
-                  push(`/${formatHandle(account)}`)
-                  handleClose()
+                  if (isFarcasterAuthenticated && authenticatedFarcasterUser) {
+                    // For Farcaster users, don't navigate anywhere yet
+                    handleClose()
+                  } else if (account) {
+                    push(`/${formatHandle(account)}`)
+                    handleClose()
+                  }
                 }}
               >
                 <LoadingImage
@@ -126,7 +153,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
                 {handle}
               </MenuItem>
 
-              {account && (
+              {account && !isFarcasterAuthenticated && (
                 <MenuItem onClick={handleSwitchProfile}>
                   <ListItemIcon>
                     <SwapHorizIcon fontSize="small" />
@@ -136,7 +163,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
               )}
               {/* <Divider /> */}
 
-              {!isMobile && account && (
+              {!isMobile && account && !isFarcasterAuthenticated && (
                 <>
                   {/* <MenuItem
                 onClick={() => {
@@ -242,9 +269,13 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
         <MenuList>
           <MenuItem
             onClick={() => {
-              if (!account) return
-              push(`/${formatHandle(account)}`)
-              handleClose()
+              if (isFarcasterAuthenticated && authenticatedFarcasterUser) {
+                // For Farcaster users, don't navigate anywhere yet
+                handleClose()
+              } else if (account) {
+                push(`/${formatHandle(account)}`)
+                handleClose()
+              }
             }}
           >
             <img
@@ -255,7 +286,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
             {handle}
           </MenuItem>
 
-          {account && (
+          {account && !isFarcasterAuthenticated && (
             <MenuItem onClick={handleSwitchProfile}>
               <ListItemIcon>
                 <SwapHorizIcon fontSize="small" />
@@ -265,7 +296,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
           )}
           <Divider />
 
-          {!isMobile && account && (
+          {!isMobile && account && !isFarcasterAuthenticated && (
             <>
               <MenuItem
                 onClick={() => {
