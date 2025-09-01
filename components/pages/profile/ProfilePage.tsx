@@ -52,7 +52,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
   })
 
   const [createClip] = useCreateClipMutation()
-  const { isAuthenticated, account: sessionAccount } = useSession()
+  const { account: sessionAccount, isLensAuthenticated } = useSession()
 
   const {
     data: streamer,
@@ -147,7 +147,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
             streamer={streamer?.streamer}
           />
         }
-        clipLength={isAuthenticated ? 30 : undefined}
+        clipLength={isLensAuthenticated ? 30 : undefined}
         createClip={handleClipClicked}
         src={
           playerStreamingMode === PlayerStreamingMode.Quality
@@ -217,7 +217,7 @@ const ProfilePage = ({ handle }: { handle: string }) => {
 
   return (
     <div className="flex flex-row h-full w-full">
-      {clipUrl && account && isAuthenticated && (
+      {clipUrl && account && isLensAuthenticated && (
         <PostClipOnLens
           open={open}
           setOpen={setOpen}

@@ -79,7 +79,12 @@ const LiveChatInput = ({
   const imageFileInputRef = React.useRef(null)
   const [selectGif, setSelectGif] = React.useState<boolean>(false)
   const [tipZoraCoins, setTipZoraCoins] = React.useState<boolean>(false)
-  const { isAuthenticated, account } = useSession()
+  const {
+    isAuthenticated,
+    account,
+    authenticatedFarcasterUser,
+    isFarcasterAuthenticated
+  } = useSession()
   const { ensAvatar, ensName } = useEns({
     address: isAuthenticated ? account?.owner : null
   })
@@ -88,20 +93,28 @@ const LiveChatInput = ({
   //   ? account?.address
   //   : // @ts-ignore
   //     (account?.owner ?? '')
-  const avatar = isAuthenticated
-    ? getAvatar(account)
-    : ensAvatar
-      ? ensAvatar
-      : !isAuthenticated
-        ? getStampFyiURL(account?.owner)
-        : ''
-  const profileHandle = isAuthenticated
-    ? formatHandle(account?.owner)
-    : ensName
-      ? ensName
-      : !isAuthenticated
-        ? getShortAddress(account?.owner)
-        : ''
+  const avatar =
+    isFarcasterAuthenticated && authenticatedFarcasterUser?.pfpUrl
+      ? authenticatedFarcasterUser.pfpUrl
+      : isAuthenticated
+        ? getAvatar(account)
+        : ensAvatar
+          ? ensAvatar
+          : !isAuthenticated
+            ? getStampFyiURL(account?.owner)
+            : ''
+  const profileHandle =
+    isFarcasterAuthenticated && authenticatedFarcasterUser?.username
+      ? authenticatedFarcasterUser.username
+      : isFarcasterAuthenticated && authenticatedFarcasterUser?.displayName
+        ? authenticatedFarcasterUser.displayName
+        : isAuthenticated
+          ? formatHandle(account?.owner)
+          : ensName
+            ? ensName
+            : !isAuthenticated
+              ? getShortAddress(account?.owner)
+              : ''
 
   const [open, setOpen] = React.useState(false)
 

@@ -38,11 +38,12 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
     account,
     authenticatedFarcasterUser,
     isFarcasterAuthenticated,
+    isLensAuthenticated,
     logoutFarcaster
   } = useSession()
   const { ensAvatar } = useEns({
     address:
-      isAuthenticated && !account?.username && !isFarcasterAuthenticated
+      isAuthenticated && !account?.username && isLensAuthenticated
         ? account?.owner
         : null
   })
@@ -153,7 +154,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
                 {handle}
               </MenuItem>
 
-              {account && !isFarcasterAuthenticated && (
+              {account && isLensAuthenticated && (
                 <MenuItem onClick={handleSwitchProfile}>
                   <ListItemIcon>
                     <SwapHorizIcon fontSize="small" />
@@ -163,7 +164,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
               )}
               {/* <Divider /> */}
 
-              {!isMobile && account && !isFarcasterAuthenticated && (
+              {!isMobile && account && isLensAuthenticated && (
                 <>
                   {/* <MenuItem
                 onClick={() => {
@@ -286,7 +287,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
             {handle}
           </MenuItem>
 
-          {account && !isFarcasterAuthenticated && (
+          {account && isLensAuthenticated && (
             <MenuItem onClick={handleSwitchProfile}>
               <ListItemIcon>
                 <SwapHorizIcon fontSize="small" />
@@ -296,7 +297,7 @@ const AvatarWithOptions = ({ handleOpen }: { handleOpen: () => void }) => {
           )}
           <Divider />
 
-          {!isMobile && account && !isFarcasterAuthenticated && (
+          {!isMobile && account && isLensAuthenticated && (
             <>
               <MenuItem
                 onClick={() => {

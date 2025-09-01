@@ -20,13 +20,13 @@ const SingleHorizontalStreamerDiv = ({
   live?: boolean
   premium?: boolean
 }) => {
-  const { isAuthenticated } = useSession()
+  const { isAuthenticated, isLensAuthenticated } = useSession()
 
   const { execute, loading: followLoading } = useFollow()
 
   const handleFollow = async (account: Account) => {
     try {
-      if (isAuthenticated) return
+      if (!isAuthenticated) return
       const result = await execute({
         account: account?.address
       })
@@ -55,40 +55,42 @@ const SingleHorizontalStreamerDiv = ({
             <LiveDiv />
           </div>
         )}
-        {!live && isAuthenticated && !account?.operations?.isFollowedByMe && (
-          <div className="-mt-4 absolute bottom-0 z-40">
-            <LoadingButton
-              startIcon={
-                <PersonAddIcon
-                  fontSize="inherit"
-                  sx={{
-                    width: '10px',
-                    height: '10px'
-                  }}
-                  className="-mr-1"
-                />
-              }
-              onClick={() => {
-                handleFollow(account)
-              }}
-              loading={followLoading}
-              variant="contained"
-              size="small"
-              color="secondary"
-              fullWidth={false}
-              sx={{
-                borderRadius: '20px',
-                padding: '3px 0px',
-                width: '10px',
-                textTransform: 'none',
-                fontSize: '10px',
-                fontWeight: 'bold'
-              }}
-            >
-              Follow
-            </LoadingButton>
-          </div>
-        )}
+        {!live &&
+          isLensAuthenticated &&
+          !account?.operations?.isFollowedByMe && (
+            <div className="-mt-4 absolute bottom-0 z-40">
+              <LoadingButton
+                startIcon={
+                  <PersonAddIcon
+                    fontSize="inherit"
+                    sx={{
+                      width: '10px',
+                      height: '10px'
+                    }}
+                    className="-mr-1"
+                  />
+                }
+                onClick={() => {
+                  handleFollow(account)
+                }}
+                loading={followLoading}
+                variant="contained"
+                size="small"
+                color="secondary"
+                fullWidth={false}
+                sx={{
+                  borderRadius: '20px',
+                  padding: '3px 0px',
+                  width: '10px',
+                  textTransform: 'none',
+                  fontSize: '10px',
+                  fontWeight: 'bold'
+                }}
+              >
+                Follow
+              </LoadingButton>
+            </div>
+          )}
       </div>
       <div className="flex flex-row items-center gap-x-0.5">
         <div className="text-s-text text-xs">{formatHandle(account)}</div>

@@ -5,7 +5,7 @@ import CreatePostButton from './CreatePostButton'
 import useSession from '../../../../utils/hooks/useSession'
 
 const MobileTopHeader = () => {
-  const { isAuthenticated } = useSession()
+  const { isLensAuthenticated } = useSession()
 
   return (
     <>
@@ -20,7 +20,7 @@ const MobileTopHeader = () => {
         </div>
 
         <div className="centered-row gap-x-1">
-          {isAuthenticated && <CreatePostButton />}
+          {isLensAuthenticated && <CreatePostButton />}
 
           <LoginButton />
         </div>
