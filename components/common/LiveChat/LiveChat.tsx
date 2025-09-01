@@ -92,7 +92,8 @@ const LiveChat = ({
   const [inputMessage, setInputMessage] = useState('')
   const [socket, setSocket] = useState<any>(null)
   // const [isSocketWithAuthToken, setIsSocketWithAuthToken] = useState(false)
-  const { isAuthenticated, account } = useSession()
+  const { isAuthenticated, isFarcasterAuthenticated, farcasterToken } =
+    useSession()
   const [open, setOpen] = React.useState(false)
   const [popedOut, setPopedOut] = React.useState(false)
   const isMobile = useIsMobile()
@@ -153,12 +154,30 @@ const LiveChat = ({
   }, [isAuthenticated])
 
   const joinChatWithAccount = useCallback(async () => {
-    if (!account?.address || !socket) return
-    const idToken = await getIdentityTokenAsync()
+    if (!isAuthenticated || !socket) return
 
-    if (!idToken) {
+    // If Farcaster authenticated, use Farcaster token
+    if (isFarcasterAuthenticated) {
+      if (!farcasterToken) return
+
+      socket.on('verified-to-send', () => {
+        setVerifiedToSend(true)
+      })
+
+      socket.on('error', (error: any) => {
+        toast.error(String(error))
+        if (error === 'You are blocked by the streamer') {
+          setStreamerHasBlockedMe(true)
+        }
+      })
+
+      socket.emit('joined-chat', farcasterToken, { isFCToken: true })
       return
     }
+
+    // Else assume Lens auth
+    const idToken = await getIdentityTokenAsync()
+    if (!idToken) return
 
     socket.on('verified-to-send', () => {
       setVerifiedToSend(true)
@@ -170,13 +189,17 @@ const LiveChat = ({
         setStreamerHasBlockedMe(true)
       }
     })
-    // emit joined chat room
     socket.emit('joined-chat', idToken)
-  }, [Boolean(socket), account?.address])
+  }, [
+    Boolean(socket),
+    isAuthenticated,
+    isFarcasterAuthenticated,
+    farcasterToken
+  ])
 
   useEffect(() => {
     joinChatWithAccount()
-  }, [socket, account?.address])
+  }, [socket, isAuthenticated, isFarcasterAuthenticated])
 
   useEffect(() => {
     const seen = new Set()
@@ -288,7 +311,8 @@ const LiveChat = ({
       // so just need to send the message content from here
       socket.emit('send-message', sendMessagePayload)
 
-      if (isAuthenticated) {
+      // Create Lens comment only if user is Lens-authenticated (not Farcaster-only)
+      if (isAuthenticated && !isFarcasterAuthenticated) {
         createComment(
           inputMessage,
           imageAttachment?.imageUrl,

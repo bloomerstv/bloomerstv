@@ -37,6 +37,7 @@ export interface AuthContextType {
   isAuthenticated: boolean
   authenticatedFarcasterUser: FarcasterUser | null
   isFarcasterAuthenticated: boolean
+  farcasterToken: string | null
   error: Error | null
   isLoading: boolean
   isError: boolean
@@ -75,33 +76,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
         if (authToken) {
           setFarcasterToken(authToken)
-
-          // Store token in session storage for persistence
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('farcaster_token', authToken)
-          }
+          console.log('Farcaster token obtained from mini app SDK', authToken)
         }
       } catch {
-        // Not in a mini app or no authentication
-        // Try to restore from session storage
-        if (typeof window !== 'undefined') {
-          const storedToken = sessionStorage.getItem('farcaster_token')
-          const storedUser = sessionStorage.getItem('farcaster_user')
-
-          if (storedToken) {
-            setFarcasterToken(storedToken)
-          }
-
-          if (storedUser) {
-            try {
-              const user = JSON.parse(storedUser)
-              setFarcasterUser(user)
-            } catch {
-              // Invalid stored data
-              sessionStorage.removeItem('farcaster_user')
-            }
-          }
-        }
+        // Not in a mini app or no authentication - do nothing
       }
     }
 
@@ -116,11 +94,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     ) {
       const user = farcasterAuthData.verifyFarcasterAuth.user as FarcasterUser
       setFarcasterUser(user)
-
-      // Store user data in session storage
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('farcaster_user', JSON.stringify(user))
-      }
     }
   }, [farcasterAuthData])
 
@@ -128,10 +101,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const logoutFarcaster = useCallback(() => {
     setFarcasterUser(null)
     setFarcasterToken(null)
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('farcaster_token')
-      sessionStorage.removeItem('farcaster_user')
-    }
   }, [])
 
   // Handle Lens account fetching
@@ -175,6 +144,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       Boolean(farcasterUser),
     authenticatedFarcasterUser: farcasterUser,
     isFarcasterAuthenticated: Boolean(farcasterUser),
+    farcasterToken,
     error: error || accountError || null,
     isLoading: loading || accountLoading,
     isError: Boolean(error || accountError),
