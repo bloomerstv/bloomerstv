@@ -88,12 +88,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         }
       } catch {
         console.log('Farcaster mini app SDK getToken failed')
-        // just for debugging - remove later
-
-        setFarcasterToken(
-          'eyJhbGciOiJSUzI1NiIsImtpZCI6IjM1NWQ0M2JmLWM0YjQtNDVlMy04MmNhLThlYjI4YzY3MDllNSJ9.eyJpYXQiOjE3NTY3MTkwODAsImlzcyI6Imh0dHBzOi8vYXV0aC5mYXJjYXN0ZXIueHl6IiwiZXhwIjoxNzU2NzIyNjgwLCJzdWIiOjMwNjc3NywiYXVkIjoiYmxvb21lcnN0di1naXQtZGV2LWRpdmVyc2VocS14eXoudmVyY2VsLmFwcCJ9.vCJ2Be0b-eFi8JRjCaHydUsqpHCeKfbgg2AFPiynb6KDUW0nLE2uCufpvLA2hRwjns9lL0UNdy_in_aBfKIlRAGdBjcXAyTp2g8iI_Y9rA_qCkZxApHMueFqTEHmYEgjlJv80WT4o2PfwbyJD7GUS29a_A5QoaZm62QKVvI8GPGJdrWW8h6JjwIsGAflYgmrI7lF7e3vE644t7Np0-Z1SXb0iKUdEFZd2p-rKcr7W8LLzbT5cgAvGd71OTMgjwZ7sqjAKHU3idQ3MBCEUi4dfHgcNMNFhO8bislBiJ6nR_2za5RkPJAtSwetZXF0zva7DUQpIyKGUN6sIgEiPqAUvg'
-        )
-        // Not in a mini app or no authentication - do nothing
       }
     }
 

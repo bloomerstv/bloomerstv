@@ -212,12 +212,10 @@ const CreatePostPopUp = ({
 
     const ipfsVideo = isVideo
       ? await uploadToIPFS(previewVideoFile.file, (progress) => {
-          console.log('progress: ', progress)
           setVideoProgress(progress)
         })
       : null
 
-    console.log('ipfsImage: ', ipfsImage)
     const duration = isVideo
       ? await getVideoDuration(previewVideoFile.url).then((num) =>
           Math.round(num)
