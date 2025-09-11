@@ -26,8 +26,9 @@ const CreateCommentRow = ({
   const { isAuthenticated, account: sessionAccount } = useSession()
   const [content, setContent] = React.useState('')
   const { data: walletClient } = useWalletClient()
-  // @ts-ignore
-  const { execute } = useCreatePost(handleOperationWith(walletClient))
+  const { execute } = useCreatePost({
+    handler: handleOperationWith(walletClient)
+  })
   const [creating, setCreating] = React.useState(false)
 
   const sendComment = async () => {

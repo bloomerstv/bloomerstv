@@ -93,10 +93,9 @@ const CreatePostPopUp = ({
     }
   })
   const { data: walletClient } = useWalletClient()
-  const { execute: createPost } = useCreatePost(
-    // @ts-ignore
-    handleOperationWith(walletClient)
-  )
+  const { execute: createPost } = useCreatePost({
+    handler: handleOperationWith(walletClient)
+  })
   const [loading, setLoading] = React.useState(false)
   const isMobile = useIsMobile()
   // const {

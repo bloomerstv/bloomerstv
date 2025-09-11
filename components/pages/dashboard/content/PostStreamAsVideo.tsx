@@ -103,8 +103,9 @@ const PostStreamAsVideo = ({
   const { account, isAuthenticated } = useSession()
 
   const { data: walletClient } = useWalletClient()
-  // @ts-ignore
-  const { execute, error } = useCreatePost(handleOperationWith(walletClient))
+  const { execute, error } = useCreatePost({
+    handler: handleOperationWith(walletClient)
+  })
 
   const [showVideoDescription, setShowVideoDescription] = useState(false)
 

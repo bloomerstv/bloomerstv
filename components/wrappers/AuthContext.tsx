@@ -17,6 +17,7 @@ import {
 } from '@lens-protocol/react'
 import { sdk } from '@farcaster/miniapp-sdk'
 import { useVerifyFarcasterAuthQuery } from '../../graphql/generated'
+import { useMiniApp } from '@neynar/react'
 
 export interface FarcasterUser {
   fid: number
@@ -50,6 +51,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children
 }) => {
+  const { isInMiniApp } = useMiniApp()
   const { data, error, loading } = useAuthenticatedUser()
   const { currentSession } = usePublicClient()
 
@@ -73,6 +75,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const checkFarcasterAuth = async () => {
       try {
+        if (!(await isInMiniApp())) return
         // Try to get token from Farcaster mini app SDK
         const result = await sdk.quickAuth.getToken()
         // console.log('Farcaster mini app SDK getToken response:', result)

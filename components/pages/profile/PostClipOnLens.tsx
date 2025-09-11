@@ -43,8 +43,9 @@ const PostClipOnLens = ({
     `Clip from @${account?.username?.value} 's stream`
   )
   const { data: walletClient } = useWalletClient()
-  // @ts-ignore
-  const { execute } = useCreatePost(handleOperationWith(walletClient))
+  const { execute } = useCreatePost({
+    handler: handleOperationWith(walletClient)
+  })
   const sendMessagePayload = useChatInteractions(
     (state) => state.sendMessagePayload
   )

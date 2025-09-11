@@ -81,8 +81,9 @@ const LiveVideoComponent = ({
   const [open, setOpen] = React.useState(false)
 
   const { data: walletClient } = useWalletClient()
-  // @ts-ignore
-  const { execute } = useCreatePost(handleOperationWith(walletClient))
+  const { execute } = useCreatePost({
+    handler: handleOperationWith(walletClient)
+  })
   const [createMyLensStreamSession] = useCreateMyLensStreamSessionMutation({
     fetchPolicy: 'no-cache'
   })
