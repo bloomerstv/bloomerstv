@@ -14,9 +14,6 @@ const TextAndImagePosts = () => {
       metadata: {
         mainContentFocus: [MainContentFocus.TextOnly, MainContentFocus.Image]
       },
-      accountScore: {
-        atLeast: 8000
-      },
       apps: [APP_ADDRESS]
     }
   })
